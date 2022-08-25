@@ -54,53 +54,33 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaID(Guid id, string name, string descr, string flag)
+        public MetaID(Guid id) :
+            this(id, "", "", typeof(object).Name, new List<string>(), new List<Guid>())
         {
-            ID = id;
-            Name = name;
-            Description = descr;
-            TypeName = typeof(object).Name;
-            FlagList = new List<string>() { flag };
-            FilterIDList = new List<Guid>();
         }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaID(Guid id, string name, string descr, string typeName, Guid filterID)
+        public MetaID(Guid id, string name) :
+            this(id, name, "", typeof(object).Name, new List<string>(), new List<Guid>())
         {
-            ID = id;
-            Name = name;
-            Description = descr;
-            TypeName = typeName;
-            FlagList = new List<string>();
-            FilterIDList = new List<Guid>() { filterID };
         }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaID(Guid id)
+        public MetaID(Guid id, string name, string descr, string flag) :
+            this(id, name, descr, typeof(object).Name, new List<string>() { flag }, new List<Guid>())
         {
-            ID = id;
-            Name = "";
-            Description = "";
-            TypeName = typeof(object).Name;
-            FlagList = new List<string>();
-            FilterIDList = new List<Guid>();
         }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaID(Guid id, string name)
+        public MetaID(Guid id, string name, string descr, string typeName, Guid filterID) :
+            this(id, name, descr, typeName, new List<string>(), new List<Guid>() { filterID })
         {
-            ID = id;
-            Name = name;
-            Description = "";
-            TypeName = typeof(object).Name;
-            FlagList = new List<string>();
-            FilterIDList = new List<Guid>();
         }
     }
 }
