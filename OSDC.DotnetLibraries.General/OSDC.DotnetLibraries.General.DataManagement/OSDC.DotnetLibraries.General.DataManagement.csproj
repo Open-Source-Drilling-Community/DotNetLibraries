@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <Title>dotnet utilities for data management</Title>
+    <Authors>NORCE D&amp;W team</Authors>
+    <Company>NORCE</Company>
+    <Description>dotnet utilities for data management</Description>
   </PropertyGroup>
 
 </Project>
