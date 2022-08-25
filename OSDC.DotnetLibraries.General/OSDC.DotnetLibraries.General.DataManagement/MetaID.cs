@@ -76,5 +76,18 @@ namespace OSDC.DotnetLibraries.General.DataManagement
             FlagList = new List<string>();
             FilterIDList = new List<Guid>() { filterID };
         }
+
+        /// <summary>
+        /// constructor
+        /// </summary>
+        public MetaID(Guid id)
+        {
+            ID = id;
+            Name = "";
+            Description = "";
+            TypeName = typeof(object).Name;
+            FlagList = new List<string>();
+            FilterIDList = new List<Guid>();
+        }
     }
 }
