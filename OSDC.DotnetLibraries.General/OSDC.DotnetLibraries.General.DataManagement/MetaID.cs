@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace OSDC.DotnetLibraries.General.DataManagement
@@ -29,33 +30,34 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         public string TypeName { get; set; }
 
         /// <summary>
-        /// a list of flags used by the data
+        /// a dictionary of flags used by the data, the key being an name identifier of the flag and the value being the value of the flag itself
         /// </summary>
-        public List<string> FlagList { get; set; }
+        public Dictionary<string, bool> Flags { get; set; }
 
         /// <summary>
-        /// a list of ID for data attributes that allows to filter and sort a set of datas
+        /// a dictionary of IDs associated to the data (for filtering and sorting purpose), the key being an identifier of the filterID and the value being the Guid itself
         /// </summary>
-        public List<Guid> FilterIDList { get; set; }
+        public Dictionary<string, Guid> FilterIDs{ get; set; }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaID(Guid id, string name, string descr, string typeName, List<string> flags, List<Guid> filterIDs)
+        [JsonConstructor]
+        public MetaID(Guid id, string name, string descr, string typeName, Dictionary<string, bool> flags, Dictionary<string, Guid> filterIDs)
         {
             ID = id;
             Name = name;
             Description = descr;
             TypeName = typeName;
-            FlagList = flags;
-            FilterIDList = filterIDs;
+            Flags = flags;
+            FilterIDs = filterIDs;
         }
 
         /// <summary>
         /// constructor
         /// </summary>
         public MetaID(Guid id) :
-            this(id, "", "", typeof(object).Name, new List<string>(), new List<Guid>())
+            this(id, "", "", typeof(object).Name, new Dictionary<string, bool>(), new Dictionary<string, Guid>())
         {
         }
 
@@ -63,23 +65,23 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaID(Guid id, string name) :
-            this(id, name, "", typeof(object).Name, new List<string>(), new List<Guid>())
+            this(id, name, "", typeof(object).Name, new Dictionary<string, bool>(), new Dictionary<string, Guid>())
         {
         }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaID(Guid id, string name, string descr, string flag) :
-            this(id, name, descr, typeof(object).Name, new List<string>() { flag }, new List<Guid>())
+        public MetaID(Guid id, string name, string descr, Dictionary<string, bool> flags) :
+            this(id, name, descr, typeof(object).Name, flags, new Dictionary<string, Guid>())
         {
         }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaID(Guid id, string name, string descr, string typeName, Guid filterID) :
-            this(id, name, descr, typeName, new List<string>(), new List<Guid>() { filterID })
+        public MetaID(Guid id, string name, string descr, string typeName, Dictionary<string, Guid> filterIDs) :
+            this(id, name, descr, typeName, new Dictionary<string, bool>(), filterIDs)
         {
         }
     }
