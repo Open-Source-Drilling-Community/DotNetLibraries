@@ -40,6 +40,13 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         public Dictionary<string, Guid> FilterIDs{ get; set; }
 
         /// <summary>
+        /// default constructor
+        /// </summary>
+        public MetaID() : base()
+        {
+        }
+
+        /// <summary>
         /// constructor
         /// </summary>
         [JsonConstructor]
