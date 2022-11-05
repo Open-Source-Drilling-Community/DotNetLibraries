@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Standard Numerical and other Classes</Title>
+    <Authors>Eric Cayeux</Authors>
+    <Company>NORCE Norwegian Research Center</Company>
+    <Description>A set of different standard classes often used while developing .Net applications, such as numerical comparisons with accuracy and typical physical constants.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+</Project>
