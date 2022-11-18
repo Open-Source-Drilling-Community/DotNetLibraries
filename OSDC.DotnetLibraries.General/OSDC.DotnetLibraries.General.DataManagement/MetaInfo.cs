@@ -117,6 +117,18 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// constructor
         /// </summary>
+        public MetaInfo(Guid id, string name, string descr) :
+            this(id, name, descr, typeof(object).Name,
+                new Dictionary<string, bool>(),
+                new Dictionary<string, Guid>(),
+                new Dictionary<string, string>(),
+                new Dictionary<string, double>())
+        {
+        }
+
+        /// <summary>
+        /// constructor
+        /// </summary>
         public MetaInfo(Guid id, string name, string descr, Dictionary<string, bool> flags) :
             this(id, name, descr, typeof(object).Name,
                 flags,
