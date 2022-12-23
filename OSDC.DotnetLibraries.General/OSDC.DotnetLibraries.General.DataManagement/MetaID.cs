@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace OSDC.DotnetLibraries.General.DataManagement
@@ -49,7 +48,6 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// constructor
         /// </summary>
-        [JsonConstructor]
         public MetaID(Guid id, string name, string descr, string typeName, Dictionary<string, bool> flags, Dictionary<string, Guid> filterIDs)
         {
             ID = id;

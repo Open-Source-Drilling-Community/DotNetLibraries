@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Windows.Markup;
+﻿using System;
 
 namespace OSDC.DotnetLibraries.General.DataManagement
 {
@@ -60,7 +57,6 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// constructor
         /// </summary>
-        [JsonConstructor]
         public MetaInfo(Guid id, string name, string descr, string typeName, string httpHostBasePath, string httpEndPoint)
         {
             ID = id;
