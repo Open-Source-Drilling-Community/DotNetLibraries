@@ -30,12 +30,12 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// the date when the data was created
         /// </summary>
-        public DateTime CreationDate { get; set; }
+        public DateTimeOffset CreationDate { get; set; }
 
         /// <summary>
         /// the date when the data was last modified
         /// </summary>
-        public DateTime LastModificationDate { get; set; }
+        public DateTimeOffset LastModificationDate { get; set; }
 
         /// <summary>
         /// the http host base path allowing to access the data in a service oriented architecture (ex: http://my-server:80/HttpHostBasePath)
