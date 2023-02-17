@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Standard Statistical Classes</Title>
+    <Company>NORCE Norwegian Research Center</Company>
+    <Authors>NORCE Drilling &amp; Well Modeling Group</Authors>
+    <Description>This package contains classes to perform statistical calculations.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>

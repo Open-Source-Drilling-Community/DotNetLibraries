@@ -3,11 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.2.2</Version>
     <Title>dotnet utilities for data management</Title>
     <Authors>NORCE D&amp;W team</Authors>
     <Company>NORCE</Company>
     <Description>dotnet utilities for data management</Description>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <AssemblyVersion>1.2.3.0</AssemblyVersion>
+    <FileVersion>1.2.3.0</FileVersion>
+    <Version>1.2.3</Version>
   </PropertyGroup>
+  <ItemGroup>
+     <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

@@ -1453,7 +1453,7 @@ namespace OSDC.DotnetLibraries.General.Common
         }
 
         /// <summary>
-        /// 
+        /// Power calculation based on an integral exponent
         /// </summary>
         /// <param name="a"></param>
         /// <param name="n"></param>
@@ -1472,7 +1472,12 @@ namespace OSDC.DotnetLibraries.General.Common
             }
             return value;
         }
-
+        /// <summary>
+        /// Power calculation based on an integral exponent
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
         public static double? Pow(double? a, int n)
         {
             if (a != null)
