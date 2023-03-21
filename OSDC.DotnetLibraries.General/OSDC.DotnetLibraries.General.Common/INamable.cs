@@ -1,5 +1,4 @@
-﻿
-namespace OSDC.DotnetLibraries.General.Common
+﻿namespace OSDC.DotnetLibraries.General.Common
 {
     /// <summary>
     /// an interface for things that can be named

@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 
-
 namespace OSDC.DotnetLibraries.General.Common
 {
     public class Numeric
@@ -149,7 +148,7 @@ namespace OSDC.DotnetLibraries.General.Common
         public static readonly double ANGLE_ACCURACY = 0.01 * PI / 180;
 
         /// <summary>
-        /// definition of undefined value.
+        /// NORCE-specific definition of undefined value.
         /// </summary>
         public static readonly DateTime UNDEF_DATETIME = DateTime.MaxValue;
 

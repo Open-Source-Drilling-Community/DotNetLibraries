@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Standard Math Classes</Title>
+    <Version>1.0.1</Version>
+    <Authors>NORCE Drilling &amp; Well Modeling Group</Authors>
+    <Company>NORCE Norwegian Research Center</Company>
+    <Description>This package contains classes to perform mathematical calculations.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.0.2" />
+  </ItemGroup>
+
+</Project>

@@ -1,5 +1,4 @@
-﻿
-namespace OSDC.DotnetLibraries.General.Common
+﻿namespace OSDC.DotnetLibraries.General.Common
 {
     /// <summary>
     /// an interface for things that can be copied into another object of the same class.
@@ -11,6 +10,6 @@ namespace OSDC.DotnetLibraries.General.Common
         /// copy from this to target
         /// </summary>
         /// <param name="target"></param>
-        bool Copy(T target);
+        void Copy(ref T target);
     }
 }
