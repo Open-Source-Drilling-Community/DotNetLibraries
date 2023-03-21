@@ -6,14 +6,27 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Standard Math Classes</Title>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>NORCE Drilling &amp; Well Modeling Group</Authors>
     <Company>NORCE Norwegian Research Center</Company>
     <Description>This package contains classes to perform mathematical calculations.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

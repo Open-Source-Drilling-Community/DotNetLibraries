@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -13,15 +13,20 @@
     <Company>NORCE Norwegian Research Center</Company>
     <Authors>NORCE Drilling &amp; Well Modeling Group</Authors>
     <Description>This package contains classes to perform statistical calculations.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\OSDC.DotnetLibraries.General.DataManagement\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.0.2" />
-    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.0.1" />
+    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
