@@ -2,8 +2,10 @@ This package is developed as part of the Society of Petroleum (SPE) Open Source 
 This package contains common classes and interfaces such as:
 - BooleanValue
 - Constants
+- DateTimeValue
 - IBooleanValue
 - ICopyable
+- IDateTimeValue
 - IDefinable
 - IIdentifiable
 - IIntegerValue
@@ -11,8 +13,10 @@ This package contains common classes and interfaces such as:
 - IntegerValue
 - IParentIdentified
 - IScalarValue
+- ITimeSpanValue
 - IUndefinable
 - IValidable
 - IValuable
 - Numeric
 - ScalarValue
+- TimeSpanValue
