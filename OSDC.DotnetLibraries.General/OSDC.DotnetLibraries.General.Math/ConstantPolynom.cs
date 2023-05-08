@@ -1,44 +1,41 @@
-﻿using OSDC.DotnetLibraries.General.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public struct LinearPolynom : IPolynom, IEquatable<IPolynom>, IEquatable<LinearPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<LinearPolynom>, IZero
+    public struct ConstantPolynom : IPolynom, IEquatable<IPolynom>, IEquatable<ConstantPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<ConstantPolynom>, IZero
     {
         /// <summary>
-        /// Ax+B
+        /// A
         /// </summary>
         public double A { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public double B { get; set; }
-        /// <summary>
-        /// Ax+B
+        /// A
         /// </summary>
         /// <param name="a"></param>
-        /// <param name="b"></param>
-        public LinearPolynom(double a, double b)
+        public ConstantPolynom(double a)
         {
             A = a;
-            B = b;
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="a"></param>
-        public LinearPolynom(double[] a)
+        public ConstantPolynom(double[] a)
         {
-            if (a != null && a.Length >= 2)
+            if (a != null && a.Length >= 1)
             {
-                A = a[1];
-                B = a[0];
+                A = a[0];
             }
             else
             {
                 A = Numeric.UNDEF_DOUBLE;
-                B = Numeric.UNDEF_DOUBLE;
             }
         }
 
@@ -46,17 +43,15 @@ namespace OSDC.DotnetLibraries.General.Math
         /// 
         /// </summary>
         /// <param name="p"></param>
-        public LinearPolynom(IPolynom p)
+        public ConstantPolynom(IPolynom p)
         {
-            if (p != null && p.Degree >= 1)
+            if (p != null && p.Degree >= 0)
             {
-                A = p[1];
-                B = p[0];
+                A = p[0];
             }
             else
             {
                 A = Numeric.UNDEF_DOUBLE;
-                B = Numeric.UNDEF_DOUBLE;
             }
         }
 
@@ -64,10 +59,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// 
         /// </summary>
         /// <param name="p"></param>
-        public LinearPolynom(LinearPolynom p)
+        public ConstantPolynom(ConstantPolynom p)
         {
             A = p.A;
-            B = p.B;
         }
 
         /// <summary>
@@ -76,16 +70,15 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public override string ToString()
         {
-            return A.ToString() + "*x+" + B.ToString();
+            return A.ToString();
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="p"></param>
-        public void Set(LinearPolynom p)
+        public void Set(ConstantPolynom p)
         {
             A = p.A;
-            B = p.B;
         }
 
         /// <summary>
@@ -93,10 +86,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
-        public void Set(double a, double b)
+        public void Set(double a)
         {
             A = a;
-            B = b;
         }
 
         /// <summary>
@@ -105,10 +97,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="a"></param>
         public void Set(double[] a)
         {
-            if (a != null && a.Length >= 2)
+            if (a != null && a.Length >= 1)
             {
                 A = a[1];
-                B = a[0];
             }
         }
 
@@ -118,10 +109,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="p"></param>
         public void Set(IPolynom p)
         {
-            if (p != null && p.Degree >= 2)
+            if (p != null && p.Degree >= 1)
             {
                 A = p[1];
-                B = p[0];
             }
         }
 
@@ -134,22 +124,13 @@ namespace OSDC.DotnetLibraries.General.Math
         {
             if (Numeric.EQ(A, 0))
             {
-                root = Numeric.UNDEF_DOUBLE;
-                if (Numeric.EQ(B, 0))
-                {
-                    //infinite number of solutions
-                    return -1;
-                }
-                else
-                {
-                    //no solutions
-                    return 0;
-                }
+                root = 0;
+                return 1;
             }
             else
             {
-                root = -B / A;
-                return 1;
+                root = Numeric.UNDEF_DOUBLE;
+                return 0;
             }
         }
 
@@ -159,7 +140,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         public int Degree
         {
-            get { return 1; }
+            get { return 0; }
         }
 
         /// <summary>
@@ -173,20 +154,16 @@ namespace OSDC.DotnetLibraries.General.Math
             {
                 if (index == 0)
                 {
-                    return B;
+                    return A;
                 }
                 else
                 {
-                    return A;
+                    return Numeric.UNDEF_DOUBLE;
                 }
             }
             set
             {
                 if (index == 0)
-                {
-                    B = value;
-                }
-                else
                 {
                     A = value;
                 }
@@ -200,7 +177,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public double Eval(double x)
         {
-            return A * x + B;
+            return A;
         }
 
         /// <summary>
@@ -217,20 +194,9 @@ namespace OSDC.DotnetLibraries.General.Math
             {
                 return Numeric.UNDEF_DOUBLE;
             }
-            else if (result == -1)
+            else 
             {
                 return min;
-            }
-            else
-            {
-                if (Numeric.GE(root, min) && Numeric.LE(root, max))
-                {
-                    return root;
-                }
-                else
-                {
-                    return Numeric.UNDEF_DOUBLE;
-                }
             }
         }
 
@@ -243,7 +209,6 @@ namespace OSDC.DotnetLibraries.General.Math
         public void SetUndefined()
         {
             A = Numeric.UNDEF_DOUBLE;
-            B = Numeric.UNDEF_DOUBLE;
         }
 
         /// <summary>
@@ -252,7 +217,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public bool IsUndefined()
         {
-            return Numeric.IsUndefined(A) || Numeric.IsUndefined(B);
+            return Numeric.IsUndefined(A);
         }
 
         #endregion
@@ -264,7 +229,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public object Clone()
         {
-            return new LinearPolynom(this);
+            return new ConstantPolynom(this);
         }
 
         #endregion
@@ -276,10 +241,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="item"></param>
         public void Copy(ref IPolynom item)
         {
-            if (item != null && item.Degree == 1)
+            if (item != null && item.Degree == 0)
             {
-                item[0] = B;
-                item[1] = A;
+                item[0] = A;
             }
         }
 
@@ -293,9 +257,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public bool Equals(IPolynom other)
         {
-            if (other != null && other.Degree == 1)
+            if (other != null && other.Degree == 0)
             {
-                return Numeric.EQ(A, other[1]) && Numeric.EQ(B, other[0]);
+                return Numeric.EQ(A, other[0]);
             }
             else
             {
@@ -305,15 +269,14 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region ICopyable<LinearPolynom> Members
+        #region ICopyable<ConstantPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="item"></param>
-        public void Copy(ref LinearPolynom item)
+        public void Copy(ref ConstantPolynom item)
         {
             item.A = A;
-            item.B = B;
         }
 
         #endregion
@@ -323,9 +286,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(LinearPolynom other)
+        public bool Equals(ConstantPolynom other)
         {
-            return Numeric.EQ(A, other.A) && Numeric.EQ(B, other.B);
+            return Numeric.EQ(A, other.A);
         }
 
         #region IZero Members
@@ -335,7 +298,6 @@ namespace OSDC.DotnetLibraries.General.Math
         public void SetZero()
         {
             A = 0;
-            B = 0;
         }
 
         /// <summary>
@@ -344,7 +306,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public bool IsZero()
         {
-            return Numeric.EQ(A, 0) && Numeric.EQ(B, 0);
+            return Numeric.EQ(A, 0);
         }
 
         #endregion
@@ -356,7 +318,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public double Derive(double x)
         {
-            return A;
+            return 0;
         }
 
         /// <summary>
@@ -377,7 +339,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public double Integrate(double a, double b)
         {
-            return 0.5 * A * b * b + B * b - (0.5 * A * a * a + B * a);
+            return A * (b - a);
         }
 
         /// <summary>
@@ -388,8 +350,7 @@ namespace OSDC.DotnetLibraries.General.Math
         {
             if (p != null && p.Degree >= 0)
             {
-                p[0] = A;
-                for (int i = 1; i < p.Degree; i++)
+                for (int i = 0; i < p.Degree; i++)
                 {
                     p[i] = 0;
                 }
@@ -402,14 +363,13 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="p"></param>
         public void Primitive(ref IPolynom p)
         {
-            if (p != null && p.Degree >= 2)
+            if (p != null && p.Degree >= 1)
             {
                 p[0] = 0;
-                p[1] = B;
-                p[2] = A / 2.0;
-                for (int i = 3; i < p.Degree; i++)
-                { 
-                    p[i] = 0; 
+                p[1] = A;
+                for (int i = 2; i < p.Degree; i++)
+                {
+                    p[i] = 0;
                 }
             }
         }
@@ -420,7 +380,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="p"></param>
         public void Derivate(ref double p)
         {
-            p = A;
+            p = 0;
         }
 
     }

@@ -5,7 +5,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
     public static class Statistics
     {
         /// <summary>
-        /// 
+        /// The arithmetic mean of a list of double
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -26,6 +26,11 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
         }
 
+        /// <summary>
+        /// the min value of a list of double
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static double Min(IList<double> data)
         {
             if (data != null && data.Count > 0)
@@ -45,6 +50,12 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 return Numeric.UNDEF_DOUBLE;
             }
         }
+
+        /// <summary>
+        /// the max value of a list of double
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static double Max(IList<double> data)
         {
             if (data != null && data.Count > 0)
@@ -65,9 +76,8 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
         }
 
-
         /// <summary>
-        ///       
+        /// The standard deviation of the list of double
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -149,7 +159,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         }
 
         /// <summary>
-        /// Calculates the chi square for a fit y(i) = func(x[i]), with standard
+        /// Calculate the chi square for a fit y(i) = func(x[i]), with standard
         /// deviations std[i]
         /// </summary>
         /// <param name="x"></param>
@@ -170,7 +180,8 @@ namespace OSDC.DotnetLibraries.General.Statistics
             return chi2;
         }
         /// <summary>
-        /// 
+        /// Calculate the chi square for a fit y(i) = func(x[i]) where x is the left element of the pair and y is the right element of the pair
+        /// The standard deviation is supposed to be equal to 1
         /// </summary>
         /// <param name="data"></param>
         /// <param name="obj"></param>
@@ -192,7 +203,13 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 return Numeric.UNDEF_DOUBLE;
             }
         }
-
+        /// <summary>
+        /// calculate the chi square of lists of estimated and measured values.
+        /// The standard deviation is supposed to be equal to 1.
+        /// </summary>
+        /// <param name="yEstimated"></param>
+        /// <param name="yMeasured"></param>
+        /// <returns></returns>
         public static double ChiSquare(double[] yEstimated, double[] yMeasured)
         {
             double chi2 = 0;
@@ -205,7 +222,13 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
             return chi2;
         }
-
+        /// <summary>
+        /// calculate the chi square of lists of estimated and measured values.
+        /// </summary>
+        /// <param name="yEstimated"></param>
+        /// <param name="yMeasured"></param>
+        /// <param name="std"></param>
+        /// <returns></returns>
         public static double ChiSquare(double[] yEstimated, double[] yMeasured, double std)
         {
             if (!Numeric.EQ(std, 0))
@@ -225,7 +248,13 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 return Numeric.UNDEF_DOUBLE;
             }
         }
-
+        /// <summary>
+        /// calculate the chi square of lists of estimated and measured values.
+        /// </summary>
+        /// <param name="yEstimated"></param>
+        /// <param name="yMeasured"></param>
+        /// <param name="std"></param>
+        /// <returns></returns>
         public static double ChiSquare(double[] yEstimated, double[] yMeasured, double[] std)
         {
             if (std == null)

@@ -9,7 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Statistics", "OSDC.DotnetLibraries.General.Statistics\OSDC.DotnetLibraries.General.Statistics.csproj", "{DC16FF1F-5981-4147-BC19-48AB3EEC0306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Math", "OSDC.DotnetLibraries.General.Math\OSDC.DotnetLibraries.General.Math.csproj", "{6A2ED092-9B11-4EEB-9B3C-C73E795163B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Math", "OSDC.DotnetLibraries.General.Math\OSDC.DotnetLibraries.General.Math.csproj", "{6A2ED092-9B11-4EEB-9B3C-C73E795163B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.OpenFoamRead", "OSDC.DotnetLibraries.General.OpenFoamRead\OSDC.DotnetLibraries.General.OpenFoamRead.csproj", "{EE13803E-1015-4487-A09B-04557B32FAE2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.OpenFoamRead.Test", "OSDC.DotnetLibraries.General.OpenFoamRead.Test\OSDC.DotnetLibraries.General.OpenFoamRead.Test.csproj", "{C6A2A5BD-5CA2-45EF-8D25-E62CAA6B0A98}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Surveying", "OSDC.DotnetLibraries.General.Surveying\OSDC.DotnetLibraries.General.Surveying.csproj", "{2DD951E2-487D-4D0A-AA83-21D8C4FC652E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Math.UnitTest", "OSDC.DotnetLibraries.General.Math.UnitTest\OSDC.DotnetLibraries.General.Math.UnitTest.csproj", "{3DEF6AD7-C1F9-4E1D-AF2F-9312DAC29757}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +41,22 @@ Global
 		{6A2ED092-9B11-4EEB-9B3C-C73E795163B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A2ED092-9B11-4EEB-9B3C-C73E795163B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A2ED092-9B11-4EEB-9B3C-C73E795163B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE13803E-1015-4487-A09B-04557B32FAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE13803E-1015-4487-A09B-04557B32FAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE13803E-1015-4487-A09B-04557B32FAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE13803E-1015-4487-A09B-04557B32FAE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6A2A5BD-5CA2-45EF-8D25-E62CAA6B0A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6A2A5BD-5CA2-45EF-8D25-E62CAA6B0A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6A2A5BD-5CA2-45EF-8D25-E62CAA6B0A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6A2A5BD-5CA2-45EF-8D25-E62CAA6B0A98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD951E2-487D-4D0A-AA83-21D8C4FC652E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD951E2-487D-4D0A-AA83-21D8C4FC652E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD951E2-487D-4D0A-AA83-21D8C4FC652E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD951E2-487D-4D0A-AA83-21D8C4FC652E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DEF6AD7-C1F9-4E1D-AF2F-9312DAC29757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DEF6AD7-C1F9-4E1D-AF2F-9312DAC29757}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DEF6AD7-C1F9-4E1D-AF2F-9312DAC29757}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DEF6AD7-C1F9-4E1D-AF2F-9312DAC29757}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

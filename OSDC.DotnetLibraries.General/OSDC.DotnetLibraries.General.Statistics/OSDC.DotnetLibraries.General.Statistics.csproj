@@ -5,9 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <Version>1.0.2</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Standard Statistical Classes</Title>
     <Company>NORCE Norwegian Research Center</Company>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.0.2" />
+    <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.0.3" />
     <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.0.2" />
   </ItemGroup>
 
