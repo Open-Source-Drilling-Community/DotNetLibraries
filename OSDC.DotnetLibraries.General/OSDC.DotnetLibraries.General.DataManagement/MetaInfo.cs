@@ -38,12 +38,17 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         public DateTimeOffset LastModificationDate { get; set; }
 
         /// <summary>
-        /// the http host base path allowing to access the data in a service oriented architecture (ex: http://my-server:80/HttpHostBasePath)
+        /// the http host name to access the data in a service oriented architecture (ex: "http://my-server:80/"), suffixed with "/"
+        /// </summary>
+        public string HttpHostName { get; set; }
+
+        /// <summary>
+        /// the http host base path of the microservice (ex: "DrillingUnitConversion/api/"), suffixed with "/"
         /// </summary>
         public string HttpHostBasePath { get; set; }
 
         /// <summary>
-        /// the end point string to append to the HttpHostBasePath to locate the data in a service oriented architecture (ex: http://my-server:80/HttpHostBasePath/HttpEndPoint)
+        /// the http end point to append to the HttpHostBasePath to locate the data (ex: "DrillingUnitChoiceSets/"), suffixed with "/"
         /// </summary>
         public string HttpEndPoint { get; set; }
 
@@ -57,7 +62,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaInfo(Guid id, string name, string descr, string typeName, string httpHostBasePath, string httpEndPoint)
+        public MetaInfo(Guid id, string name, string descr, string typeName, string httpHostName, string httpHostBasePath, string httpEndPoint)
         {
             ID = id;
             Name = name;
@@ -65,6 +70,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
             TypeName = typeName;
             CreationDate = DateTime.UtcNow;
             LastModificationDate = CreationDate;
+            HttpHostName = httpHostName;
             HttpHostBasePath = httpHostBasePath;
             HttpEndPoint = httpEndPoint;
         }
@@ -73,7 +79,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaInfo(Guid id) :
-            this(id, "", "", typeof(object).Name, "", "")
+            this(id, "", "", typeof(object).Name, "", "", "")
         {
         }
 
@@ -81,7 +87,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaInfo(Guid id, string name) :
-            this(id, name, "", typeof(object).Name, "", "")
+            this(id, name, "", typeof(object).Name, "", "", "")
         {
         }
 
@@ -89,15 +95,15 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaInfo(Guid id, string name, string descr) :
-            this(id, name, descr, typeof(object).Name, "", "")
+            this(id, name, descr, typeof(object).Name, "", "", "")
         {
         }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaInfo(Guid id, string name, string descr, string httpHostBasePath, string httpEndPoint) :
-            this(id, name, descr, typeof(object).Name, httpHostBasePath, httpEndPoint)
+        public MetaInfo(Guid id, string name, string descr, string httpHostName, string httpHostBasePath, string httpEndPoint) :
+            this(id, name, descr, typeof(object).Name, httpHostName, httpHostBasePath, httpEndPoint)
         {
         }
     }
