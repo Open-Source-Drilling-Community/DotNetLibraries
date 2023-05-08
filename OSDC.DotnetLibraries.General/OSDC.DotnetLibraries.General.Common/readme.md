@@ -6,7 +6,9 @@ This package contains common classes and interfaces such as:
 - ICopyable
 - IDefinable
 - IIdentifiable
+- IIntegerValue
 - INamable
+- IntegerValue
 - IParentIdentified
 - IScalarValue
 - IUndefinable
