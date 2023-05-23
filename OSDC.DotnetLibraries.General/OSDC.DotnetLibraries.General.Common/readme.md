@@ -13,10 +13,12 @@ This package contains common classes and interfaces such as:
 - IntegerValue
 - IParentIdentified
 - IScalarValue
+- IStringValue
 - ITimeSpanValue
 - IUndefinable
 - IValidable
 - IValuable
 - Numeric
 - ScalarValue
+- StringValue
 - TimeSpanValue
