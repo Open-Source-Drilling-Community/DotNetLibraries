@@ -30,6 +30,31 @@ namespace OSDC.DotnetLibraries.General.Math
             }
         }
         /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public Point3D(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+        /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public Point3D(double? x, double? y, double? z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        /// <summary>
         /// equality at numeric accuracy
         /// </summary>
         /// <param name="cmp"></param>
@@ -74,6 +99,56 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             return System.Math.Atan2(y, x);
         }
+        /// <summary>
+        /// Set the coordinates based on a reference point
+        /// </summary>
+        /// <param name="point"></param>
+        public void Set(Point3D point)
+        {
+            if (point != null)
+            {
+                base.Set(point);
+                Z = point.Z;
+            }
+        }
+        /// <summary>
+        /// Set the coordinates based on a reference point
+        /// </summary>
+        /// <param name="point"></param>
+        public void Set(IPoint3D point)
+        {
+            if (point != null)
+            {
+                base.Set(point);
+                Z = point.Z;
+            }
+        }
+
+        /// <summary>
+        /// Set the coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public void Set(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+        /// <summary>
+        /// Set the coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public void Set(double? x, double? y, double? z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
         /// <summary>
         /// return the euclidian distance with another point
         /// </summary>
@@ -149,5 +224,43 @@ namespace OSDC.DotnetLibraries.General.Math
             double dz = z2 - z1;
             return System.Math.Sqrt(dx*dx + dy*dy + dz*dz);
         }
+        /// <summary>
+        /// Calculate the cross product between the vector P1P2 and P1P3 where P1 is this.
+        /// </summary>
+        /// <param name="p2"></param>
+        /// <param name="p3"></param>
+        /// <returns></returns>
+        public Vector3D CrossProductVector(Point3D p2, Point3D p3)
+        {
+            if (p2 != null && p3 != null)
+            {
+                Vector3D p1p2 = new Vector3D(this, p2);
+                Vector3D p1p3 = new Vector3D(this, p3);
+                return p1p2.CrossProduct(p1p3);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// Check if this is colinear with p2 and p3
+        /// </summary>
+        /// <param name="p2"></param>
+        /// <param name="p3"></param>
+        /// <returns></returns>        
+        public bool AreColinear(IPoint3D p2, IPoint3D p3)
+        {
+            if (p2 != null && p3 != null)
+            {
+                Vector3D cross = CrossProductVector((Point3D)p2, (Point3D)p3);
+                return Numeric.EQ(cross.GetLength(), 0.0);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }

@@ -20,7 +20,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             double root = 0;
             int count = poly.FindRoots(ref root);
             Assert.AreEqual(0, count);
-            Assert.Pass();
         }
         [Test]
         public void Test2()
@@ -29,7 +28,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             double root = 0;
             int count = poly.FindRoots(ref root);
             Assert.AreEqual(1, count);
-            Assert.Pass();
         }
         [Test]
         public void Test3()
@@ -38,7 +36,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             IPolynom derivative = new ConstantPolynom();
             poly.Derivate(ref derivative);
             Assert.AreEqual(0.0, derivative[0]);
-            Assert.Pass();
         }
         [Test]
         public void Test4()
@@ -48,7 +45,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             poly.Derivate(ref derivative);
             Assert.AreEqual(0.0, derivative[0]);
             Assert.AreEqual(0.0, derivative[1]);
-            Assert.Pass();
         }
         [Test]
         public void Test5()
@@ -59,7 +55,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(0.0, derivative[0]);
             Assert.AreEqual(0.0, derivative[1]);
             Assert.AreEqual(0.0, derivative[2]);
-            Assert.Pass();
         }
         [Test]
         public void Test6()
@@ -71,7 +66,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(0.0, derivative[1]);
             Assert.AreEqual(0.0, derivative[2]);
             Assert.AreEqual(0.0, derivative[3]);
-            Assert.Pass();
         }
         [Test]
         public void Test7()
@@ -84,7 +78,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(0.0, derivative[2]);
             Assert.AreEqual(0.0, derivative[3]);
             Assert.AreEqual(0.0, derivative[4]);
-            Assert.Pass();
         }
         [Test]
         public void Test8()
@@ -94,7 +87,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             poly.Primitive(ref primitive);
             Assert.AreEqual(0.0, primitive[0]);
             Assert.AreEqual(1.0, primitive[1]);
-            Assert.Pass();
         }
         [Test]
         public void Test9()
@@ -105,7 +97,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(0.0, primitive[0]);
             Assert.AreEqual(1.0, primitive[1]);
             Assert.AreEqual(0.0, primitive[2]);
-            Assert.Pass();
         }
         [Test]
         public void Test10()
@@ -117,7 +108,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(1.0, primitive[1]);
             Assert.AreEqual(0.0, primitive[2]);
             Assert.AreEqual(0.0, primitive[3]);
-            Assert.Pass();
         }
         [Test]
         public void Test11()
@@ -130,7 +120,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(0.0, primitive[2]);
             Assert.AreEqual(0.0, primitive[3]);
             Assert.AreEqual(0.0, primitive[4]);
-            Assert.Pass();
         }
         [Test]
         public void Test12()
@@ -143,7 +132,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             double integral1 = primitive.Eval(b)- primitive.Eval(a);
             double integral2 = poly.Integrate(a, b);
             Assert.AreEqual(integral1, integral2);
-            Assert.Pass();
         }
         [Test]
         public void Test13()
@@ -160,7 +148,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             eval1 = cpoly.Eval(x);
             eval2 = poly.Eval(x);
             Assert.AreEqual(eval1, eval2);
-            Assert.Pass();
         }
 
         [Test]
@@ -173,7 +160,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             cpoly.Derivate(ref derivative1);
             poly.Derivate(ref derivative2);
             Assert.AreEqual(derivative1[0], derivative2[0]);
-            Assert.Pass();
         }
         [Test]
         public void Test15()
@@ -185,7 +171,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             cpoly.Derivate(ref derivative1);
             poly.Derivate(ref derivative2);
             Assert.AreEqual(derivative1[0], derivative2[0]);
-            Assert.Pass();
         }
         [Test]
         public void Test16()
@@ -200,7 +185,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             derivate1 = cpoly.Derive(x);
             derivate2 = poly.Derive(x);
             Assert.AreEqual(derivate1, derivate2);
-            Assert.Pass();
         }
         [Test]
         public void Test17()
@@ -215,7 +199,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             derivate1 = cpoly.DeriveSecond(x);
             derivate2 = poly.DeriveSecond(x);
             Assert.AreEqual(derivate1, derivate2);
-            Assert.Pass();
         }
 
         [Test]
@@ -229,7 +212,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             poly.Primitive(ref primitive2);
             Assert.AreEqual(primitive1[0], primitive2[0]);
             Assert.AreEqual(primitive1[1], primitive2[1]);
-            Assert.Pass();
         }
         [Test]
         public void Test19()
@@ -242,7 +224,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             poly.Primitive(ref primitive2);
             Assert.AreEqual(primitive1[0], primitive2[0]);
             Assert.AreEqual(primitive1[1], primitive2[1]);
-            Assert.Pass();
         }
         [Test]
         public void Test20()
@@ -254,7 +235,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             double integral1 = cpoly.Integrate(a, b);
             double integral2 = poly.Integrate(a, b);
             Assert.AreEqual(integral1, integral2);
-            Assert.Pass();
         }
 
     }

@@ -31,7 +31,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(1.0, root1);
             Assert.AreEqual(2.0, root2);
             Assert.AreEqual(3.0, root3);
-            Assert.Pass();
         }
         [Test]
         public void Test2()
@@ -45,7 +44,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(1.0, root1);
             Assert.AreEqual(1.0, root2);
             Assert.AreEqual(1.0, root3);
-            Assert.Pass();
         }
         [Test]
         public void Test3()
@@ -62,7 +60,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(0.0, root3.Imaginary);
             Assert.AreEqual(3.0, root2.Real);
             Assert.AreEqual(0.0, root2.Imaginary);
-            Assert.Pass();
         }
         [Test]
         public void Test4()
@@ -74,7 +71,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             int count = poly.FindRoots(ref root1, ref root2, ref root3);
             Assert.AreEqual(1, count);
             Assert.AreEqual(-1.0, root1);
-            Assert.Pass();
         }
         [Test]
         public void Test5()
@@ -91,7 +87,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(-System.Math.Sqrt(3.0)/2.0, root2.Imaginary);
             Assert.AreEqual(-0.5, root3.Real);
             Assert.AreEqual(System.Math.Sqrt(3.0) / 2.0, root3.Imaginary);
-            Assert.Pass();
         }
         [Test]
         public void Test6()
@@ -102,7 +97,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(11.0, derivative[0]);
             Assert.AreEqual(-12.0, derivative[1]);
             Assert.AreEqual(3.0, derivative[2]);
-            Assert.Pass();
         }
         [Test]
         public void Test7()
@@ -114,7 +108,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(-12.0, derivative[1]);
             Assert.AreEqual(3.0, derivative[2]);
             Assert.AreEqual(0.0, derivative[3]);
-            Assert.Pass();
         }
         [Test]
         public void Test8()
@@ -127,7 +120,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(3.0, derivative[2]);
             Assert.AreEqual(0.0, derivative[3]);
             Assert.AreEqual(0.0, derivative[4]);
-            Assert.Pass();
         }
         [Test]
         public void Test9()
@@ -138,7 +130,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(11.0, derivative[0]);
             Assert.AreEqual(-12.0, derivative[1]);
             Assert.AreEqual(3.0, derivative[2]);
-            Assert.Pass();
         }
 
         [Test]
@@ -152,7 +143,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(11.0/2.0, primitive[2]);
             Assert.AreEqual(-6.0 / 3.0, primitive[3]);
             Assert.AreEqual(1.0 / 4.0, primitive[4]);
-            Assert.Pass();
         }
         [Test]
         public void Test11()
@@ -165,7 +155,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(11.0 / 2.0, primitive[2]);
             Assert.AreEqual(-6.0 / 3.0, primitive[3]);
             Assert.AreEqual(1.0 / 4.0, primitive[4]);
-            Assert.Pass();
         }
         [Test]
         public void Test12()
@@ -178,7 +167,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             double integral1 = primitive.Eval(b) - primitive.Eval(a);
             double integral2 = poly.Integrate(a, b);
             Assert.AreEqual(integral1, integral2, 1e-6);
-            Assert.Pass();
         }
         [Test]
         public void Test13()
@@ -198,7 +186,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             eval1 = cpoly.Eval(x);
             eval2 = poly.Eval(x);
             Assert.AreEqual(eval1, eval2);
-            Assert.Pass();
         }
 
         [Test]
@@ -213,7 +200,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(derivative1[0], derivative2[0]);
             Assert.AreEqual(derivative1[1], derivative2[1]);
             Assert.AreEqual(derivative1[2], derivative2[2]);
-            Assert.Pass();
         }
         [Test]
         public void Test15()
@@ -226,7 +212,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             poly.Derivate(ref derivative2);
             Assert.AreEqual(derivative1[0], derivative2[0]);
             Assert.AreEqual(derivative1[1], derivative2[1]);
-            Assert.Pass();
         }
         [Test]
         public void Test16()
@@ -241,7 +226,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             derivate1 = cpoly.Derive(x);
             derivate2 = poly.Derive(x);
             Assert.AreEqual(derivate1, derivate2);
-            Assert.Pass();
         }
         [Test]
         public void Test17()
@@ -256,7 +240,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             derivate1 = cpoly.DeriveSecond(x);
             derivate2 = poly.DeriveSecond(x);
             Assert.AreEqual(derivate1, derivate2);
-            Assert.Pass();
         }
 
         [Test]
@@ -273,7 +256,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(primitive1[2], primitive2[2]);
             Assert.AreEqual(primitive1[3], primitive2[3]);
             Assert.AreEqual(primitive1[4], primitive2[4]);
-            Assert.Pass();
         }
         [Test]
         public void Test19()
@@ -289,7 +271,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.AreEqual(primitive1[2], primitive2[2]);
             Assert.AreEqual(primitive1[3], primitive2[3]);
             Assert.AreEqual(primitive1[4], primitive2[4]);
-            Assert.Pass();
         }
         [Test]
         public void Test20()
@@ -301,7 +282,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             double integral1 = cpoly.Integrate(a, b);
             double integral2 = poly.Integrate(a, b);
             Assert.AreEqual(integral1, integral2);
-            Assert.Pass();
         }
         [Test]
         public void Test24()
@@ -320,7 +300,6 @@ namespace OSDC.DotnetLibraries.General.Math.UnitTest
             Assert.IsTrue(Numeric.EQ(eq, 0.0));
             eq = cpoly.Eval(roots[2].Real);
             Assert.IsTrue(Numeric.EQ(eq, 0.0));
-            Assert.Pass();
         }
 
     }

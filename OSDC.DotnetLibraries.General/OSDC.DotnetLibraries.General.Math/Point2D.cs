@@ -30,6 +30,27 @@ namespace OSDC.DotnetLibraries.General.Math
             }
         }
         /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public Point2D(double x, double y) : base()
+        {
+            X = x;
+            Y = y;
+        }
+        /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public Point2D(double? x, double? y) : base()
+        {
+            X = x;
+            Y = y;
+        }
+
+        /// <summary>
         /// Test equality with a numeric accuracy
         /// </summary>
         /// <param name="cmp"></param>
@@ -42,5 +63,50 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             return Numeric.EQ(X, cmp.X) && Numeric.EQ(Y, cmp.Y);
         }
+        /// <summary>
+        /// Set the coordinates based on a reference
+        /// </summary>
+        /// <param name="point"></param>
+        public void Set(Point2D point)
+        {
+            if (point != null)
+            {
+                X = point.X;
+                Y = point.Y;
+            }
+        }
+        /// <summary>
+        /// Set the coordinates based on a reference
+        /// </summary>
+        /// <param name="point"></param>
+        public void Set(IPoint2D point)
+        {
+            if (point != null)
+            {
+                X = point.X;
+                Y = point.Y;
+            }
+        }
+        /// <summary>
+        /// Set the coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void Set(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+        /// <summary>
+        /// Set the coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void Set(double? x, double? y)
+        {
+            X = x;
+            Y = y;
+        }
+
     }
 }

@@ -32,6 +32,54 @@ namespace OSDC.DotnetLibraries.General.Math
             }
         }
         /// <summary>
+        /// constructor with initialization from Point3D instance
+        /// </summary>
+        /// <param name="pt"></param>
+        public Vector3D(Point3D pt)
+        {
+            if (pt != null)
+            {
+                X = pt.X;
+                Y = pt.Y;
+                Z = pt.Z;
+            }
+        }
+        /// <summary>
+        /// constructor as a bipoint
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        public Vector3D(Point3D pt1, Point3D pt2) : base()
+        {
+            if (pt1 != null && pt2 != null)
+            {
+                X = pt2.X - pt1.X;
+                Y = pt2.Y - pt1.Y;
+                Z = pt2.Z - pt1.Z;
+            }
+        }
+        /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public Vector3D(double x, double y, double z): base(x, y)
+        {
+            Z = z;
+        }
+        /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public Vector3D(double? x, double? y, double? z) : base(x, y)
+        {
+            Z = z;
+        }
+
+        /// <summary>
         /// create a Vector3D using spherical components
         /// </summary>
         /// <param name="length"></param>
@@ -140,6 +188,23 @@ namespace OSDC.DotnetLibraries.General.Math
             }
         }
         /// <summary>
+        /// check if the vector is unity at the given numerical precision
+        /// </summary>
+        /// <param name="precision"></param>
+        /// <returns></returns>
+        public new bool IsUnity()
+        {
+            return Numeric.EQ(GetLength(), 1.0);
+        }
+        /// <summary>
+        /// normalize the vector
+        /// </summary>
+        public new void SetUnity()
+        {
+            SetLength(1.0);
+        }
+
+        /// <summary>
         /// return the inclination of this vector
         /// </summary>
         /// <returns></returns>
@@ -180,6 +245,100 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             return System.Math.Atan2(y, x);
         }
+        /// <summary>
+        /// return the angle compared to the downward vertical if not horizontal, or the azimuth otherwise
+        /// </summary>
+        /// <param name="isGravity"></param>
+        /// <returns></returns>
+        public double? GetToolface(out bool isGravity)
+        {
+            isGravity = false;
+            if (X != null || Y != null || Z != null)
+            {
+                double x = (double)X;
+                double y = (double)Y;
+                double z = (double)Z;
+                Vector3D vertical = new Vector3D(0, 0, -1.0);
+                double norm = System.Math.Sqrt(x * x + y * y + z * z);
+                if (Numeric.EQ(norm, 0))
+                {
+                    return null;
+                }
+                else
+                {
+                    double? cos = vertical.Dot(this) / norm;
+                    if (Numeric.EQ(cos, 0))
+                    {
+                        // perpendicular to vertical, then we use azimuth
+                        return GetAz();
+                    }
+                    else
+                    {
+                        double? sin = vertical.CrossProduct(this).GetLength() / norm;
+                        if (cos != null && sin != null)
+                        {
+                            isGravity = true;
+                            return System.Math.Atan2((double)sin, (double)cos);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// Set the composants based on a reference vector
+        /// </summary>
+        /// <param name="vector"></param>
+        public void Set(IVector3D vector)
+        {
+            if (vector != null)
+            {
+                base.Set(vector);
+                Z = vector.Z;
+            }
+        }
+        /// <summary>
+        /// Set the composants based on a reference vector
+        /// </summary>
+        /// <param name="vector"></param>
+        public void Set(Vector3D vector)
+        {
+            if (vector != null)
+            {
+                base.Set(vector);
+                Z = vector.Z;
+            }
+        }
+        /// <summary>
+        /// Set the vector composants
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public void Set(double x, double y, double z)
+        {
+                base.Set(x, y);
+                Z = z;
+        }
+        /// <summary>
+        /// Set the vector composants
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public void Set(double? x, double? y, double? z)
+        {
+            base.Set(x, y);
+            Z = z;
+        }
+
         /// <summary>
         /// the dot product of two 3D vectors
         /// </summary>

@@ -37,6 +37,71 @@ namespace OSDC.DotnetLibraries.General.Math
             }
         }
         /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public Vector2D(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+        /// <summary>
+        /// constructor with initialization
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public Vector2D(double? x, double? y)
+        {
+            X = x;
+            Y = y;
+        }
+        /// <summary>
+        /// Set the coordinates based on a reference
+        /// </summary>
+        /// <param name="point"></param>
+        public void Set(Vector2D point)
+        {
+            if (point != null)
+            {
+                X = point.X;
+                Y = point.Y;
+            }
+        }
+        /// <summary>
+        /// Set the coordinates based on a reference
+        /// </summary>
+        /// <param name="point"></param>
+        public void Set(IVector2D point)
+        {
+            if (point != null)
+            {
+                X = point.X;
+                Y = point.Y;
+            }
+        }
+        /// <summary>
+        /// Set the coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void Set(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+        /// <summary>
+        /// Set the coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void Set(double? x, double? y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        /// <summary>
         /// Equal at numeric accuracy
         /// </summary>
         /// <param name="cmp"></param>

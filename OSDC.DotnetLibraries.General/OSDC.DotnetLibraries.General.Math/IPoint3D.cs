@@ -18,5 +18,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="cmp"></param>
         /// <returns></returns>
         public bool Equals(IPoint3D cmp);
+
+        void Set(IPoint3D point);
+        void Set(double? x, double? y, double? z);
+
     }
 }
