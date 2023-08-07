@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public interface IVector2D : IEquatable<IVector2D>
+    public interface IVector2D : IEquivalent<IVector2D>
     {
         /// <summary>
         /// the x-coordinate
@@ -16,11 +16,5 @@ namespace OSDC.DotnetLibraries.General.Math
         /// the y-coordinate
         /// </summary>
         double? Y { get; set; }
-        /// <summary>
-        /// equals at numeric accuracy
-        /// </summary>
-        /// <param name="cmp"></param>
-        /// <returns></returns>
-        public bool Equals(IVector2D cmp);
     }
 }

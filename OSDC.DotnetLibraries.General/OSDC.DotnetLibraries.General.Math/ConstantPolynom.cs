@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OSDC.DotnetLibraries.General.Common;
+﻿using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public struct ConstantPolynom : IPolynom, IEquatable<IPolynom>, IEquatable<ConstantPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<ConstantPolynom>, IZero
+    public struct ConstantPolynom : IPolynom, IEquivalent<IPolynom>, IEquivalent<ConstantPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<ConstantPolynom>, IZero
     {
         /// <summary>
         /// A
@@ -249,17 +244,34 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<IPolynom> Members
+        #region IEquivalent<IPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IPolynom other)
+        public bool EQ(IPolynom other)
         {
             if (other != null && other.Degree == 0)
             {
                 return Numeric.EQ(A, other[0]);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(IPolynom other, double precision)
+        {
+            if (other != null && other.Degree == 0)
+            {
+                return Numeric.EQ(A, other[0], precision);
             }
             else
             {
@@ -281,15 +293,27 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
+        #region IEquivalent<ConstantPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(ConstantPolynom other)
+        public bool EQ(ConstantPolynom other)
         {
             return Numeric.EQ(A, other.A);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(ConstantPolynom other, double precision)
+        {
+            return Numeric.EQ(A, other.A, precision);
+        }
+        #endregion
 
         #region IZero Members
         /// <summary>

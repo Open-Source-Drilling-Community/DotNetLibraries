@@ -110,14 +110,29 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         /// <param name="cmp"></param>
         /// <returns></returns>
-        public bool Equals(IVector3D cmp)
+        public bool EQ(IVector3D cmp)
         {
             if (cmp == null)
             {
                 return false;
             }
-            return base.Equals(cmp) && Numeric.EQ(Z, cmp.Z);
+            return base.EQ(cmp) && Numeric.EQ(Z, cmp.Z);
         }
+
+        /// <summary>
+        /// equal at given accuracy
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool EQ(IVector3D cmp, double precision)
+        {
+            if (cmp == null)
+            {
+                return false;
+            }
+            return base.EQ(cmp, precision) && Numeric.EQ(Z, cmp.Z, precision);
+        }
+
         /// <summary>
         /// force the two components to be undefined
         /// </summary>

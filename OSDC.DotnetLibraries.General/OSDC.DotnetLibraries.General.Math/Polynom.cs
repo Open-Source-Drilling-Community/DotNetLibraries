@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OSDC.DotnetLibraries.General.Common;
+﻿using OSDC.DotnetLibraries.General.Common;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Factorization;
-using System.Diagnostics.Tracing;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public class Polynom : IPolynom, IEquatable<IPolynom>, IEquatable<Polynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<Polynom>, IZero
+    public class Polynom : IPolynom, IEquivalent<IPolynom>, IEquivalent<Polynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<Polynom>, IZero
     {
         /// <summary>
         /// coefficients: coeffs_[0] + coeffs_[1]*x + ... coeffs_[n]*x^n
@@ -395,13 +388,13 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<IPolynom> Members
+        #region IEquivalent<IPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IPolynom other)
+        public bool EQ(IPolynom other)
         {
             if (other != null && other.Degree == Degree)
             {
@@ -426,7 +419,36 @@ namespace OSDC.DotnetLibraries.General.Math
                 return false;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(IPolynom other, double precision)
+        {
+            if (other != null && other.Degree == Degree)
+            {
+                if (coeffs_ != null)
+                {
+                    for (int i = 0; i < coeffs_.Length; i++)
+                    {
+                        if (!Numeric.EQ(coeffs_[i], other[i], precision))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    return Degree < 0;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region ICopyable<Polynom> Members
@@ -448,12 +470,13 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
+        #region IEquivalent<Polynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(Polynom other)
+        public bool EQ(Polynom other)
         {
             if (other != null && Degree == other.Degree)
             {
@@ -478,6 +501,37 @@ namespace OSDC.DotnetLibraries.General.Math
                 return false;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(Polynom other, double precision)
+        {
+            if (other != null && Degree == other.Degree)
+            {
+                if (coeffs_ != null)
+                {
+                    for (int i = 0; i < coeffs_.Length; i++)
+                    {
+                        if (!Numeric.EQ(coeffs_[i], other.coeffs_[i], precision))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    return other.coeffs_ == null || other.coeffs_.Length == 0;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        #endregion
 
         #region IZero Members
         /// <summary>

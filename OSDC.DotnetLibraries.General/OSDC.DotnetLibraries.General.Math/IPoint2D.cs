@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public interface IPoint2D: IEquatable<IPoint2D>
+    public interface IPoint2D: IEquivalent<IPoint2D>, ICloneable, IUndefinable, IZeroeable
     {
         /// <summary>
         /// the X coordinate
@@ -16,11 +12,17 @@ namespace OSDC.DotnetLibraries.General.Math
         /// the Y coordinate
         /// </summary>
         public double? Y { get; set; }
+
+        void Set(IPoint2D point);
+
+        void Set(double? x, double? y);
+
         /// <summary>
-        /// equality test at numeric accuracty
+        /// calculate the cross product between the vector P1P2 and P1P3 where P1 is this.
         /// </summary>
-        /// <param name="cmp"></param>
+        /// <param name="p2"></param>
+        /// <param name="p3"></param>
         /// <returns></returns>
-        public bool Equals(IPoint2D cmp);
+        double? CrossProduct(IPoint2D p2, IPoint2D p3);
     }
 }

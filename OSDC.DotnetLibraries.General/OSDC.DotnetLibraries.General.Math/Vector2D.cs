@@ -106,7 +106,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         /// <param name="cmp"></param>
         /// <returns></returns>
-        public bool Equals(IVector2D cmp)
+        public bool EQ(IVector2D cmp)
         {
             if (cmp == null)
             {
@@ -114,6 +114,21 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             return Numeric.EQ(X, cmp.X) && Numeric.EQ(Y, cmp.Y);
         }
+
+        /// <summary>
+        /// Equal at given accuracy
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool EQ(IVector2D cmp, double precision)
+        {
+            if (cmp == null)
+            {
+                return false;
+            }
+            return Numeric.EQ(X, cmp.X, precision) && Numeric.EQ(Y, cmp.Y, precision);
+        }
+
         /// <summary>
         /// force the two components to be undefined
         /// </summary>

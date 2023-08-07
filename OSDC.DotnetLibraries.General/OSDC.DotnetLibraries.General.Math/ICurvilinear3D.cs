@@ -2,7 +2,7 @@
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public interface ICurvilinear3D : IPoint3D, IEquatable<ICurvilinear3D>
+    public interface ICurvilinear3D : IPoint3D, IEquivalent<ICurvilinear3D>
     {
         /// <summary>
         /// the curvilinear abscissa or measured depth
@@ -16,12 +16,5 @@ namespace OSDC.DotnetLibraries.General.Math
         /// the azimuth (0 in the x-direction)
         /// </summary>
         public double? Azimuth { get; set; }
-        /// <summary>
-        /// equal at numeric accuracy
-        /// </summary>
-        /// <param name="cmp"></param>
-        /// <returns></returns>
-        public bool Equals(ICurvilinear3D cmp);
-
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using OSDC.DotnetLibraries.General.Common;
+﻿using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
@@ -13,7 +7,7 @@ namespace OSDC.DotnetLibraries.General.Math
     /// 
     ///  A x^2 + B x + C
     /// </summary>
-    public struct QuadraticPolynom : IPolynom, IEquatable<IPolynom>, IEquatable<QuadraticPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<QuadraticPolynom>, IZero
+    public struct QuadraticPolynom : IPolynom, IEquivalent<IPolynom>, IEquivalent<QuadraticPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<QuadraticPolynom>, IZero
     {
         /// <summary>
         /// Ax^2+Bx+C
@@ -428,13 +422,13 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<IPolynom > Members
+        #region IEquivalent<IPolynom > Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IPolynom other)
+        public bool EQ(IPolynom other)
         {
             if (other != null && other.Degree == 2)
             {
@@ -445,7 +439,22 @@ namespace OSDC.DotnetLibraries.General.Math
                 return false;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(IPolynom other, double precision)
+        {
+            if (other != null && other.Degree == 2)
+            {
+                return Numeric.EQ(A, other[2], precision) && Numeric.EQ(B, other[1], precision) && Numeric.EQ(C, other[0], precision);
+            }
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region ICopyable<QuadraticPolynom> Members
@@ -462,17 +471,25 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<QuadraticPolynom> Members
+        #region IEquivalent<QuadraticPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(QuadraticPolynom other)
+        public bool EQ(QuadraticPolynom other)
         {
             return Numeric.EQ(A, other.A) && Numeric.EQ(B, other.B) && Numeric.EQ(C, other.C);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(QuadraticPolynom other, double precision)
+        {
+            return Numeric.EQ(A, other.A, precision) && Numeric.EQ(B, other.B, precision) && Numeric.EQ(C, other.C, precision);
+        }
         #endregion
 
         #region IZero Members

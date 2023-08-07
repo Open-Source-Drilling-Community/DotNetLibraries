@@ -6,20 +6,15 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public interface IPoint3D : IPoint2D, IEquatable<IPoint3D>
+    public interface IPoint3D : IPoint2D, IEquivalent<IPoint3D>
     {
         /// <summary>
         /// the Z coordinate
         /// </summary>
         public double? Z { get; set; }
-        /// <summary>
-        /// equality test at numeric accuracy
-        /// </summary>
-        /// <param name="cmp"></param>
-        /// <returns></returns>
-        public bool Equals(IPoint3D cmp);
 
         void Set(IPoint3D point);
+
         void Set(double? x, double? y, double? z);
 
     }

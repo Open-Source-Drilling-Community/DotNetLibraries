@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using OSDC.DotnetLibraries.General.Common;
+﻿using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public struct QuarticPolynom : IPolynom, IEquatable<IPolynom>, IEquatable<QuarticPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<QuarticPolynom>, IZero
+    public struct QuarticPolynom : IPolynom, IEquivalent<IPolynom>, IEquivalent<QuarticPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<QuarticPolynom>, IZero
     {
         /// <summary>
         /// A x^4 + B x^3 + C x^2  + D x + E
@@ -404,14 +397,13 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<IPolynom> Members
-
+        #region IEquivalent<IPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IPolynom other)
+        public bool EQ(IPolynom other)
         {
             if (other == null || other.Degree != 4)
             {
@@ -426,7 +418,26 @@ namespace OSDC.DotnetLibraries.General.Math
                        Numeric.EQ(E, other[0]);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(IPolynom other, double precision)
+        {
+            if (other == null || other.Degree != 4)
+            {
+                return false;
+            }
+            else
+            {
+                return Numeric.EQ(A, other[4], precision) &&
+                       Numeric.EQ(B, other[3], precision) &&
+                       Numeric.EQ(C, other[2], precision) &&
+                       Numeric.EQ(D, other[1], precision) &&
+                       Numeric.EQ(E, other[0], precision);
+            }
+        }
         #endregion
 
         #region ICopyable<QuarticPolynom> Members
@@ -445,13 +456,13 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<QuarticPolynom> Members
+        #region IEquivalent<QuarticPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(QuarticPolynom other)
+        public bool EQ(QuarticPolynom other)
         {
             return Numeric.EQ(A, other.A) &&
                    Numeric.EQ(B, other.B) &&
@@ -459,7 +470,19 @@ namespace OSDC.DotnetLibraries.General.Math
                    Numeric.EQ(D, other.D) &&
                    Numeric.EQ(E, other.E);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(QuarticPolynom other, double precision)
+        {
+            return Numeric.EQ(A, other.A, precision) &&
+                   Numeric.EQ(B, other.B, precision) &&
+                   Numeric.EQ(C, other.C, precision) &&
+                   Numeric.EQ(D, other.D, precision) &&
+                   Numeric.EQ(E, other.E, precision);
+        }
         #endregion
 
         /// <summary>

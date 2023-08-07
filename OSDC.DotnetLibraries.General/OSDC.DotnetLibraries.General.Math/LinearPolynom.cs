@@ -2,7 +2,7 @@
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public struct LinearPolynom : IPolynom, IEquatable<IPolynom>, IEquatable<LinearPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<LinearPolynom>, IZero
+    public struct LinearPolynom : IPolynom, IEquivalent<IPolynom>, IEquivalent<LinearPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<LinearPolynom>, IZero
     {
         /// <summary>
         /// Ax+B
@@ -285,17 +285,33 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<IPolynom> Members
+        #region IEquivalent<IPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IPolynom other)
+        public bool EQ(IPolynom other)
         {
             if (other != null && other.Degree == 1)
             {
                 return Numeric.EQ(A, other[1]) && Numeric.EQ(B, other[0]);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(IPolynom other, double precision)
+        {
+            if (other != null && other.Degree == 1)
+            {
+                return Numeric.EQ(A, other[1], precision) && Numeric.EQ(B, other[0], precision);
             }
             else
             {
@@ -318,15 +334,26 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
+        #region IEquivalent<LinearPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(LinearPolynom other)
+        public bool EQ(LinearPolynom other)
         {
             return Numeric.EQ(A, other.A) && Numeric.EQ(B, other.B);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(LinearPolynom other, double precision)
+        {
+            return Numeric.EQ(A, other.A, precision) && Numeric.EQ(B, other.B, precision);
+        }
+        #endregion
 
         #region IZero Members
         /// <summary>

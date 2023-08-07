@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics;
 using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public struct CubicPolynom : IPolynom, IEquatable<IPolynom>, IEquatable<CubicPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<CubicPolynom>, IZero
+    public struct CubicPolynom : IPolynom, IEquivalent<IPolynom>, IEquivalent<CubicPolynom>, IUndefinable, ICloneable, ICopyable<IPolynom>, ICopyable<CubicPolynom>, IZero
     {
         /// <summary>
         /// Ax^3+Bx^2+Cx+D
@@ -562,13 +563,13 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<IPolynom> Members
+        #region IEquivalent<IPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IPolynom other)
+        public bool EQ(IPolynom other)
         {
             if (other == null || other.Degree != 3)
             {
@@ -580,6 +581,22 @@ namespace OSDC.DotnetLibraries.General.Math
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(IPolynom other, double precision)
+        {
+            if (other == null || other.Degree != 3)
+            {
+                return false;
+            }
+            else
+            {
+                return Numeric.EQ(A, other[3], precision) && Numeric.EQ(B, other[2], precision) && Numeric.EQ(C, other[1], precision) && Numeric.EQ(D, other[0], precision);
+            }
+        }
         #endregion
 
 
@@ -599,15 +616,25 @@ namespace OSDC.DotnetLibraries.General.Math
 
         #endregion
 
-        #region IEquatable<CubicPolynom> Members
+        #region IEquivalent<CubicPolynom> Members
         /// <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(CubicPolynom other)
+        public bool EQ(CubicPolynom other)
         {
             return Numeric.EQ(A, other.A) && Numeric.EQ(B, other.B) && Numeric.EQ(C, other.C) && Numeric.EQ(D, other.D);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool EQ(CubicPolynom other, double precision)
+        {
+            return Numeric.EQ(A, other.A, precision) && Numeric.EQ(B, other.B, precision) && Numeric.EQ(C, other.C, precision) && Numeric.EQ(D, other.D, precision);
         }
 
         #endregion
