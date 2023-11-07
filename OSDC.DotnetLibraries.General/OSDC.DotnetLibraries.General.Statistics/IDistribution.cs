@@ -12,19 +12,19 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        double[,] GetCurve();
+        double[,]? GetCurve();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        double GetMean();
+        double? GetMean();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        double GetStandardDeviation();
+        double? GetStandardDeviation();
 
         /// <summary>
         /// 
@@ -36,6 +36,6 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        double GetMostLikely();
+        double? GetMostLikely();
     }
 }

@@ -10,7 +10,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
 {
     public class GeneralContinuousDistribution : ContinuousDistribution
     {
-        private double[,] function_;
+        private double[,]? function_;
         private List<double> data_;
         private double resolution_;
         private bool isFunctionUpdated_ = false;
@@ -81,7 +81,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         [XmlIgnore()]
-        public double[,] Function
+        public double[,]? Function
         {
             get
             {
@@ -166,14 +166,10 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double Realize()
+        public override double? Realize()
         {
             if (isValid())
             {
-                if (isCorrelated_)
-                {
-                    return base.Realize();
-                }
                 if (!isFunctionUpdated_)
                 {
                     ComputeFunction();
@@ -222,12 +218,12 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 }
                 else
                 {
-                    return Numeric.UNDEF_DOUBLE;
+                    return null;
                 }
             }
             else
             {
-                return Numeric.UNDEF_DOUBLE;
+                return null;
             }
         }
 
@@ -236,7 +232,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="cumulative"></param>
         /// <returns></returns>
-        public override double Quantile(double cumulative)
+        public override double? Quantile(double cumulative)
         {
             return GetPercentile(cumulative * 100.0);
         }
@@ -245,7 +241,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double[,] GetCurve()
+        public override double[,]? GetCurve()
         {
             if (!isFunctionUpdated_)
             {
@@ -259,7 +255,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public override double GetCumulativeProbability(double target)
+        public override double? GetCumulativeProbability(double target)
         {
             double result = Numeric.UNDEF_DOUBLE;
             if (data_ != null && data_.Count > 0)
@@ -299,7 +295,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double[,] GetHistogram()
+        public override double[,]? GetHistogram()
         {
             CleanData();
 
@@ -388,7 +384,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="normalized"></param>
         /// <returns></returns>
-        public double[,] GetHistogram(bool normalized)
+        public double[,]? GetHistogram(bool normalized)
         {
             if (normalized)
             {
@@ -531,7 +527,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <param name="from"></param>
-        public override void Copy(ContinuousDistribution from)
+        public override void Copy(ContinuousDistribution? from)
         {
             if (from != null)
             {
@@ -564,7 +560,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double GetMean()
+        public override double? GetMean()
         {
             double total = 0;
             double nbOfElmt = 0;
@@ -578,11 +574,11 @@ namespace OSDC.DotnetLibraries.General.Statistics
                         nbOfElmt++;
                     }
                 }
-                return nbOfElmt > 0 ? total / nbOfElmt : Numeric.UNDEF_DOUBLE;
+                return nbOfElmt > 0 ? total / nbOfElmt : null;
             }
             else
             {
-                return Numeric.UNDEF_DOUBLE;
+                return null;
             }
         }
 
@@ -590,12 +586,12 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double GetStandardDeviation()
+        public override double? GetStandardDeviation()
         {
             double total = 0;
             double nbOfElmnts = 0;
-            double mean = GetMean();
-            if (data_ != null && data_.Count > 0)
+            double? mean = GetMean();
+            if (mean != null && data_ != null && data_.Count > 0)
             {
                 foreach (double val in data_)
                 {
@@ -605,13 +601,13 @@ namespace OSDC.DotnetLibraries.General.Statistics
                         nbOfElmnts++;
                     }
                 }
-                double result = nbOfElmnts > 0 ? System.Math.Sqrt(total / nbOfElmnts - mean * mean) : Numeric.UNDEF_DOUBLE;
+                double? result = nbOfElmnts > 0 ? System.Math.Sqrt(total / nbOfElmnts - mean.Value * mean.Value) : null;
                 result *= System.Math.Sqrt((double)(nbOfElmnts) / (double)(nbOfElmnts - 1));
                 return result;
             }
             else
             {
-                return Numeric.UNDEF_DOUBLE;
+                return null;
             }
         }
 
@@ -619,33 +615,47 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public double Variance()
+        public double? Variance()
         {
             if (!isFunctionUpdated_)
             {
                 ComputeFunction();
             }
-            double[] xVec = new double[function_.GetLength(0)];
-            double[] yVec = new double[function_.GetLength(0)];
-            for (int i = 0; i < xVec.Length; i++)
+            if (function_ == null)
             {
-                xVec[i] = function_[i, 0];
-                yVec[i] = function_[i, 1];
+                return null;
             }
-            double Ex2 = 0;
-            double variance;
-            double a;
-            double b;
-            for (long i = 1; i < function_.GetLength(0); i++)
+            else
             {
-                a = (yVec[i] - yVec[i - 1]) / (xVec[i] - xVec[i - 1]);
-                b = yVec[i] - a * xVec[i];
-                Ex2 += 1 / 4f * a * System.Math.Pow(xVec[i], 4) + 1 / 3f * b * System.Math.Pow(xVec[i], 3) - 1 / 4f * a * System.Math.Pow(xVec[i - 1], 4) - 1 / 3f * b * System.Math.Pow(xVec[i - 1], 3);
-            }
-            double Ex = GetMean();
-            variance = Ex2 - System.Math.Pow(Ex, 2);
+                double[] xVec = new double[function_.GetLength(0)];
+                double[] yVec = new double[function_.GetLength(0)];
+                for (int i = 0; i < xVec.Length; i++)
+                {
+                    xVec[i] = function_[i, 0];
+                    yVec[i] = function_[i, 1];
+                }
+                double Ex2 = 0;
+                double variance;
+                double a;
+                double b;
+                for (long i = 1; i < function_.GetLength(0); i++)
+                {
+                    a = (yVec[i] - yVec[i - 1]) / (xVec[i] - xVec[i - 1]);
+                    b = yVec[i] - a * xVec[i];
+                    Ex2 += 1 / 4f * a * System.Math.Pow(xVec[i], 4) + 1 / 3f * b * System.Math.Pow(xVec[i], 3) - 1 / 4f * a * System.Math.Pow(xVec[i - 1], 4) - 1 / 3f * b * System.Math.Pow(xVec[i - 1], 3);
+                }
+                double? Ex = GetMean();
+                if (Ex != null)
+                {
+                    variance = Ex2 - System.Math.Pow(Ex.Value, 2);
 
-            return variance;
+                    return variance;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         /// <summary>
@@ -653,7 +663,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public override double GetPercentile(double x)
+        public override double? GetPercentile(double x)
         {
 
             if (data_ != null && data_.Count > 0 && x >= 0 && x <= 100)
@@ -672,7 +682,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
             else
             {
-                return Numeric.UNDEF_DOUBLE;
+                return null;
             }
         }
 
@@ -680,7 +690,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public double[] Get5thPercentiles()
+        public double[]? Get5thPercentiles()
         {
             if (!isFunctionUpdated_)
             {
@@ -731,9 +741,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double GetDataMin()
+        public override double? GetDataMin()
         {
-            double result = Numeric.UNDEF_DOUBLE;
+            double? result = null;
             if (data_ != null && data_.Count > 0)
             {
                 if (!isDataSorted_)
@@ -755,9 +765,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double GetDataMax()
+        public override double? GetDataMax()
         {
-            double result = Numeric.UNDEF_DOUBLE;
+            double? result = null;
             if (data_ != null && data_.Count > 0)
             {
                 if (!isDataSorted_)
