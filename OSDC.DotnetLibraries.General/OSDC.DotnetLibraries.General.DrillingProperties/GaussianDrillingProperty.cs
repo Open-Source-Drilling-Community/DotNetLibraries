@@ -19,9 +19,9 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
             }
             set
             {
-                if (value is GaussianDistribution)
+                if (value != null && value is GaussianDistribution gaussianDistribution)
                 {
-                    GaussianValue = (GaussianDistribution)value;
+                    GaussianValue = gaussianDistribution;
                 }
             }
         }

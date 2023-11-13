@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.7</Version>
+    <Version>1.1.0</Version>
     <Title>A library to define drilling properties with their physical quantity, uncertainty and possible references</Title>
     <Authors>Eric Cayeux</Authors>
     <Company>NORCE Norwegian Research Centre</Company>
@@ -14,8 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DWIS.Vocabulary.Schemas" Version="1.0.61" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="OSDC.DotnetLibraries.General.Statistics" Version="1.0.6" />
+    <PackageReference Include="OSDC.DotnetLibraries.General.Statistics" Version="1.0.7" />
     <PackageReference Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="1.0.27" />
   </ItemGroup>
 

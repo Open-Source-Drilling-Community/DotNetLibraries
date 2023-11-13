@@ -19,9 +19,9 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
             }
             set
             {
-                if (value is GeneralContinuousDistribution)
+                if (value != null && value is GeneralContinuousDistribution generalDistribution)
                 {
-                    GeneralDistributionValue = (GeneralContinuousDistribution)value;
+                    GeneralDistributionValue = generalDistribution;
                 }
             }
         }

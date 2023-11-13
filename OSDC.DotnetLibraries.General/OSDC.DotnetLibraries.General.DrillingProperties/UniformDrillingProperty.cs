@@ -19,9 +19,9 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
             }
             set
             {
-                if (value is UniformDistribution)
+                if (value != null && value is UniformDistribution uniformDistribution)
                 {
-                    UniformValue = (UniformDistribution)value;
+                    UniformValue = uniformDistribution;
                 }
             }
         }

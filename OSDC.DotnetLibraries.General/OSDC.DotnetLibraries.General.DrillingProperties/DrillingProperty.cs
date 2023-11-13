@@ -9,35 +9,9 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// <summary>
         /// the probability distribution for the property
         /// </summary>
-        public virtual ContinuousDistribution Value { get; set; } = null;
-        /// <summary>
-        /// the drilling specific physical quantity. If it is defined then PhysicalQuantity is ignored
-        /// </summary>
-        public DrillingPhysicalQuantity.QuantityEnum? DrillingPhysicalQuantity { get; set; }
-        /// <summary>
-        /// the general physical quantity. Is used only if DrillingPhysicalQuantity is null
-        /// </summary>
-        public PhysicalQuantity.QuantityEnum? PhysicalQuantity { get; set; }
-        /// <summary>
-        /// a possible reference for an abscissa
-        /// </summary>
-        public CommonProperty.AbscissaReferenceType AbscissaReference { get; set; } = CommonProperty.AbscissaReferenceType.None;
-        /// <summary>
-        /// a possible reference for a drilling depth
-        /// </summary>
-        public CommonProperty.DepthReferenceType DepthReference { get; set; } = CommonProperty.DepthReferenceType.None;
-        /// <summary>
-        /// a possible reference for a position
-        /// </summary>
-        public CommonProperty.PositionReferenceType PositionReference { get; set;} = CommonProperty.PositionReferenceType.None;
-        /// <summary>
-        /// a possible reference for an azimuth
-        /// </summary>
-        public CommonProperty.AzimuthReferenceType AzimuthReference { get; set; }= CommonProperty.AzimuthReferenceType.None;
-        /// <summary>
-        /// describe whether the property is mandatory in one or more perspectives
-        /// </summary>
-        public CommonProperty.MandatoryType Mandatory { get; set; } = CommonProperty.MandatoryType.None;
+        public virtual ContinuousDistribution? Value { get; set; } = null;
+        public virtual List<SemanticFact>? ClassLevelSemantic { get; set; } = null;
+        public virtual List<SemanticFact>? InstanceLevelSemantic { get; set; } = null;
 
         /// <summary>
         /// Default Constructor
@@ -55,13 +29,22 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
                 {
                     Value = src.Value.Clone();
                 }
-                DrillingPhysicalQuantity = src.DrillingPhysicalQuantity;
-                PhysicalQuantity = src.PhysicalQuantity;
-                AbscissaReference = src.AbscissaReference;
-                DepthReference = src.DepthReference;
-                PositionReference = src.PositionReference;
-                AzimuthReference = src.AzimuthReference;
-                Mandatory = src.Mandatory;
+                if (src.ClassLevelSemantic != null)
+                {
+                    ClassLevelSemantic = new List<SemanticFact>();
+                    foreach (SemanticFact fact in src.ClassLevelSemantic)
+                    {
+                        ClassLevelSemantic.Add(new SemanticFact(fact));
+                    }
+                }
+                if (src.InstanceLevelSemantic != null)
+                {
+                    InstanceLevelSemantic = new List<SemanticFact>();
+                    foreach (SemanticFact fact in src.InstanceLevelSemantic)
+                    {
+                        InstanceLevelSemantic.Add(new SemanticFact(fact));
+                    }
+                }
             }
         }
     }
