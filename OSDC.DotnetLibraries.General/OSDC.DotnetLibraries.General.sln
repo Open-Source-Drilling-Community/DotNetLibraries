@@ -21,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Surveying.UnitTest", "OSDC.DotnetLibraries.General.Surveying.UnitTest\OSDC.DotnetLibraries.General.Surveying.UnitTest.csproj", "{19AB019F-E532-4D1C-AFA9-E80741D09EA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.DrillingProperties", "OSDC.DotnetLibraries.General.DrillingProperties\OSDC.DotnetLibraries.General.DrillingProperties.csproj", "{775BF7C4-7C2A-4096-B8B5-2E18F0DA8679}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties", "OSDC.DotnetLibraries.General.DrillingProperties\OSDC.DotnetLibraries.General.DrillingProperties.csproj", "{775BF7C4-7C2A-4096-B8B5-2E18F0DA8679}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.APIProxy", "OSDC.DotnetLibraries.General.APIProxy\OSDC.DotnetLibraries.General.APIProxy.csproj", "{5A5332CE-EB41-4AFE-B66B-D7747AFA8DD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.JsonSD", "OSDC.DotnetLibraries.General.JsonSD\OSDC.DotnetLibraries.General.JsonSD.csproj", "{3BE7D213-BC09-498F-BF65-A12737248DC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +73,14 @@ Global
 		{775BF7C4-7C2A-4096-B8B5-2E18F0DA8679}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{775BF7C4-7C2A-4096-B8B5-2E18F0DA8679}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{775BF7C4-7C2A-4096-B8B5-2E18F0DA8679}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A5332CE-EB41-4AFE-B66B-D7747AFA8DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A5332CE-EB41-4AFE-B66B-D7747AFA8DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A5332CE-EB41-4AFE-B66B-D7747AFA8DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A5332CE-EB41-4AFE-B66B-D7747AFA8DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BE7D213-BC09-498F-BF65-A12737248DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BE7D213-BC09-498F-BF65-A12737248DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BE7D213-BC09-498F-BF65-A12737248DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BE7D213-BC09-498F-BF65-A12737248DC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

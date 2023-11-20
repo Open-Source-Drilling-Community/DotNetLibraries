@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 
 namespace OSDC.DotnetLibraries.General.DataManagement
 {
@@ -10,27 +11,27 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// an ID for the data
         /// </summary>
-        public Guid ID { get; set; }
+        public Guid ID { get; set; } = Guid.Empty;
 
         /// <summary>
         /// name of the data
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// a description of the data
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// the type name of the data
         /// </summary>
-        public string TypeName { get; set; }
+        public string TypeName { get; set; } = string.Empty;
 
         /// <summary>
         /// the date when the data was created
         /// </summary>
-        public DateTimeOffset CreationDate { get; set; }
+        public DateTimeOffset CreationDate { get; set; } 
 
         /// <summary>
         /// the date when the data was last modified
@@ -40,17 +41,28 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// the http host name to access the data in a service oriented architecture (ex: "http://my-server:80/"), suffixed with "/"
         /// </summary>
-        public string HttpHostName { get; set; }
+        public string HttpHostName { get; set; } = string.Empty;
 
         /// <summary>
         /// the http host base path of the microservice (ex: "DrillingUnitConversion/api/"), suffixed with "/"
         /// </summary>
-        public string HttpHostBasePath { get; set; }
+        public string HttpHostBasePath { get; set; } = string.Empty;
 
         /// <summary>
         /// the http end point to append to the HttpHostBasePath to locate the data (ex: "DrillingUnitChoiceSets/"), suffixed with "/"
         /// </summary>
-        public string HttpEndPoint { get; set; }
+        public string HttpEndPoint { get; set; } = string.Empty;
+        /// <summary>
+        /// the http end point to append to the HttpHostBasePath to access the search API, suffixed with "/". 
+        /// For example to search on a cartographic projection microservice, the cartographic projection that uses a geodetic datum. 
+        /// In this case, the ID is the guid of the geodetic datum.
+        /// A search API only implements the Get HTTP request.
+        /// </summary>
+        public string HttpEndPointSearch { get; set; } = string.Empty;
+        /// <summary>
+        /// the http end point to append to the HttpHostBasePath to access the calculation API, (ex: "DataUnitConversionSets/"), suffixed with "/"
+        /// </summary>
+        public string HttpEndPointCalculate { get; set; } = string.Empty;
 
         /// <summary>
         /// default constructor
@@ -62,7 +74,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaInfo(Guid id, string name, string descr, string typeName, string httpHostName, string httpHostBasePath, string httpEndPoint)
+        public MetaInfo(Guid id, string name, string descr, string typeName, string httpHostName, string httpHostBasePath, string httpEndPoint, string httpEndPointSearch, string httpEndPointCalculate)
         {
             ID = id;
             Name = name;
@@ -73,13 +85,23 @@ namespace OSDC.DotnetLibraries.General.DataManagement
             HttpHostName = httpHostName;
             HttpHostBasePath = httpHostBasePath;
             HttpEndPoint = httpEndPoint;
+            HttpEndPointSearch = httpEndPointSearch;
+            HttpEndPointCalculate = httpEndPointCalculate;
+        }
+
+        /// <summary>
+        /// constructor
+        /// </summary>
+        public MetaInfo(Guid id, string name, string descr, string typeName, string httpHostName, string httpHostBasePath, string httpEndPoint) : 
+            this(id, name,descr, typeName, httpHostName, httpHostBasePath, httpEndPoint, string.Empty, string.Empty )
+        {
         }
 
         /// <summary>
         /// constructor
         /// </summary>
         public MetaInfo(Guid id) :
-            this(id, "", "", typeof(object).Name, "", "", "")
+            this(id, string.Empty, string.Empty, typeof(object).Name, string.Empty, string.Empty, string.Empty)
         {
         }
 
@@ -87,7 +109,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaInfo(Guid id, string name) :
-            this(id, name, "", typeof(object).Name, "", "", "")
+            this(id, name, string.Empty, typeof(object).Name, string.Empty, string.Empty, string.Empty)
         {
         }
 
@@ -95,7 +117,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaInfo(Guid id, string name, string descr) :
-            this(id, name, descr, typeof(object).Name, "", "", "")
+            this(id, name, descr, typeof(object).Name, string.Empty, string.Empty, string.Empty)
         {
         }
 
@@ -105,6 +127,27 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         public MetaInfo(Guid id, string name, string descr, string httpHostName, string httpHostBasePath, string httpEndPoint) :
             this(id, name, descr, typeof(object).Name, httpHostName, httpHostBasePath, httpEndPoint)
         {
+        }
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="src"></param>
+        public MetaInfo(MetaInfo src)
+        {
+            if (src != null)
+            {
+                ID = src.ID;
+                Name = src.Name;
+                Description = src.Description;
+                TypeName = src.TypeName;
+                CreationDate = src.CreationDate;
+                LastModificationDate = src.CreationDate;
+                HttpHostName = src.HttpHostName;
+                HttpHostBasePath = src.HttpHostBasePath;
+                HttpEndPoint = src.HttpEndPoint;
+                HttpEndPointSearch = src.HttpEndPointSearch;
+                HttpEndPointCalculate = src.HttpEndPointCalculate;
+            }
         }
     }
 }
