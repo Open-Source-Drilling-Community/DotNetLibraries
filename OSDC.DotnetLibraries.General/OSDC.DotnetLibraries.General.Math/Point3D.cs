@@ -2,13 +2,13 @@
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public class Point3D : Point2D, IPoint3D
+    public class Point3D : Point2D, IPoint3D, IEquatable<IPoint3D>
     {
         public double? Z { get; set; } = null;
         /// <summary>
         /// default constructor
         /// </summary>
-        public Point3D(): base()
+        public Point3D() : base()
         {
 
         }
@@ -21,6 +21,19 @@ namespace OSDC.DotnetLibraries.General.Math
             if (cmp != null)
             {
                 Z = cmp.Z;
+            }
+        }
+        /// <summary>
+        /// copy constructor
+        /// </summary>
+        /// <param name="pt"></param>
+        public Point3D(IPoint3D pt)
+        {
+            if (pt != null)
+            {
+                X = pt.X;
+                Y = pt.Y;
+                Z = pt.Z;
             }
         }
         /// <summary>
@@ -131,6 +144,28 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         /// <param name="cmp"></param>
         /// <returns></returns>
+
+        public bool Equals(IPoint3D? cmp)
+        {
+            if (cmp == null)
+            {
+                return false;
+            }
+            return base.Equals(cmp) && Numeric.EQ(Z, cmp.Z);
+        }
+        /// <summary>
+        /// equality at given accuracy
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(IPoint3D? cmp, double precision)
+        {
+            if (cmp == null)
+            {
+                return false;
+            }
+            return base.EQ(cmp, precision) && Numeric.EQ(Z, cmp.Z, precision);
+        }
         public bool EQ(IPoint3D cmp)
         {
             if (cmp == null)
@@ -139,7 +174,6 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             return base.Equals(cmp) && Numeric.EQ(Z, cmp.Z);
         }
-
         /// <summary>
         /// equality at given accuracy
         /// </summary>
@@ -174,7 +208,7 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public double? GetAz()
         {
-            if (X== null || Y== null)
+            if (X == null || Y == null)
             {
                 return null;
             }
@@ -261,14 +295,14 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns></returns>
         public double? GetRadius()
         {
-            if (X== null || Y == null || Z == null)
+            if (X == null || Y == null || Z == null)
             {
                 return null;
             }
             double x = (double)X;
             double y = (double)Y;
             double z = (double)Z;
-            return System.Math.Sqrt(x*x + y*y + z*z);
+            return System.Math.Sqrt(x * x + y * y + z * z);
         }
         /// <summary>
         /// return the inclination (0 meaning vertical, pi/2 meaning horizontal)
@@ -309,7 +343,7 @@ namespace OSDC.DotnetLibraries.General.Math
             double dx = x2 - x1;
             double dy = y2 - y1;
             double dz = z2 - z1;
-            return System.Math.Sqrt(dx*dx + dy*dy + dz*dz);
+            return System.Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
         /// <summary>
         /// return the horizontal distance between two points

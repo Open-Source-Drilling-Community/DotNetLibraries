@@ -2,7 +2,7 @@
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public class Vector : IVector, ICloneable, IUnity, IDotProductable<Vector>, IUndefinable, IZeroeable, IScalarProduct<Vector>
+    public class Vector : IVector, IEquatable<Vector>, ICloneable, IUnity, IDotProductable<Vector>, IUndefinable, IZeroeable, IScalarProduct<Vector>
     {
         private double?[] values_;
 
@@ -140,6 +140,42 @@ namespace OSDC.DotnetLibraries.General.Math
         public bool EQ(Vector v)
         {
             return EQ(v, Numeric.DOUBLE_ACCURACY);
+        }
+
+        public bool Equals(Vector? v, double precision)
+        {
+            if (v == null || v.Dim != Dim)
+            {
+                return false;
+            }
+            else
+            {
+                if (Dim == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    for (int i = 0; i < values_.Length; i++)
+                    {
+                        if (!Numeric.EQ(values_[i], v[i], precision))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public bool Equals(Vector? v)
+        {
+            return Equals(v, Numeric.DOUBLE_ACCURACY);
         }
 
         public bool EQ(Vector v, double precision)

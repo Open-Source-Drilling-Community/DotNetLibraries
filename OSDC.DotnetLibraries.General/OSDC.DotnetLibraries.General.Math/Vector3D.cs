@@ -7,12 +7,52 @@ using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public class Vector3D : Vector2D, IVector3D
+    public class Vector3D : Vector2D, IVector3D, IEquatable<Vector3D>, IDotProductable<Vector3D>, IAddable<Vector3D>, IScalarProduct<Vector3D>
     {
         /// <summary>
         /// z accessor
         /// </summary>
         public double? Z { get; set; } = null;
+        /// <summary>
+        /// the dimension is 3
+        /// </summary>
+        public override int Dim => 3;
+        /// <summary>
+        /// access to components through indexing
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public override double? this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return X;
+                    case 1:
+                        return Y;
+                    default:
+                        return Z;
+                }
+            }
+            set
+            {
+                switch (index)
+                {
+                    case 0:
+                        X = value;
+                        break;
+                    case 1:
+                        Y = value;
+                        break;
+                    default:
+                        Z = value;
+                        break;
+                }
+            }
+        }
+
         /// <summary>
         /// default constructor
         /// </summary>
@@ -80,31 +120,96 @@ namespace OSDC.DotnetLibraries.General.Math
         }
 
         /// <summary>
-        /// create a Vector3D using spherical components
+        /// fill in the passed array with the components of the vector 3D
         /// </summary>
-        /// <param name="length"></param>
-        /// <param name="inclination"></param>
-        /// <param name="azimuth"></param>
-        /// <returns></returns>
-        public static Vector3D CreateSpheric(double? length, double? inclination, double? azimuth)
+        /// <param name="a"></param>
+        public override void CopyTo(double?[] a)
         {
-            if (length == null || inclination == null || azimuth == null)
+            if (a != null && a.Length >= 3 && X != null && Y != null && Z != null)
             {
-                return null;
-            }
-            else
-            {
-                double l = (double)length;
-                double incl = (double)inclination;
-                double az = (double)azimuth; 
-                double ca = System.Math.Cos(az);
-                double sa = System.Math.Sin(az);
-                double ci = System.Math.Cos(incl);
-                double si = System.Math.Sin(incl);
-                return new Vector3D() { X = l * ca * si, Y = l * sa * si, Z = l * ci };
+                a[0] = (double)X;
+                a[1] = (double)Y;
+                a[2] = (double)Z;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="v"></param>
+        public override void CopyTo(int start, IVector v)
+        {
+            if (v != null && v.Dim >= Dim - start)
+            {
+                for (int i = start; i < Dim; i++)
+                {
+                    v[i - start] = this[i];
+                }
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="a"></param>
+        public override void CopyFrom(double[] a)
+        {
+            if (a != null && a.Length >= Dim)
+            {
+                X = a[0];
+                Y = a[1];
+                Z = a[2];
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="v"></param>
+        public override void CopyFrom(int start, IVector v)
+        {
+            if (v != null)
+            {
+                for (int i = 0; i < System.Math.Min(v.Dim, Dim - start); i++)
+                {
+                    this[i + start] = v[i];
+                }
+            }
+        }
+        /// <summary>
+        /// cloning
+        /// </summary>
+        /// <returns></returns>
+        public override object Clone()
+        {
+            return new Vector3D(this);
+        }
 
+        /// <summary>
+        /// equal at numeric accuracy
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(Vector3D? cmp)
+        {
+            if (cmp == null)
+            {
+                return false;
+            }
+            return base.EQ(cmp) && Numeric.EQ(Z, cmp.Z);
+        }
+        /// <summary>
+        /// equal at given accuracy
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(Vector3D? cmp, double precision)
+        {
+            if (cmp == null)
+            {
+                return false;
+            }
+            return base.EQ(cmp, precision) && Numeric.EQ(Z, cmp.Z, precision);
+        }
         /// <summary>
         /// equal at numeric accuracy
         /// </summary>
@@ -118,7 +223,6 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             return base.EQ(cmp) && Numeric.EQ(Z, cmp.Z);
         }
-
         /// <summary>
         /// equal at given accuracy
         /// </summary>
@@ -180,6 +284,14 @@ namespace OSDC.DotnetLibraries.General.Math
             double y = (double)Y;
             double z = (double)Z;
             return System.Math.Sqrt(x * x + y * y + z * z);
+        }
+        /// <summary>
+        /// the square of the Euclidian norm of the 3D vector
+        /// </summary>
+        /// <returns></returns>
+        public override double? GetLength2()
+        {
+            return X * X + Y * Y + Z * Z;
         }
         /// <summary>
         /// set the length of the vector but does not change the direction
@@ -459,6 +571,31 @@ namespace OSDC.DotnetLibraries.General.Math
         }
 
         /// <summary>
+        /// create a Vector3D using spherical components
+        /// </summary>
+        /// <param name="length"></param>
+        /// <param name="inclination"></param>
+        /// <param name="azimuth"></param>
+        /// <returns></returns>
+        public static Vector3D CreateSpheric(double? length, double? inclination, double? azimuth)
+        {
+            if (length == null || inclination == null || azimuth == null)
+            {
+                return null;
+            }
+            else
+            {
+                double l = (double)length;
+                double incl = (double)inclination;
+                double az = (double)azimuth;
+                double ca = System.Math.Cos(az);
+                double sa = System.Math.Sin(az);
+                double ci = System.Math.Cos(incl);
+                double si = System.Math.Sin(incl);
+                return new Vector3D() { X = l * ca * si, Y = l * sa * si, Z = l * ci };
+            }
+        }
+        /// <summary>
         /// in 2D the cross product is an outer operator and it returns a Vector 3D
         /// </summary>
         /// <param name="a"></param>
@@ -487,6 +624,19 @@ namespace OSDC.DotnetLibraries.General.Math
                 Y = y;
                 Z = z;
             }
+        }
+        /// <summary>
+        /// predicate for parallelism
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public bool IsParallel(Vector3D v, double precision)
+        {
+            if (v == null)
+            {
+                return false;
+            }
+            return Numeric.EQ(CrossProduct(v).GetLength(), precision);
         }
         /// <summary>
         /// predicate for parallelism
