@@ -1,6 +1,6 @@
 # DotNetLibraries
 
-This repository has been created and is maintained by the NORCE Energy Modelling & Simulation team. Its content is donated  without any limit or warranty to the Society of Petroleum (SPE) Open Source Drilling Community, a sub-committee of the Drilling System Automation Technical Section. Anyone is thus free to use the source code of this repository under its own responsibility.
+This repository has been created and is maintained by the NORCE Energy Modelling & Simulation team. This research work has been funded by the [Research Council of Norway](https://www.forskningsradet.no/) and [Industry partners](https://www.digiwells.no/about/board/) in the framework of the center for research-based innovation [SFI Digiwells (2020-2028)](https://www.digiwells.no/) focused on Digitalization, Drilling Engineering and GeoSteering. Part of it is hereby donated **without any limit or warranty** to the Society of Petroleum (SPE) Open Source Drilling Community, a sub-committee of the Drilling System Automation Technical Section. Anyone is thus **free to use** the source code of this repository **under its own responsibility**.
 
 ## General description
 It contains the following standard libraries implemented in .NET, relevant for the development of scientific applications:
