@@ -15,3 +15,5 @@ It contains the following standard libraries implemented in .NET, relevant for t
 - [Surveying (unit tests)](https://github.com/Open-Source-Drilling-Community/DotNetLibraries/tree/main/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Surveying.UnitTest): unit tests associated with the Surveying library
 - [Surveying](https://github.com/Open-Source-Drilling-Community/DotNetLibraries/tree/main/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Surveying): utility classes and functions used in wellbore surveying
 
+## Deployment
+Most of these libraries have been packaged as .NET NuGets and published to [nuget.org](https://www.nuget.org/packages?q=OSDC.Dotnetlibraries).
