@@ -11,6 +11,9 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
 {
     public class MetaDataDrillingProperty
     {
+        public string Namespace { get; set; } = string.Empty;
+        public string ClassName { get; set; } = string.Empty;
+        public string PropertyName { get; set; } = string.Empty;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public CommonProperty.AbscissaReferenceType? AbscissaReferenceType { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -19,6 +19,7 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         public Nouns.Enum? Object { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? ObjectName { get; set; } = null;
+        public Tuple<string, string>[]? ObjectAttributes { get; set; } = null;
 
         /// <summary>
         /// Default constructor
@@ -40,6 +41,7 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
                 Verb = src.Verb;
                 Object = src.Object;
                 ObjectName = src.ObjectName;
+                ObjectAttributes = src.ObjectAttributes;
             }
         }
         /// <summary>
@@ -48,29 +50,34 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// <param name="subject"></param>
         /// <param name="verb"></param>
         /// <param name="object"></param>
-        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, Nouns.Enum @object)
+        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, Nouns.Enum @object, params Tuple<string, string>[] objectAttributes)
         {
             Subject = subject;
             Verb = verb;
             Object = @object;
+            ObjectAttributes = objectAttributes; 
         }
-        public SemanticFact(string subject, Verbs.Enum verb, Nouns.Enum @object)
+        public SemanticFact(string subject, Verbs.Enum verb, Nouns.Enum @object, params Tuple<string, string>[] objectAttributes)
         {
             SubjectName = subject;
             Verb = verb;
             Object = @object;
+            ObjectAttributes = objectAttributes;
         }
-        public SemanticFact(string subject, Verbs.Enum verb, string @object)
+
+        public SemanticFact(string subject, Verbs.Enum verb, string @object, Tuple<string, string>[] objectAttributes)
         {
             SubjectName = subject;
             Verb = verb;
             ObjectName = @object;
+            ObjectAttributes = objectAttributes;
         }
-        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, string @object)
+        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, string @object, params Tuple<string, string>[] objectAttributes)
         {
             Subject = subject;
             Verb = verb;
             ObjectName = @object;
+            ObjectAttributes = objectAttributes;
         }
     }
 }

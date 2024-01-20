@@ -92,6 +92,7 @@ namespace DrillingProperties
 </pre>
 
 The execution of the program gives:
+
 <pre>
 Realized values: value1 = 1.00 value2 = 0.49 value3 = 9.66 value4 = 2.41
 Realized values: value1 = 1.00 value2 = -0.08 value3 = 9.93 value4 = 1.93
@@ -104,6 +105,7 @@ Realized values: value1 = 1.00 value2 = 0.62 value3 = 10.49 value4 = 1.15
 Realized values: value1 = 1.00 value2 = -0.21 value3 = 10.45 value4 = 2.60
 Realized values: value1 = 1.00 value2 = 0.66 value3 = 9.70 value4 = 1.32
 </pre>
+
 # Providing Meta Information
 There is the possibility to provide meta information with the declation of a `DrillingProperty`. This is achieved using
 specific attributes. The possible attributes are:
@@ -122,9 +124,10 @@ the property is mandatory and in the affirmative in which context. The value `Ge
 The value `None` means that it is always optional. Other values can be combined together using a logical "or", therefore allowing
 to state that the property can be mandatory in one or several context. Example contexts are: `Mechanical`, `Hydraulic`, `Directional`, ...
 This attribute shall be defined only once for the property.
-- `SemanticFactAttribute`: It takes three arguments: `Subject`, `Verb` and `Object`. `Subject` and `Object` belongs to either the enumeration
+- `SemanticFactAttribute`: It takes three or more arguments: `Subject`, `Verb` and `Object`. `Subject` and `Object` belongs to either the enumeration
 `Nouns.Enum` or a `string`, while `Verb` is a choice from the enum `Verbs.Enum`. Both `Nouns.Enum` and `Verbs.Enum` are defined in the library
-`DWIS.Vocabulary.Schemas` which contains the vocabulary defined in the D-WIS project (see [D-WIS.org](https://d-wis.org/)). This 
+`DWIS.Vocabulary.Schemas` which contains the vocabulary defined in the D-WIS project (see [D-WIS.org](https://d-wis.org/)). If there are more
+than three arguments, the additional one must come in pair and are strings. They correspond to `attribute` and `value` for the `Object`. This 
 attribute is used to defined a true assertion about that property. The use of a `string` for the `Subject` or the `Object` is to
 refer to internal variables of the semantic definition. This attribute can be used multiple times therefore allowing
 to describe multiple facts about the property, i.e., a semantic network.
@@ -187,6 +190,9 @@ namespace DrillingProperties
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputedData)]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
         [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
+        [SemanticFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputationUnit)]
+        [SemanticFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
+        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsComputationOutput, "TransientT&D#01")]
         public GeneralDistributionDrillingProperty EstimatedBitDepth { get; set; } = new GeneralDistributionDrillingProperty();
     }
     class Example
@@ -211,8 +217,7 @@ namespace DrillingProperties
         }
 
     }
-}
-```
+}```
 </pre>
 
 # Transfer of Meta Information via Json
@@ -223,6 +228,10 @@ define a unique identification to the set of attributes that are associated with
 method `GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData` is available to generate a dictionary of `DrillingProperty` 
 described in an `Assembly`. The keys of the dictionary are the `Guid` associated with the `DrillingProperty` and the values are
 instances of the class `MetaDataDrillingProperty`. A `MetaDataDrillingProperty` has the following properties:
+
+- `Namespace`, a string that contains the namespace of the class where this property is defined
+- `ClassName`, a string that contains the class name where this property is defined
+- `PropertyName`, a string that contains the name of the property
 - `AbscissaReferenceType`, which is of type `CommonProperty.AbscissaReferenceType?`
 - `AzimuthReferenceType`, which is of type `CommonProperty.AzimuthReferenceType?`
 - `DepthReferenceType`, which is of type `CommonProperty.DepthReferenceType?`
@@ -233,8 +242,15 @@ instances of the class `MetaDataDrillingProperty`. A `MetaDataDrillingProperty` 
 - `DrillingPhysicalQuantity`, which is of type `DrillingPhysicalQuantity.QuantityEnum?`
 - `SemanticFacts`, which is of type `List<SemanticFact>?`
 
-This method can be used to generate the meta informations of all the properties defined in an `Assembly`. In the context of
-a micro-service architecture, the generated dictionary can thereafater been made available through the `Get` interface of a 
+This method can be used to generate the meta information of all the properties defined in an `Assembly`. 
+
+The dictionary can be serialized to json and stored on a file together with the json schema to supplement the data model with the attributes, annotations, decorations 
+that could not be saved inside the json schema.
+
+In the context of the generation of code from a json schema, the dictionary can be used to add attributes (C#), annotations (Java) or decoration (Python)
+to the generated properties in the classes.
+
+In the context of a micro-service architecture, the generated dictionary can thereafater been made available through the `Get` interface of a 
 specific end-point of the micro-service.
 
 When an instance of a class that utilizes `DrillingProperty` is serialized to json, the property `MetaDataID` indicates the `Guid`
@@ -251,6 +267,7 @@ Note that a simple way to generate `Guid` is to visit [guidgenerator.com](https:
 
 ## Example
 Here is an example.
+
 <pre>
 ```csharp
 using OSDC.DotnetLibraries.General.DrillingProperties;
@@ -345,15 +362,16 @@ namespace DrillingProperties
 </pre>
 
 The output is the following:
+
 <pre>
 Serialization of instance in json:
 {"MeasuredBitDepth":{"GaussianValue":{"Mean":1000,"StandardDeviation":0.1,"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"1532f187-99d3-42d2-a99d-d579b94cb55e"},"BlockPositionSetPoint":{"DiracDistributionValue":{"Value":10,"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"fe1e95a1-fa56-4d7f-9db3-98719edfd485"},"TopOfStringSpeedUpwardLimit":{"UniformValue":{"Min":0.1,"Max":0.11,"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"a7378c62-c17b-4031-a711-e9f36d44ee3f"},"EstimatedBitDepth":{"GeneralDistributionValue":{"Function":[{"Item1":999.8,"Item2":0.05},{"Item1":999.9,"Item2":0.1},{"Item1":1000,"Item2":0.25},{"Item1":1000.1,"Item2":0.5},{"Item1":1000.2,"Item2":0.08},{"Item1":1000.3,"Item2":0.02}],"NumberOfHistrogramPoints":20,"Data":[],"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"1d30f759-6979-4996-a3bd-d42f991d2392"}}
 
 Drilling Property Dictionary
-1532f187-99d3-42d2-a99d-d579b94cb55e={"DepthReferenceType":1,"MandatoryType":65535,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"BitDepth#01","Verb":59,"Object":79},{"SubjectName":"BitDepth#01","Verb":59,"Object":138},{"SubjectName":"BitDepth#01","Verb":95,"ObjectName":"Bit#01"},{"SubjectName":"Bit#01","Verb":59,"Object":163}]}
-fe1e95a1-fa56-4d7f-9db3-98719edfd485={"DepthReferenceType":2,"MandatoryType":19,"PhysicalQuantity":65,"SemanticFacts":[{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":91},{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":124},{"SubjectName":"BlockPositionSP#01","Verb":95,"ObjectName":"Elevator#01"},{"SubjectName":"Elevator#01","Verb":59,"Object":182}]}
-a7378c62-c17b-4031-a711-e9f36d44ee3f={"MandatoryType":11,"DrillingPhysicalQuantity":0,"SemanticFacts":[{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":92},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":134},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":95,"Object":176},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":99,"Object":274}]}
-1d30f759-6979-4996-a3bd-d42f991d2392={"DepthReferenceType":1,"MandatoryType":0,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":79},{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":140},{"SubjectName":"EstimatedBitDepth#01","Verb":95,"ObjectName":"Bit#01"},{"SubjectName":"Bit#01","Verb":59,"Object":163}]}
+1532f187-99d3-42d2-a99d-d579b94cb55e={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"MeasuredBitDepth","DepthReferenceType":1,"MandatoryType":65535,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"BitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":59,"Object":138,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]}]}
+fe1e95a1-fa56-4d7f-9db3-98719edfd485={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"BlockPositionSetPoint","DepthReferenceType":2,"MandatoryType":19,"PhysicalQuantity":65,"SemanticFacts":[{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":91,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":124,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":95,"ObjectName":"Elevator#01","ObjectAttributes":[]},{"SubjectName":"Elevator#01","Verb":59,"Object":182,"ObjectAttributes":[]}]}
+a7378c62-c17b-4031-a711-e9f36d44ee3f={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"TopOfStringSpeedUpwardLimit","MandatoryType":11,"DrillingPhysicalQuantity":0,"SemanticFacts":[{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":92,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":134,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":95,"Object":176,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":99,"Object":274,"ObjectAttributes":[]}]}
+1d30f759-6979-4996-a3bd-d42f991d2392={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"EstimatedBitDepth","DepthReferenceType":1,"MandatoryType":0,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":140,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]}]}
 </pre>
 
 # Dependence

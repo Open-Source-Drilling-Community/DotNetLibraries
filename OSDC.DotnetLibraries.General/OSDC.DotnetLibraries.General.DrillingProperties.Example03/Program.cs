@@ -51,7 +51,7 @@ namespace DrillingProperties
     class Example
     {
         static void Main()
-        {
+        {          
             TestClass testClass = new TestClass();
             testClass.MeasuredBitDepth.GaussianValue.Mean = 1000.0;
             testClass.MeasuredBitDepth.GaussianValue.StandardDeviation = 0.1;

@@ -44,6 +44,9 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
                                 var pressureReferenceAttribute = property.GetCustomAttribute<PressureReferenceAttribute>();
                                 var semanticFactsAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
                                 MetaDataDrillingProperty metaData = new MetaDataDrillingProperty();
+                                metaData.Namespace = (type.Namespace == null) ? string.Empty : type.Namespace;
+                                metaData.ClassName = type.Name;
+                                metaData.PropertyName = property.Name;
                                 if (physicalQuantityAttribute != null)
                                 {
                                     metaData.PhysicalQuantity = physicalQuantityAttribute.PhysicalQuantity;
@@ -88,6 +91,7 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
                                             fact.Verb = attribute.Verb;
                                             fact.Object = attribute.Object;
                                             fact.ObjectName = attribute.ObjectName;
+                                            fact.ObjectAttributes = attribute.ObjectAttributes;
                                             if (metaData.SemanticFacts == null)
                                             {
                                                 metaData.SemanticFacts = new List<SemanticFact>();
