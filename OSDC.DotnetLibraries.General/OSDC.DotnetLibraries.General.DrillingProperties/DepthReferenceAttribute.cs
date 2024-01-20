@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.General.DrillingProperties
 {
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class DepthReferenceAttribute : ReferenceAttribute
     {
         public CommonProperty.DepthReferenceType ReferenceType { get; }

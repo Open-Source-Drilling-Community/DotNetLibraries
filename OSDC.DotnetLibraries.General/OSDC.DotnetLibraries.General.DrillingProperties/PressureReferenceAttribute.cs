@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.General.DrillingProperties
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class PositionReferenceAttribute : ReferenceAttribute
+    public class PressureReferenceAttribute : ReferenceAttribute
     {
-        public CommonProperty.PositionReferenceType ReferenceType { get; }
+        public CommonProperty.PressureReferenceType ReferenceType { get; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="val"></param>
-        public PositionReferenceAttribute(CommonProperty.PositionReferenceType val)
+        public PressureReferenceAttribute(CommonProperty.PressureReferenceType val)
         {
             this.ReferenceType = val;
         }
-
     }
 }

@@ -339,21 +339,20 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double[,]? GetCurve()
+        public override Tuple<double, double>[]? GetCurve()
         {
             if (Mean != null && StandardDeviation != null)
             {
                 double min, max, x, step;
                 min = Mean.Value - 4 * StandardDeviation.Value;
                 max = Mean.Value + 4 * StandardDeviation.Value;
-                double[,] result = new double[100, 2];
+                Tuple<double, double>[] result = new Tuple<double, double>[100];
                 step = (max - min) / 100;
                 x = min;
 
                 for (int i = 0; i < 100; i++)
                 {
-                    result[i, 0] = x;
-                    result[i, 1] = (1 / (StandardDeviation.Value * System.Math.Sqrt(2 * System.Math.PI))) * System.Math.Exp(-((x - Mean.Value) * (x - Mean.Value) / (2 * StandardDeviation.Value * StandardDeviation.Value)));
+                    result[i] = new Tuple<double, double>(x, (1 / (StandardDeviation.Value * System.Math.Sqrt(2 * System.Math.PI))) * System.Math.Exp(-((x - Mean.Value) * (x - Mean.Value) / (2 * StandardDeviation.Value * StandardDeviation.Value))));
                     x += step;
                 }
                 return result;

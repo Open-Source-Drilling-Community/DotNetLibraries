@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OSDC.DotnetLibraries.General.Common;
@@ -10,7 +12,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
 {
     public class GeneralContinuousDistribution : ContinuousDistribution
     {
-        private double[,]? function_;
+        private Tuple<double, double>[]? function_;
         private List<double> data_;
         private double resolution_;
         private bool isFunctionUpdated_ = false;
@@ -61,13 +63,10 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 }
                 if (source.function_ != null)
                 {
-                    function_ = new double[source.function_.GetLength(0), source.function_.GetLength(1)];
-                    for (int i = 0; i < source.function_.GetLength(0); i++)
+                    function_ = new Tuple<double, double>[source.function_.Length];
+                    for (int i = 0; i < source.function_.Length; i++)
                     {
-                        for (int j = 0; j < source.function_.GetLength(1); j++)
-                        {
-                            function_[i, j] = source.function_[i, j];
-                        }
+                        function_[i] = new Tuple<double, double>(source.function_[i].Item1, source.function_[i].Item2);
                     }
                 }
                 resolution_ = source.resolution_;
@@ -80,8 +79,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <summary>
         /// 
         /// </summary>
-        [XmlIgnore()]
-        public double[,]? Function
+        public Tuple<double, double>[]? Function
         {
             get
             {
@@ -134,28 +132,26 @@ namespace OSDC.DotnetLibraries.General.Statistics
 
         private void ComputeFunction()
         {
-            double[,] temp = GetHistogram();
+            Tuple<double,double>[]? temp = GetHistogram();
             if (temp != null)
             {
-                function_ = new double[numberOfHistrogramPoints_ + 2, 2];
+                function_ = new Tuple<double,double>[numberOfHistrogramPoints_ + 2];
 
-                double range = temp[temp.GetLength(0) - 1, 0] - temp[0, 0];
+                double range = temp[temp.Length - 1].Item1 - temp[0].Item1;
                 resolution_ = range / (numberOfHistrogramPoints_ - 1);
-                if (function_ != null && function_.GetLength(0) > 0 && function_.GetLength(1) == 2)
+                if (function_ != null && function_.Length > 0)
                 {
                     double total_ = 0;
-                    for (int i = 0; i < temp.GetLength(0); i++)
+                    for (int i = 0; i < temp.Length; i++)
                     {
-                        total_ += temp[i, 1];
-                        function_[i + 1, 0] = temp[i, 0] + resolution_ / 2;
+                        total_ += temp[i].Item2;
+                        function_[i + 1] = new Tuple<double, double>(temp[i].Item1 + resolution_ / 2, 0);
                     }
-                    function_[0, 0] = temp[0, 0] - resolution_ / 2;
-                    function_[0, 1] = 0;
-                    function_[function_.GetLength(0) - 1, 0] = temp[temp.GetLength(0) - 1, 0] + 3 * resolution_ / 2;
-                    function_[function_.GetLength(0) - 1, 1] = 0;
-                    for (int i = 0; i < temp.GetLength(0); i++)
+                    function_[0] = new Tuple<double, double>(temp[0].Item1 - resolution_ / 2, 0);
+                    function_[function_.Length - 1] = new Tuple<double, double>(temp[temp.Length - 1].Item1 + 3 * resolution_ / 2, 0);
+                    for (int i = 0; i < temp.Length; i++)
                     {
-                        function_[i + 1, 1] = temp[i, 1] / total_;
+                        function_[i + 1] = new Tuple<double, double>(function_[i+1].Item1, temp[i].Item2 / total_);
                     }
                 }
             }
@@ -176,14 +172,14 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 }
                 if (function_ != null)
                 {
-                    double minValueX = function_[0, 0];
-                    double maxValueX = function_[function_.GetLength(0) - 1, 0];
-                    double maxValueY = function_[0, 1];
-                    for (int i = 0; i < function_.GetLength(0); i++)
+                    double minValueX = function_[0].Item1;
+                    double maxValueX = function_[function_.Length - 1].Item1;
+                    double maxValueY = function_[0].Item2;
+                    for (int i = 0; i < function_.Length; i++)
                     {
-                        if (maxValueY < function_[i, 1])
+                        if (maxValueY < function_[i].Item2)
                         {
-                            maxValueY = function_[i, 1];
+                            maxValueY = function_[i].Item2;
                         }
                     }
 
@@ -196,17 +192,17 @@ namespace OSDC.DotnetLibraries.General.Statistics
                     {
                         draw = minValueX + (maxValueX - minValueX) * RandomGenerator.Instance.NextDouble();
                         index = 0;
-                        if (draw > function_[0, 0])
+                        if (draw > function_[0].Item1)
                         {
-                            while (function_[index, 0] < draw)
+                            while (function_[index].Item1 < draw)
                             {
                                 index = index + 1;
                             }
-                            yValue = function_[index - 1, 1] + (draw - function_[index - 1, 0]) / (function_[index, 0] - function_[index - 1, 0]) * (function_[index, 1] - function_[index - 1, 1]);
+                            yValue = function_[index - 1].Item2 + (draw - function_[index - 1].Item1) / (function_[index].Item1 - function_[index - 1].Item1) * (function_[index].Item2 - function_[index - 1].Item2);
                         }
                         else
                         {
-                            yValue = function_[0, 1];
+                            yValue = function_[0].Item2;
                         }
                         if (Numeric.EQ(minValueX, maxValueX) || RandomGenerator.Instance.NextDouble() < (yValue / maxValueY))
                         {
@@ -241,13 +237,18 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double[,]? GetCurve()
+        public override Tuple<double, double>[]? GetCurve()
         {
             if (!isFunctionUpdated_)
             {
                 ComputeFunction();
             }
-            return function_;
+            Tuple<double, double>[] result = new Tuple<double, double>[function_.Length];
+            for (int i = 0; i < function_.Length; i++)
+            {
+                result[i] = new Tuple<double, double>(function_[i].Item1, function_[i].Item2);
+            }
+            return result;
         }
 
         /// <summary>
@@ -295,7 +296,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double[,]? GetHistogram()
+        public override Tuple<double, double>[]? GetHistogram()
         {
             CleanData();
 
@@ -325,40 +326,37 @@ namespace OSDC.DotnetLibraries.General.Statistics
                     double range = max - min;
                     if (Numeric.EQ(range, 0)) //Deterministic value, only need 2 points
                     {
-                        double[,] histo = new double[2, 2];
-                        histo[0, 0] = data_[0] - data_[0] * 0.01;
-                        histo[0, 1] = 0;
-                        histo[1, 0] = data_[0];
-                        histo[1, 1] = 1.0;
+                        Tuple<double, double>[] histo = new Tuple<double, double>[2];
+                        histo[0] = new Tuple<double,double>(data_[0] - data_[0] * 0.01, 0);
+                        histo[1] = new Tuple<double, double>(data_[0], 1.0);
                         return histo;
                     }
                     else
                     {
                         resolution_ = range / numberOfHistrogramPoints_;
-                        double[,] histogram = new double[numberOfHistrogramPoints_, 2];
+                        Tuple<double, double>[] histogram = new Tuple<double, double>[numberOfHistrogramPoints_];
 
                         for (int i = 0; i < numberOfHistrogramPoints_; i++)
                         {
-                            histogram[i, 0] = min + i * resolution_ + resolution_ / 2;
-                            histogram[i, 1] = 0;
+                            histogram[i] = new Tuple<double, double>(min + i * resolution_ + resolution_ / 2, 0);
                         }
                         for (int i = 0; i < data_.Count; i++)
                         {
                             if (data_[i] != max)
                             {
                                 int index = System.Math.Min((int)((data_[i] - min) / resolution_), numberOfHistrogramPoints_ - 1);
-                                histogram[index, 1] = histogram[index, 1] + 1;
+                                histogram[index] = new Tuple<double, double>(histogram[index].Item1, histogram[index].Item2 + 1);
                             }
                             else
                             {
-                                histogram[numberOfHistrogramPoints_ - 1, 1] = histogram[numberOfHistrogramPoints_ - 1, 1] + 1;
+                                histogram[numberOfHistrogramPoints_ - 1] = new Tuple<double, double>(histogram[numberOfHistrogramPoints_ - 1].Item1, histogram[numberOfHistrogramPoints_ - 1].Item2 + 1);
                             }
                         }
                         if (data_.Count > 0)
                         {
                             for (int i = 0; i < numberOfHistrogramPoints_; i++)
                             {
-                                histogram[i, 1] = (histogram[i, 1] / data_.Count);// *(1 / resolution_);
+                                histogram[i] = new Tuple<double, double>(histogram[i].Item1, (histogram[i].Item2 / data_.Count));
                             }
                         }
                         return histogram;
@@ -366,10 +364,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 }
                 else
                 {
-                    double[,] result = new double[1, 2];
+                    Tuple<double, double>[] result = new Tuple<double, double>[1];
 
-                    result[0, 0] = data_[0];
-                    result[0, 1] = 1;
+                    result[0] = new Tuple<double, double>(data_[0], 1);
                     return result;
                 }
             }
@@ -384,7 +381,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="normalized"></param>
         /// <returns></returns>
-        public double[,]? GetHistogram(bool normalized)
+        public Tuple<double, double>[]? GetHistogram(bool normalized)
         {
             if (normalized)
             {
@@ -414,52 +411,44 @@ namespace OSDC.DotnetLibraries.General.Statistics
                     double range = max - min;
                     if (Numeric.EQ(range, 0))
                     {
-                        double[,] histo = new double[2, 2];
-                        histo[0, 0] = data_[0] - data_[0] * 0.01;
-                        histo[0, 1] = 0;
-                        histo[1, 0] = data_[0];
-                        histo[1, 1] = data_.Count;
+                        Tuple<double, double>[] histo = new Tuple<double, double>[2];
+                        histo[0] = new Tuple<double, double>(data_[0] - data_[0] * 0.01, 0);
+                        histo[1] = new Tuple<double, double>(data_[0], data_.Count);
 
                         return histo;
                     }
                     else
                     {
                         resolution_ = range / numberOfHistrogramPoints_;
-                        double[,] histogram = new double[numberOfHistrogramPoints_, 2];
+                        Tuple<double, double>[] histogram = new Tuple<double, double>[numberOfHistrogramPoints_];
 
                         for (int i = 0; i < numberOfHistrogramPoints_; i++)
                         {
-                            histogram[i, 0] = min + i * resolution_ + resolution_ / 2;
-                            histogram[i, 1] = 0;
+                            histogram[i] = new Tuple<double, double>(min + i * resolution_ + resolution_ / 2, 0);
                         }
                         for (int i = 0; i < data_.Count; i++)
                         {
                             if (data_[i] != max)
                             {
                                 int index = System.Math.Min((int)((data_[i] - min) / resolution_), numberOfHistrogramPoints_ - 1);
-                                histogram[index, 1] = histogram[index, 1] + 1;
+                                histogram[index] = new Tuple<double, double>(histogram[index].Item1, histogram[index].Item2 + 1);
                             }
                             else
                             {
-                                histogram[numberOfHistrogramPoints_ - 1, 1] = histogram[numberOfHistrogramPoints_ - 1, 1] + 1;
+                                histogram[numberOfHistrogramPoints_ - 1] = new Tuple<double, double>(histogram[numberOfHistrogramPoints_ - 1].Item1, histogram[numberOfHistrogramPoints_ - 1].Item2 + 1);
                             }
                         }
                         double area = 0;
-                        for (int i = 0; i < histogram.GetLength(0) - 1; i++)
+                        for (int i = 0; i < histogram.Length - 1; i++)
                         {
-                            area += (histogram[i + 1, 0] - histogram[i, 0]) * histogram[i, 1];
+                            area += (histogram[i + 1].Item1 - histogram[i].Item1) * histogram[i].Item2;
                         }
                         if (Numeric.GT(area, 0))
                         {
-                            for (int i = 0; i < histogram.GetLength(0); i++)
+                            for (int i = 0; i < histogram.Length; i++)
                             {
-                                histogram[i, 1] /= area;
+                                histogram[i] = new Tuple<double, double>(histogram[i].Item1, histogram[i].Item2 / area);
                             }
-                        }
-                        area = 0;
-                        for (int i = 0; i < histogram.GetLength(0) - 1; i++)
-                        {
-                            area += (histogram[i + 1, 0] - histogram[i, 0]) * histogram[i, 1];
                         }
                         return histogram;
                     }
@@ -500,16 +489,16 @@ namespace OSDC.DotnetLibraries.General.Statistics
             {
                 ComputeFunction();
             }
-            if (function_ != null && function_.GetLength(0) > 0 && function_.GetLength(1) == 2)
+            if (function_ != null && function_.Length > 0)
             {
                 double total = 0;
-                for (int i = 0; i < function_.GetLength(0); i++)
+                for (int i = 0; i < function_.Length; i++)
                 {
-                    if (function_[i, 1] < 0)
+                    if (function_[i].Item2 < 0)
                     {
                         return false;
                     }
-                    total += function_[i, 1];
+                    total += function_[i].Item2;
                 }
                 if (!Numeric.EQ(total, 1.0, 1e-3))
                 {
@@ -535,15 +524,12 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 {
                     resolution_ = ((GeneralContinuousDistribution)from).resolution_;
                     numberOfHistrogramPoints_ = ((GeneralContinuousDistribution)from).numberOfHistrogramPoints_;
-                    function_ = new double[((GeneralContinuousDistribution)from).Function.GetLength(0), ((GeneralContinuousDistribution)from).Function.GetLength(1)];
+                    function_ = new Tuple<double, double>[((GeneralContinuousDistribution)from).Function.Length];
                     if (from is GeneralContinuousDistribution)
                     {
-                        for (int i = 0; i < ((GeneralContinuousDistribution)from).Function.GetLength(0); i++)
+                        for (int i = 0; i < ((GeneralContinuousDistribution)from).Function.Length; i++)
                         {
-                            for (int j = 0; j < ((GeneralContinuousDistribution)from).Function.GetLength(1); j++)
-                            {
-                                function_[i, j] = ((GeneralContinuousDistribution)from).Function[i, j];
-                            }
+                            function_[i] = new Tuple<double, double>(((GeneralContinuousDistribution)from).Function[i].Item1, ((GeneralContinuousDistribution)from).Function[i].Item2);
                         }
                     }
                     data_.Clear();
@@ -627,18 +613,18 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
             else
             {
-                double[] xVec = new double[function_.GetLength(0)];
-                double[] yVec = new double[function_.GetLength(0)];
+                double[] xVec = new double[function_.Length];
+                double[] yVec = new double[function_.Length];
                 for (int i = 0; i < xVec.Length; i++)
                 {
-                    xVec[i] = function_[i, 0];
-                    yVec[i] = function_[i, 1];
+                    xVec[i] = function_[i].Item1;
+                    yVec[i] = function_[i].Item2;
                 }
                 double Ex2 = 0;
                 double variance;
                 double a;
                 double b;
-                for (long i = 1; i < function_.GetLength(0); i++)
+                for (long i = 1; i < function_.Length; i++)
                 {
                     a = (yVec[i] - yVec[i - 1]) / (xVec[i] - xVec[i - 1]);
                     b = yVec[i] - a * xVec[i];
@@ -704,14 +690,14 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 double currentX = 0.05;
                 int index = 0;
                 double max = 0;
-                for (int i = 0; i < function_.GetLength(0); i++)
+                for (int i = 0; i < function_.Length; i++)
                 {
-                    if (function_[i, 1] != 0)
+                    if (function_[i].Item2 != 0)
                     {
-                        max = function_[i, 0];
+                        max = function_[i].Item1;
                     }
                     previousTemp = temp;
-                    temp += function_[i, 1];
+                    temp += function_[i].Item2;
                     if (Numeric.GT(temp, 1, 0.001))
                     {
                         return null;
@@ -720,8 +706,8 @@ namespace OSDC.DotnetLibraries.General.Statistics
                     {
                         while (temp >= currentX && index < result.Length && i < function_.GetLength(0) - 1)
                         {
-                            double prevValue = i >= 1 ? function_[i - 1, 0] : 0;
-                            result[index] = i >= 1 ? (function_[i, 0] - function_[i - 1, 0]) * (currentX - previousTemp) / (temp - previousTemp) + function_[i - 1, 0] : function_[i, 0];
+                            double prevValue = i >= 1 ? function_[i - 1].Item1 : 0;
+                            result[index] = i >= 1 ? (function_[i].Item1 - function_[i - 1].Item1) * (currentX - previousTemp) / (temp - previousTemp) + function_[i - 1].Item1 : function_[i].Item1;
                             index++;
                             currentX += 0.05;
                         }

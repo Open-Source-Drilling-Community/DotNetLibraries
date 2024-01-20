@@ -1,6 +1,8 @@
 ﻿using OSDC.DotnetLibraries.General.Statistics;
 using OSDC.UnitConversion.Conversion;
 using OSDC.UnitConversion.Conversion.DrillingEngineering;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.General.DrillingProperties
 {
@@ -10,8 +12,8 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// the probability distribution for the property
         /// </summary>
         public virtual ContinuousDistribution? Value { get; set; } = null;
-        public virtual List<SemanticFact>? ClassLevelSemantic { get; set; } = null;
-        public virtual List<SemanticFact>? InstanceLevelSemantic { get; set; } = null;
+
+        public Guid MetaDataID { get; set; } = Guid.Empty;
 
         /// <summary>
         /// Default Constructor
@@ -29,23 +31,17 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
                 {
                     Value = src.Value.Clone();
                 }
-                if (src.ClassLevelSemantic != null)
-                {
-                    ClassLevelSemantic = new List<SemanticFact>();
-                    foreach (SemanticFact fact in src.ClassLevelSemantic)
-                    {
-                        ClassLevelSemantic.Add(new SemanticFact(fact));
-                    }
-                }
-                if (src.InstanceLevelSemantic != null)
-                {
-                    InstanceLevelSemantic = new List<SemanticFact>();
-                    foreach (SemanticFact fact in src.InstanceLevelSemantic)
-                    {
-                        InstanceLevelSemantic.Add(new SemanticFact(fact));
-                    }
-                }
             }
+        }
+
+        /// <summary>
+        /// Draw a value according to the probability distribution defined in Value
+        /// </summary>
+        /// <returns></returns>
+        public virtual double? Realize()
+        {
+            if (Value == null) return null;
+            return Value.Realize();
         }
     }
 }

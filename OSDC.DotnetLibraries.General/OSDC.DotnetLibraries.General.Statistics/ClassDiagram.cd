@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.ContinuousDistribution" Collapsed="true">
+    <Position X="4.75" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ACAAGgAAAAREDQoAIAAIKIAAAgAAgGAAEAAgCgAAIBA=</HashCode>
+      <FileName>ContinuousDistribution.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.DiracDistribution">
+    <Position X="0.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEgAAAAQECAAAIAAACAAAAgAAgEAAEAAgCAAAIBA=</HashCode>
+      <FileName>DiracDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.GaussianDistribution">
+    <Position X="8.75" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAEgAAAAQECAAAoAAACAAABgAAAEAEEAAgCAAAIBA=</HashCode>
+      <FileName>GaussianDistribution.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.GeneralContinuousDistribution">
+    <Position X="2.75" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAEoAAAASECAAwIgAADAIAAgAggBAIkAAgKAAAgBA=</HashCode>
+      <FileName>GeneralContinuousDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.UniformDistribution">
+    <Position X="6" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ACAAGgAAABQECAIAMAAACIAAAgAAgEAAEAAgCAAAIBA=</HashCode>
+      <FileName>UniformDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

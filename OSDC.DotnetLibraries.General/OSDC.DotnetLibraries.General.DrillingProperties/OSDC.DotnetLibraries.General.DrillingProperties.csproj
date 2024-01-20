@@ -14,9 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DWIS.Vocabulary.Schemas" Version="1.0.61" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="OSDC.DotnetLibraries.General.Statistics" Version="1.0.7" />
+    <PackageReference Include="DWIS.Vocabulary.Schemas" Version="1.0.62" />
+    <PackageReference Include="OSDC.DotnetLibraries.General.Statistics" Version="1.0.9" />
     <PackageReference Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="1.0.27" />
   </ItemGroup>
 

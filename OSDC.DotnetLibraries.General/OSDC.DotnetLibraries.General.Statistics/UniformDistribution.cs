@@ -126,26 +126,20 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double[,]? GetCurve()
+        public override Tuple<double, double>[]? GetCurve()
         {
             if (isValid() && Min != null && Max != null)
             {
                 double min = Min.Value - (Max.Value - Min.Value) * 0.05;
                 double max = Max.Value + (Max.Value - Min.Value) * 0.05;
                 double value = 1 / (Max.Value - Min.Value);
-                double[,] result = new double[6, 2];
-                result[0, 0] = min;
-                result[0, 1] = 0;
-                result[1, 0] = Min.Value;
-                result[1, 1] = 0;
-                result[2, 0] = Min.Value;
-                result[2, 1] = value;
-                result[3, 0] = Max.Value;
-                result[3, 1] = value;
-                result[4, 0] = Max.Value;
-                result[4, 1] = 0;
-                result[5, 0] = max;
-                result[5, 1] = 0;
+                Tuple<double, double>[] result = new Tuple<double, double>[6];
+                result[0] = new Tuple<double, double>(min, 0);
+                result[1] = new Tuple<double, double>(Min.Value, 0);
+                result[2] = new Tuple<double, double>(Min.Value, value);
+                result[3] = new Tuple<double, double>(Max.Value, value);
+                result[4] = new Tuple<double, double>(Max.Value, 0);
+                result[5] = new Tuple<double, double>(max, 0);
                 return result;
             }
             else

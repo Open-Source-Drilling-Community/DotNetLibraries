@@ -116,7 +116,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual double[,]? GetHistogram()
+        public virtual Tuple<double, double>[]? GetHistogram()
         {
             return GetCurve();
         }
@@ -141,7 +141,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual double[,]? GetCurve()
+        public virtual Tuple<double, double>[]? GetCurve()
         {
             return null;
         }
@@ -150,7 +150,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual double[,]? GetCDFCurve()
+        public virtual Tuple<double, double>[]? GetCDFCurve()
         {
             double? min = GetDataMin();
             double? max = GetDataMax();
@@ -158,18 +158,18 @@ namespace OSDC.DotnetLibraries.General.Statistics
             {
                 double range = max.Value - min.Value;
                 int n = 50;
-                double[,] curve = new double[n, 2];
+                Tuple<double, double>[] curve = new Tuple<double, double>[n];
                 for (int i = 0; i < n; i++)
                 {
-                    curve[i, 0] = min.Value + i * (range / ((double)(n - 1)));
-                    double? res = GetCumulativeProbability(curve[i, 0]);
+                    curve[i] = new Tuple<double, double>(min.Value + i * (range / ((double)(n - 1))), 0);
+                    double? res = GetCumulativeProbability(curve[i].Item1);
                     if (res != null)
                     {
-                        curve[i, 1] = res.Value;
+                        curve[i] = new Tuple<double, double>(curve[i].Item1, res.Value);
                     }
                     else
                     {
-                        curve[i, 1] = Numeric.UNDEF_DOUBLE;
+                        curve[i] = new Tuple<double, double>(curve[i].Item1, Numeric.UNDEF_DOUBLE);
                     }
                 }
                 return curve;

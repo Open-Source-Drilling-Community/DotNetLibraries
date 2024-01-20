@@ -1,44 +1,51 @@
-﻿using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.UnitConversion.Conversion.DrillingEngineering;
+using OSDC.UnitConversion.Conversion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using OSDC.DotnetLibraries.General.Statistics;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Reflection;
 
 namespace OSDC.DotnetLibraries.General.DrillingProperties
 {
-    public class UniformDrillingProperty : DrillingProperty
+    public class ScalarDrillingProperty : DrillingProperty
     {
+        /// <summary>
+        /// the value of the property
+        /// </summary>
         [JsonIgnore]
         public override ContinuousDistribution? Value
         {
             get
             {
-                return UniformValue;
+                return DiracDistributionValue;
             }
             set
             {
-                if (value != null && value is UniformDistribution uniformDistribution)
+                if (value != null && value is DiracDistribution distribution)
                 {
-                    UniformValue = uniformDistribution;
+                    DiracDistributionValue = distribution;
                 }
             }
         }
-
-        public UniformDistribution UniformValue { get; set; } = new UniformDistribution();
+        /// <summary>
+        /// 
+        /// </summary>
+        public DiracDistribution DiracDistributionValue { get; set; } = new DiracDistribution();
 
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public UniformDrillingProperty() : base() { }
+        public ScalarDrillingProperty() :base() { }
         /// <summary>
-        /// initialization with meta data ID
+        /// Initialization with meta data ID
         /// </summary>
         /// <param name="id"></param>
-        public UniformDrillingProperty(string id) :base()
+        public ScalarDrillingProperty(string id):base()
         {
             Guid guid;
             if (Guid.TryParse(id, out guid))
@@ -50,7 +57,7 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// Initialize with meta data ID
         /// </summary>
         /// <param name="id"></param>
-        public UniformDrillingProperty(Guid id) : base()
+        public ScalarDrillingProperty(Guid id):base()
         {
             MetaDataID = id;
         }
@@ -58,8 +65,9 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// Copy constructor
         /// </summary>
         /// <param name="src"></param>
-        public UniformDrillingProperty(UniformDrillingProperty src) : base(src)
+        public ScalarDrillingProperty(ScalarDrillingProperty src) :base(src)
         {
+
         }
     }
 }

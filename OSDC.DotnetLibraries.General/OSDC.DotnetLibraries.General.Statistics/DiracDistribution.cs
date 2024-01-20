@@ -52,7 +52,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double[,]? GetCurve()
+        public override Tuple<double, double>[]? GetCurve()
         {
             if (Value == null)
             {
@@ -72,18 +72,13 @@ namespace OSDC.DotnetLibraries.General.Statistics
                     min = -0.05;
                     max = 0.05;
                 }
-                double[,] result = new double[5, 2];
+                Tuple<double, double>[] result = new Tuple<double, double>[5];
 
-                result[0, 0] = min;
-                result[0, 1] = 0;
-                result[1, 0] = Value.Value;
-                result[1, 1] = 0;
-                result[2, 0] = Value.Value;
-                result[2, 1] = 1;
-                result[3, 0] = Value.Value;
-                result[3, 1] = 0;
-                result[4, 0] = max;
-                result[4, 1] = 0;
+                result[0] = new Tuple<double, double>(min, 0);
+                result[1] = new Tuple<double, double>(Value.Value,0);
+                result[2] = new Tuple<double, double>(Value.Value, 0);
+                result[3] = new Tuple<double, double>(Value.Value, 0);
+                result[4] = new Tuple<double, double>(max, 0);
                 return result;
             }
         }

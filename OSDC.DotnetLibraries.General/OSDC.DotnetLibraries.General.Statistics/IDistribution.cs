@@ -12,7 +12,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        double[,]? GetCurve();
+        Tuple<double, double>[]? GetCurve();
 
         /// <summary>
         /// 

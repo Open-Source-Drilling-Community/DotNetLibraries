@@ -25,7 +25,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.APIProxy", "OSDC.DotnetLibraries.General.APIProxy\OSDC.DotnetLibraries.General.APIProxy.csproj", "{5A5332CE-EB41-4AFE-B66B-D7747AFA8DD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.JsonSD", "OSDC.DotnetLibraries.General.JsonSD\OSDC.DotnetLibraries.General.JsonSD.csproj", "{3BE7D213-BC09-498F-BF65-A12737248DC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.JsonSD", "OSDC.DotnetLibraries.General.JsonSD\OSDC.DotnetLibraries.General.JsonSD.csproj", "{3BE7D213-BC09-498F-BF65-A12737248DC3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.UnitTest", "OSDC.DotnetLibraries.General.DrillingProperties.UnitTest\OSDC.DotnetLibraries.General.DrillingProperties.UnitTest.csproj", "{4336DAA5-B3BE-4D57-A642-8CE0E361202D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example01", "OSDC.DotnetLibraries.General.DrillingProperties.Example01\OSDC.DotnetLibraries.General.DrillingProperties.Example01.csproj", "{83CE49AD-99B8-475B-9E1E-55697DF5BC82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example02", "OSDC.DotnetLibraries.General.DrillingProperties.Example02\OSDC.DotnetLibraries.General.DrillingProperties.Example02.csproj", "{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example03", "OSDC.DotnetLibraries.General.DrillingProperties.Example03\OSDC.DotnetLibraries.General.DrillingProperties.Example03.csproj", "{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +89,22 @@ Global
 		{3BE7D213-BC09-498F-BF65-A12737248DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BE7D213-BC09-498F-BF65-A12737248DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BE7D213-BC09-498F-BF65-A12737248DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4336DAA5-B3BE-4D57-A642-8CE0E361202D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4336DAA5-B3BE-4D57-A642-8CE0E361202D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4336DAA5-B3BE-4D57-A642-8CE0E361202D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4336DAA5-B3BE-4D57-A642-8CE0E361202D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83CE49AD-99B8-475B-9E1E-55697DF5BC82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83CE49AD-99B8-475B-9E1E-55697DF5BC82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83CE49AD-99B8-475B-9E1E-55697DF5BC82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83CE49AD-99B8-475B-9E1E-55697DF5BC82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

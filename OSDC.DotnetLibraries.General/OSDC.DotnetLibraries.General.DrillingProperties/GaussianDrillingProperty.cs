@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -11,7 +13,7 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
     public class GaussianDrillingProperty : DrillingProperty
     {
         [JsonIgnore]
-        public override ContinuousDistribution Value
+        public override ContinuousDistribution? Value
         {
             get
             {
@@ -30,6 +32,26 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// Default Constructor
         /// </summary>
         public GaussianDrillingProperty() :base() { }
+        /// <summary>
+        /// Initialization with meta data id
+        /// </summary>
+        /// <param name="id"></param>
+        public GaussianDrillingProperty(string id): base()
+        {
+            Guid guid;
+            if (Guid.TryParse(id, out guid))
+            {
+                MetaDataID = guid;
+            }
+        }
+        /// <summary>
+        /// Initialize with meta data ID
+        /// </summary>
+        /// <param name="id"></param>
+        public GaussianDrillingProperty(Guid id) : base()
+        {
+            MetaDataID = id;
+        }
         /// <summary>
         /// Copy constructor
         /// </summary>
