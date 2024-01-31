@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <Title>A library to define drilling properties with their physical quantity, uncertainty and possible references</Title>
     <Authors>Eric Cayeux</Authors>
     <Company>NORCE Norwegian Research Centre</Company>

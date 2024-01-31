@@ -221,14 +221,11 @@ namespace DrillingProperties
 </pre>
 
 # Transfer of Meta Information via Json
-Json does not support the possibility to define attributes (C#), annotations (Java), decoration (Python) in a json schema.
+Json schema does not support the possibility to define attributes (C#), annotations (Java), decoration (Python).
 As most data exchanges utilize json formatting for the payload, another way to convey the meta information had to be found.
-An additional attribute has been added. It is called `MetaDataIDAttribute`. It has one argument of type `Guid`. This allows to
-define a unique identification to the set of attributes that are associated with the `DrillingProperty`. Furthermore, a static
-method `GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData` is available to generate a dictionary of `DrillingProperty` 
-described in an `Assembly`. The keys of the dictionary are the `Guid` associated with the `DrillingProperty` and the values are
-instances of the class `MetaDataDrillingProperty`. A `MetaDataDrillingProperty` has the following properties:
-
+A static method `GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData` is available to generate a dictionary of `DrillingProperty` 
+described in an `Assembly`. The keys of the dictionary are the `Tuple<string, string>` where the first item is the classname and the second item is the property name of the `DrillingProperty`.
+The values are instances of the class `MetaDataDrillingProperty`. A `MetaDataDrillingProperty` has the following properties:
 - `Namespace`, a string that contains the namespace of the class where this property is defined
 - `ClassName`, a string that contains the class name where this property is defined
 - `PropertyName`, a string that contains the name of the property
@@ -250,20 +247,8 @@ that could not be saved inside the json schema.
 In the context of the generation of code from a json schema, the dictionary can be used to add attributes (C#), annotations (Java) or decoration (Python)
 to the generated properties in the classes.
 
-In the context of a micro-service architecture, the generated dictionary can thereafater been made available through the `Get` interface of a 
+In the context of a micro-service architecture, the generated dictionary can be made available through the `Get` interface of a 
 specific end-point of the micro-service.
-
-When an instance of a class that utilizes `DrillingProperty` is serialized to json, the property `MetaDataID` indicates the `Guid`
-of the corresponding entry in the generated dictionary. It is therefore possible for the receiving application to get the specific
-meta information for that property.
-
-The `MetaDataID` could have been filled in during serialization by reading the attribute `MetaDataIDAttribute` associated with
-the property, however such a solution would have required to pass to the Json serialization function specific json converters
-each time it is called. The risk of forgetting to pass the converters is relatively high and therefore a simpler strategy has been chosen: the `Guid` defined by `MetaDataIDAttribute` is passed to the constructor of the 
-`DrillingProperty`. This requires the programmer to copy paste the `Guid`, which is not very elegant, but on the other hand
-the problem is fixed once for all for each definition of `DrillingProperty`.
-
-Note that a simple way to generate `Guid` is to visit [guidgenerator.com](https://guidgenerator.com/online-guid-generator.aspx). 
 
 ## Example
 Here is an example.
@@ -288,8 +273,7 @@ namespace DrillingProperties
         [SemanticFact("BitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DerivedMeasurement)]
         [SemanticFact("BitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
         [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
-        [MetaDataID("1532f187-99d3-42d2-a99d-d579b94cb55e")]
-        public GaussianDrillingProperty MeasuredBitDepth { get; set; } = new GaussianDrillingProperty("1532f187-99d3-42d2-a99d-d579b94cb55e");
+        public GaussianDrillingProperty MeasuredBitDepth { get; set; } = new GaussianDrillingProperty();
 
         [PhysicalQuantity(PhysicalQuantity.QuantityEnum.StandardLength)]
         [DepthReference(CommonProperty.DepthReferenceType.DrillFloor)]
@@ -298,8 +282,7 @@ namespace DrillingProperties
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.BelongsToClass, Nouns.Enum.SetPoint)]
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.IsMechanicallyLocatedAt, "Elevator#01")]
         [SemanticFact("Elevator#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Elevator)]
-        [MetaDataID("fe1e95a1-fa56-4d7f-9db3-98719edfd485")]
-        public ScalarDrillingProperty BlockPositionSetPoint { get; set; } = new ScalarDrillingProperty("fe1e95a1-fa56-4d7f-9db3-98719edfd485");
+        public ScalarDrillingProperty BlockPositionSetPoint { get; set; } = new ScalarDrillingProperty();
 
         [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.BlockVelocity)]
         [Mandatory(CommonProperty.MandatoryType.Mechanical | CommonProperty.MandatoryType.Hydraulic | CommonProperty.MandatoryType.MaterialTransport)]
@@ -307,8 +290,7 @@ namespace DrillingProperties
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Limit)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsMechanicallyLocatedAt, Nouns.Enum.DrillString)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsPhysicallyLocatedAt, Nouns.Enum.TopOfStringReferenceLocation)]
-        [MetaDataID("a7378c62-c17b-4031-a711-e9f36d44ee3f")]
-        public UniformDrillingProperty TopOfStringSpeedUpwardLimit { get; set; } = new UniformDrillingProperty("a7378c62-c17b-4031-a711-e9f36d44ee3f");
+        public UniformDrillingProperty TopOfStringSpeedUpwardLimit { get; set; } = new UniformDrillingProperty();
 
         [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
         [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
@@ -317,41 +299,18 @@ namespace DrillingProperties
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputedData)]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
         [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
-        [MetaDataID("1d30f759-6979-4996-a3bd-d42f991d2392")]
-        public GeneralDistributionDrillingProperty EstimatedBitDepth { get; set; } = new GeneralDistributionDrillingProperty("1d30f759-6979-4996-a3bd-d42f991d2392");
+        public GeneralDistributionDrillingProperty EstimatedBitDepth { get; set; } = new GeneralDistributionDrillingProperty();
     }
     class Example
     {
         static void Main()
-        {
-            TestClass testClass = new TestClass();
-            testClass.MeasuredBitDepth.GaussianValue.Mean = 1000.0;
-            testClass.MeasuredBitDepth.GaussianValue.StandardDeviation = 0.1;
-            testClass.BlockPositionSetPoint.DiracDistributionValue.Value = 10.0;
-            testClass.TopOfStringSpeedUpwardLimit.UniformValue.Min = 0.10;
-            testClass.TopOfStringSpeedUpwardLimit.UniformValue.Max = 0.11;
-            testClass.EstimatedBitDepth.GeneralDistributionValue.Function = new Tuple<double, double>[]
-            {
-                new Tuple<double, double>(999.8, 0.05),
-                new Tuple<double, double>(999.9, 0.10),
-                new Tuple<double, double>(1000.0, 0.25),
-                new Tuple<double, double>(1000.1, 0.50),
-                new Tuple<double, double>(1000.2, 0.08),
-                new Tuple<double, double>(1000.3, 0.02)
-            };
-
+        {          
             var dict = GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData(Assembly.GetExecutingAssembly());
-
-            string json = JsonSerializer.Serialize(testClass);
-            Console.WriteLine("Serialization of instance in json:");
-            Console.WriteLine(json);
-            Console.WriteLine();
             if (dict != null)
             {
-                Console.WriteLine("Drilling Property Dictionary");
                 foreach (var keyValue in dict)
                 {
-                    Console.WriteLine(keyValue.Key + "=" + JsonSerializer.Serialize(keyValue.Value));
+                    Console.WriteLine("(" + keyValue.Key.Item1 + ", " + keyValue.Key.Item2 + ") " + "=" + JsonSerializer.Serialize(keyValue.Value));
                 }
             }
         }
@@ -364,14 +323,10 @@ namespace DrillingProperties
 The output is the following:
 
 <pre>
-Serialization of instance in json:
-{"MeasuredBitDepth":{"GaussianValue":{"Mean":1000,"StandardDeviation":0.1,"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"1532f187-99d3-42d2-a99d-d579b94cb55e"},"BlockPositionSetPoint":{"DiracDistributionValue":{"Value":10,"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"fe1e95a1-fa56-4d7f-9db3-98719edfd485"},"TopOfStringSpeedUpwardLimit":{"UniformValue":{"Min":0.1,"Max":0.11,"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"a7378c62-c17b-4031-a711-e9f36d44ee3f"},"EstimatedBitDepth":{"GeneralDistributionValue":{"Function":[{"Item1":999.8,"Item2":0.05},{"Item1":999.9,"Item2":0.1},{"Item1":1000,"Item2":0.25},{"Item1":1000.1,"Item2":0.5},{"Item1":1000.2,"Item2":0.08},{"Item1":1000.3,"Item2":0.02}],"NumberOfHistrogramPoints":20,"Data":[],"MinValue":-1.7976931348623157E+308,"MaxValue":1.7976931348623157E+308},"MetaDataID":"1d30f759-6979-4996-a3bd-d42f991d2392"}}
-
-Drilling Property Dictionary
-1532f187-99d3-42d2-a99d-d579b94cb55e={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"MeasuredBitDepth","DepthReferenceType":1,"MandatoryType":65535,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"BitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":59,"Object":138,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]}]}
-fe1e95a1-fa56-4d7f-9db3-98719edfd485={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"BlockPositionSetPoint","DepthReferenceType":2,"MandatoryType":19,"PhysicalQuantity":65,"SemanticFacts":[{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":91,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":124,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":95,"ObjectName":"Elevator#01","ObjectAttributes":[]},{"SubjectName":"Elevator#01","Verb":59,"Object":182,"ObjectAttributes":[]}]}
-a7378c62-c17b-4031-a711-e9f36d44ee3f={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"TopOfStringSpeedUpwardLimit","MandatoryType":11,"DrillingPhysicalQuantity":0,"SemanticFacts":[{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":92,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":134,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":95,"Object":176,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":99,"Object":274,"ObjectAttributes":[]}]}
-1d30f759-6979-4996-a3bd-d42f991d2392={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"EstimatedBitDepth","DepthReferenceType":1,"MandatoryType":0,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":140,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]}]}
+(TestClass, MeasuredBitDepth) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"MeasuredBitDepth","DepthReferenceType":1,"MandatoryType":65535,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"BitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":59,"Object":138,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]}]}
+(TestClass, BlockPositionSetPoint) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"BlockPositionSetPoint","DepthReferenceType":2,"MandatoryType":19,"PhysicalQuantity":65,"SemanticFacts":[{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":91,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":124,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":95,"ObjectName":"Elevator#01","ObjectAttributes":[]},{"SubjectName":"Elevator#01","Verb":59,"Object":182,"ObjectAttributes":[]}]}
+(TestClass, TopOfStringSpeedUpwardLimit) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"TopOfStringSpeedUpwardLimit","MandatoryType":11,"DrillingPhysicalQuantity":0,"SemanticFacts":[{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":92,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":134,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":95,"Object":176,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":99,"Object":274,"ObjectAttributes":[]}]}
+(TestClass, EstimatedBitDepth) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"EstimatedBitDepth","DepthReferenceType":1,"MandatoryType":0,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":140,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]}]}
 </pre>
 
 # Dependence

@@ -10,14 +10,14 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
     public class GenerateDrillingPropertyMetaData
     {
 
-        public static Dictionary<Guid, MetaDataDrillingProperty>? GetDrillingPropertyMetaData(Assembly assembly)
+        public static Dictionary<Tuple<string, string>, MetaDataDrillingProperty>? GetDrillingPropertyMetaData(Assembly assembly)
         {
             if (assembly == null)
             {
                 return null;
             }
             Type[] types = assembly.GetTypes();
-            Dictionary<Guid, MetaDataDrillingProperty> results = new Dictionary<Guid, MetaDataDrillingProperty>();
+            Dictionary<Tuple<string, string>, MetaDataDrillingProperty> results = new Dictionary<Tuple<string, string>, MetaDataDrillingProperty>();
             // Filter and print only the classes
             foreach (Type type in types)
             {
@@ -30,19 +30,25 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
                     {
                         if (property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty)))
                         {
-                            var metaDataIDAttribute = (MetaDataIDAttribute?)property.GetCustomAttribute(typeof(MetaDataIDAttribute));
-                            if (metaDataIDAttribute != null && metaDataIDAttribute.MetaDataID != Guid.Empty)
+                            var physicalQuantityAttribute = property.GetCustomAttribute<PhysicalQuantityAttribute>();
+                            var drillingPhysicalQuantityAttribute = property.GetCustomAttribute<DrillingPhysicalQuantityAttribute>();
+                            var abscissaReferenceAttribute = property.GetCustomAttribute<AbscissaReferenceAttribute>();
+                            var azimuthReferenceAttribute = property.GetCustomAttribute<AzimuthReferenceAttribute>();
+                            var depthReferenceAttribute = property.GetCustomAttribute<DepthReferenceAttribute>();
+                            var mandatoryAttritbute = property.GetCustomAttribute<MandatoryAttribute>();
+                            var positionReferenceAttribute = property.GetCustomAttribute<PositionReferenceAttribute>();
+                            var pressureReferenceAttribute = property.GetCustomAttribute<PressureReferenceAttribute>();
+                            var semanticFactsAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
+                            if (physicalQuantityAttribute != null ||
+                                drillingPhysicalQuantityAttribute != null ||
+                                abscissaReferenceAttribute != null ||
+                                azimuthReferenceAttribute != null ||
+                                depthReferenceAttribute != null ||
+                                mandatoryAttritbute != null ||
+                                positionReferenceAttribute != null ||
+                                pressureReferenceAttribute != null ||
+                                (semanticFactsAttributes != null && semanticFactsAttributes.Any()))
                             {
-                                Guid ID = metaDataIDAttribute.MetaDataID;
-                                var physicalQuantityAttribute = property.GetCustomAttribute<PhysicalQuantityAttribute>();
-                                var drillingPhysicalQuantityAttribute = property.GetCustomAttribute<DrillingPhysicalQuantityAttribute>();
-                                var abscissaReferenceAttribute = property.GetCustomAttribute<AbscissaReferenceAttribute>();
-                                var azimuthReferenceAttribute = property.GetCustomAttribute<AzimuthReferenceAttribute>();
-                                var depthReferenceAttribute = property.GetCustomAttribute<DepthReferenceAttribute>();
-                                var mandatoryAttritbute = property.GetCustomAttribute<MandatoryAttribute>();
-                                var positionReferenceAttribute = property.GetCustomAttribute<PositionReferenceAttribute>();
-                                var pressureReferenceAttribute = property.GetCustomAttribute<PressureReferenceAttribute>();
-                                var semanticFactsAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
                                 MetaDataDrillingProperty metaData = new MetaDataDrillingProperty();
                                 metaData.Namespace = (type.Namespace == null) ? string.Empty : type.Namespace;
                                 metaData.ClassName = type.Name;
@@ -100,7 +106,7 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
                                         }
                                     }
                                 }
-                                results.Add(ID, metaData);
+                                results.Add(new Tuple<string, string>(type.Name, property.Name), metaData);
                             }
                         }
                     }

@@ -42,26 +42,6 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// </summary>
         public ScalarDrillingProperty() :base() { }
         /// <summary>
-        /// Initialization with meta data ID
-        /// </summary>
-        /// <param name="id"></param>
-        public ScalarDrillingProperty(string id):base()
-        {
-            Guid guid;
-            if (Guid.TryParse(id, out guid))
-            {
-                MetaDataID = guid;
-            }
-        }
-        /// <summary>
-        /// Initialize with meta data ID
-        /// </summary>
-        /// <param name="id"></param>
-        public ScalarDrillingProperty(Guid id):base()
-        {
-            MetaDataID = id;
-        }
-        /// <summary>
         /// Copy constructor
         /// </summary>
         /// <param name="src"></param>

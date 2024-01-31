@@ -35,26 +35,6 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// </summary>
         public UniformDrillingProperty() : base() { }
         /// <summary>
-        /// initialization with meta data ID
-        /// </summary>
-        /// <param name="id"></param>
-        public UniformDrillingProperty(string id) :base()
-        {
-            Guid guid;
-            if (Guid.TryParse(id, out guid))
-            {
-                MetaDataID = guid;
-            }
-        }
-        /// <summary>
-        /// Initialize with meta data ID
-        /// </summary>
-        /// <param name="id"></param>
-        public UniformDrillingProperty(Guid id) : base()
-        {
-            MetaDataID = id;
-        }
-        /// <summary>
         /// Copy constructor
         /// </summary>
         /// <param name="src"></param>

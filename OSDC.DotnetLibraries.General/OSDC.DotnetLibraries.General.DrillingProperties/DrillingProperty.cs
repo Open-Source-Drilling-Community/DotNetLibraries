@@ -13,8 +13,6 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties
         /// </summary>
         public virtual ContinuousDistribution? Value { get; set; } = null;
 
-        public Guid MetaDataID { get; set; } = Guid.Empty;
-
         /// <summary>
         /// Default Constructor
         /// </summary>

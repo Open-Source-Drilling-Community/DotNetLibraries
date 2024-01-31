@@ -95,10 +95,6 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties.UnitTest
             Assert.IsNotNull(deserialized.UniformValue);
             Assert.IsNotNull(deserialized.GaussianValue);
             Assert.IsNotNull(deserialized.GeneralDistributionValue);
-            Assert.AreEqual(new Guid("bc51b872-cf4d-4474-86a9-9f4a83efe905"), deserialized.ScalarValue.MetaDataID);
-            Assert.AreEqual(new Guid("52539cdd-1918-4f7d-8cdd-b9bc9bb818c3"), deserialized.UniformValue.MetaDataID);
-            Assert.AreEqual(new Guid("cc46f945-c9f5-4605-b1b3-c391239416fb"), deserialized.GaussianValue.MetaDataID);
-            Assert.AreEqual(new Guid("ae4ed40a-e7d2-486d-8368-61528bc95cee"), deserialized.GeneralDistributionValue.MetaDataID);
             Assert.NotNull(deserialized.ScalarValue.DiracDistributionValue.Value);
             Assert.AreEqual((double)test.ScalarValue.DiracDistributionValue.Value, (double)deserialized.ScalarValue.DiracDistributionValue.Value, 1e-6);
             Assert.NotNull(deserialized.UniformValue.UniformValue.Min);
@@ -124,10 +120,6 @@ namespace OSDC.DotnetLibraries.General.DrillingProperties.UnitTest
             var results = GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData(assembly);
             Assert.IsNotNull(results);
             Assert.AreEqual(4, results.Count);
-            Assert.IsNotNull(results[new Guid("bc51b872-cf4d-4474-86a9-9f4a83efe905")]);
-            Assert.IsNotNull(results[new Guid("52539cdd-1918-4f7d-8cdd-b9bc9bb818c3")]);
-            Assert.IsNotNull(results[new Guid("cc46f945-c9f5-4605-b1b3-c391239416fb")]);
-            Assert.IsNotNull(results[new Guid("ae4ed40a-e7d2-486d-8368-61528bc95cee")]);
         }
     }
 }
