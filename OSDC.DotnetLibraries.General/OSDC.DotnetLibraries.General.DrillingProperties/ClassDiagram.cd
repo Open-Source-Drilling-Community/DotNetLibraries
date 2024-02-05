@@ -36,21 +36,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.DrillingProperties.DrillingProperty">
-    <Position X="7" Y="4" Width="2" />
+    <Position X="7" Y="5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAABAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>DrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.DrillingProperties.GaussianDrillingProperty">
-    <Position X="11.25" Y="6.75" Width="2.25" />
+    <Position X="11.25" Y="7.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>GaussianDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.DrillingProperties.GeneralDistributionDrillingProperty">
-    <Position X="7.75" Y="6.75" Width="2.75" />
+    <Position X="7.75" Y="7.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAgAAAAAAA=</HashCode>
       <FileName>GeneralDistributionDrillingProperty.cs</FileName>
@@ -85,21 +85,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.DrillingProperties.ScalarDrillingProperty">
-    <Position X="5" Y="6.75" Width="2" />
+    <Position X="5" Y="7.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAA=</HashCode>
       <FileName>ScalarDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.DrillingProperties.SemanticFact">
-    <Position X="12.25" Y="3.75" Width="2" />
+    <Position X="16.25" Y="5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AIAAACAAAAAAAAAgAIAAIAAAAAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>SemanticFact.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.DrillingProperties.UniformDrillingProperty">
-    <Position X="2.25" Y="6.75" Width="2" />
+    <Position X="2.25" Y="7.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>UniformDrillingProperty.cs</FileName>
@@ -108,7 +108,7 @@
   <Class Name="OSDC.DotnetLibraries.General.DrillingProperties.SemanticFactAttribute">
     <Position X="19.5" Y="3" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AIAAACAAAAAAAAAgAIAAIAAAAAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>SemanticFactAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
