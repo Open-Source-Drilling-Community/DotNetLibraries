@@ -4,7 +4,7 @@ namespace OSDC.DotnetLibraries.General.Math
 {
     public class Point3D : Point2D, IPoint3D, IEquatable<IPoint3D>
     {
-        public double? Z { get; set; } = null;
+        public virtual double? Z { get; set; } = null;
         /// <summary>
         /// default constructor
         /// </summary>

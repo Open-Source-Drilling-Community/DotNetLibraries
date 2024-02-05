@@ -4,8 +4,8 @@ namespace OSDC.DotnetLibraries.General.Math
 {
     public class Point2D : IPoint2D
     {
-        public double? X { get; set; } = null;
-        public double? Y { get; set; } = null;
+        public virtual double? X { get; set; } = null;
+        public virtual double? Y { get; set; } = null;
         /// <summary>
         /// default constructor
         /// </summary>
