@@ -29,11 +29,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.UnitTest", "OSDC.DotnetLibraries.General.DrillingProperties.UnitTest\OSDC.DotnetLibraries.General.DrillingProperties.UnitTest.csproj", "{4336DAA5-B3BE-4D57-A642-8CE0E361202D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example01", "OSDC.DotnetLibraries.General.DrillingProperties.Example01\OSDC.DotnetLibraries.General.DrillingProperties.Example01.csproj", "{83CE49AD-99B8-475B-9E1E-55697DF5BC82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example01", "OSDC.DotnetLibraries.General.DrillingProperties.Example01\OSDC.DotnetLibraries.General.DrillingProperties.Example01.csproj", "{83CE49AD-99B8-475B-9E1E-55697DF5BC82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example02", "OSDC.DotnetLibraries.General.DrillingProperties.Example02\OSDC.DotnetLibraries.General.DrillingProperties.Example02.csproj", "{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example02", "OSDC.DotnetLibraries.General.DrillingProperties.Example02\OSDC.DotnetLibraries.General.DrillingProperties.Example02.csproj", "{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example03", "OSDC.DotnetLibraries.General.DrillingProperties.Example03\OSDC.DotnetLibraries.General.DrillingProperties.Example03.csproj", "{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example03", "OSDC.DotnetLibraries.General.DrillingProperties.Example03\OSDC.DotnetLibraries.General.DrillingProperties.Example03.csproj", "{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree", "OSDC.DotnetLibraries.General.Octree\OSDC.DotnetLibraries.General.Octree.csproj", "{59C47F96-644B-4EFE-9579-A4E03D220405}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree.Example01", "OSDC.DotnetLibraries.General.Octree.Example01\OSDC.DotnetLibraries.General.Octree.Example01.csproj", "{6D308B8C-7D6A-449F-B2D1-1108A97B15D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree.Example02", "OSDC.DotnetLibraries.General.Octree.Example02\OSDC.DotnetLibraries.General.Octree.Example02.csproj", "{01424C89-1192-4855-9BCF-A3886817EDDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree.Example03", "OSDC.DotnetLibraries.General.Octree.Example03\OSDC.DotnetLibraries.General.Octree.Example03.csproj", "{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +113,22 @@ Global
 		{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59C47F96-644B-4EFE-9579-A4E03D220405}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59C47F96-644B-4EFE-9579-A4E03D220405}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59C47F96-644B-4EFE-9579-A4E03D220405}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59C47F96-644B-4EFE-9579-A4E03D220405}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D308B8C-7D6A-449F-B2D1-1108A97B15D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D308B8C-7D6A-449F-B2D1-1108A97B15D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D308B8C-7D6A-449F-B2D1-1108A97B15D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D308B8C-7D6A-449F-B2D1-1108A97B15D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01424C89-1192-4855-9BCF-A3886817EDDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01424C89-1192-4855-9BCF-A3886817EDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01424C89-1192-4855-9BCF-A3886817EDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01424C89-1192-4855-9BCF-A3886817EDDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

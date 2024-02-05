@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>Library to Manipulate Octree decomposition and encoding</Title>
+    <Version>1.0.0</Version>
+    <Authors>Eric Cayeux</Authors>
+    <Company>NORCE Norwegian Research Centre</Company>
+    <Description>This is a library to manipulate octree decomposition and encoding.</Description>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.0.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+    <None Update="readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
