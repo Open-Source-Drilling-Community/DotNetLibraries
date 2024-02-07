@@ -1,16 +1,119 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using OSDC.DotnetLibraries.General.Common;
+﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
+using OSDC.DotnetLibraries.General.DrillingProperties;
+using OSDC.UnitConversion.Conversion;
+using OSDC.UnitConversion.Conversion.DrillingEngineering;
 
 namespace OSDC.DotnetLibraries.General.Surveying
 {
     public class Survey : CurvilinearPoint3D
     {
+        private double? latitude_ = null;
+        private double? longitude_ = null;
+        /// <summary>
+        /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the equator to the latitude of this point. 
+        /// Positive in the north direction.
+        /// </summary>
+        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Position)]
+        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
+        public override double? X
+        {
+            get => base.X;
+            set
+            {
+                base.X = value;
+                UpdateX(value);
+            }
+        }
+        /// <summary>
+        /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the Greenwich meridian to the longitude of this point.
+        /// Positive in the east direction.
+        /// </summary>
+        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Position)]
+        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
+        public override double? Y
+        {
+            get => base.Y;
+            set
+            {
+                base.Y = value;
+                UpdateY(value);
+            }
+        }
+        /// <summary>
+        /// Latitude of the point on the WGS84 spheroid
+        /// </summary>
+        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
+        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
+        public double? Latitude
+        {
+            get { return latitude_; }
+            set
+            {
+                latitude_ = value;
+                UpdateLatitude(value);
+            }
+        }
+        /// <summary>
+        /// Longitude of the point on the WGS84 spheroid
+        /// </summary>
+        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
+        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
+        public double? Longitude
+        {
+            get { return longitude_; }
+            set
+            {
+                longitude_ = value;
+                UpdateLongitude(value);
+            }
+        }
+
+         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void SetLatitudeLongitude(double x, double y)
+        {
+            double f = 1.0 / Constants.EarthInverseFlateningWGS84;
+            double b = Constants.EarthSemiMajorAxisWGS84 * (1.0 - f);
+            double b2 = b * b;
+            double a2 = Constants.EarthSemiMajorAxisWGS84 * Constants.EarthSemiMajorAxisWGS84;
+            double m = 1.0 - b2 / a2;
+            double latitude = SpecialFunctions.InverseEllipseE(x/ Constants.EarthSemiMajorAxisWGS84, m);
+            Latitude = latitude;
+            double sinLat = System.Math.Sin(latitude);
+            double cosLat = System.Math.Cos(latitude);
+            double R = Constants.EarthSemiMajorAxisWGS84 * System.Math.Sqrt(cosLat * cosLat + (b2 / a2) * sinLat * sinLat) / System.Math.Sqrt(1 - f * (2 - f) * sinLat * sinLat);
+            if (Numeric.EQ(R, 0))
+            {
+                Longitude = null;
+            }
+            else
+            {
+                Longitude = y / R;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        public void SetXY(double latitude, double longitude)
+        {
+            double f = 1.0 / Constants.EarthInverseFlateningWGS84;
+            double b = Constants.EarthSemiMajorAxisWGS84 * (1.0 - f);
+            double b2 = b * b;
+            double a2 = Constants.EarthSemiMajorAxisWGS84 * Constants.EarthSemiMajorAxisWGS84;
+            double sinLat = System.Math.Sin(latitude);
+            double cosLat = System.Math.Cos(latitude);
+            double R = Constants.EarthSemiMajorAxisWGS84 * System.Math.Sqrt(cosLat * cosLat + (b2 / a2) * sinLat * sinLat) / System.Math.Sqrt(1 - f * (2 - f) * sinLat * sinLat);
+            base.Y = R * longitude;
+            double m = 1.0 - b2 / a2;
+            base.X = Constants.EarthSemiMajorAxisWGS84 * SpecialFunctions.EllipseE(latitude, m);
+        }
+
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -249,5 +352,37 @@ namespace OSDC.DotnetLibraries.General.Surveying
                 }
             }
         }
+        private void UpdateX(double? value)
+        {
+            if (value != null && Y != null)
+            {
+                SetLatitudeLongitude((double)value, (double)Y);
+            }
+        }
+
+        private void UpdateY(double? value)
+        {
+            if (value != null && X != null)
+            {
+                SetLatitudeLongitude((double)X, (double)value);
+
+            }
+        }
+
+        private void UpdateLatitude(double? value)
+        {
+            if (value != null && longitude_ != null)
+            {
+                SetXY((double)value, (double)longitude_);
+            }
+        }
+        private void UpdateLongitude(double? value)
+        {
+            if (value != null && latitude_ != null)
+            {
+                SetXY((double)latitude_, (double)value);
+            }
+        }
+
     }
 }

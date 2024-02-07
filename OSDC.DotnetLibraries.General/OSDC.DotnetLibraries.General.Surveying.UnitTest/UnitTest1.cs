@@ -57,5 +57,38 @@ namespace OSDC.DotnetLibraries.General.Surveying.UnitTest
             Assert.AreEqual(sv2.Y.Value, result.Y.Value, acc);
             Assert.AreEqual(sv2.Z.Value/2.0, result.Z.Value, acc);
         }
+
+        [Test]
+        public void Test4()
+        {
+            Survey sv1 = new Survey() { Latitude = 0, Longitude = 0, Z = 0 };
+            Assert.AreEqual(0, sv1.X, 1e-3);
+            Assert.AreEqual(0, sv1.Y, 1e-3);
+        }
+
+        [Test]
+        public void Test5()
+        {
+            Survey sv1 = new Survey() { X = 0, Y = 0, Z = 0 };
+            Assert.AreEqual(0, sv1.Latitude, 1e-5);
+            Assert.AreEqual(0, sv1.Longitude, 1e-5);
+        }
+
+        [Test]
+        public void Test6()
+        {
+            Survey sv1 = new Survey() { Latitude = 58.93438 * System.Math.PI / 180.0, Longitude = 5.70725 * System.Math.PI / 180.0, Z = 0 };
+            Assert.AreEqual(6560503.2546896785, sv1.X, 1e-3);
+            Assert.AreEqual(635328.16382991057, sv1.Y, 1e-3);
+        }
+
+        [Test]
+        public void Test7()
+        {
+            Survey sv1 = new Survey() { X= 6560503.255, Y = 635328.164, Z = 0 };
+            Assert.AreEqual(58.93438 * System.Math.PI / 180.0, sv1.Latitude, 1e-3);
+            Assert.AreEqual(5.70725 * System.Math.PI / 180.0, sv1.Longitude, 1e-3);
+        }
+
     }
 }
