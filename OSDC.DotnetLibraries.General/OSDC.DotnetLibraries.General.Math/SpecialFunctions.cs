@@ -1,4 +1,7 @@
-﻿using OSDC.DotnetLibraries.General.Common;
+﻿using MathNet.Numerics.Distributions;
+using MathNet.Numerics.LinearAlgebra.Factorization;
+using MathNet.Numerics;
+using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.General.Math
 {
@@ -1117,6 +1120,136 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             return h;
         }
-
+        /// <summary>
+        /// Incomplete ellipse integral of the first kind. It is calculated using the Carlson's function $R_F$
+        /// </summary>
+        /// <param name="phi">Must be a value between 0 and $\frac{\pi}{2}$</param>
+        /// <param name="ak">$ak*sin(\phi)$ must be between 0 and 1</param>
+        /// <returns></returns>
+        public static double EllipseF(double phi, double ak)
+        {
+            double s = System.Math.Sin(phi);
+            double c = System.Math.Cos(phi);
+            return s * EllipseRF(c * c, (1.0 - s * ak) * (1.0 + s * ak), 1.0);
+        }
+        /// <summary>
+        /// Incomplete ellipse integral of the second kind. It is calculated using the Carlson's functions $R_D$ and $R_F$
+        /// </summary>
+        /// <param name="phi">Must be a value between 0 and $\frac{\pi}{2}$</param>
+        /// <param name="ak">$ak*sin(\phi)$ must be between 0 and 1</param>
+        /// <returns></returns>
+        public static double EllipseE(double phi, double ak)
+        {
+            double s = System.Math.Sin(phi);
+            double c = System.Math.Cos(phi);
+            double cc = c * c;
+            double q = (1.0 -s*ak)*(1.0 + s * ak);
+            return s * (EllipseRF(cc, q, 1.0) - s * ak * s * ak * EllipseRD(cc, q, 1.0) / 3.0);
+        }
+        /// <summary>
+        /// Carlson's elliptic integral of the first kind. At most one of the argument can be equal to zero.
+        /// </summary>
+        /// <param name="x">Must be positive</param>
+        /// <param name="y">Must be positive</param>
+        /// <param name="z">Must be positive</param>
+        /// <returns></returns>
+        public static double EllipseRF(double x, double y, double z)
+        {
+            double tiny = 5.0 * double.MinValue;
+            double big = double.MaxValue / 5.0;
+            double errtol = 0.0025;
+            if (System.Math.Min(System.Math.Min(x,y),z) < 0.0 || 
+                System.Math.Min(System.Math.Min(x+y, x+z), y+z) < tiny ||
+                System.Math.Max(System.Math.Max(x, y), z) >big)
+            {
+                throw new ArgumentException("The arguments must be positive and at most one of them can be zero");
+            }
+            double xt = x;
+            double yt = y;
+            double zt = z;
+            double delx, dely, delz, ave;
+            do
+            {
+                double sqrtx = System.Math.Sqrt(xt);
+                double sqrty = System.Math.Sqrt(yt);
+                double sqrtz = System.Math.Sqrt(zt);
+                double alamb = sqrtx*(sqrty+sqrtz)+ sqrty*sqrtz;
+                xt = 0.25 * (xt + alamb);
+                yt = 0.25*(yt+ alamb);
+                zt = 0.25*(zt+ alamb);
+                ave = (xt + yt + zt) / 3.0;
+                delx = (ave - xt) / ave;
+                dely = (ave - yt) / ave;
+                delz = (ave - zt) / ave;
+            } while (System.Math.Max(System.Math.Max(System.Math.Abs(delx), System.Math.Abs(dely)), System.Math.Abs(delz)) > errtol);
+            double e2 = delx * dely - delz * delz;
+            double e3 = delx * dely * delz;
+            return (1.0 + (e2 / 24.0 - 0.1 - 2.0 * e3 / 44.0) * e2 + e3 / 14.0) / System.Math.Sqrt(ave);
+        }
+        /// <summary>
+        /// Carlson's elliptic integral of the second kind. At most one of the argument can be equal to zero.
+        /// x+y must be non-negative.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z">Must be positive</param>
+        /// <returns></returns>
+        public static double EllipseRD(double x, double y, double z)
+        {
+            double tiny = 5.0 * double.MinValue;
+            double big = double.MaxValue / 5.0;
+            double errtol = 0.0025;
+            if (System.Math.Min(x, y) < 0.0 || System.Math.Min(x + y, z) < tiny || System.Math.Max(System.Math.Max(x, y), z) > big)
+            {
+                throw new ArgumentException("x+y must be non-negative, z must be positive, and at most one of them can be zero");
+            }
+            double xt = x;
+            double yt = y;
+            double zt = z;
+            double sum = 0;
+            double fac = 1.0;
+            double delx, dely, delz, ave;
+            do
+            {
+                double sqrtx = System.Math.Sqrt(xt);
+                double sqrty = System.Math.Sqrt(yt);
+                double sqrtz = System.Math.Sqrt(zt);
+                double alamb = sqrtx * (sqrty + sqrtz) + sqrty * sqrtz;
+                sum += fac / (sqrtz * (zt + alamb));
+                fac = 0.25 * fac;
+                xt = 0.25 * (xt + alamb);
+                yt = 0.25 * (yt + alamb);
+                zt = 0.25 * (zt + alamb);
+                ave = 0.2 * (xt + yt + 3.0 * xt);
+                delx = (ave - xt) / ave;
+                dely = (ave - yt) / ave;
+                delz = (ave - zt) / ave;
+            } while (System.Math.Max(System.Math.Max(System.Math.Abs(delx), System.Math.Abs(dely)), System.Math.Abs(delz)) > errtol);
+            double ea = delx * dely;
+            double eb = delz * delz;
+            double ec = ea - eb;
+            double ed = ea - 6.0 * eb;
+            double ee = ed + ec + ec;
+            return 3.0 * sum + fac * (1.0 + ed * (-3.0 / 14.0 + 0.25 * 9.0 * ed / 22.0 - 1.5 * 3.0 * delz * ee / 26.0) + delz * (ee / 6.0 + delz * (-9.0 * ec / 22.0 + delz * 3.0 * ea / 26.0))) / (ave * System.Math.Sqrt(ave));
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="z"></param>
+        /// <param name="m">between 0 and 1</param>
+        /// <returns></returns>
+        public static double InverseEllipseE(double z, double m)
+        {
+            double T = z;
+            double Told;
+            double m2 = m * m;
+            do
+            {
+                Told = T;
+                double sinT = System.Math.Sin(T);
+                T = T - (EllipseE(T, m) - z) / System.Math.Sqrt(1 - m2 * sinT*sinT);
+            } while (System.Math.Abs(T - Told) > 1e-8);
+            return T;
+        }
     }
 }

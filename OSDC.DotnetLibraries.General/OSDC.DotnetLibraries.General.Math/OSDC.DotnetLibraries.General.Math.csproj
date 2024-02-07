@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Standard Math Classes</Title>
-    <Version>1.0.9.3</Version>
+    <Version>1.0.9.5</Version>
     <Authors>NORCE Drilling &amp; Well Modeling Group</Authors>
     <Company>NORCE Norwegian Research Center</Company>
     <Description>This package contains classes to perform mathematical calculations.</Description>
