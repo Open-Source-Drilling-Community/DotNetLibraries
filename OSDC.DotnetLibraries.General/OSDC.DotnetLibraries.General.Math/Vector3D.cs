@@ -636,7 +636,7 @@ namespace OSDC.DotnetLibraries.General.Math
             {
                 return false;
             }
-            return Numeric.EQ(CrossProduct(v).GetLength(), precision);
+            return Numeric.EQ(CrossProduct(v).GetLength(), 0.0, precision);
         }
         /// <summary>
         /// predicate for parallelism
@@ -649,7 +649,7 @@ namespace OSDC.DotnetLibraries.General.Math
             {
                 return false;
             }
-            return Numeric.EQ(CrossProduct(v).GetLength(), 0);
+            return Numeric.EQ(CrossProduct(v).GetLength(), 0.0);
         }
         /// <summary>
         /// predicate that tests if two 3D vectors are colinear
