@@ -323,6 +323,15 @@ namespace OSDC.DotnetLibraries.General.Math
             double z = (double)Z;
             return System.Math.Acos(z / l);
         }
+        public double? Distance(IPoint3D pt)
+        {
+            if (pt != null)
+            {
+                return Numeric.SqrtEqual((base.X - pt.X) * (base.X - pt.X) + (base.Y - pt.Y) * (base.Y - pt.Y) + (Z - pt.Z) * (Z - pt.Z));
+            }
+
+            return Numeric.UNDEF_DOUBLE;
+        }
         /// <summary>
         /// return the euclidian distance to another point
         /// </summary>
