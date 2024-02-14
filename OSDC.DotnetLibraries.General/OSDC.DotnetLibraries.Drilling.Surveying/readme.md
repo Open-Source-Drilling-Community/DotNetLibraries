@@ -32,13 +32,13 @@ The next section explains how `Latitude` and `Longitude` are converted to `X` an
 ## Conversion from Latitude-Longitude to Riemannian Coordinates
 
 The earth is modelled as an oblate, i.e., a spheroid flatened at the pole. At a given latitude, a path on the Earth is a circle. Let us consider that the origin of 
-longitudes is Greenwich and that the Earth is modelled by a semi-long axis, $a$, and a flatening, $f$. The flatening is defined as:
-$f = \frac{{a - b}}{{a}}$
-where $b$ is the semi-short axis. Therefore the semi short axis can be expressed as:
-$b = a - f \cdot a$
+longitudes is Greenwich and that the Earth is modelled by a semi-long axis, $$a$$, and a flatening, $$f$$. The flatening is defined as:
+$$f = \frac{{a - b}}{{a}}$$
+where $$b$$ is the semi-short axis. Therefore the semi short axis can be expressed as:
+$$b = a - f \cdot a$$
 
-The radius of the Earth at a given latitude, $\phi$ is given by:
-$R(\phi) = \frac{{a \cdot \sqrt{{\cos^2(\phi) + \frac{{b^2}}{{a^2}} \cdot \sin^2(\phi)}}}}{{\sqrt{1 - f \cdot (2 - f) \cdot \sin^2(\phi)}}}$
+The radius of the Earth at a given latitude, $$\phi$$ is given by:
+$$R(\phi) = \frac{{a \cdot \sqrt{{\cos^2(\phi) + \frac{{b^2}}{{a^2}} \cdot \sin^2(\phi)}}}}{{\sqrt{1 - f \cdot (2 - f) \cdot \sin^2(\phi)}}}$$
 
 <svg width="700" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
 <g>
@@ -72,15 +72,15 @@ $R(\phi) = \frac{{a \cdot \sqrt{{\cos^2(\phi) + \frac{{b^2}}{{a^2}} \cdot \sin^2
 </g>
 </svg>
 
-At that latitude the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $\lambda$:
-$y = R(\phi) \cdot \lambda$
-The $x$-coordinate (south-north) is the length of the elliptical arc counted from the equator using the latitude. 
-This involves the elliptic integral of the second kind, denoted $E(\phi, m)$ where $m=1- \frac{{b^2}}{{a^2}}$. 
-Its definition is: $E(\phi, m) = \int_0^\phi \sqrt{1 - m \cdot \sin^2(t)} \, dt$.
-The definition of $x$ is then: $x = a \cdot E(\phi, m)$.
+At that latitude the $$y$$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $$\lambda$$:
+$$y = R(\phi) \cdot \lambda$$
+The $$x$$-coordinate (south-north) is the length of the elliptical arc counted from the equator using the latitude. 
+This involves the elliptic integral of the second kind, denoted $$E(\phi, m)$ where $m=1- \frac{{b^2}}{{a^2}}$$. 
+Its definition is: $$E(\phi, m) = \int_0^\phi \sqrt{1 - m \cdot \sin^2(t)} \, dt$$.
+The definition of $$x$$ is then: $$x = a \cdot E(\phi, m)$$.
 
-Conversely, to retrieve the latitude and longitude from the $x$ and $y$ coordinates, i.e., arc lengths, the following method is used:
-$\phi = E^{-1}(\frac{x}{a}, m)$ and $\lambda = \frac{y}{R(\phi)}$.
+Conversely, to retrieve the latitude and longitude from the $$x$$ and $$y$$ coordinates, i.e., arc lengths, the following method is used:
+$$\phi = E^{-1}(\frac{x}{a}, m)$$ and $$\lambda = \frac{y}{R(\phi)}$$.
 
 The elliptic integral of the second kind is calculated using the special function defined in `OSDC.DotnetLibraries.General.Math`, 
 namely `SpecialFunctions.EllipticE(phi, m)` and its inverse is `Elliptic.InverseEllipticE(x, m)`.
@@ -89,10 +89,10 @@ For short lateral displacements, considering that `X` and `Y` are cartesian coor
 by most Earth Model software used in E&P applications. So `X` and `Y` can be considered as respectively a sort of Northing and Easting coordinate.
 
 ## Conversion to Spherical Coordinate
-At a given latitude, the radial distance to the centre of the Earth is given by: $r = \frac{a}{\sqrt{1-e^2 \sin(\phi)}}$ and where $e=\sqrt{\frac{a^2-b^2}{a^2}}$ is the eccentricity 
+At a given latitude, the radial distance to the centre of the Earth is given by: $$r = \frac{a}{\sqrt{1-e^2 \sin(\phi)}}$$ and where $$e=\sqrt{\frac{a^2-b^2}{a^2}}$$ is the eccentricity 
 of the ellipse. 
 
-The radial position of the point is $r_p = r(\phi)-Z$ where $Z$ is the vertical depth at that point.
+The radial position of the point is $$r_p = r(\phi)-Z$$ where $$Z$$ is the vertical depth at that point.
 
 Knowing the radial position, the latitude and the longitude, it is possible to calculate the cartesian coordinates of the point in a global coordinate
 system centered at the Earth center and with X, Y and Z directions that are fixed orthogonal axes attached to the Earth. The method `GetSphericalPoint` returns a `SphericalPoint3D`
@@ -390,13 +390,29 @@ MD (m)  Incl (°)        Az (°)  TVD (m) Riem. North (m) Riem. East (m)  DLS (�
 ## Realization of a SurveyStationList
 A `SurveyStationList` has covariance matrices for each of its `SurveyStation`, meaning that a true trajectory can be anywhere in the surrounding of the
 `SurveyStationList`. Yet, the covariance matrices correspond mostly to systematic errors that are probagated all along the series of measurements. So a realized
-trajectory must respect a consistency compared to thos covariance matrices. The method `Realize` produces a `SurveyList`, i.e., a list of `Survey`. There is
+trajectory must respect a consistency compared to those covariance matrices. The method `Realize` produces a `SurveyList`, i.e., a list of `Survey`. There is
 indeed no needs anymore to have information about the covariances in the realized trajectory. The generation algorithm is the following:
 
-1. The last `SurveyStation` of the `SurveyStationList` is used to draw a point according to the probability distribution associated with this `SurveyStation`.
+1. The last `SurveyStation` of the `SurveyStationList` is used to draw randomly a point according to the probability distribution associated with this `SurveyStation`.
 For that purpose, the covariance matrix is diagonalized and the principal components are calculated. The eigenvalues are the variances in the three principal
-directions,${\sigma_x}^2, {\sigma_y}^2, {\sigma_z}^2$, with $x, y, z$ being the local coordinate system along the principal directions. 
+directions,$${\sigma_x}^2, {\sigma_y}^2, {\sigma_z}^2$$, with $$x, y, z$$ being the local coordinate system along the principal directions. 
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
-$\mathcal{N}(0,{\sigma_x}^2),  \mathcal{N}(0,{\sigma_y}^2, \mathcal{N}(0,{\sigma_z}^2)$. Three values are drawn using these probability distributions,
-$\hat{x}, \hat{y}, \hat{z}$. The $\chi^2_3$ corresponding to this position is calculated using the following relation: 
-${\frac{\hat{x}^2}{{\sigma_x}^2}+\frac{\hat{y}^2}{{\sigma_y}^2}+\frac{\hat{z}^2}{{\sigma_z}^2}}={\chi^2_3}$
+$$\mathcal{N}(0,{\sigma_x}^2),  \mathcal{N}(0,{\sigma_y}^2, \mathcal{N}(0,{\sigma_z}^2)$$. Three values are drawn using these probability distributions,
+$$\hat{x}, \hat{y}, \hat{z}$$. The $$\chi^2_3$$ corresponding to this position is calculated using the following relation: 
+$${\frac{\hat{x}^2}{{\sigma_x}^2}+\frac{\hat{y}^2}{{\sigma_y}^2}+\frac{\hat{z}^2}{{\sigma_z}^2}}={\chi^2_3}$$. The calculated $$\chi^2_3$$
+is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $$\chi^2_3$$. The latitude and longitude
+of that point are calculated using an instance of `SphericalPoint3D`. They are denoted respectively $$\phi_0$$ and $$\lambda_0$$. The 
+randomly drawn point around the `SurveyStation` is then converted to a `Survey` in the Riemaniann manifold representing the Earth, using
+the inverse transformation based on the eigenvectors.
+2. Iteratively and in the upward direction, other `Station` are calculated using $$\phi_0$$ and $$\lambda_0$$ and a radial distance 
+calculated using the ellipsoid of uncertainty defined by $$\chi^2_3$$, i.e., 
+$$r^2=\frac{\chi^2_3}{\frac{\cos{\phi_0}^2.\cos{\lambda_0}^2}{{\sigma_x}^2}+\frac{\cos{\phi_0}^2.\sin{\lambda_0}^2}{{\sigma_y}^2}+\frac{\sin{\phi_0}^2}{{\sigma_z}^2}}$$
+Of course, this `SphericalPoint3D` is defined in the local coordinate system directed by the principal components of the covariance
+matrix of the `SurveyStation`. Having retrieved the $$x$$, $$y$$ and $$z$$ components of the point in the local coordinate system,
+it is transformed to the Riemannian manifold coordinates using the inverse transformation based on the eigen vectors of the covariance
+matrix. This operation generates a list of `Survey` for which the `RiemaniannNorth`, `RiemaniannEast` and `TVD` are filled in.
+3. The last operation consists in calculating the `Inclination`, `Azimuth` and `Abscissa` at each `Survey`. From top to bottom, the list
+is transversed and a circular arcj is calculated that links the previous `Survey`, which is fully defined, with the current `Survey`, 
+which is only known by its `RiemaniannNorth`, `RiemaniannEast` and `TVD`. Knowing the circular arc, it is the possible to calculate the
+length of the arc, i.e., derive the `Abscissa`, the `Inclination` and the `Azimuth`.
+
