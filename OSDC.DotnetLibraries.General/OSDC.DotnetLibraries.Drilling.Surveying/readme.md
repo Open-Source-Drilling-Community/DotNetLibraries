@@ -72,7 +72,7 @@ $$R(\phi) = \frac{{a \cdot \sqrt{{\cos^2(\phi) + \frac{{b^2}}{{a^2}} \cdot \sin^
 </g>
 </svg>
 
-At that latitude the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $$\lambda$$:
+At that latitude the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $\lambda$:
 $y = R(\phi) \cdot \lambda$
 The $x$-coordinate (south-north) is the length of the elliptical arc counted from the equator using the latitude. 
 This involves the elliptic integral of the second kind, denoted $E(\phi, m)$ where $m=1- \frac{{b^2}}{{a^2}}$. 
@@ -395,7 +395,7 @@ indeed no needs anymore to have information about the covariances in the realize
 
 1. The last `SurveyStation` of the `SurveyStationList` is used to draw randomly a point according to the probability distribution associated with this `SurveyStation`.
 For that purpose, the covariance matrix is diagonalized and the principal components are calculated. The eigenvalues are the variances in the three principal
-directions,${\sigma_x}^2, {\sigma_y}^2, {\sigma_z}^2$, with $x, y, z$ being the local coordinate system along the principal directions. 
+directions, ${\sigma_x}^2, {\sigma_y}^2, {\sigma_z}^2$, with $x, y, z$ being the local coordinate system along the principal directions. 
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
 $\mathcal{N}(0,{\sigma_x}^2),  \mathcal{N}(0,{\sigma_y}^2, \mathcal{N}(0,{\sigma_z}^2)$. Three values are drawn using these probability distributions,
 $\hat{x}, \hat{y}, \hat{z}$. The $\chi^2_3$ corresponding to this position is calculated using the following relation: 
