@@ -15,33 +15,41 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.OpenFoamRead.Test", "OSDC.DotnetLibraries.General.OpenFoamRead.Test\OSDC.DotnetLibraries.General.OpenFoamRead.Test.csproj", "{C6A2A5BD-5CA2-45EF-8D25-E62CAA6B0A98}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Surveying", "OSDC.DotnetLibraries.General.Surveying\OSDC.DotnetLibraries.General.Surveying.csproj", "{2DD951E2-487D-4D0A-AA83-21D8C4FC652E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Surveying", "OSDC.DotnetLibraries.Drilling.Surveying\OSDC.DotnetLibraries.Drilling.Surveying.csproj", "{2DD951E2-487D-4D0A-AA83-21D8C4FC652E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Math.UnitTest", "OSDC.DotnetLibraries.General.Math.UnitTest\OSDC.DotnetLibraries.General.Math.UnitTest.csproj", "{3DEF6AD7-C1F9-4E1D-AF2F-9312DAC29757}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Surveying.UnitTest", "OSDC.DotnetLibraries.General.Surveying.UnitTest\OSDC.DotnetLibraries.General.Surveying.UnitTest.csproj", "{19AB019F-E532-4D1C-AFA9-E80741D09EA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Surveying.UnitTest", "OSDC.DotnetLibraries.Drilling.Surveying.UnitTest\OSDC.DotnetLibraries.Drilling.Surveying.UnitTest.csproj", "{19AB019F-E532-4D1C-AFA9-E80741D09EA3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties", "OSDC.DotnetLibraries.General.DrillingProperties\OSDC.DotnetLibraries.General.DrillingProperties.csproj", "{775BF7C4-7C2A-4096-B8B5-2E18F0DA8679}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties", "OSDC.DotnetLibraries.Drilling.DrillingProperties\OSDC.DotnetLibraries.Drilling.DrillingProperties.csproj", "{775BF7C4-7C2A-4096-B8B5-2E18F0DA8679}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.APIProxy", "OSDC.DotnetLibraries.General.APIProxy\OSDC.DotnetLibraries.General.APIProxy.csproj", "{5A5332CE-EB41-4AFE-B66B-D7747AFA8DD2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.JsonSD", "OSDC.DotnetLibraries.General.JsonSD\OSDC.DotnetLibraries.General.JsonSD.csproj", "{3BE7D213-BC09-498F-BF65-A12737248DC3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.UnitTest", "OSDC.DotnetLibraries.General.DrillingProperties.UnitTest\OSDC.DotnetLibraries.General.DrillingProperties.UnitTest.csproj", "{4336DAA5-B3BE-4D57-A642-8CE0E361202D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest", "OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest\OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest.csproj", "{4336DAA5-B3BE-4D57-A642-8CE0E361202D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example01", "OSDC.DotnetLibraries.General.DrillingProperties.Example01\OSDC.DotnetLibraries.General.DrillingProperties.Example01.csproj", "{83CE49AD-99B8-475B-9E1E-55697DF5BC82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01.csproj", "{83CE49AD-99B8-475B-9E1E-55697DF5BC82}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example02", "OSDC.DotnetLibraries.General.DrillingProperties.Example02\OSDC.DotnetLibraries.General.DrillingProperties.Example02.csproj", "{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example02", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example02\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example02.csproj", "{EA2CFA85-3BD4-48BE-A759-B5E49FD6E59E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DrillingProperties.Example03", "OSDC.DotnetLibraries.General.DrillingProperties.Example03\OSDC.DotnetLibraries.General.DrillingProperties.Example03.csproj", "{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example03", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example03\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example03.csproj", "{77111B7D-7C4C-4C45-BFE4-5C4C54DD567A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree", "OSDC.DotnetLibraries.General.Octree\OSDC.DotnetLibraries.General.Octree.csproj", "{59C47F96-644B-4EFE-9579-A4E03D220405}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Octree", "OSDC.DotnetLibraries.General.Octree\OSDC.DotnetLibraries.General.Octree.csproj", "{59C47F96-644B-4EFE-9579-A4E03D220405}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree.Example01", "OSDC.DotnetLibraries.General.Octree.Example01\OSDC.DotnetLibraries.General.Octree.Example01.csproj", "{6D308B8C-7D6A-449F-B2D1-1108A97B15D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Octree.Example01", "OSDC.DotnetLibraries.General.Octree.Example01\OSDC.DotnetLibraries.General.Octree.Example01.csproj", "{6D308B8C-7D6A-449F-B2D1-1108A97B15D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree.Example02", "OSDC.DotnetLibraries.General.Octree.Example02\OSDC.DotnetLibraries.General.Octree.Example02.csproj", "{01424C89-1192-4855-9BCF-A3886817EDDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Octree.Example02", "OSDC.DotnetLibraries.General.Octree.Example02\OSDC.DotnetLibraries.General.Octree.Example02.csproj", "{01424C89-1192-4855-9BCF-A3886817EDDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Octree.Example03", "OSDC.DotnetLibraries.General.Octree.Example03\OSDC.DotnetLibraries.General.Octree.Example03.csproj", "{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.Octree.Example03", "OSDC.DotnetLibraries.General.Octree.Example03\OSDC.DotnetLibraries.General.Octree.Example03.csproj", "{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example04", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example04\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example04.csproj", "{106C355B-E3C9-4B70-9778-1DC41002165D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Surveying.Example01", "OSDC.DotnetLibraries.Drilling.Surveying.Example01\OSDC.DotnetLibraries.Drilling.Surveying.Example01.csproj", "{F1C1665E-2795-4E1E-A357-7F9FBB6F5920}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Surveying.Example02", "OSDC.DotnetLibraries.Drilling.Surveying.Example02\OSDC.DotnetLibraries.Drilling.Surveying.Example02.csproj", "{2DF3EF8A-3F08-40D3-8B53-6A0B778E7565}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.Surveying.Example03", "OSDC.DotnetLibraries.Drilling.Surveying.Example03\OSDC.DotnetLibraries.Drilling.Surveying.Example03.csproj", "{4C51171F-55F6-41C7-A550-066D7FC734B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +137,22 @@ Global
 		{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5B08FB7-B9C5-447D-8CB1-FE41DBB3AF37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{106C355B-E3C9-4B70-9778-1DC41002165D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{106C355B-E3C9-4B70-9778-1DC41002165D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{106C355B-E3C9-4B70-9778-1DC41002165D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{106C355B-E3C9-4B70-9778-1DC41002165D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1C1665E-2795-4E1E-A357-7F9FBB6F5920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1C1665E-2795-4E1E-A357-7F9FBB6F5920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1C1665E-2795-4E1E-A357-7F9FBB6F5920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1C1665E-2795-4E1E-A357-7F9FBB6F5920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DF3EF8A-3F08-40D3-8B53-6A0B778E7565}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DF3EF8A-3F08-40D3-8B53-6A0B778E7565}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DF3EF8A-3F08-40D3-8B53-6A0B778E7565}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DF3EF8A-3F08-40D3-8B53-6A0B778E7565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C51171F-55F6-41C7-A550-066D7FC734B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C51171F-55F6-41C7-A550-066D7FC734B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C51171F-55F6-41C7-A550-066D7FC734B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C51171F-55F6-41C7-A550-066D7FC734B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

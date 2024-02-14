@@ -7,15 +7,15 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <summary>
         /// the curvilinear abscissa
         /// </summary>
-        public double? Abscissa { get; set; } = null;
+        public virtual double? Abscissa { get; set; } = null;
         /// <summary>
-        /// the inclinationination (0 is vertical)
+        /// the inclination (0 is vertical)
         /// </summary>
-        public double? Inclination { get; set; } = null;
+        public virtual double? Inclination { get; set; } = null;
         /// <summary>
-        /// the azimuthimuth (0 is in the x-direction)
+        /// the azimuth (0 is in the x-direction)
         /// </summary>
-        public double? Azimuth { get; set; } = null;
+        public virtual double? Azimuth { get; set; } = null;
 
         /// <summary>
         /// Default constructor
