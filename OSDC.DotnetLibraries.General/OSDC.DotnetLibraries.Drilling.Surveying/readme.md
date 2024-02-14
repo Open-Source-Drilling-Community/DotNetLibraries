@@ -89,7 +89,7 @@ For short lateral displacements, considering that `X` and `Y` are cartesian coor
 by most Earth Model software used in E&P applications. So `X` and `Y` can be considered as respectively a sort of Northing and Easting coordinate.
 
 ## Conversion to Spherical Coordinate
-At a given latitude, the radial distance to the centre of the Earth is given by: $r = \frac{a}{\sqrt{1-e^2 * \sin(\phi)}}$ and where $e=\sqrt{\frac{a^2-b^2}{a^2}}$ is the eccentricity 
+At a given latitude, the radial distance to the centre of the Earth is given by: $r = \frac{a}{\sqrt{1-e^2 \sin(\phi)}}$ and where $e=\sqrt{\frac{a^2-b^2}{a^2}}$ is the eccentricity 
 of the ellipse. 
 
 The radial position of the point is $r_p = r(\phi)-Z$ where $Z$ is the vertical depth at that point.
@@ -397,6 +397,6 @@ indeed no needs anymore to have information about the covariances in the realize
 For that purpose, the covariance matrix is diagonalized and the principal components are calculated. The eigenvalues are the variances in the three principal
 directions,${\sigma_x}^2, {\sigma_y}^2, {\sigma_z}^2$, with $x, y, z$ being the local coordinate system along the principal directions. 
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
-$\mathcal{N}(0,{\sigma_x}^2),  \mathcal{N}(0,{\sigma_y}^2, \mathcal{N}(0,{\sigma_z}^2$. Three values are drawn using these probability distributions,
+$\mathcal{N}(0,{\sigma_x}^2),  \mathcal{N}(0,{\sigma_y}^2, \mathcal{N}(0,{\sigma_z}^2)$. Three values are drawn using these probability distributions,
 $\hat{x}, \hat{y}, \hat{z}$. The $\chi^2_3$ corresponding to this position is calculated using the following relation: 
 ${\frac{\hat{x}^2}{{\sigma_x}^2}+\frac{\hat{y}^2}{{\sigma_y}^2}+\frac{\hat{z}^2}{{\sigma_z}^2}}={\chi^2_3}$
