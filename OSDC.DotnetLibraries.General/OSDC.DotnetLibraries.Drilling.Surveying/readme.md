@@ -367,7 +367,7 @@ For that purpose, the covariance matrix is diagonalized and the principal compon
 directions, ${\sigma_{x_n}}^2, {\sigma_{y_n}}^2, {\sigma_{z_n}}^2$, with $x_n, y_n, z_n$ being the local coordinate system along the principal directions at the `SurveyStation` $n$. 
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
 $\mathcal{N}(0,{\sigma_{x_n}}^2),  \mathcal{N}(0,{\sigma_{y_n}}^2), \mathcal{N}(0,{\sigma_{z_n}}^2)$. Three values are drawn using these probability distributions, 
-$\x_n, y_n, z_n$ . The $\chi^2_{3_n}$ corresponding to this position is calculated using the following relation: 
+$x_n, y_n, z_n$ . The $\chi^2_{3_n}$ corresponding to this position is calculated using the following relation: 
 $${\frac{x_n^2}{{\sigma_{x_n}}^2}+\frac{y_n^2}{{\sigma_{y_n}}^2}+\frac{z_n^2}{{\sigma_{z_n}}^2}}={\chi^2_{3_n}}$$. The calculated $\chi^2_{3_n}$
 is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $\chi^2_{3_n}$. The latitude and longitude
 of that point are calculated using an instance of `SphericalPoint3D`. They are denoted respectively $\phi_n$ and $\lambda_n$. The 
@@ -386,14 +386,14 @@ matrix of the `SurveyStation`. Having retrieved the $x_i$, $y_i$ and $z_i$ compo
 it is transformed to the Riemannian manifold coordinates using the inverse transformation based on the eigen vectors of the covariance
 matrix. This operation generates a list of `Survey` for which the `RiemaniannNorth`, `RiemaniannEast` and `TVD` are filled in.
 
-![Schematic representation of the first step of the procedure to generate a realization of a SurveyStationList](RealizationSecondStep.JPG)
+![Schematic representation of the second step of the procedure to generate a realization of a SurveyStationList](RealizationSecondStep.JPG)
 
 3. The last operation consists in calculating the `Inclination`, `Azimuth` and `Abscissa` at each `Survey`. From top to bottom, the list
 is transversed and a circular arcj is calculated that links the previous `Survey`, which is fully defined, with the current `Survey`, 
 which is only known by its `RiemaniannNorth`, `RiemaniannEast` and `TVD`. Knowing the circular arc, it is the possible to calculate the
 length of the arc, i.e., derive the `Abscissa`, the `Inclination` and the `Azimuth`.
 
-
+![Schematic representation of the third step of the procedure to generate a realization of a SurveyStationList](RealizationThirdStep.JPG)
 
 ## Calculation of the envelope of uncertainty of a SurveyStationList
 It is possible to define a scaling factor and a list of wellbore radii per depth range. The scaling factor is used when searching for the
