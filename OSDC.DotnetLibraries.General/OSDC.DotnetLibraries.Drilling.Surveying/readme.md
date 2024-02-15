@@ -364,11 +364,11 @@ indeed no needs anymore to have information about the covariances in the realize
 
 1. The last `SurveyStation` of the `SurveyStationList`, indexed $n$, is used to draw randomly a point according to the probability distribution associated with this `SurveyStation`.
 For that purpose, the covariance matrix is diagonalized and the principal components are calculated. The eigenvalues are the variances in the three principal
-directions, ${\sigma_x_n}^2, {\sigma_y_n}^2, {\sigma_z_n}^2$, with $x_n, y_n, z_n$ being the local coordinate system along the principal directions at the `SurveyStation` $n$. 
+directions, ${\sigma_{x_n}}^2, {\sigma_{y_n}}^2, {\sigma_{z_n}}^2$, with $x_n, y_n, z_n$ being the local coordinate system along the principal directions at the `SurveyStation` $n$. 
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
-$\mathcal{N}(0,{\sigma_x_n}^2),  \mathcal{N}(0,{\sigma_y_n}^2, \mathcal{N}(0,{\sigma_z_n}^2)$. Three values are drawn using these probability distributions,
+$\mathcal{N}(0,{\sigma_{x_n}}^2),  \mathcal{N}(0,{\sigma_{y_n}}^2, \mathcal{N}(0,{\sigma_{z_n}}^2)$. Three values are drawn using these probability distributions,
 $\hat{x_n}, \hat{y_n}, \hat{z_n}$. The $\chi^2_{3_n}$ corresponding to this position is calculated using the following relation: 
-$${\frac{\hat{x_n}^2}{{\sigma_x_n}^2}+\frac{\hat{y_n}^2}{{\sigma_y_n}^2}+\frac{\hat{z_n}^2}{{\sigma_z_n}^2}}={\chi^2_{3_n}}$$. The calculated $\chi^2_{3_n}$
+$${\frac{\hat{x_n}^2}{{\sigma_{x_n}}^2}+\frac{\hat{y_n}^2}{{\sigma_{y_n}}^2}+\frac{\hat{z_n}^2}{{\sigma_{z_n}}^2}}={\chi^2_{3_n}}$$. The calculated $\chi^2_{3_n}$
 is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $\chi^2_{3_n}$. The latitude and longitude
 of that point are calculated using an instance of `SphericalPoint3D`. They are denoted respectively $\phi_n$ and $\lambda_n$. The 
 randomly drawn point around the `SurveyStation` is then converted to a `Survey` in the Riemaniann manifold representing the Earth, using
@@ -377,8 +377,8 @@ the inverse transformation based on the eigenvectors.
 
 2. Iteratively and in the upward direction, other `Station` are calculated using $\phi_n$ and $\lambda_n$ and a radial distance 
 calculated using the ellipsoid of uncertainty defined by $\chi^2_{3_n}$, i.e., 
-$${r^2}_i=\frac{\chi^2_{3_n}}{\frac{\cos{\phi_n}^2.\cos{\lambda_n}^2}{{\sigma_x_i}^2}+\frac{\cos{\phi_n}^2.\sin{\lambda_n}^2}{{\sigma_y_i}^2}+\frac{\sin{\phi_n}^2}{{\sigma_z_i}^2}}$$
-where ${\sigma_x_i}^2, {\sigma_y_i}^2, {\sigma_z_i}^2$ are the variance in the principal directions at `SurveyStation` $i$. $r_i$ is the 
+$${r^2}_i=\frac{\chi^2_{3_n}}{\frac{\cos{\phi_n}^2.\cos{\lambda_n}^2}{{\sigma_{x_i}}^2}+\frac{\cos{\phi_n}^2.\sin{\lambda_n}^2}{{\sigma_{y_i}}^2}+\frac{\sin{\phi_n}^2}{{\sigma_{z_i}}^2}}$$
+where ${\sigma_{x_i}}^2, {\sigma_{y_i}}^2, {\sigma_{z_i}}^2$ are the variance in the principal directions at `SurveyStation` $i$. $r_i$ is the 
 radial distance, in the coordinate system oriented by the principle directions at the `SurveyStation` $i$.
 Of course, this `SphericalPoint3D` is defined in the local coordinate system directed by the principal components of the covariance
 matrix of the `SurveyStation`. Having retrieved the $x_i$, $y_i$ and $z_i$ components of the point in the local coordinate system,
