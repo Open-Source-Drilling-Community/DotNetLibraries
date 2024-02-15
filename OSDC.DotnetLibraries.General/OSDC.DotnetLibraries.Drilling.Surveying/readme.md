@@ -330,6 +330,7 @@ The class `SurveyStation` defines the following methods:
 is defined by a `Vector3D` that contains the radii in the three principle components and a `Matrix3x3` that contains the eigen
 vectors. The ellipsoid can be expanded by the borehole radius and it can be increased by a scaling factor. The scaling factor 
 is typically used when searching for the safety factor between two `SurveyStationList`.
+![Ellipsoid at a given confidence factor with its principles directions and radii](EllipsoidPrincipleDirections.JPG)
 - `CalculateHorizontalEllipse`: this method calculates the horizontal projection of the ellipsoid. The result is provided with
 2 radii stored in a `Vector2D` and an angle compared to the true north. A scaling factor and the borehole radius can be
 used in the calculation of the ellipse.
@@ -339,10 +340,12 @@ to the ellipse calculation.
 - `CalculatePerpendicularEllipse`: this method calculates the projection of the ellipsoid in a perpendicular plane to the tangent
 at that `SurveyStation`. The calculated ellipse is store as 2 radii in a `Vector2D` and an angle compared to the upward vertical.
 A scaling factor and the borehole radius can be integrated to the ellipse calculation.
+![Projection of the ellipsoid on the horizontal, vertical and perpendicular planes](EllipsoidProjections.JPG)
 - `CalculateExtremumsInDepth`: this method calculates two `Point3D`: one is the shallowest of the ellipsoid, and the other one
 is the deepest point on the ellipsoid. The algorithm is based on the description found in Cayeux et al. (2014) 
 [https://doi.org/10.2118/170330-MS](https://doi.org/10.2118/170330-MS)
 
+![Extremum points on the ellipsoid in the vertical direction](EllipsoidExtremumPointsVertical.JPG)
 
 # SurveyStationList
 A `SurveyStationList` is a list of `SurveyStation`. It provides the following methods:
@@ -359,28 +362,36 @@ A `SurveyStationList` has covariance matrices for each of its `SurveyStation`, m
 trajectory must respect a consistency compared to those covariance matrices. The method `Realize` produces a `SurveyList`, i.e., a list of `Survey`. There is
 indeed no needs anymore to have information about the covariances in the realized trajectory. The generation algorithm is the following:
 
-1. The last `SurveyStation` of the `SurveyStationList` is used to draw randomly a point according to the probability distribution associated with this `SurveyStation`.
+1. The last `SurveyStation` of the `SurveyStationList`, indexed $n$, is used to draw randomly a point according to the probability distribution associated with this `SurveyStation`.
 For that purpose, the covariance matrix is diagonalized and the principal components are calculated. The eigenvalues are the variances in the three principal
-directions, ${\sigma_x}^2, {\sigma_y}^2, {\sigma_z}^2$, with $x, y, z$ being the local coordinate system along the principal directions. 
+directions, ${\sigma_x_n}^2, {\sigma_y_n}^2, {\sigma_z_n}^2$, with $x_n, y_n, z_n$ being the local coordinate system along the principal directions at the `SurveyStation` $n$. 
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
-$\mathcal{N}(0,{\sigma_x}^2),  \mathcal{N}(0,{\sigma_y}^2, \mathcal{N}(0,{\sigma_z}^2)$. Three values are drawn using these probability distributions,
-$\hat{x}, \hat{y}, \hat{z}$. The $\chi^2_3$ corresponding to this position is calculated using the following relation: 
-$${\frac{\hat{x}^2}{{\sigma_x}^2}+\frac{\hat{y}^2}{{\sigma_y}^2}+\frac{\hat{z}^2}{{\sigma_z}^2}}={\chi^2_3}$$. The calculated $\chi^2_3$
-is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $\chi^2_3$. The latitude and longitude
-of that point are calculated using an instance of `SphericalPoint3D`. They are denoted respectively $\phi_0$ and $\lambda_0$. The 
+$\mathcal{N}(0,{\sigma_x_n}^2),  \mathcal{N}(0,{\sigma_y_n}^2, \mathcal{N}(0,{\sigma_z_n}^2)$. Three values are drawn using these probability distributions,
+$\hat{x_n}, \hat{y_n}, \hat{z_n}$. The $\chi^2_{3_n}$ corresponding to this position is calculated using the following relation: 
+$${\frac{\hat{x_n}^2}{{\sigma_x_n}^2}+\frac{\hat{y_n}^2}{{\sigma_y_n}^2}+\frac{\hat{z_n}^2}{{\sigma_z_n}^2}}={\chi^2_{3_n}}$$. The calculated $\chi^2_{3_n}$
+is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $\chi^2_{3_n}$. The latitude and longitude
+of that point are calculated using an instance of `SphericalPoint3D`. They are denoted respectively $\phi_n$ and $\lambda_n$. The 
 randomly drawn point around the `SurveyStation` is then converted to a `Survey` in the Riemaniann manifold representing the Earth, using
 the inverse transformation based on the eigenvectors.
-2. Iteratively and in the upward direction, other `Station` are calculated using $\phi_0$ and $\lambda_0$ and a radial distance 
-calculated using the ellipsoid of uncertainty defined by $\chi^2_3$, i.e., 
-$$r^2=\frac{\chi^2_3}{\frac{\cos{\phi_0}^2.\cos{\lambda_0}^2}{{\sigma_x}^2}+\frac{\cos{\phi_0}^2.\sin{\lambda_0}^2}{{\sigma_y}^2}+\frac{\sin{\phi_0}^2}{{\sigma_z}^2}}$$
+![Schematic representation of the first step of the procedure to generate a realization of a SurveyStationList](RealizationFirstStep.JPG)
+
+2. Iteratively and in the upward direction, other `Station` are calculated using $\phi_n$ and $\lambda_n$ and a radial distance 
+calculated using the ellipsoid of uncertainty defined by $\chi^2_{3_n}$, i.e., 
+$${r^2}_i=\frac{\chi^2_{3_n}}{\frac{\cos{\phi_n}^2.\cos{\lambda_n}^2}{{\sigma_x_i}^2}+\frac{\cos{\phi_n}^2.\sin{\lambda_n}^2}{{\sigma_y_i}^2}+\frac{\sin{\phi_n}^2}{{\sigma_z_i}^2}}$$
+where ${\sigma_x_i}^2, {\sigma_y_i}^2, {\sigma_z_i}^2$ are the variance in the principal directions at `SurveyStation` $i$. $r_i$ is the 
+radial distance, in the coordinate system oriented by the principle directions at the `SurveyStation` $i$.
 Of course, this `SphericalPoint3D` is defined in the local coordinate system directed by the principal components of the covariance
-matrix of the `SurveyStation`. Having retrieved the $x$, $y$ and $z$ components of the point in the local coordinate system,
+matrix of the `SurveyStation`. Having retrieved the $x_i$, $y_i$ and $z_i$ components of the point in the local coordinate system,
 it is transformed to the Riemannian manifold coordinates using the inverse transformation based on the eigen vectors of the covariance
 matrix. This operation generates a list of `Survey` for which the `RiemaniannNorth`, `RiemaniannEast` and `TVD` are filled in.
+![Schematic representation of the first step of the procedure to generate a realization of a SurveyStationList](RealizationSecondStep.JPG)
+
 3. The last operation consists in calculating the `Inclination`, `Azimuth` and `Abscissa` at each `Survey`. From top to bottom, the list
 is transversed and a circular arcj is calculated that links the previous `Survey`, which is fully defined, with the current `Survey`, 
 which is only known by its `RiemaniannNorth`, `RiemaniannEast` and `TVD`. Knowing the circular arc, it is the possible to calculate the
 length of the arc, i.e., derive the `Abscissa`, the `Inclination` and the `Azimuth`.
+
+
 
 ## Calculation of the envelope of uncertainty of a SurveyStationList
 It is possible to define a scaling factor and a list of wellbore radii per depth range. The scaling factor is used when searching for the
