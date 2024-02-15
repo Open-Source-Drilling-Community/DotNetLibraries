@@ -40,37 +40,7 @@ $$b = a - f \cdot a$$
 The radius of the Earth at a given latitude, $\phi$ is given by:
 $$R(\phi) = \frac{{a \cdot \sqrt{{\cos^2(\phi) + \frac{{b^2}}{{a^2}} \cdot \sin^2(\phi)}}}}{{\sqrt{1 - f \cdot (2 - f) \cdot \sin^2(\phi)}}}$$
 
-<svg width="700" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
-<g>
-<rect x="0" y="0" width="700" height="300" fill="#FFFFFF"/>
-<path d="M136.5 141C136.5 76.6589 226.491 24.5001 337.5 24.5001 448.509 24.5001 538.5 76.6589 538.5 141 538.5 205.341 448.509 257.5 337.5 257.5 226.491 257.5 136.5 205.341 136.5 141Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<path d="M282.5 141C282.5 76.6589 306.005 24.5001 335 24.5001 363.995 24.5001 387.5 76.6589 387.5 141 387.5 205.341 363.995 257.5 335 257.5 306.005 257.5 282.5 205.341 282.5 141Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<path d="M136.5 141C136.5 119.185 226.491 101.5 337.5 101.5 448.509 101.5 538.5 119.185 538.5 141 538.5 162.815 448.509 180.5 337.5 180.5 226.491 180.5 136.5 162.815 136.5 141Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(9.6 94)">Equator</text>
-<path d="M48.6383 106.197 140.944 148.27 140.668 148.876 48.3618 106.803ZM141.252 144.38 146.872 151.338 137.934 151.66Z"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(128.54 275)">Greenwich</text>
-<path d="M0.214529-0.255125 48.2213 40.1127 47.7923 40.6229-0.214529 0.255125ZM49.5606 36.4482 53.1093 44.6584 44.412 42.5712Z" transform="matrix(1 0 0 -1 245.5 268.158)"/>
-<path d="M255.5 141C255.5 76.6589 291.317 24.5001 335.5 24.5001 379.683 24.5001 415.5 76.6589 415.5 141 415.5 205.341 379.683 257.5 335.5 257.5 291.317 257.5 255.5 205.341 255.5 141Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" stroke-dasharray="5.33333 4" fill="none" fill-rule="evenodd"/>
-<path d="M173.5 78.5001C173.5 60.8269 247.597 46.5001 339 46.5001 430.403 46.5001 504.5 60.8269 504.5 78.5001 504.5 96.1732 430.403 110.5 339 110.5 247.597 110.5 173.5 96.1732 173.5 78.5001Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" stroke-dasharray="5.33333 4" fill="none" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(347.344 198)">0,0</text>
-<path d="M411.682 107.294C416.256 129.694 416.098 153.579 411.229 175.847" stroke="#0070C0" stroke-width="4" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<path d="M414.179 106.458C405.4 107.331 396.234 108.05 386.791 108.607" stroke="#0070C0" stroke-width="4" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(431.699 148)">x</text>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(392.211 95)">y</text>
-<path d="M335 3 335 279.232" stroke="#000000" stroke-width="2" stroke-miterlimit="8" stroke-dasharray="8 6 2 6" fill="none" fill-rule="evenodd"/>
-<path d="M0.278086-0.183792 18.4004 27.2361 17.8442 27.6037-0.278086 0.183792ZM20.7241 24.1021 21.7981 32.9816 14.0501 28.5131Z" transform="matrix(-1 0 0 1 335.298 78.5001)"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(309.658 88)">R</text>
-<path d="M557.807 140.46 116 140" stroke="#000000" stroke-width="2" stroke-miterlimit="8" stroke-dasharray="8 6 2 6" fill="none" fill-rule="evenodd"/>
-<path d="M334.968 142.514 293.465 116.948 295.563 113.542 337.066 139.108ZM293.07 121.402 286 110 299.364 111.185Z" fill="#0070C0"/>
-<path d="M0 0 47.6964 39.883" stroke="#000000" stroke-width="0.666667" stroke-miterlimit="8" fill="none" fill-rule="evenodd" transform="matrix(-1 0 0 1 333.196 140.5)"/>
-<path d="M301.663 165.273C300.875 150.727 300.789 135.71 301.408 121.033" stroke="#000000" stroke-width="2" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(285.473 136)">φ</text>
-<path d="M385.683 164.3C357.757 165.115 328.66 165.22 300.359 164.606" stroke="#000000" stroke-width="2" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<path d="M335.865 138.197 402.763 170.309 401.032 173.915 334.135 141.803ZM402.691 165.837 410.913 176.439 397.498 176.655Z" fill="#0070C0"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(341.513 160)">λ</text>
-<path d="M382.5 178.5C382.5 177.395 383.395 176.5 384.5 176.5 385.605 176.5 386.5 177.395 386.5 178.5 386.5 179.605 385.605 180.5 384.5 180.5 383.395 180.5 382.5 179.605 382.5 178.5Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill-rule="evenodd"/>
-</g>
-</svg>
+![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
 
 At that latitude the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $\lambda$:
 $y = R(\phi) \cdot \lambda$
@@ -98,42 +68,8 @@ Knowing the radial position, the latitude and the longitude, it is possible to c
 system centered at the Earth center and with X, Y and Z directions that are fixed orthogonal axes attached to the Earth. The method `GetSphericalPoint` returns a `SphericalPoint3D`
 in this cartesian reference system. The X-direction passes by the equator and the Greenwich meridian. The Y-direction passes by the equator and is 90deg east
 for the Greenwich meridian. The Z-direction passed by the North pole.
-<svg width="700" height="330" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
-<g>
-<rect x="0" y="0" width="700" height="330" fill="#FFFFFF"/>
-<path d="M136.5 169.5C136.5 104.883 226.491 52.5001 337.5 52.5001 448.509 52.5001 538.5 104.883 538.5 169.5 538.5 234.117 448.509 286.5 337.5 286.5 226.491 286.5 136.5 234.117 136.5 169.5Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<path d="M282.5 169.5C282.5 104.883 306.005 52.5001 335 52.5001 363.995 52.5001 387.5 104.883 387.5 169.5 387.5 234.117 363.995 286.5 335 286.5 306.005 286.5 282.5 234.117 282.5 169.5Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<path d="M136.5 169.5C136.5 147.961 226.491 130.5 337.5 130.5 448.509 130.5 538.5 147.961 538.5 169.5 538.5 191.039 448.509 208.5 337.5 208.5 226.491 208.5 136.5 191.039 136.5 169.5Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(9.6 123)">Equator</text>
-<path d="M48.6383 135.197 140.944 177.27 140.668 177.876 48.3618 135.803ZM141.252 173.38 146.872 180.338 137.934 180.66Z"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(128.54 304)">Greenwich</text>
-<path d="M0.214529-0.255125 48.2213 40.1127 47.7923 40.6229-0.214529 0.255125ZM49.5606 36.4482 53.1093 44.6584 44.412 42.5712Z" transform="matrix(1 0 0 -1 245.5 297.158)"/>
-<path d="M255.5 169.5C255.5 104.883 291.317 52.5001 335.5 52.5001 379.683 52.5001 415.5 104.883 415.5 169.5 415.5 234.117 379.683 286.5 335.5 286.5 291.317 286.5 255.5 234.117 255.5 169.5Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" stroke-dasharray="5.33333 4" fill="none" fill-rule="evenodd"/>
-<path d="M173.5 107.5C173.5 89.8269 247.597 75.5001 339 75.5001 430.403 75.5001 504.5 89.8269 504.5 107.5 504.5 125.173 430.403 139.5 339 139.5 247.597 139.5 173.5 125.173 173.5 107.5Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" stroke-dasharray="5.33333 4" fill="none" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(347.344 227)">0,0</text>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(480.782 285)">X</text>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(561.776 137)">Y</text>
-<path d="M336.049 38.6593 336.108 46.6591 334.108 46.6738 334.049 38.674ZM336.152 52.6589 336.167 54.6589 334.167 54.6736 334.152 52.6736ZM336.211 60.6587 336.27 68.6585 334.27 68.6732 334.211 60.6734ZM336.314 74.6583 336.329 76.6583 334.329 76.673 334.314 74.673ZM336.373 82.6581 336.432 90.6579 334.432 90.6726 334.373 82.6728ZM336.476 96.6577 336.49 98.6577 334.49 98.6724 334.476 96.6724ZM336.535 104.658 336.593 112.657 334.593 112.672 334.535 104.672ZM336.638 118.657 336.652 120.657 334.652 120.672 334.638 118.672ZM336.696 126.657 336.755 134.657 334.755 134.671 334.696 126.672ZM336.799 140.657 336.814 142.656 334.814 142.671 334.799 140.671ZM336.858 148.656 336.917 156.656 334.917 156.671 334.858 148.671ZM336.961 162.656 336.976 164.656 334.976 164.671 334.961 162.671ZM331.059 40.0292 335 32 339.059 39.9704Z"/><path d="M0.130962-0.306529 72.2806 30.5188 72.0187 31.1319-0.130962 0.306529ZM72.4952 26.6232 78.2803 33.4446 69.3521 33.9799Z" transform="matrix(1 0 0 -1 335.5 168.945)"/><path d="M557.807 169.46 116 169" stroke="#000000" stroke-width="2" stroke-miterlimit="8" stroke-dasharray="8 6 2 6" fill="none" fill-rule="evenodd"/>
-<path d="M334.968 171.514 293.465 145.948 295.563 142.542 337.066 168.108ZM293.07 150.402 286 139 299.364 140.185Z" fill="#0070C0"/><path d="M0 0 47.6964 39.883" stroke="#000000" stroke-width="0.666667" stroke-miterlimit="8" fill="none" fill-rule="evenodd" transform="matrix(-1 0 0 1 333.196 169.5)"/>
-<path d="M301.658 193.778C300.876 179.228 300.79 164.211 301.404 149.531" stroke="#000000" stroke-width="2" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(285.473 165)">φ</text>
-<path d="M385.683 192.3C357.757 193.115 328.66 193.22 300.359 192.606" stroke="#000000" stroke-width="2" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
-<path d="M335.865 167.197 402.763 199.309 401.032 202.915 334.135 170.803ZM402.691 194.837 410.913 205.439 397.498 205.655Z" fill="#0070C0"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(341.513 189)">λ</text>
-<path d="M382.5 207C382.5 205.619 383.395 204.5 384.5 204.5 385.605 204.5 386.5 205.619 386.5 207 386.5 208.381 385.605 209.5 384.5 209.5 383.395 209.5 382.5 208.381 382.5 207Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill-rule="evenodd"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(338.39 142)">R(</text>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(358.723 142)">φ</text>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(374.39 142)">)</text>
-<path d="M335.617 167.213 341.914 172.147 340.68 173.722 334.383 168.787ZM346.636 175.848 348.211 177.082 346.977 178.656 345.403 177.422ZM352.933 180.783 359.23 185.717 357.997 187.291 351.7 182.357ZM363.953 189.418 365.527 190.651 364.294 192.226 362.719 190.992ZM370.25 194.352 376.547 199.287 375.313 200.861 369.016 195.926ZM381.27 202.987 382.844 204.221 381.61 205.795 380.036 204.562ZM387.567 207.922 393.864 212.856 392.63 214.43 386.333 209.496ZM398.586 216.557 400.16 217.791 398.927 219.365 397.353 218.131ZM404.883 221.491 411.18 226.426 409.947 228 403.65 223.066ZM415.903 230.127 417.477 231.36 416.243 232.935 414.669 231.701ZM422.2 235.061 428.497 239.996 427.263 241.57 420.966 236.635ZM433.219 243.696 434.794 244.93 433.56 246.504 431.986 245.271ZM439.516 248.631 445.813 253.565 444.58 255.139 438.283 250.205ZM450.536 257.266 452.11 258.5 450.877 260.074 449.302 258.84ZM456.833 262.2 463.13 267.135 461.896 268.709 455.599 263.775ZM467.853 270.836 469.427 272.069 468.193 273.643 466.619 272.41ZM471.349 269.764 475.179 277.847 466.415 276.061Z"/><path d="M0.154663-0.987967 8.0584 0.249336 7.74907 2.22527-0.154663 0.987967ZM13.9862 1.17731 15.9621 1.48664 15.6528 3.46257 13.6769 3.15325ZM21.8899 2.41462 29.7937 3.65192 29.4844 5.62785 21.5806 4.39055ZM35.7215 4.5799 37.6974 4.88922 37.3881 6.86516 35.4122 6.55583ZM43.6252 5.8172 51.529 7.0545 51.2196 9.03044 43.3159 7.79313ZM57.4568 7.98248 59.4327 8.29181 59.1234 10.2677 57.1474 9.95841ZM65.3605 9.21978 73.2642 10.4571 72.9549 12.433 65.0512 11.1957ZM79.192 11.3851 81.168 11.6944 80.8586 13.6703 78.8827 13.361ZM87.0958 12.6224 94.9995 13.8597 94.6902 15.8356 86.7864 14.5983ZM100.927 14.7876 102.903 15.097 102.594 17.0729 100.618 16.7636ZM108.831 16.0249 116.735 17.2623 116.425 19.2382 108.522 18.0009ZM122.663 18.1902 124.639 18.4996 124.329 20.4755 122.353 20.1662ZM130.566 19.4275 138.47 20.6648 138.161 22.6408 130.257 21.4035ZM144.398 21.5928 146.374 21.9021 146.064 23.8781 144.089 23.5687ZM152.302 22.8301 160.205 24.0674 159.896 26.0434 151.992 24.8061ZM166.133 24.9954 168.109 25.3047 167.8 27.2807 165.824 26.9713ZM174.037 26.2327 181.941 27.47 181.631 29.4459 173.728 28.2086ZM187.868 28.398 189.844 28.7073 189.535 30.6832 187.559 30.3739ZM195.772 29.6353 203.676 30.8726 203.367 32.8485 195.463 31.6112ZM209.604 31.8006 211.58 32.1099 211.27 34.0858 209.294 33.7765ZM215.095 29.6237 222.381 34.8129 213.858 37.5275Z" transform="matrix(1 0 0 -1 336 169.813)"/>
-<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(329.926 24)">Z</text>
-<path d="M411 136 411 196.879" stroke="#4472C4" stroke-width="2" stroke-miterlimit="8" stroke-dasharray="8 6" fill="none" fill-rule="evenodd"/>
-<path d="M0 0 37.9565 0.000104987" stroke="#4472C4" stroke-width="2" stroke-miterlimit="8" stroke-dasharray="8 6" fill="none" fill-rule="evenodd" transform="matrix(-1 0 0 1 410.957 197)"/>
-<path d="M410.313 197.018 366 165" stroke="#4472C4" stroke-width="2" stroke-miterlimit="8" stroke-dasharray="8 6" fill="none" fill-rule="evenodd"/><path d="M412.237 136.412 336 99" stroke="#4472C4" stroke-width="2" stroke-miterlimit="8" stroke-dasharray="8 6" fill="none" fill-rule="evenodd"/>
-<text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(356.788 205)">x</text>
-<text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(358.027 162)">y</text>
-<text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(321.943 102)">z</text>
-</g>
-</svg>
+
+![Schematic representation of the conversion from latitude-longitude to spherical coordinates](SphericalCoordinates.JPG)
 
 ## Example of Riemannian and Cartesian coordinate transformation from Latitude and Longitude
 
@@ -384,8 +320,38 @@ MD (m)  Incl (°)        Az (°)  TVD (m) Riem. North (m) Riem. East (m)  DLS (�
 </pre>
 
 # SurveyStation
+A `SurveyStation` is a subclass of `Survey`. It extends a `Survey` by adding a 3x3 covariance matrix and `Vector3D` `Bias`.
+The covariance matrix represents the 3D gaussian probability distribution of the position of the `SurveyStation` in a 
+local 3D space and with directions in the North, East and downward Vertical.
+The `Bias` contains the possible mean values of this probability distribution relative to the position of the `SurveyStation`.
+
+The class `SurveyStation` defines the following methods:
+- `CalculateEllipsoid`: this method is used to calculate an ellipsoid of uncertainty at a given confidence factor. The ellipsoid
+is defined by a `Vector3D` that contains the radii in the three principle components and a `Matrix3x3` that contains the eigen
+vectors. The ellipsoid can be expanded by the borehole radius and it can be increased by a scaling factor. The scaling factor 
+is typically used when searching for the safety factor between two `SurveyStationList`.
+- `CalculateHorizontalEllipse`: this method calculates the horizontal projection of the ellipsoid. The result is provided with
+2 radii stored in a `Vector2D` and an angle compared to the true north. A scaling factor and the borehole radius can be
+used in the calculation of the ellipse.
+- `CalculateVerticalEllipse`: this method calculates the vertical projection of the ellipsoid. The result is stored as 2 
+radii in a `Vector2D`and an angle compared to the downward vertical. A scaling factor and the borehole radius can be integrated
+to the ellipse calculation.
+- `CalculatePerpendicularEllipse`: this method calculates the projection of the ellipsoid in a perpendicular plane to the tangent
+at that `SurveyStation`. The calculated ellipse is store as 2 radii in a `Vector2D` and an angle compared to the upward vertical.
+A scaling factor and the borehole radius can be integrated to the ellipse calculation.
+- `CalculateExtremumsInDepth`: this method calculates two `Point3D`: one is the shallowest of the ellipsoid, and the other one
+is the deepest point on the ellipsoid. The algorithm is based on the description found in Cayeux et al. (2014) 
+[https://doi.org/10.2118/170330-MS](https://doi.org/10.2118/170330-MS)
+
 
 # SurveyStationList
+A `SurveyStationList` is a list of `SurveyStation`. It provides the following methods:
+- `Calculate`: this method calulates the position of each `SurveyStation` using the minimum curvature method.
+- `Realize`: this method is used to draw randomly a `SurveyList` based on the covariance matrices at each `SurveyStation` of the `SurveyStationList`
+- `EnvelopeOfUncertainty`: this method is used to obtain an envelope of uncertainty at a given confidence factor. 
+- `HorizontalUncertainties`: this method is used to obtain a list of horizontal projections of the ellipsoid of uncertainties at a given confidence factor.
+- `VerticalUncertainties`: this method is used to obtain a list of vertical projections of the ellipsoid of uncertainties at a given confidence factor.
+- `ExtremumInDepthSurveyLists`: this method is used to obtain a high- and low- side `SurveyList` corresponding to the shallowest and deepest points of the ellipsoid of uncertainty at a given confidence factor.
 
 ## Realization of a SurveyStationList
 A `SurveyStationList` has covariance matrices for each of its `SurveyStation`, meaning that a true trajectory can be anywhere in the surrounding of the
@@ -415,4 +381,11 @@ matrix. This operation generates a list of `Survey` for which the `RiemaniannNor
 is transversed and a circular arcj is calculated that links the previous `Survey`, which is fully defined, with the current `Survey`, 
 which is only known by its `RiemaniannNorth`, `RiemaniannEast` and `TVD`. Knowing the circular arc, it is the possible to calculate the
 length of the arc, i.e., derive the `Abscissa`, the `Inclination` and the `Azimuth`.
+
+## Calculation of the envelope of uncertainty of a SurveyStationList
+It is possible to define a scaling factor and a list of wellbore radii per depth range. The scaling factor is used when searching for the
+safety factor between two `SurveyStationList`. The envelope of uncertainty is constructed using the perpendicular projections
+of the ellipsoids of uncertainty at the given confidence factor. Each ellipse is discretized as a polygon. The number of
+vertices of the polygons is passed as argument to the function call. It can happen that there is a half rotation of the indices
+of the polygons from one `SurveyStation` to the next one. The algorithm checks for this and untwists when necessary.
 
