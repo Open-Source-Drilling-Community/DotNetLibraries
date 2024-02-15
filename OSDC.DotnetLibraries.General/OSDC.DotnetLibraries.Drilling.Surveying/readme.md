@@ -367,8 +367,8 @@ For that purpose, the covariance matrix is diagonalized and the principal compon
 directions, ${\sigma_{x_n}}^2, {\sigma_{y_n}}^2, {\sigma_{z_n}}^2$, with $x_n, y_n, z_n$ being the local coordinate system along the principal directions at the `SurveyStation` $n$. 
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
 $\mathcal{N}(0,{\sigma_{x_n}}^2),  \mathcal{N}(0,{\sigma_{y_n}}^2, \mathcal{N}(0,{\sigma_{z_n}}^2)$. Three values are drawn using these probability distributions,
-$\hat{x_n}, \hat{y_n}, \hat{z_n}$. The $\chi^2_{3_n}$ corresponding to this position is calculated using the following relation: 
-$${\frac{\hat{x_n}^2}{{\sigma_{x_n}}^2}+\frac{\hat{y_n}^2}{{\sigma_{y_n}}^2}+\frac{\hat{z_n}^2}{{\sigma_{z_n}}^2}}={\chi^2_{3_n}}$$. The calculated $\chi^2_{3_n}$
+$\hat{x}_n, \hat{y}_n, \hat{z}_n$. The $\chi^2_{3_n}$ corresponding to this position is calculated using the following relation: 
+$${\frac{{\hat{x}_n}^2}{{\sigma_{x_n}}^2}+\frac{{\hat{y}_n}^2}{{\sigma_{y_n}}^2}+\frac{{\hat{z}_n}^2}{{\sigma_{z_n}}^2}}={\chi^2_{3_n}}$$. The calculated $\chi^2_{3_n}$
 is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $\chi^2_{3_n}$. The latitude and longitude
 of that point are calculated using an instance of `SphericalPoint3D`. They are denoted respectively $\phi_n$ and $\lambda_n$. The 
 randomly drawn point around the `SurveyStation` is then converted to a `Survey` in the Riemaniann manifold representing the Earth, using
