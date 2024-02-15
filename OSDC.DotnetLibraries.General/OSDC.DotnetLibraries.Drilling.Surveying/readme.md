@@ -378,7 +378,7 @@ the inverse transformation based on the eigenvectors.
 
 2. Iteratively and in the upward direction, other `Station` are calculated using $\phi_n$ and $\lambda_n$ and a radial distance 
 calculated using the ellipsoid of uncertainty defined by $\chi^2_{3_n}$, i.e., 
-$${r^2}_i=\frac{\chi^2_{3_n}}{\frac{\cos{\phi_n}^2.\cos{\lambda_n}^2}{{\sigma_{x_i}}^2}+\frac{\cos{\phi_n}^2.\sin{\lambda_n}^2}{{\sigma_{y_i}}^2}+\frac{\sin{\phi_n}^2}{{\sigma_{z_i}}^2}}$$
+$$r^2_i=\frac{\chi^2_{3_n}}{\frac{\cos{\phi_n}^2.\cos{\lambda_n}^2}{{\sigma_{x_i}}^2}+\frac{\cos{\phi_n}^2.\sin{\lambda_n}^2}{{\sigma_{y_i}}^2}+\frac{\sin{\phi_n}^2}{{\sigma_{z_i}}^2}}$$
 where ${\sigma_{x_i}}^2, {\sigma_{y_i}}^2, {\sigma_{z_i}}^2$ are the variance in the principal directions at `SurveyStation` $i$. $r_i$ is the 
 radial distance, in the coordinate system oriented by the principle directions at the `SurveyStation` $i$.
 Of course, this `SphericalPoint3D` is defined in the local coordinate system directed by the principal components of the covariance
