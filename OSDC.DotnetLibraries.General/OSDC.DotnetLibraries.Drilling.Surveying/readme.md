@@ -399,6 +399,12 @@ length of the arc, i.e., derive the `Abscissa`, the `Inclination` and the `Azimu
 It is possible to define a scaling factor and a list of wellbore radii per depth range. The scaling factor is used when searching for the
 safety factor between two `SurveyStationList`. The envelope of uncertainty is constructed using the perpendicular projections
 of the ellipsoids of uncertainty at the given confidence factor. Each ellipse is discretized as a polygon. The number of
-vertices of the polygons is passed as argument to the function call. It can happen that there is a half rotation of the indices
-of the polygons from one `SurveyStation` to the next one. The algorithm checks for this and untwists when necessary.
+vertices of the polygons is passed as argument to the function call. 
 
+![Construction of the envelope of uncertainty when the numbering for two adjacent ellipses coincides](EnvelopeOfUncertaintyDirectNumbering.JPG)
+
+It can happen that there is a half rotation of the indices of the polygons from one `SurveyStation` to the next one. 
+To avoid this problem, the distance between the first vertex of the previous ellipse is calculated to all the vertices of the next ellipse.
+The shortest distance indicates which vertex of the next ellipse shall be considered as the first one.
+
+![Construction of the envelope of uncertainty when renumbering is necessary](EnvelopeOfUncertaintyRenumbering.JPG)
