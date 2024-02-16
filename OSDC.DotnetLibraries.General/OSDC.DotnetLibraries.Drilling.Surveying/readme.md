@@ -408,3 +408,16 @@ To avoid this problem, the distance between the first vertex of the previous ell
 The shortest distance indicates which vertex of the next ellipse shall be considered as the first one.
 
 ![Construction of the envelope of uncertainty when renumbering is necessary](EnvelopeOfUncertaintyRenumbering.JPG)
+
+## Horizontal and Vertical Projections of the Ellipsoids
+Two methods are available to generate series of horizontal and vertical projections of the ellipsoids at a given confidence factor. 
+
+![Horizontal and Vertical ellipses along a SurveyStationList](HorizontalAndVerticalUncertainties.JPG)
+
+## Extremum Survey lists in Depth
+Two `SurveyList` can be calculated corresponding to the shallowest and the deepest trajectories at a given confidence factor. The last survey point
+is used to calculate the shallowest and deepest TVD on the ellipsoid of uncertainty. The corresponding latitude and longitude of those points in 
+the local reference frame of the ellipsoide are then used to generate the `SurveyList` in an identical way as the realization of `SurveyList` using 
+the `Covariance` matrices.
+
+![Extremum survey lists in depth](ExtremumSurveyListInDepth.JPG)
