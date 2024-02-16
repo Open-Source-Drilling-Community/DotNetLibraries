@@ -4,7 +4,8 @@ This package contains classes to perform survey calculations.
 
 # Survey
 A `Survey` is a subclass of `CurvilinearPoint3D`. For that reason, it is a `Point3D` with `X`, `Y` and `Z` components, but it is also defined
-on a curve and has therefore a curvilinear `Abscissa` and a tangent defined by an `Inclination` and an `Azimuth`. In the drilling world a different
+on a curve and has therefore a curvilinear `Abscissa` (denoted here as $s$) and a tangent defined by an `Inclination` (denoted here $\theta$) 
+and an `Azimuth` (denoted here $\alpha$). In the drilling world a different
 terminology than the mathematical one is used and synonyms properties are added as a matter of convenience. For instance `MD` is a synonym for `Abscissa`, 
 and `TVD` is a synonym for `Z`. Meta data are also provided, meaning that some properties are redefined locally to allow for adding `Attribute` like
 `DrillingPhysicalQuantity` or `PositionReference` for instance. 
@@ -14,7 +15,26 @@ there are four additional properties `Curvature`, `Toolface`, `BUR` and `TUR`, w
 The build-up rate is the derivative of the inclination with regards to the curvilinear abscissa, i.e., $\beta = \frac{d\theta}{ds}$. The turn-rate is 
 the derivative of the azimuth with regards to the curvilinear abscissa, i.e., $\tau = \frac{d\alpha}{ds}$.
 
-The class `Survey` defines two additional properties: `Latitude` and `Longitude`. This is 
+Furthermore, it is often useful to display a trajectory in a 2D vertical coordinate where one of the axis is the TVD. In the past, trajectories were essentially
+staying in the same direction and therefore it was sufficient to project the trajectory on a vertical plane following that direction. Nowadays many trajectories
+are truly 3D, with large changes in azimuth and consequently a simple projection on a vertical is not really convenient. A solution consists in considering that
+vertical lines can pass by any position along the trajectory. This series of vertical lines defined a ruled surface 
+(see [wikipedia: ruled surface](https://en.wikipedia.org/wiki/Ruled_surface)). More precisely, as all the lines are parallel, it defined a developable surface.
+An important property of developable surfaces is that they can be unfolded while preserving distances on the associated manifold. In road design, the unfolded view
+of this developable surface is called the longitudinal profile. There is therefore an additional property to a `Survey` called `LongitudinalProfile` which contains
+the curvilinear abscissa of the `Survey` in the horizonal projection of the trajectory.
+
+![Longitudinal Profile](LongitudinalProfile.JPG)
+
+The hypothesis behind the minimum curvature method to calculate the position of a `Survey` is that the curved followed by the well is a circular arc.
+This circular arc is contained in a plane defined by two vectors: the tangent of the starting `Survey` and the rotated vertical upward vector with the angle $\omega$
+corresponding to the initial toolface of the circular arc using the tangent as the axis of the rotation. The projection of this circular arc on the horizontal plane
+is an arc of an ellipse. This ellipse is defined by a center, a semi-long and a semi-short axes. The length of this arc of ellipse is the difference of curvilinear abscissas
+in the longitudinal profile direction. To calculate the length of the arc of ellipse, it is necessary to recourse to an elliptical intergral of the second kind.
+
+![Projection of a circular arc between two Survey into the horizontal plane](LongitudinalProfileArcConversion.JPG)
+
+The class `Survey` defines two additional properties: `Latitude` (denoted here $\phi$) and `Longitude` (denoted here $\lambda$). This is 
 because the drilling data model makes only use of globally defined values, meaning that a well position, i.e., a `Survey` must be defined uniquely
 on the Earth. This is achieved by using `Latidude` and `Longitude` on the WGS84 spheroid, which is the reference Earth spheroid for all geodetic
 conversions. Then remains the problem of what `X`, `Y` and `Z` mean when considering that they shall be defined globally for any position on the Earth.
@@ -32,7 +52,6 @@ equipped with a positive-definite inner product on the tangent space at each poi
 The next section explains how `Latitude` and `Longitude` are converted to `X` and `Y`.
 
 ## Conversion from Latitude-Longitude to Riemannian Coordinates
-
 The earth is modelled as an oblate, i.e., a spheroid flatened at the pole. At a given latitude, a path on the Earth is a circle. Let us consider that the origin of 
 longitudes is Greenwich and that the Earth is modelled by a semi-long axis, $a$, and a flatening, $f$. The flatening is defined as:
 $$f = \frac{{a - b}}{{a}}$$
@@ -59,6 +78,7 @@ namely `SpecialFunctions.EllipticE(phi, m)` and its inverse is `Elliptic.Inverse
 
 For short lateral displacements, considering that `X` and `Y` are cartesian coordinates does not introduce much error. This is actually what is assumed
 by most Earth Model software used in E&P applications. So `X` and `Y` can be considered as respectively a sort of Northing and Easting coordinate.
+
 
 ## Conversion to Spherical Coordinate
 At a given latitude, the radial distance to the centre of the Earth is given by: $$r = \frac{a}{\sqrt{1-e^2 \sin(\phi)}}$$ and where $e=\sqrt{\frac{a^2-b^2}{a^2}}$ is the eccentricity 
@@ -111,6 +131,23 @@ The execution result is:
 RiemannianNorth: 6560503.255 m, RiemannianEast: 635328.164 m
 CartesianX: 3284101.435 m, CartesianY: 328216.605 m, CartesianZ: 5478668.203 m
 </pre>
+
+## Distance on a Riemaniann Manifold
+The distance between two points on an oblate can be calculated using the inverse problem algorithm described by Vincenty 
+[doi:10.1179/sre.1975.23.176.88](https://doi.org/10.1179/sre.1975.23.176.88) and 
+[doi:10.5281/zenodo.32999](https://doi.org/10.5281/zenodo.32999). 
+
+It remains to find the distance between two points that are not at 0 TVD and not necessarily at the same TVD either.
+
+First, let us consider the effect of depth in the Riemaniann manifold perspective. As TVD is directed to the center of the Earth,
+it has been shown that the radial distance to the center of the planet is: $r-Z = \frac{a}{\sqrt{1-e^2 \sin(\phi)}}-Z$. Let us
+consider the equivalent semi-long axis of a prolate, $a'$ with the same eccentricity that passes through this radial distance to the center
+of the Earth: $r-Z =\frac{a'}{\sqrt{1-e^2 \sin(\phi)}}$, which means that $a'=(\frac{a}{\sqrt{1-e^2 \sin(\phi)}}-Z).\sqrt{1-e^2 \sin(\phi)}$.
+It is from now on possible to attach a prolate with the same eccentricity as the one of WGS84 to any vertical depth.
+
+Let us consider that two points are at the same vertical depth but not on the WGS84 spheroid. Then it is possible to calculate
+the Riemaniann distance between these two points using the Vicenty algorithm. The deepest wells that have build drilled are in the
+range of 12 km. The largest departure for a well is in the range of 15 km.
 
 ## Minimum Curvature Method and Interpolation between two `Survey`
 The minimum curvature method can be used to calculate the spatial position of a point from a previous and a measurement of `MD`, `Inclination` and `Azimuth`.
@@ -423,3 +460,10 @@ the local reference frame of the ellipsoide are then used to generate the `Surve
 the `Covariance` matrices.
 
 ![Extremum survey lists in depth](ExtremumSurveyListInDepth.JPG)
+
+# Octree Discretization
+
+## Octree Encoding of the Envelope of Uncertainty of SurveyStationList
+
+
+
