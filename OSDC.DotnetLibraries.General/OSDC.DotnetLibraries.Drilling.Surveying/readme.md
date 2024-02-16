@@ -9,8 +9,10 @@ terminology than the mathematical one is used and synonyms properties are added 
 and `TVD` is a synonym for `Z`. Meta data are also provided, meaning that some properties are redefined locally to allow for adding `Attribute` like
 `DrillingPhysicalQuantity` or `PositionReference` for instance. 
 
-Usually, a `Survey` belongs to a trajectory and therefore it is interesting maintain information about the local curvature at that point. For that reason, 
+Usually, a `Survey` belongs to a trajectory and therefore it is interesting to maintain information about the local curvature at that point. For that reason, 
 there are four additional properties `Curvature`, `Toolface`, `BUR` and `TUR`, where the last two stands for build-up rate and turn rate, respectively.
+The build-up rate is the derivative of the inclination with regards to the curvilinear abscissa, i.e., $\beta = \frac{d\theta}{ds}$. The turn-rate is 
+the derivative of the azimuth with regards to the curvilinear abscissa, i.e., $\tau = \frac{d\alpha}{ds}$.
 
 The class `Survey` defines two additional properties: `Latitude` and `Longitude`. This is 
 because the drilling data model makes only use of globally defined values, meaning that a well position, i.e., a `Survey` must be defined uniquely
