@@ -142,7 +142,7 @@ It remains to find the distance between two points that are not at 0 TVD and not
 First, let us consider the effect of depth in the Riemaniann manifold perspective. As TVD is directed to the center of the Earth,
 it has been shown that the radial distance to the center of the planet is: $r-Z = \frac{a}{\sqrt{1-e^2 \sin(\phi)}}-Z$. Let us
 consider the equivalent semi-long axis of a prolate, $a'$ with the same eccentricity that passes through this radial distance to the center
-of the Earth: $r-Z =\frac{a'}{\sqrt{1-e^2 \sin(\phi)}}$, which means that $a'=(\frac{a}{\sqrt{1-e^2 \sin(\phi)}}-Z).\sqrt{1-e^2 \sin(\phi)}$.
+of the Earth: $r-Z =\frac{a'}{\sqrt{1-e^2 \sin(\phi)}}$, which means that $a'=a-Z.\sqrt{1-e^2 \sin(\phi)}$.
 It is from now on possible to attach a prolate with the same eccentricity as the one of WGS84 to any vertical depth.
 
 Let us consider that two points are at the same vertical depth but not on the WGS84 spheroid. Then it is possible to calculate
