@@ -59,7 +59,7 @@ where $b$ is the semi-short axis. Therefore the semi short axis can be expressed
 $$b = a - f \cdot a$$
 
 The radius of the Earth at a given latitude, $\phi$ is given by:
-$$R(\phi) = \frac{{a \cdot \sqrt{{\cos^2(\phi) + \frac{{b^2}}{{a^2}} \cdot \sin^2(\phi)}}}}{{\sqrt{1 - f \cdot (2 - f) \cdot \sin^2(\phi)}}}$$
+$$R(\phi) = \sqrt{\frac{(a^2\cos{\phi})^2+(b^2+sin{\phi})^2}{(a\cos{\phi})^2+(b\sin{\phi})^2}}$$
 
 ![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
 
@@ -147,7 +147,9 @@ It is from now on possible to attach a prolate with the same eccentricity as the
 
 Let us consider that two points are at the same vertical depth but not on the WGS84 spheroid. Then it is possible to calculate
 the Riemaniann distance between these two points using the Vicenty algorithm. The deepest wells that have build drilled are in the
-range of 12 km. The largest departure for a well is in the range of 15 km.
+range of 12 km. The largest departure for a well is in the range of 15 km. Let us consider two points on the WGS84 spheroid that
+are distant by about 15 km. Each of them has a latitude and longitude. Then, we can calculate the difference of length
+between two points distant from about 15 km when using a vertical depth of 0 and a vertical depth of 12 km. 
 
 ## Minimum Curvature Method and Interpolation between two `Survey`
 The minimum curvature method can be used to calculate the spatial position of a point from a previous and a measurement of `MD`, `Inclination` and `Azimuth`.
