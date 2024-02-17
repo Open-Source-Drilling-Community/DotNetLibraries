@@ -34,10 +34,38 @@ in the longitudinal profile direction. To calculate the length of the arc of ell
 
 ![Projection of a circular arc between two Survey into the horizontal plane](LongitudinalProfileArcConversion.JPG)
 
+
+
+
 The class `Survey` defines two additional properties: `Latitude` (denoted here $\phi$) and `Longitude` (denoted here $\lambda$). This is 
 because the drilling data model makes only use of globally defined values, meaning that a well position, i.e., a `Survey` must be defined uniquely
 on the Earth. This is achieved by using `Latidude` and `Longitude` on the WGS84 spheroid, which is the reference Earth spheroid for all geodetic
-conversions. Then remains the problem of what `X`, `Y` and `Z` mean when considering that they shall be defined globally for any position on the Earth.
+conversions. It should be noted that the WGS84 latitude is a geodetic one, meaning that it is the angle between the equator plane and the normal that passes through the point. 
+But as the Earth is an oblate, the normal does not pass by the Earth center. The angle between the equatorial plane and the line that passes by the Earth
+center and the point is called the geocentric latitude, denoted here $\phi'$. The relation between the two latitudes is:
+
+$$\tan{\phi'}=(1-f)\tan{\phi}$$
+
+where $f$ is the flattening factor. The semi-long, $a$ and semi-short, $b$, axes are related as follow:
+
+$$f=\frac{a-b}{a}$$
+
+The radial distance between the point on the spheroid and the center of the Earth is denoted $R$ and can be calculated 
+as follow:
+
+$$R=\frac{a}{\sqrt{1-{e}^2.\sin^2{\phi'}}} $$
+
+where $e$ is the eccentricity. The eccentricity is defined as follow:
+
+$$e=\sqrt{1-\frac{b^2}{a^2}}$$
+
+The prime vertical radius of curvature, denoted here $N$, at the geodetic latitude $\phi$ is:
+
+$$N=\frac{a^2}{\sqrt{a^2\cos^2{\phi}+b^2\sin^2{\phi}}}$$
+
+![Geodetic and geocentric latitude and radii on an oblate](GeodeticAndGeocentricLatitude.JPG)
+
+Then remains the problem of what `X`, `Y` and `Z` mean when considering that they shall be defined globally for any position on the Earth.
 It is desirable to keep the meaning of `Z` to be a depth in the vertical direction. Then `X` and `Y` should be somewhat related to `Latitude` and `Longitude`
 but with a physical quantity of dimension Length. The solution adopted is that `X` is the length of the arc following the meridian at that 
 `Longitude` and originating from the equator and counted positively in the North direction. Similarly, `Y` is the length of the arc following the parallel 
@@ -60,6 +88,9 @@ $$b = a - f \cdot a$$
 
 The radius of the Earth at a given latitude, $\phi$ is given by:
 $$R(\phi) = \frac{a\cos{\phi}}{\sqrt{1-e^2\sin^2{\phi}}}$$
+
+where $e$ is the eccentricity:
+$$e^2=\frac{a^2-b^2}{a^2}$$
 
 ![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
 
