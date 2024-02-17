@@ -83,7 +83,7 @@ the semi short axis can be expressed as:
 $$b = a - f \cdot a$$
 
 The radius of the Earth perpendicularly to the axis passing by the poles and at a given geodetic latitude, $\phi$, is given by:
-$$R(\phi) = \frac{a\cos{(\tan^1{((1-f)\tan{(\phi)})})}}{\sqrt{1-e^2\sin^2{(\tan^1{((1-f)\tan{(\phi)}}})}}$$
+$$R(\phi) = \frac{a\cos{(\tan^{-1}{((1-f)\tan{(\phi)})})}}{\sqrt{1-e^2\sin^2{(\tan^{-1}{((1-f)\tan{(\phi)}}})}}$$
 
 ![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
 
