@@ -82,7 +82,7 @@ by most Earth Model software used in E&P applications. So `X` and `Y` can be con
 
 ## Conversion to Spherical Coordinate
 At a given latitude, the radial distance to the centre (also called the geocentric radius) of the Earth is given by: 
-$$r(\phi) = \frac{a}{\sqrt{1-e^2\sin^2{\phi}}$$
+$$r(\phi) = \frac{a}{\sqrt{1-e^2\sin^2{\phi}}}$$
 
 The radial position of the point is $r_p = r(\phi)-Z$ where $Z$ is the vertical depth at that point.
 
