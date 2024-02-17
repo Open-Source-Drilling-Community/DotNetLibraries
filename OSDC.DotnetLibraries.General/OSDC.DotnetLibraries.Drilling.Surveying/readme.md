@@ -59,7 +59,7 @@ where $b$ is the semi-short axis. Therefore the semi short axis can be expressed
 $$b = a - f \cdot a$$
 
 The radius of the Earth at a given latitude, $\phi$ is given by:
-$$R(\phi) = \cos{\phi}\sqrt{\frac{(a^2\cos{\phi})^2+(b^2sin{\phi})^2}{(a\cos{\phi})^2+(b\sin{\phi})^2}}$$
+$$R(\phi) = \frac{a\cos{\phi}}{\sqrt{1-e^2\sin^2{\phi}}}}$$
 
 ![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
 
