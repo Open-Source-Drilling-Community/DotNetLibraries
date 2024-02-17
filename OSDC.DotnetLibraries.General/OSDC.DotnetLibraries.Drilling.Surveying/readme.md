@@ -59,7 +59,7 @@ where $b$ is the semi-short axis. Therefore the semi short axis can be expressed
 $$b = a - f \cdot a$$
 
 The radius of the Earth at a given latitude, $\phi$ is given by:
-$$R(\phi) = \sqrt{\frac{(a^2\cos{\phi})^2+(b^2+sin{\phi})^2}{(a\cos{\phi})^2+(b\sin{\phi})^2}}$$
+$$R(\phi) = \cos{\phi}\sqrt{\frac{(a^2\cos{\phi})^2+(b^2sin{\phi})^2}{(a\cos{\phi})^2+(b\sin{\phi})^2}}$$
 
 ![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
 
@@ -81,8 +81,8 @@ by most Earth Model software used in E&P applications. So `X` and `Y` can be con
 
 
 ## Conversion to Spherical Coordinate
-At a given latitude, the radial distance to the centre of the Earth is given by: $$r = \frac{a}{\sqrt{1-e^2 \sin(\phi)}}$$ and where $e=\sqrt{\frac{a^2-b^2}{a^2}}$ is the eccentricity 
-of the ellipse. 
+At a given latitude, the radial distance to the centre (also called the geocentric radius) of the Earth is given by: 
+$$r(\phi) = \frac{a}{\sqrt{1-e^2\sin^2{\phi}}$$
 
 The radial position of the point is $r_p = r(\phi)-Z$ where $Z$ is the vertical depth at that point.
 
