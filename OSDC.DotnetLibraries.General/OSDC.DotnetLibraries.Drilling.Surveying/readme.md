@@ -34,13 +34,10 @@ in the longitudinal profile direction. To calculate the length of the arc of ell
 
 ![Projection of a circular arc between two Survey into the horizontal plane](LongitudinalProfileArcConversion.JPG)
 
-
-
-
 The class `Survey` defines two additional properties: `Latitude` (denoted here $\phi$) and `Longitude` (denoted here $\lambda$). This is 
 because the drilling data model makes only use of globally defined values, meaning that a well position, i.e., a `Survey` must be defined uniquely
 on the Earth. This is achieved by using `Latidude` and `Longitude` on the WGS84 spheroid, which is the reference Earth spheroid for all geodetic
-conversions. It should be noted that the WGS84 latitude is a geodetic one, meaning that it is the angle between the equator plane and the normal that passes through the point. 
+conversions. As a reminder, the earth is modelled as an oblate, i.e., a spheroid flatened at the pole. It should be noted that the WGS84 latitude is a geodetic one, meaning that it is the angle between the equator plane and the normal that passes through the point. 
 But as the Earth is an oblate, the normal does not pass by the Earth center. The angle between the equatorial plane and the line that passes by the Earth
 center and the point is called the geocentric latitude, denoted here $\phi'$. The relation between the two latitudes is:
 
@@ -71,7 +68,7 @@ but with a physical quantity of dimension Length. The solution adopted is that `
 `Longitude` and originating from the equator and counted positively in the North direction. Similarly, `Y` is the length of the arc following the parallel 
 at that `Latitude` and originating from the Greenwich meridian and counted positively in the East direction. In other words, `X` and `Y` are coordinates
 in a Riemannian manifold defined the Earth spheroid. Therefore two synonym properties are introduced: `RiemannianNorth`which corresponds to `X`
-and RiemannianEast which corresponds to `Y`. 
+and `RiemannianEast` which corresponds to `Y`.
 
 As a reminder, a manifold is a topological space that locally resembles an Euclidian space near each point. A smooth
 manifold is a differentiable manifold that is locally similar to a vector space to allow the application of calculus. A Riemannian manifold is a smooth manifold
@@ -80,29 +77,25 @@ equipped with a positive-definite inner product on the tangent space at each poi
 The next section explains how `Latitude` and `Longitude` are converted to `X` and `Y`.
 
 ## Conversion from Latitude-Longitude to Riemannian Coordinates
-The earth is modelled as an oblate, i.e., a spheroid flatened at the pole. At a given latitude, a path on the Earth is a circle. Let us consider that the origin of 
-longitudes is Greenwich and that the Earth is modelled by a semi-long axis, $a$, and a flatening, $f$. The flatening is defined as:
-$$f = \frac{{a - b}}{{a}}$$
-where $b$ is the semi-short axis. Therefore the semi short axis can be expressed as:
+At a given latitude, a path on the Earth is a circle. Let us consider that the origin of 
+longitudes is Greenwich and that the Earth is modelled by a semi-long axis, $a$, and a flatening, $f$. From the definition of the flattening,
+the semi short axis can be expressed as:
 $$b = a - f \cdot a$$
 
-The radius of the Earth at a given latitude, $\phi$ is given by:
-$$R(\phi) = \frac{a\cos{\phi}}{\sqrt{1-e^2\sin^2{\phi}}}$$
-
-where $e$ is the eccentricity:
-$$e^2=\frac{a^2-b^2}{a^2}$$
+The radius of the Earth perpendicularly to the axis passing by the poles and at a given geodetic latitude, $\phi$, is given by:
+$$R(\phi) = \frac{a\cos{\atan{(1-f)\tan(\phi)}}}{\sqrt{1-e^2\sin^2{\atan{(1-f)\tan(\phi)}}}}$$
 
 ![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
 
-At that latitude the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $\lambda$:
+At that geodetic latitude, the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $\lambda$:
 $y = R(\phi) \cdot \lambda$
 The $x$-coordinate (south-north) is the length of the elliptical arc counted from the equator using the latitude. 
-This involves the elliptic integral of the second kind, denoted $E(\phi, m)$ where $m=1- \frac{{b^2}}{{a^2}}$. 
+This involves the elliptic integral of the second kind, denoted $E(\phi, e^2)$. 
 Its definition is: $E(\phi, m) = \int_0^\phi \sqrt{1 - m \cdot \sin^2(t)} \, dt$.
-The definition of $x$ is then: $x = a \cdot E(\phi, m)$.
+The definition of $x$ is then: $x = a \cdot E(\phi, e^2)$.
 
 Conversely, to retrieve the latitude and longitude from the $x$ and $y$ coordinates, i.e., arc lengths, the following method is used:
-$\phi = E^{-1}(\frac{x}{a}, m)$ and $\lambda = \frac{y}{R(\phi)}$.
+$\phi = E^{-1}(\frac{x}{a}, e^2)$ and $\lambda = \frac{y}{R(\phi)}$.
 
 The elliptic integral of the second kind is calculated using the special function defined in `OSDC.DotnetLibraries.General.Math`, 
 namely `SpecialFunctions.EllipticE(phi, m)` and its inverse is `Elliptic.InverseEllipticE(x, m)`.
