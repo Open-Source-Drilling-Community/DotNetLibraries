@@ -560,7 +560,7 @@ namespace OSDC.DotnetLibraries.General.Math
                 return null;
             }
         }
-        public Point3D TransCoord2PtsTgReversed(Point3D pf, Point3D p1)
+        public Point3D? TransCoord2PtsTgReversed(Point3D pf, Point3D p1)
         {
             if (pf != null && p1 != null && Azimuth != null && Inclination != null && pf.Y != null && Y != null && pf.Z != null && Z != null && pf.X != null && X != null)
             {
