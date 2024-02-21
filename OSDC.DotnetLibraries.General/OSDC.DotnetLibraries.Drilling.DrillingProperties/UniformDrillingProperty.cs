@@ -12,6 +12,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public class UniformDrillingProperty : DrillingProperty
     {
+        /// <summary>
+        /// synonym property to UniformValue
+        /// </summary>
         [JsonIgnore]
         public override ContinuousDistribution? Value
         {
@@ -27,8 +30,60 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-
+        /// <summary>
+        /// synonym property to the Value but with the correct type
+        /// </summary>
         public UniformDistribution UniformValue { get; set; } = new UniformDistribution();
+        /// <summary>
+        /// convenience property to access directly the min value of UniformValue
+        /// </summary>
+        [JsonIgnore]
+        public double? Min
+        {
+            get
+            {
+                if (UniformValue != null)
+                {
+                    return UniformValue.Min;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (UniformValue != null)
+                {
+                    UniformValue.Min = value;
+                }
+            }
+        }
+        /// <summary>
+        /// Convenience property to directly access the max value of UniformValue
+        /// </summary>
+        [JsonIgnore]
+        public double? Max
+        {
+            get
+            {
+                if (UniformValue != null)
+                {
+                    return UniformValue.Max;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (UniformValue != null)
+                {
+                    UniformValue.Max = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Default Constructor

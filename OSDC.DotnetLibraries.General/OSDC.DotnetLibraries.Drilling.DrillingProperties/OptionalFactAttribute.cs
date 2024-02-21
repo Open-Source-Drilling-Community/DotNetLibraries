@@ -8,18 +8,9 @@ using System.Threading.Tasks;
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-    public class SemanticFactAttribute : Attribute
+    public class OptionalFactAttribute : SemanticFactAttribute
     {
-        public Nouns.Enum? Subject { get; protected set; } = null;
-        public string? SubjectName { get; protected set; } = null;
-        public Verbs.Enum Verb { get; protected set; } = Verbs.Enum.DWISVerb;
-        public Nouns.Enum? Object { get; protected set; } = null;
-        public string? ObjectName { get; protected set; } = null;
-        public Tuple<string, string>[]? ObjectAttributes { get; protected set; } = null;
-        
-        protected SemanticFactAttribute() { }
-
-        public SemanticFactAttribute(Nouns.Enum subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes) 
+        public OptionalFactAttribute(Nouns.Enum subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes)
         {
             Subject = subject;
             Verb = verb;
@@ -37,7 +28,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-        public SemanticFactAttribute(string subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes)
+        public OptionalFactAttribute(string subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes)
         {
             SubjectName = subject;
             Verb = verb;
@@ -55,7 +46,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-        public SemanticFactAttribute(string subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
+        public OptionalFactAttribute(string subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
         {
             SubjectName = subject;
             Verb = verb;
@@ -73,7 +64,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-        public SemanticFactAttribute(Nouns.Enum subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
+        public OptionalFactAttribute(Nouns.Enum subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
         {
             Subject = subject;
             Verb = verb;

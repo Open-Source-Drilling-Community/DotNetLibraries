@@ -33,9 +33,34 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             }
         }
         /// <summary>
-        /// 
+        /// synonym of the Value property but with the correct type
         /// </summary>
         public DiracDistribution DiracDistributionValue { get; set; } = new DiracDistribution();
+        /// <summary>
+        /// convenience property to access the value of the DiracDistributionValue.
+        /// </summary>
+        [JsonIgnore]
+        public double? ScalarValue
+        {
+            get
+            {
+                if (DiracDistributionValue != null)
+                {
+                    return DiracDistributionValue.Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (DiracDistributionValue != null)
+                {
+                    DiracDistributionValue.Value = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Default Constructor

@@ -13,6 +13,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public class GeneralDistributionDrillingProperty : DrillingProperty
     {
+        /// <summary>
+        /// redefined property to utilize the synonym one with the correct type
+        /// </summary>
         [JsonIgnore]
         public override ContinuousDistribution? Value
         {
@@ -28,7 +31,35 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
+        /// <summary>
+        /// synonym property to Value but with the correct type
+        /// </summary>
         public GeneralContinuousDistribution GeneralDistributionValue { get; set; } = new GeneralContinuousDistribution();
+        /// <summary>
+        /// convenience property to access directly the histogram of the GeneralDistributionValue
+        /// </summary>
+        [JsonIgnore]
+        public Tuple<double, double>[]? Histogram
+        {
+            get
+            {
+                if (GeneralDistributionValue != null)
+                {
+                    return GeneralDistributionValue.Function;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (GeneralDistributionValue != null)
+                {
+                    GeneralDistributionValue.Function = value;
+                }
+            }
+        }
         /// <summary>
         /// Default Constructor
         /// </summary>

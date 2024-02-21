@@ -14,7 +14,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
         public ScalarDrillingProperty ScalarValue { get; set; } = new ScalarDrillingProperty();
 
         [PhysicalQuantity(PhysicalQuantity.QuantityEnum.SmallLength)]
-        [AbscissaReference(CommonProperty.AbscissaReferenceType.Top)]
+        [AbscissaReference(CommonProperty.AbscissaReferenceType.TopOfString)]
         [Mandatory(CommonProperty.MandatoryType.PipeHandling | CommonProperty.MandatoryType.Mechanical)]
         public UniformDrillingProperty UniformValue { get; set; } = new UniformDrillingProperty();
 

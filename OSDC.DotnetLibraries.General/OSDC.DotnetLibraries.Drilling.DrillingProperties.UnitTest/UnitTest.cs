@@ -16,7 +16,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
         public void Test1()
         {
             var scalarDrillingProperty = new ScalarDrillingProperty();
-            scalarDrillingProperty.DiracDistributionValue.Value = 1;
+            scalarDrillingProperty.ScalarValue = 1;
 
             string json = JsonSerializer.Serialize(scalarDrillingProperty);
             ScalarDrillingProperty? deserialized = JsonSerializer.Deserialize<ScalarDrillingProperty>(json);
@@ -29,31 +29,31 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
         public void Test2()
         {
             var uniformDrillingProperty = new UniformDrillingProperty();
-            uniformDrillingProperty.UniformValue.Min = 0;
-            uniformDrillingProperty.UniformValue.Max = 1;
+            uniformDrillingProperty.Min = 0;
+            uniformDrillingProperty.Max = 1;
 
             string json = JsonSerializer.Serialize(uniformDrillingProperty);
             UniformDrillingProperty? deserialized = JsonSerializer.Deserialize<UniformDrillingProperty>(json);
             Assert.NotNull(deserialized);
-            Assert.NotNull(deserialized.UniformValue.Min);
-            Assert.NotNull(deserialized.UniformValue.Max);
-            Assert.AreEqual((double)uniformDrillingProperty.UniformValue.Min, (double)deserialized.UniformValue.Min, 1e-6);
-            Assert.AreEqual((double)uniformDrillingProperty.UniformValue.Max, (double)deserialized.UniformValue.Max, 1e-6);
+            Assert.NotNull(deserialized.Min);
+            Assert.NotNull(deserialized.Max);
+            Assert.AreEqual((double)uniformDrillingProperty.Min, (double)deserialized.Min, 1e-6);
+            Assert.AreEqual((double)uniformDrillingProperty.Max, (double)deserialized.Max, 1e-6);
         }
         [Test]
         public void Test3()
         {
             var gaussianDrillingProperty = new GaussianDrillingProperty();
-            gaussianDrillingProperty.GaussianValue.Mean = 1;
-            gaussianDrillingProperty.GaussianValue.StandardDeviation = 0.1;
+            gaussianDrillingProperty.Mean = 1;
+            gaussianDrillingProperty.StandardDeviation = 0.1;
 
             string json = JsonSerializer.Serialize(gaussianDrillingProperty);
             GaussianDrillingProperty? deserialized = JsonSerializer.Deserialize<GaussianDrillingProperty>(json);
             Assert.NotNull(deserialized);
-            Assert.NotNull(deserialized.GaussianValue.Mean);
-            Assert.NotNull(deserialized.GaussianValue.StandardDeviation);
-            Assert.AreEqual((double)gaussianDrillingProperty.GaussianValue.Mean, (double)deserialized.GaussianValue.Mean, 1e-6);
-            Assert.AreEqual((double)gaussianDrillingProperty.GaussianValue.StandardDeviation, (double)deserialized.GaussianValue.StandardDeviation, 1e-6);
+            Assert.NotNull(deserialized.Mean);
+            Assert.NotNull(deserialized.StandardDeviation);
+            Assert.AreEqual((double)gaussianDrillingProperty.Mean, (double)deserialized.Mean, 1e-6);
+            Assert.AreEqual((double)gaussianDrillingProperty.StandardDeviation, (double)deserialized.StandardDeviation, 1e-6);
         }
 
         [Test]
@@ -81,11 +81,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
         public void Test5()
         {
             TestClass test = new TestClass();
-            test.ScalarValue.DiracDistributionValue.Value = 1.0;
-            test.UniformValue.UniformValue.Min = 0;
-            test.UniformValue.UniformValue.Max = 2;
-            test.GaussianValue.GaussianValue.Mean = 10;
-            test.GaussianValue.GaussianValue.StandardDeviation = 3;
+            test.ScalarValue.ScalarValue = 1.0;
+            test.UniformValue.Min = 0;
+            test.UniformValue.Max = 2;
+            test.GaussianValue.Mean = 10;
+            test.GaussianValue.StandardDeviation = 3;
             test.GeneralDistributionValue.GeneralDistributionValue.Data = new List<double>() { 2, 4, 7, 1, 2, 3 };
 
             string json = JsonSerializer.Serialize(test);
@@ -95,16 +95,16 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
             Assert.IsNotNull(deserialized.UniformValue);
             Assert.IsNotNull(deserialized.GaussianValue);
             Assert.IsNotNull(deserialized.GeneralDistributionValue);
-            Assert.NotNull(deserialized.ScalarValue.DiracDistributionValue.Value);
-            Assert.AreEqual((double)test.ScalarValue.DiracDistributionValue.Value, (double)deserialized.ScalarValue.DiracDistributionValue.Value, 1e-6);
-            Assert.NotNull(deserialized.UniformValue.UniformValue.Min);
-            Assert.NotNull(deserialized.UniformValue.UniformValue.Max);
-            Assert.AreEqual((double)test.UniformValue.UniformValue.Min, (double)deserialized.UniformValue.UniformValue.Min, 1e-6);
-            Assert.AreEqual((double)test.UniformValue.UniformValue.Max, (double)deserialized.UniformValue.UniformValue.Max, 1e-6);
-            Assert.NotNull(deserialized.GaussianValue.GaussianValue.Mean);
-            Assert.NotNull(deserialized.GaussianValue.GaussianValue.StandardDeviation);
-            Assert.AreEqual((double)test.GaussianValue.GaussianValue.Mean, (double)deserialized.GaussianValue.GaussianValue.Mean, 1e-6);
-            Assert.AreEqual((double)test.GaussianValue.GaussianValue.StandardDeviation, (double)deserialized.GaussianValue.GaussianValue.StandardDeviation, 1e-6);
+            Assert.NotNull(deserialized.ScalarValue.ScalarValue);
+            Assert.AreEqual((double)test.ScalarValue.ScalarValue, (double)deserialized.ScalarValue.ScalarValue, 1e-6);
+            Assert.NotNull(deserialized.UniformValue.Min);
+            Assert.NotNull(deserialized.UniformValue.Max);
+            Assert.AreEqual((double)test.UniformValue.Min, (double)deserialized.UniformValue.Min, 1e-6);
+            Assert.AreEqual((double)test.UniformValue.Max, (double)deserialized.UniformValue.Max, 1e-6);
+            Assert.NotNull(deserialized.GaussianValue.Mean);
+            Assert.NotNull(deserialized.GaussianValue.StandardDeviation);
+            Assert.AreEqual((double)test.GaussianValue.Mean, (double)deserialized.GaussianValue.Mean, 1e-6);
+            Assert.AreEqual((double)test.GaussianValue.StandardDeviation, (double)deserialized.GaussianValue.StandardDeviation, 1e-6);
             Assert.NotNull(deserialized.GeneralDistributionValue.GeneralDistributionValue.Data);
             Assert.AreEqual(deserialized.GeneralDistributionValue.GeneralDistributionValue.Data.Count, test.GeneralDistributionValue.GeneralDistributionValue.Data.Count);
             for (int i = 0; i < test.GeneralDistributionValue.GeneralDistributionValue.Data.Count; i++)

@@ -38,13 +38,13 @@ namespace DrillingProperties
         static void Main()
         {
             TestClass testClass = new TestClass();
-            testClass.FluidDensityEstimated.GaussianValue.Mean = 1000.0;
-            testClass.FluidDensityEstimated.GaussianValue.StandardDeviation = 10.0;
+            testClass.FluidDensityEstimated.Mean = 1000.0;
+            testClass.FluidDensityEstimated.StandardDeviation = 10.0;
             testClass.FluidDensityMeasured = 999.0;
-            testClass.DensitometerAccuracy.GaussianValue.Mean = 0.0;
-            testClass.DensitometerAccuracy.GaussianValue.StandardDeviation = 1.0; // Anton Paar L-Dens 3300
-            testClass.DensitometerPrecision.GaussianValue.Mean = 0.0;
-            testClass.DensitometerPrecision.GaussianValue.StandardDeviation = 0.1;
+            testClass.DensitometerAccuracy.Mean = 0.0;
+            testClass.DensitometerAccuracy.StandardDeviation = 1.0; // Anton Paar L-Dens 3300
+            testClass.DensitometerPrecision.Mean = 0.0;
+            testClass.DensitometerPrecision.StandardDeviation = 0.1;
 
             double? densitometerAccuracy = testClass.DensitometerAccuracy.Realize();
             for (int i = 0; i < 10; i++)
