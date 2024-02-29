@@ -7,11 +7,10 @@ that allow to decorate the properties. There is also a function to generate a di
 the drilling properties that can therefore be serialized in json.
 
 # Principles
-A `DrillingProperty` is an abstract class that defines two properties: `Value` and `MetaDataID`. A `Value` is a `ContinuousDistribution` 
+A `DrillingProperty` is an abstract class that defines one property: `Value`. A `Value` is a `ContinuousDistribution` 
 and therefore represents any continuous probability distrutions. `ContinuousDistribution`and other probability distributions are defined
 in `OSDC.DotnetLibraries.General.Statistics`, which is available as a nuget on nuget.org 
-([see here](https://www.nuget.org/packages/OSDC.DotnetLibraries.General.Statistics/)). A `MetaDataID` is a `Guid` used to uniquely identified this particular
-property in a class. `DrillingProperty` has a method called `Realize` that is used to draw a value (`double?`) using the
+([see here](https://www.nuget.org/packages/OSDC.DotnetLibraries.General.Statistics/)). `DrillingProperty` has a method called `Realize` that is used to draw a value (`double?`) using the
 probability distribution defined in `Value`. It may return `null`.
 
 `DrillingProperty`has four direct sub-classes:
@@ -47,6 +46,44 @@ In that case, an histogram is generated from the data set, which is stored in `F
 An histogram is represented as an array of `Tuple<double, double>` for which `Item1` is the value of the bin and `Item2` is the
 probability of the bin. There is an additional property, defined for convinience, to access directly the `Function` of the `GeneralContinuousDistribution`.
 It is called `Histogram`.
+
+```mermaid
+classDiagram
+    DrillingProperty <|-- ScalarDrillingProperty
+    DrillingProperty <|-- GaussianDrillingProperty
+    DrillingProperty <|-- UniformDrillingProperty
+    DrillingProperty <|-- GeneralDistributionDrillingProperty
+    DrillingProperty : +ContinuousDistribution Value
+    DrillingProperty : +double? Realize()
+    class ScalarDrillingProperty {
+        +DiracDistribution DiracDistributionValue
+    }
+    class GaussianDrillingProperty {
+        +GaussianDistribution GaussianValue
+        +double? Mean
+        +double? StandardDeviation
+    }
+    GaussianDrillingProperty <|-- SensorDrillingProperty
+    GaussianDrillingProperty <|-- FullScaleDrillingProperty
+    class SensorDrillingProperty {
+        +double? Accuracy
+        +double? Precision
+    }
+    class FullScaleDrillingProperty {
+        +double? FullScale
+        +double? ProportionError
+    }
+    class UniformDrillingProperty {
+        +UniformDistribution UniformValue
+        +double? Min
+        +double? Max
+    }
+    class GeneralDistributionDrillingProperty {
+        +GeneralContinuousDistribution GeneralDistributionValue
+        +Tuple<double, double>[]? Histogram
+    }
+end
+```
 
 ## Example
 Here is an example. 
@@ -161,12 +198,16 @@ refer to internal variables of the semantic definition. This attribute can be us
 to describe multiple facts about the property, i.e., a semantic network.
     - `OptionalFactAttribute`: It is a subclass of `SemanticFactAttribute`. When the property has an attribute `AccessToVariableAttribute`
     that is set to readable, and therefore a sparql query will be generated to populate the value of the property, then `OptionalFactAttribute`
-    may be dropped in the sparql query in case there are no matching data.
+    may be dropped in the sparql query in case there are no matching data. `OptionalFactAttribute` has an additional property called `GroupIndex`, a `byte`.
+    The purpose of `GroupIndex` is to state that a set of `OptionalFactAttribute` are bound together when they use the same value for `GroupIndex`.
+    This information is used to generate the multiple variant of Sparql queries that result from the combinatorial choices related to the `OptionalFactAttribute`.
 - `SemanticDiracVariableAttribute`: It takes one argument that is the name used for a `DrillingSignal` that will be used for the `Value` of this
 property.
 - `SemanticGaussianVariableAttribute`: It takes two arguments. The first one is the name of a `DrillingSignal` used in the semantic facts
  that is used as the `Mean` value of this property. The second argument is the name of a `DrillingSignal` used in the semantic facts
  and that is used as the `StandardDeviation` value of this property.
+- `SemanticUniformVariableAttribute`: It takes two arguments that are the names of a `DrillingSignal` used in the semantic facts
+that are used as the `Min` and the `Max` value of this property.
 - `SemanticGeneralDistributionVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used in the semantic facts
 to access the `Histogram` value of this property.
 - `AbscissaReferenceAttribute`: It takes one argument of type `CommonProperty.AbscissaReferenceType`. It allows to specify
@@ -187,6 +228,79 @@ the reference for pressure of the property.
 - `TimeReferenceAttribute`: It takes one argument of type `CommonProperty.TimeReferenceType`. It allows to specify the 
 reference for time of a property.
 
+```mermaid
+classDiagram
+    PhysicalQuantityAttribute <|-- DrillingPhysicalQuantityAttribute
+    PhysicalQuantityAttribute : +PhysicalQuantity.QuantityEnum PhysicalQuantity
+    class DrillingPhysicalQuantityAttribute {
+        +DrillingPhysicalQuantity.QuantityEnum PhysicalQuantity
+    }
+    class AccessToVariableAttribute {
+        +CommonProperty.VariableAccessType AccessType
+    }
+    class MandatoryAttribute {
+        +CommonProperty.MandatoryType Mandatory
+    }
+    SemanticFactAttribute <|-- OptionalFactAttribute
+    SemanticFactAttribute : +Nouns.Enum? Subject
+    SemanticFactAttribute : +string? SubjectName
+    SemanticFactAttribute : +Verbs.Enum Verb
+    SemanticFactAttribute : +Nouns.Enum? Object
+    SemanticFactAttribute : +string? ObjectName
+    class OptionalFactAttribute {
+        +byte GroupIndex
+    }
+    class SemanticDiracVariableAttribute {
+        +string? Value
+    }
+    class SemanticGaussianVariableAttribute {
+        +string? Mean
+        +string? StandardDeviation
+    }
+    class SemanticUniformVariableAttribute {
+        +string? Min
+        +string? Max
+    }
+    class SemanticGeneralDistributionVariableAttribute {
+        +string? Histogram
+    }
+```
+
+```mermaid
+classDiagram
+    ReferenceAttribute <|-- AbscissaReferenceAttribute
+    ReferenceAttribute <|-- AnglePositionReferenceAttribute
+    ReferenceAttribute <|-- AxialPositionReferenceAttribute
+    ReferenceAttribute <|-- AzimuthReferenceAttribute
+    ReferenceAttribute <|-- DepthReferenceAttribute
+    ReferenceAttribute <|-- PositionReferenceAttribute
+    ReferenceAttribute <|-- PressureReferenceAttribute
+    ReferenceAttribute <|-- TimeReferenceAttribute
+    class AbscissaReferenceAttribute {
+        +CommonProperty.AbscissaReferenceType ReferenceType
+    }
+    class AnglePositionReferenceAttribute {
+        +CommonProperty.AnglePositionReferenceType ReferenceType
+    }
+    class AxialPositionReferenceAttribute {
+        +CommonProperty.AxialPositionReferenceType ReferenceType
+    }
+    class AzimuthReferenceAttribute {
+        +CommonProperty.AzimuthReferenceType ReferenceType
+    }
+    class DepthReferenceAttribute {
+        +CommonProperty.DepthReferenceType ReferenceType
+    }
+    class PositionReferenceAttribute {
+        +CommonProperty.PositionReferenceType ReferenceType
+    }
+    class PressureReferenceAttribute {
+        +CommonProperty.PressureReferenceType ReferenceType
+    }
+    class TimeReferenceAttribute {
+        +CommonProperty.TimeReferenceType ReferenceType
+    }
+```
 ## Example
 Here is an example:
 
@@ -262,7 +376,7 @@ namespace DrillingProperties
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
         [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
         [SemanticFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputationUnit)]
-        [OptionalFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
+        [OptionalFact(0, "TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsTransformationOutput, "TransientT&D#01")]
         [SemanticFact("EstimatedBitDepthHistogramValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("EstimatedBitDepthHistogram#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GenericUncertainty)]
@@ -406,7 +520,7 @@ namespace DrillingProperties
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
         [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
         [SemanticFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputationUnit)]
-        [OptionalFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
+        [OptionalFact(0, "TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsTransformationOutput, "TransientT&D#01")]
         [SemanticFact("EstimatedBitDepthHistogramValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("EstimatedBitDepthHistogram#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GenericUncertainty)]

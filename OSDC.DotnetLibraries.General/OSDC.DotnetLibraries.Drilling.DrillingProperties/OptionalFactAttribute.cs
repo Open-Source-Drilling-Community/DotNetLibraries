@@ -10,8 +10,19 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class OptionalFactAttribute : SemanticFactAttribute
     {
-        public OptionalFactAttribute(Nouns.Enum subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes)
+        public byte GroupIndex { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bundleIdx"></param>
+        /// <param name="subject"></param>
+        /// <param name="verb"></param>
+        /// <param name="object"></param>
+        /// <param name="objectAttributes"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public OptionalFactAttribute(byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes)
         {
+            GroupIndex = bundleIdx;
             Subject = subject;
             Verb = verb;
             Object = @object;
@@ -28,8 +39,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-        public OptionalFactAttribute(string subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bundleIdx"></param>
+        /// <param name="subject"></param>
+        /// <param name="verb"></param>
+        /// <param name="object"></param>
+        /// <param name="objectAttributes"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public OptionalFactAttribute(byte bundleIdx, string subject, Verbs.Enum verb, Nouns.Enum @object, params string[] objectAttributes)
         {
+            GroupIndex = bundleIdx;
             SubjectName = subject;
             Verb = verb;
             Object = @object;
@@ -46,8 +67,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-        public OptionalFactAttribute(string subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bundleIdx"></param>
+        /// <param name="subject"></param>
+        /// <param name="verb"></param>
+        /// <param name="object"></param>
+        /// <param name="objectAttributes"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public OptionalFactAttribute(byte bundleIdx, string subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
         {
+            GroupIndex = bundleIdx;
             SubjectName = subject;
             Verb = verb;
             ObjectName = @object;
@@ -64,8 +95,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-        public OptionalFactAttribute(Nouns.Enum subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bundleIdxNouns"></param>
+        /// <param name="subject"></param>
+        /// <param name="verb"></param>
+        /// <param name="object"></param>
+        /// <param name="objectAttributes"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public OptionalFactAttribute(byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, string @object, params string[] objectAttributes)
         {
+            GroupIndex = bundleIdx;
             Subject = subject;
             Verb = verb;
             ObjectName = @object;
