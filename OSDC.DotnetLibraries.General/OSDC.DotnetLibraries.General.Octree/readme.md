@@ -13,7 +13,6 @@ another `Bounds` by calling `Intersects`.
 
 Here is a short example:
 
-<pre>
 ```csharp
 using OSDC.DotnetLibraries.General.Math;
 using OSDC.DotnetLibraries.General.Octree;
@@ -47,15 +46,14 @@ class Example
     }
 }
 ```
-</pre>
 
 The results on the Console are:
-<pre>
+```
 Is the point: (0, 0, 0) contained in the bounds: (-1, 1), (-1, 1), (-1, 1) ? True
 Is the point: (2, 0, 0) contained in the bounds: (-1, 1), (-1, 1), (-1, 1) ? False
 Does the bounds (-2, 0), (-1, 0), (-0,5, 0) intersects the bounds (-1, 1), (-1, 1), (-1, 1) ? True
 Does the bounds (-3, -2), (-3, -2), (-3, -2) intersects the bounds (-1, 1), (-1, 1), (-1, 1) ? False
-</pre>
+```
 
 ## Octree Code
 An `OctreeCode` is a 64 bits `struct` that represents a node in an octree encoding. it cannot exceed 19 levels in the octree. The first 5 digits are reserved to contain
@@ -71,7 +69,6 @@ used to get an `OctreeCode` from a List of bytes.
 
 Here is an example:
 
-<pre>
 ```csharp
 using OSDC.DotnetLibraries.General.Octree;
 
@@ -100,14 +97,13 @@ class Example
     }
 }
 ```
-</pre>
 
 The results displayed in the Console are:
-<pre>
+```
 The string 012345676543210 is encoded as 780000A72EFAC688
 The same octree code decodes to: 012345676543210
 The same code corresponds to the list: 0 1 2 3 4 5 6 7 6 5 4 3 2 1 0
-</pre>
+```
 
 ## Octree Code Long
 An `OctreeCodeLong` works similarly to an `OctreeCode` excepts that it can encode an `Octree` node up to depthe level 32. It is stored on 128 bits.
@@ -134,7 +130,6 @@ It is also possible to obtain all the leaves of the`Octree`, i.e., the volume th
 
 Here is an example:
 
-<pre>
 ```csharp
 using OSDC.DotnetLibraries.General.Octree;
 using OSDC.DotnetLibraries.General.Math;
@@ -170,11 +165,10 @@ class Example
     }
 }
 ```
-</pre>
 
 And the results may look something like this:
 
-<pre>
+```
 Point : (-0,9468318435989447, -0,06818247896011287, -0,4471816260823409)
 Point : (-0,6841114991343233, -0,5217117504032298, 0,8309187817122348)
 Point : (0,49908845144004976, 0,7674486069025055, -0,19562912474549243)
@@ -196,7 +190,7 @@ Bound min: (-0,12831111904233694, -0,0459591643884778, 0,7532857665792108) + max
 Bound min: (0,16597872506827116, -0,6473628673702478, 0,6640525422990322) + max: (0,16597872599959373, -0,6473628664389253, 0,6640525432303548)
 Bound min: (-0,8244910631328821, 0,047964395955204964, 0,2420140653848648) + max: (-0,8244910622015595, 0,04796439688652754, 0,24201406631618738)
 Bound min: (-0,5345687223598361, 0,6278376616537571, 0,23786973301321268) + max: (-0,5345687214285135, 0,6278376625850797, 0,23786973394453526)
-</pre>
+```
 
 
 
