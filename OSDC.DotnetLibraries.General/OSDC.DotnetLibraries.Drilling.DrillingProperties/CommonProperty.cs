@@ -9,33 +9,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public class CommonProperty
     {
-        public enum TimeReferenceType { None, GPS, UTC, LocalTime};
-        public enum AbscissaReferenceType { None, BottomOfString, TopOfString };
-        public enum DepthReferenceType { 
-            None, 
-            WGS84, 
-            CasingFlange, 
-            CrownValve, 
-            DerrickFloor, 
-            KellyBushing, 
-            RotaryTable, 
-            WellHead, 
-            GroundLevel, 
-            SeaFloor, 
-            LowestAstronomicalTide, 
-            MeanSeaLevel, 
-            MeanHigherHighWater, 
-            MeanHighWater,
-            MeanLowerLowWater,
-            MeanLowWater,
-            MeanTideLevel,
-            KickOff};
-        public enum PositionReferenceType { None, WGS84, WellHead };
-        public enum AxialPositionReferenceType { None, BottomShoulder, TopShoulder};
-        public enum AnglePositionReferenceType { None, ScribeLine, GravityHighSide, MagneticHighSide, UpperSide };
-        public enum AzimuthReferenceType { None, TrueNorth, MagneticNorth, GridNorth };
-        public enum PressureReferenceType { None, Absolute, Relative, Gauge };
-
         public enum VariableAccessType { None, Readable, Assignable };
         public enum MandatoryType
         {

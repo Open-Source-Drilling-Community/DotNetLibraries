@@ -30,7 +30,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        bool isValid();
+        bool IsValid();
 
         /// <summary>
         /// 

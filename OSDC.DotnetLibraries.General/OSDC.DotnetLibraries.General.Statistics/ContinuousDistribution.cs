@@ -213,7 +213,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual bool isValid()
+        public virtual bool IsValid()
         {
             return false;
         }

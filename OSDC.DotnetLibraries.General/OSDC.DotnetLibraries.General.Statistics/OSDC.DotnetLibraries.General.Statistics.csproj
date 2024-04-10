@@ -7,7 +7,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <AssemblyVersion>1.0.2.0</AssemblyVersion>
     <FileVersion>1.0.2.0</FileVersion>
-    <Version>1.0.12</Version>
+    <Version>1.2.3</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Standard Statistical Classes</Title>
     <Company>NORCE Norwegian Research Center</Company>

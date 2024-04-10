@@ -1,10 +1,7 @@
 ﻿using DWIS.Vocabulary.Schemas;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using OSDC.UnitConversion.Conversion;
+using OSDC.UnitConversion.Conversion.DrillingEngineering;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
@@ -19,6 +16,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public Nouns.Enum? Object { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? ObjectName { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public PhysicalQuantity.QuantityEnum? ObjectPhysicalQuantity { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public DrillingPhysicalQuantity.QuantityEnum? ObjectDrillingQuantity { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Tuple<string, string>[]? ObjectAttributes { get; set; } = null;
 
         /// <summary>
@@ -41,6 +43,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 Verb = src.Verb;
                 Object = src.Object;
                 ObjectName = src.ObjectName;
+                ObjectPhysicalQuantity = src.ObjectPhysicalQuantity;
+                ObjectDrillingQuantity = src.ObjectDrillingQuantity;
                 ObjectAttributes = src.ObjectAttributes;
             }
         }
@@ -77,6 +81,35 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             Subject = subject;
             Verb = verb;
             ObjectName = @object;
+            ObjectAttributes = objectAttributes;
+        }
+
+        public SemanticFact(string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes)
+        {
+            SubjectName = subject;
+            Verb = verb;
+            ObjectPhysicalQuantity = quantity;
+            ObjectAttributes = objectAttributes;
+        }
+        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes)
+        {
+            Subject = subject;
+            Verb = verb;
+            ObjectPhysicalQuantity = quantity;
+            ObjectAttributes = objectAttributes;
+        }
+        public SemanticFact(string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes)
+        {
+            SubjectName = subject;
+            Verb = verb;
+            ObjectDrillingQuantity = quantity;
+            ObjectAttributes = objectAttributes;
+        }
+        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes)
+        {
+            Subject = subject;
+            Verb = verb;
+            ObjectDrillingQuantity = quantity;
             ObjectAttributes = objectAttributes;
         }
     }

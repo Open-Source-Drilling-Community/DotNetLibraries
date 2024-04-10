@@ -5,6 +5,7 @@ using OSDC.UnitConversion.Conversion;
 using OSDC.UnitConversion.Conversion.DrillingEngineering;
 using System.Text.Json.Serialization;
 using MathNet.Numerics.LinearAlgebra.Factorization;
+using MathNet.Numerics.Integration;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
@@ -18,7 +19,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
         [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
-        public double? MD {  get => base.Abscissa; set => base.Abscissa = value; }
+        public double? MD { get => base.Abscissa; set => base.Abscissa = value; }
 
         /// <summary>
         /// synonym of Z
@@ -141,7 +142,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingCurvature)]
         public double? TUR { get; set; } = null;
 
-         /// <summary>
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="riemannianNorth"></param>
@@ -149,15 +150,17 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         public void SetLatitudeLongitude(double riemannianNorth, double riemannianEast)
         {
             double f = 1.0 / Constants.EarthInverseFlateningWGS84;
-            double b = Constants.EarthSemiMajorAxisWGS84 * (1.0 - f);
+            double a = Constants.EarthSemiMajorAxisWGS84;
+            double b = a * (1.0 - f);
             double b2 = b * b;
-            double a2 = Constants.EarthSemiMajorAxisWGS84 * Constants.EarthSemiMajorAxisWGS84;
-            double m = 1.0 - b2 / a2;
-            double latitude = SpecialFunctions.InverseEllipseE(riemannianNorth/ Constants.EarthSemiMajorAxisWGS84, m);
+            double a2 = a * a;
+            double e2 = (a2 - b2) / a2;
+            double e = System.Math.Sqrt(e2);
+            double latitude = SpecialFunctions.InverseEllipseE(riemannianNorth / a, e2);
             Latitude = latitude;
             double sinLat = System.Math.Sin(latitude);
             double cosLat = System.Math.Cos(latitude);
-            double R = Constants.EarthSemiMajorAxisWGS84 * System.Math.Sqrt(cosLat * cosLat + (b2 / a2) * sinLat * sinLat) / System.Math.Sqrt(1 - f * (2 - f) * sinLat * sinLat);
+            double R = a * cosLat / System.Math.Sqrt(1 - e2 * sinLat * sinLat);
             if (Numeric.EQ(R, 0))
             {
                 Longitude = null;
@@ -175,15 +178,23 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         public void SetRiemannianNorthEast(double latitude, double longitude)
         {
             double f = 1.0 / Constants.EarthInverseFlateningWGS84;
-            double b = Constants.EarthSemiMajorAxisWGS84 * (1.0 - f);
+            double a = Constants.EarthSemiMajorAxisWGS84;
+            double b = a * (1.0 - f);
+            double a2 = a * a;
             double b2 = b * b;
-            double a2 = Constants.EarthSemiMajorAxisWGS84 * Constants.EarthSemiMajorAxisWGS84;
+            double e2 = (a2 - b2) / a2;
             double sinLat = System.Math.Sin(latitude);
             double cosLat = System.Math.Cos(latitude);
-            double R = Constants.EarthSemiMajorAxisWGS84 * System.Math.Sqrt(cosLat * cosLat + (b2 / a2) * sinLat * sinLat) / System.Math.Sqrt(1 - f * (2 - f) * sinLat * sinLat);
-            base.Y = R * longitude;
-            double m = 1.0 - b2 / a2;
-            base.X = Constants.EarthSemiMajorAxisWGS84 * SpecialFunctions.EllipseE(latitude, m);
+            double R = a2 * cosLat / System.Math.Sqrt(a2*cosLat*cosLat+b2*sinLat*sinLat);
+            double R1 = a * cosLat / System.Math.Sqrt(1-e2* sinLat * sinLat);
+            double phiPrime = System.Math.Atan((1 - f) * System.Math.Tan(latitude));
+            double cosPhiPrime = System.Math.Cos(phiPrime);
+            double sinPhiPrime = System.Math.Sin(phiPrime);
+            double R2 = cosPhiPrime * System.Math.Sqrt((a2*cosLat*a2*cosLat+ b2*sinLat*b2*sinLat)/(a2*cosLat*cosLat+b2*sinLat*sinLat));
+            double R3 = cosPhiPrime * a * System.Math.Sqrt(1 - e2 * sinPhiPrime * sinPhiPrime);
+            base.Y = R2 * longitude;
+            double e = System.Math.Sqrt(e2);
+            base.X = a * SpecialFunctions.EllipseE(latitude, e2);
         }
         /// <summary>
         /// return a SphericalPoint3D referred to a global coordinate system centered at the center of the Eart.
@@ -196,8 +207,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 double a = Constants.EarthSemiMajorAxisWGS84;
                 double f = 1.0 / Constants.EarthInverseFlateningWGS84;
                 double b = a * (1.0 - f);
-                double e2 = (a * a - b * b) / (a * a);
-                double r = a / System.Math.Sqrt(1 - e2 * System.Math.Sin(Latitude.Value));
+                double lat = Latitude.Value;
+                double cosLat = System.Math.Cos(lat);
+                double sinLat = System.Math.Sin(lat);
+                double r = System.Math.Sqrt((a * a * a * a * cosLat * cosLat + b * b * b * b * sinLat * sinLat) / (a * a * cosLat * cosLat + b * b * sinLat * sinLat));
                 r -= Z.Value;
                 return new SphericalPoint3D() { Latitude = Latitude, Longitude = Longitude, R = r };
             }
@@ -222,8 +235,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             if (src != null)
             {
                 Abscissa = src.Abscissa;
-                Inclination= src.Inclination;
-                Azimuth= src.Azimuth;
+                Inclination = src.Inclination;
+                Azimuth = src.Azimuth;
             }
         }
         /// <summary>
@@ -346,8 +359,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double si2 = System.Math.Sin(i2);
             double ca2 = System.Math.Cos(a2);
             double sa2 = System.Math.Sin(a2);
-            double si12 = System.Math.Sin((i2 - i1)/2.0);
-            double sa12 = System.Math.Sin((a2 - a1)/2.0);
+            double si12 = System.Math.Sin((i2 - i1) / 2.0);
+            double sa12 = System.Math.Sin((a2 - a1) / 2.0);
             double dl = 2.0 * System.Math.Asin(System.Math.Sqrt(si12 * si12 + si1 * si2 * sa12 * sa12));
             double rf;
             if (Numeric.EQ(dl, 0, 0.02))
@@ -365,19 +378,19 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             next.Curvature = dl / dm;
             CurvilinearPoint3D prev = new CurvilinearPoint3D();
             double ds = 0.1;
-            if (InterpolateAtAbscissa(next, next.Abscissa.Value-ds, prev)) 
+            if (InterpolateAtAbscissa(next, next.Abscissa.Value - ds, prev))
             {
-                if (prev.Inclination != null && prev.Azimuth != null) 
+                if (prev.Inclination != null && prev.Azimuth != null)
                 {
                     si1 = System.Math.Sin(prev.Inclination.Value);
                     ci1 = System.Math.Cos(prev.Inclination.Value);
                     si2 = System.Math.Sin(next.Inclination.Value);
                     ci2 = System.Math.Cos(next.Inclination.Value);
-                    sa12 = System.Math.Sin(next.Azimuth.Value-prev.Azimuth.Value);
+                    sa12 = System.Math.Sin(next.Azimuth.Value - prev.Azimuth.Value);
                     double ca12 = System.Math.Cos(next.Azimuth.Value - prev.Azimuth.Value);
                     double denom = si2 * ci1 * ca12 - si1 * ci2;
                     next.Toolface = System.Math.Atan2(denom, si2 * sa12);
-                    
+
                     next.BUR = (next.Inclination - prev.Inclination) / ds;
                     if (next.Azimuth != null &&
                         prev.Azimuth != null &&
@@ -1062,58 +1075,80 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
         }
 
-        private Point3D? TransCoord2PtsTgReversed(Point3D pf, Point3D p1)
+        public double? Riemannian2DDistance(double? latitude2, double? longitude2)
         {
-            if (pf != null && p1 != null && Azimuth != null && Inclination != null && pf.Y != null && Y != null && pf.Z != null && Z != null && pf.X != null && X != null)
-            {
-                double ca = System.Math.Cos(Azimuth.Value);
-                double sa = System.Math.Sin(Azimuth.Value);
-                double ci = System.Math.Cos(Inclination.Value);
-                double si = System.Math.Sin(Inclination.Value);
-                double xk = si * ca;
-                double yk = si * sa;
-                double zk = ci;
-                double xi1 = (double)(ci * (pf.Y - Y) - si * sa * (pf.Z - Z));
-                double yi1 = (double)(si * ca * (pf.Z - Z) - ci * (pf.X - X));
-                double zi1 = (double)(si * sa * (pf.X - X) - si * ca * (pf.Y - Y));
-                double sqrti = System.Math.Sqrt(xi1 * xi1 + yi1 * yi1 + zi1 * zi1);
-                if (!Numeric.EQ(sqrti, 0))
-                {
-                    double xi = xi1 / sqrti;
-                    double yi = yi1 / sqrti;
-                    double zi = zi1 / sqrti;
-                    double xj1 = yi1 * ci - zi1 * si * sa;
-                    double yj1 = zi1 * si * ca - xi1 * ci;
-                    double zj1 = xi1 * si * sa - yi1 * si * ca;
-                    double sqrtj = -System.Math.Sqrt(xj1 * xj1 + yj1 * yj1 + zj1 * zj1);
-                    if (!Numeric.EQ(sqrtj, 0))
-                    {
-                        double xj = xj1 / sqrtj;
-                        double yj = yj1 / sqrtj;
-                        double zj = zj1 / sqrtj;
-                        Point3D p2 = new()
-                        {
-                            X = xi * p1.X + xj * p1.Y + xk * p1.Z + X,
-                            Y = yi * p1.X + yj * p1.Y + yk * p1.Z + Y,
-                            Z = zi * p1.X + zj * p1.Y + zk * p1.Z + Z
-                        };
-                        return p2;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
+            if (TVD == null || Latitude == null || Longitude == null || latitude2 == null || longitude2 == null)
             {
                 return null;
             }
-
+            double z = TVD.Value;
+            double lat1 = Latitude.Value;
+            double lon1 = Longitude.Value;
+            double lat2 = latitude2.Value;
+            double lon2 = longitude2.Value;
+            double a = Constants.EarthSemiMajorAxisWGS84;
+            double b = a - a / Constants.EarthInverseFlateningWGS84;
+            double a2 = a * a;
+            double b2 = b * b;
+            double e2 = (a2 - b2) / a2;
+            double ap = a - z * System.Math.Sqrt(1 - e2 * System.Math.Sin(lat1));
+            double bp = ap * System.Math.Sqrt(1 - e2);
+            double ap2 = ap * ap;
+            double bp2 = bp * bp;
+            double fp = (ap - bp) / ap;
+            double L = lon2 - lon1;
+            double lambda = L;
+            double U1 = System.Math.Atan((1 - fp) * System.Math.Tan(lat1));
+            double U2 = System.Math.Atan((1 - fp) * System.Math.Tan(lat2));
+            double cosU1 = System.Math.Cos(U1);
+            double sinU1 = System.Math.Sin(U1);
+            double cosU2 = System.Math.Cos(U2);
+            double sinU2 = System.Math.Sin(U2);
+            double cosAlpha2;
+            double cosSigma;
+            double sinLambda;
+            double cos2sigmam;
+            double sinSigma;
+            double sigma;
+            double lambdaPrev;
+            int count = 0;
+            do
+            {
+                lambdaPrev = lambda;
+                double cosLambda = System.Math.Cos(lambdaPrev);
+                sinLambda = System.Math.Sin(lambdaPrev);
+                double term1 = cosU2 * sinLambda;
+                double term2 = cosU1 * sinU2 - sinU1 * cosU2 * cosLambda;
+                sinSigma = System.Math.Sqrt(term1 * term1 + term2 * term2);
+                cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
+                sigma = System.Math.Atan2(sinSigma, cosSigma);
+                if (Numeric.EQ(sinSigma, 0))
+                {
+                    return 0;
+                }
+                double sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
+                double sinAlpha2 = sinAlpha * sinAlpha;
+                cosAlpha2 = 1 - sinAlpha2;
+                if (Numeric.EQ(cosAlpha2, 0))
+                {
+                    cos2sigmam = cosSigma;
+                }
+                else
+                {
+                    cos2sigmam = cosSigma - 2.0 * sinU1 * sinU2 / cosAlpha2;
+                }
+                double C = (fp / 16.0) * cosAlpha2 * (4.0 + fp * (4.0 - 3.0 * cosAlpha2));
+                lambda = L + (1 - C) * fp * sinAlpha * (sigma + C * sinSigma * (cos2sigmam + C * cosSigma * (-1.0 + 2.0 * cos2sigmam * cos2sigmam)));
+            } while (System.Math.Abs(lambda - lambdaPrev) > 1e-12 && count++ < 20);
+            if (count >= 20)
+            {
+                
+            }
+            double u2 = cosAlpha2 * (ap2 - bp2) / bp2;
+            double A = 1.0 + (u2 / 16384.0) * (4096.0 + u2 * (-768.0 + u2 * (320.0 - 175 * u2)));
+            double B = (u2 / 1024) * (256.0 + u2 * (-128.0 + u2 * (74.0 - 47 * u2)));
+            double deltaSigma = B * sinSigma * (cos2sigmam + (1.0 / 4.0) * B * (cosSigma * (-1 + 2.0 * cos2sigmam * cos2sigmam) - (B / 6.0) * cos2sigmam * (-3.0 + 4.0 * sinSigma * sinSigma) * (-3.0 + 4.0 * cos2sigmam * cos2sigmam)));
+            return b * A * (sigma - deltaSigma);
         }
     }
 }

@@ -164,7 +164,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? Realize()
         {
-            if (isValid())
+            if (IsValid())
             {
                 if (!isFunctionUpdated_)
                 {
@@ -483,7 +483,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override bool isValid()
+        public override bool IsValid()
         {
             if (!isFunctionUpdated_)
             {

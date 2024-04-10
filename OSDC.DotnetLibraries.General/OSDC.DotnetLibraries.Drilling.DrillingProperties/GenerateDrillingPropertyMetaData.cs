@@ -30,40 +30,28 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                     {
                         if (property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty)))
                         {
-                            var physicalQuantityAttribute = property.GetCustomAttribute<PhysicalQuantityAttribute>();
-                            var drillingPhysicalQuantityAttribute = property.GetCustomAttribute<DrillingPhysicalQuantityAttribute>();
                             var accessToVariableAttribute = property.GetCustomAttribute<AccessToVariableAttribute>();
                             var mandatoryAttritbute = property.GetCustomAttribute<MandatoryAttribute>();
                             var semanticFactAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
                             var optionalFactAttributes = property.GetCustomAttributes<OptionalFactAttribute>();
                             var semanticDiracVariableAttribute = property.GetCustomAttribute<SemanticDiracVariableAttribute>();
                             var semanticGaussianVariableAttribute = property.GetCustomAttribute<SemanticGaussianVariableAttribute>();
+                            var semanticSensorVariableAttribute = property.GetCustomAttribute<SemanticSensorVariableAttribute>();
+                            var semanticFullScaleVariableAttribute = property.GetCustomAttribute<SemanticFullScaleVariableAttribute>();
                             var semanticUniformVariableAttribute = property.GetCustomAttribute<SemanticUniformVariableAttribute>();
                             var semanticGeneralDistributionVariableAttribute = property.GetCustomAttribute<SemanticGeneralDistributionVariableAttribute>();
-                            var abscissaReferenceAttribute = property.GetCustomAttribute<AbscissaReferenceAttribute>();
-                            var anglePositionReferenceAttribute = property.GetCustomAttribute<AnglePositionReferenceAttribute>();
-                            var axialPositionReferenceAttribute = property.GetCustomAttribute<AxialPositionReferenceAttribute>();
-                            var azimuthReferenceAttribute = property.GetCustomAttribute<AzimuthReferenceAttribute>();
-                            var depthReferenceAttribute = property.GetCustomAttribute<DepthReferenceAttribute>();
-                            var positionReferenceAttribute = property.GetCustomAttribute<PositionReferenceAttribute>();
-                            var pressureReferenceAttribute = property.GetCustomAttribute<PressureReferenceAttribute>();
-                            var timeReferenceAttribute = property.GetCustomAttribute<TimeReferenceAttribute>();
-                            if (physicalQuantityAttribute != null ||
-                                drillingPhysicalQuantityAttribute != null ||
-                                accessToVariableAttribute != null ||
+                            var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
+                            var semanticExclusiveOrAttributes = property.GetCustomAttributes<SemanticExclusiveOrAttribute>();
+                            if (accessToVariableAttribute != null ||
                                 semanticDiracVariableAttribute != null ||
                                 semanticGaussianVariableAttribute != null ||
+                                semanticSensorVariableAttribute != null ||
+                                semanticFullScaleVariableAttribute != null ||
                                 semanticUniformVariableAttribute != null ||
                                 semanticGeneralDistributionVariableAttribute != null ||
-                                anglePositionReferenceAttribute != null ||
-                                axialPositionReferenceAttribute != null ||
-                                abscissaReferenceAttribute != null ||
-                                azimuthReferenceAttribute != null ||
-                                depthReferenceAttribute != null ||
-                                timeReferenceAttribute != null ||
+                                semanticBernoulliVariableAttribute != null ||
+                                (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
                                 mandatoryAttritbute != null ||
-                                positionReferenceAttribute != null ||
-                                pressureReferenceAttribute != null ||
                                 (semanticFactAttributes != null && semanticFactAttributes.Any()) ||
                                 (optionalFactAttributes != null && optionalFactAttributes.Any()))
                             {
@@ -71,71 +59,63 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 metaData.Namespace = (type.Namespace == null) ? string.Empty : type.Namespace;
                                 metaData.ClassName = type.Name;
                                 metaData.PropertyName = property.Name;
-                                if (physicalQuantityAttribute != null)
-                                {
-                                    metaData.PhysicalQuantity = physicalQuantityAttribute.PhysicalQuantity;
-                                }
-                                if (drillingPhysicalQuantityAttribute != null)
-                                {
-                                    metaData.DrillingPhysicalQuantity = drillingPhysicalQuantityAttribute.PhysicalQuantity;
-                                }
                                 if (accessToVariableAttribute != null)
                                 {
                                     metaData.AccessType = accessToVariableAttribute.AccessType;
                                 }
                                 if (semanticDiracVariableAttribute != null)
                                 {
-                                    metaData.SemanticDiracVariable = semanticDiracVariableAttribute.Value;
+                                    metaData.SemanticDiracVariable = semanticDiracVariableAttribute.ValueVariable;
                                 }
                                 if (semanticGaussianVariableAttribute != null)
                                 {
-                                    metaData.SemanticGaussianMeanVariable = semanticGaussianVariableAttribute.Mean;
-                                    metaData.SemanticGaussianStandardDeviationVariable = semanticGaussianVariableAttribute.StandardDeviation;
+                                    metaData.SemanticGaussianMeanVariable = semanticGaussianVariableAttribute.MeanVariable;
+                                    metaData.SemanticGaussianStandardDeviationVariable = semanticGaussianVariableAttribute.StandardDeviationVariable;
+                                    metaData.SemanticDefaultStandardDeviation = semanticGaussianVariableAttribute.DefaultStandardDeviation;
+                                }
+                                if (semanticSensorVariableAttribute != null)
+                                {
+                                    metaData.SemanticSensorPrecisionVariable = semanticSensorVariableAttribute.PrecisionVariable;
+                                    metaData.SemanticSensorDefaultPrecision = semanticSensorVariableAttribute.DefaultPrecision;
+                                    metaData.SemanticSensorAccuracyVariable = semanticSensorVariableAttribute.AccuracyVariable;
+                                    metaData.SemanticSensorDefaultAccuracy = semanticSensorVariableAttribute.DefaultAccuracy;
+                                }
+                                if (semanticFullScaleVariableAttribute != null)
+                                {
+                                    metaData.SemanticFullScaleVariable = semanticFullScaleVariableAttribute.FullScaleVariable;
+                                    metaData.SemanticDefaultFullScale = semanticFullScaleVariableAttribute.DefaultFullScale;
+                                    metaData.SemanticProportionErrorVariable = semanticFullScaleVariableAttribute.ProportionErrorVariable;
+                                    metaData.SemanticDefaultProportionError = semanticFullScaleVariableAttribute.DefaultProportionError;
                                 }
                                 if (semanticUniformVariableAttribute != null)
                                 {
-                                    metaData.SemanticUniformMinVariable = semanticUniformVariableAttribute.MinValue;
-                                    metaData.SemanticUniformMaxVariable = semanticUniformVariableAttribute.MaxValue;
+                                    metaData.SemanticUniformMinVariable = semanticUniformVariableAttribute.MinValueVariable;
+                                    metaData.SemanticUniformMaxVariable = semanticUniformVariableAttribute.MaxValueVariable;
                                 }
                                 if (semanticGeneralDistributionVariableAttribute != null)
                                 {
-                                    metaData.SemanticGeneralDistributionHistogramVariable = semanticGeneralDistributionVariableAttribute.Histogram;
+                                    metaData.SemanticGeneralDistributionHistogramVariable = semanticGeneralDistributionVariableAttribute.HistogramVariable;
                                 }
-                                if (anglePositionReferenceAttribute != null)
+                                if (semanticBernoulliVariableAttribute != null)
                                 {
-                                    metaData.AnglePositionReferenceType = anglePositionReferenceAttribute.ReferenceType;
+                                    metaData.SemanticBernoulliProbabilistVariable = semanticBernoulliVariableAttribute.ProbabilistVariable;
+                                    metaData.SemanticBernoulliDeterministVariable = semanticBernoulliVariableAttribute.DeterministVariable;
+                                    metaData.SemanticBernoulliDeterministDefaultUncertainty = semanticBernoulliVariableAttribute.DeterministDefaultUncertainty;
                                 }
-                                if (axialPositionReferenceAttribute != null)
+                                if (semanticExclusiveOrAttributes != null)
                                 {
-                                    metaData.AxialPositionReferenceType = axialPositionReferenceAttribute.ReferenceType;
-                                }
-                                if (abscissaReferenceAttribute != null)
-                                {
-                                    metaData.AbscissaReferenceType = abscissaReferenceAttribute.ReferenceType;
-                                }
-                                if (azimuthReferenceAttribute != null)
-                                {
-                                    metaData.AzimuthReferenceType = azimuthReferenceAttribute.ReferenceType;
-                                }
-                                if (depthReferenceAttribute != null)
-                                {
-                                    metaData.DepthReferenceType = depthReferenceAttribute.ReferenceType;
-                                }
-                                if (timeReferenceAttribute != null)
-                                {
-                                    metaData.TimeReferenceType = timeReferenceAttribute.ReferenceType;
+                                    metaData.SemanticExclusiveOrs = new List<byte[]>();
+                                    foreach (var attribute in semanticExclusiveOrAttributes)
+                                    {
+                                        if (attribute.ExclusiveOr != null)
+                                        {
+                                            metaData.SemanticExclusiveOrs.Add(attribute.ExclusiveOr);
+                                        }
+                                    }
                                 }
                                 if (mandatoryAttritbute != null)
                                 {
                                     metaData.MandatoryType = mandatoryAttritbute.Mandatory;
-                                }
-                                if (positionReferenceAttribute != null)
-                                {
-                                    metaData.PositionReferenceType = positionReferenceAttribute.ReferenceType;
-                                }
-                                if (pressureReferenceAttribute != null)
-                                {
-                                    metaData.PressureReferenceType = pressureReferenceAttribute.ReferenceType;
                                 }
                                 if (semanticFactAttributes != null)
                                 {
@@ -143,12 +123,23 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         if (attribute != null)
                                         {
-                                            SemanticFact fact = new SemanticFact();
+                                            SemanticFact? fact = null;
+                                            if (attribute is ExcludeFactAttribute)
+                                            {
+                                                fact = new ExcludeFact();
+                                                
+                                            }
+                                            else
+                                            {
+                                                fact = new SemanticFact();
+                                            }
                                             fact.Subject = attribute.Subject;
                                             fact.SubjectName = attribute.SubjectName;
                                             fact.Verb = attribute.Verb;
                                             fact.Object = attribute.Object;
                                             fact.ObjectName = attribute.ObjectName;
+                                            fact.ObjectPhysicalQuantity = attribute.ObjectPhysicalQuantity;
+                                            fact.ObjectDrillingQuantity = attribute.ObjectDrillingQuantity;
                                             fact.ObjectAttributes = attribute.ObjectAttributes;
                                             if (metaData.SemanticFacts == null)
                                             {
@@ -164,13 +155,24 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         if (attribute != null)
                                         {
-                                            OptionalFact fact = new OptionalFact();
+                                            OptionalFact? fact = null;
+                                            if (attribute is OptionalExcludeFactAttribute)
+                                            {
+                                                fact = new OptionalExcludeFact();
+                                            }
+                                            else
+                                            {
+                                                fact = new OptionalFact();             
+                                            }
+                                            fact.ParentGroupIndex = attribute.ParentGroupIndex;
                                             fact.GroupIndex = attribute.GroupIndex;
                                             fact.Subject = attribute.Subject;
                                             fact.SubjectName = attribute.SubjectName;
                                             fact.Verb = attribute.Verb;
                                             fact.Object = attribute.Object;
                                             fact.ObjectName = attribute.ObjectName;
+                                            fact.ObjectPhysicalQuantity = attribute.ObjectPhysicalQuantity;
+                                            fact.ObjectDrillingQuantity = attribute.ObjectDrillingQuantity;
                                             fact.ObjectAttributes = attribute.ObjectAttributes;
                                             if (metaData.OptionalFacts == null)
                                             {

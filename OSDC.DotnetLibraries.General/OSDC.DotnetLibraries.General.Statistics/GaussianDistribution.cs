@@ -367,7 +367,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override bool isValid()
+        public override bool IsValid()
         {
             return Numeric.IsDefined(Mean) && Numeric.IsDefined(StandardDeviation) && Numeric.GT(StandardDeviation, 0) && Numeric.GE(Mean, minValue_) && Numeric.LE(Mean, maxValue_);
         }

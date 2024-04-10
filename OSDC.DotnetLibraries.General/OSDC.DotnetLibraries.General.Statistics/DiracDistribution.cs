@@ -121,7 +121,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override bool isValid()
+        public override bool IsValid()
         {
             return !Numeric.IsUndefined(Value) && Numeric.GE(Value, minValue_) && Numeric.LE(Value, maxValue_);
         }

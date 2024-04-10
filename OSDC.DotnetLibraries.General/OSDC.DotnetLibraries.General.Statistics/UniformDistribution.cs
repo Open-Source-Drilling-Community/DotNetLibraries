@@ -41,7 +41,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetMean()
         {
-            if (isValid())
+            if (IsValid())
             {
                 return (Min + Max) / 2;
             }
@@ -58,7 +58,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetStandardDeviation()
         {
-            if (isValid())
+            if (IsValid())
             {
                 return (Max - Min) / (2 * System.Math.Sqrt(3));
             }
@@ -74,7 +74,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? Realize()
         {
-            if (isValid() && Min != null && Max != null)
+            if (IsValid() && Min != null && Max != null)
             {
                 double unif = RandomGenerator.Instance.NextDouble();
                 double U;
@@ -94,7 +94,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? Quantile(double cumulative)
         {
-            if (isValid() && Min != null && Max != null)
+            if (IsValid() && Min != null && Max != null)
             {
                 double U;
                 U = Min.Value + (Max.Value - Min.Value) * cumulative;
@@ -128,7 +128,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override Tuple<double, double>[]? GetCurve()
         {
-            if (isValid() && Min != null && Max != null)
+            if (IsValid() && Min != null && Max != null)
             {
                 double min = Min.Value - (Max.Value - Min.Value) * 0.05;
                 double max = Max.Value + (Max.Value - Min.Value) * 0.05;
@@ -155,7 +155,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetProbability(double target)
         {
-            if (isValid() && Min != null && Max != null)
+            if (IsValid() && Min != null && Max != null)
             {
                 if (target < Min.Value || target > Max.Value)
                 {
@@ -179,7 +179,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetCumulativeProbability(double target)
         {
-            if (isValid() && Min != null && Max != null)
+            if (IsValid() && Min != null && Max != null)
             {
                 if (target <= Max.Value)
                 {
@@ -217,7 +217,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         /// <returns></returns>
-        public override bool isValid()
+        public override bool IsValid()
         {
             return (Max > Min) && Numeric.GE(Min, minValue_) && Numeric.LE(Max, maxValue_);
         }

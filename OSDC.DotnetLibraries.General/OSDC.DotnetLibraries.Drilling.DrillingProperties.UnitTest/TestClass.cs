@@ -6,25 +6,36 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
 {
     internal class TestClass
     {
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
-        [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
         [Mandatory(CommonProperty.MandatoryType.General)]
-        [SemanticFact(Nouns.Enum.DynamicDrillingSignal, Verbs.Enum.IsProcessedBy, Nouns.Enum.ComputationUnit)]
-        [SemanticFact(Nouns.Enum.DataProvider, Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingContractor)]
+        [SemanticFact("signal", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.Depth)]
+        [SemanticFact("SignalVerticalElevationFrame", Verbs.Enum.BelongsToClass, Nouns.Enum.VerticalDepthFrame)]
+        [SemanticFact("signal", Verbs.Enum.HasReferenceFrame, "SignalVerticalElevationFrame")]
+        [SemanticFact("WGS84DepthDatum", Verbs.Enum.BelongsToClass, Nouns.Enum.WGS84VerticalLocation)]
+        [SemanticFact("SignalVerticalElevationFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84DepthDatum")]
         public ScalarDrillingProperty ScalarValue { get; set; } = new ScalarDrillingProperty();
 
-        [PhysicalQuantity(PhysicalQuantity.QuantityEnum.SmallLength)]
-        [AbscissaReference(CommonProperty.AbscissaReferenceType.TopOfString)]
         [Mandatory(CommonProperty.MandatoryType.PipeHandling | CommonProperty.MandatoryType.Mechanical)]
+        [SemanticFact("signal", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, PhysicalQuantity.QuantityEnum.SmallLength)]
+        [SemanticFact("SignalCurvilinearFrame", Verbs.Enum.BelongsToClass, Nouns.Enum.OneDimensionalCurviLinearReferenceFrame)]
+        [SemanticFact("signal", Verbs.Enum.HasReferenceFrame, "SignalCurvilinearFrame")]
+        [SemanticFact("TopOfStringDatum", Verbs.Enum.BelongsToClass, Nouns.Enum.TopOfStringReferenceLocation)]
+        [SemanticFact("SignalCurvilinearFrame", Verbs.Enum.HasReferenceFrameOrigin, "TopOfStringDatum")]
         public UniformDrillingProperty UniformValue { get; set; } = new UniformDrillingProperty();
 
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
         [Mandatory(CommonProperty.MandatoryType.Hydraulic | CommonProperty.MandatoryType.Mechanical | CommonProperty.MandatoryType.MaterialTransport)]
+        [SemanticFact("signal", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
         public GaussianDrillingProperty GaussianValue { get; set; } = new GaussianDrillingProperty();
 
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
         [Mandatory(CommonProperty.MandatoryType.Directional)]
-        [AzimuthReference(CommonProperty.AzimuthReferenceType.TrueNorth)]
+        [SemanticFact("signal", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
+        [SemanticFact("SignalAzimuthFrame", Verbs.Enum.BelongsToClass, Nouns.Enum.AngleReferenceFrame)]
+        [SemanticFact("signal", Verbs.Enum.HasReferenceFrame, "SignalAzimuthFrame")]
+        [SemanticFact("TrueNorthDatum", Verbs.Enum.BelongsToClass, Nouns.Enum.TrueNorthAzimuthLocation)]
+        [SemanticFact("SignalAzimuthFrame", Verbs.Enum.HasReferenceFrameOrigin, "TrueNorthDatum")]
         public GeneralDistributionDrillingProperty GeneralDistributionValue { get; set; } = new GeneralDistributionDrillingProperty();
     }
 }

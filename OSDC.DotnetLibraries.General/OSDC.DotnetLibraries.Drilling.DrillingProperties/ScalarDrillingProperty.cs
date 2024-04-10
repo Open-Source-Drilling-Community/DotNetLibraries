@@ -14,6 +14,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public class ScalarDrillingProperty : DrillingProperty
     {
+
         /// <summary>
         /// the value of the property
         /// </summary>

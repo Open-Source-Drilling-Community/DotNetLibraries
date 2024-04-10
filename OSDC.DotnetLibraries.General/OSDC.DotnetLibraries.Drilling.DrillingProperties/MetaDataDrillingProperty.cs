@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using MathNet.Numerics.LinearAlgebra;
 using OSDC.UnitConversion.Conversion;
 using OSDC.UnitConversion.Conversion.DrillingEngineering;
 
@@ -23,33 +24,38 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticGaussianStandardDeviationVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public double? SemanticDefaultStandardDeviation { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? SemanticSensorPrecisionVariable { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public double? SemanticSensorDefaultPrecision { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? SemanticSensorAccuracyVariable { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public double? SemanticSensorDefaultAccuracy { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? SemanticFullScaleVariable { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public double? SemanticDefaultFullScale { get; set; } = null;
+        public string? SemanticProportionErrorVariable { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public double? SemanticDefaultProportionError { get; set; } = null;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticUniformMinVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticUniformMaxVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticGeneralDistributionHistogramVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.AnglePositionReferenceType? AnglePositionReferenceType { get; set; } = null;
+        public string? SemanticBernoulliProbabilistVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.AxialPositionReferenceType? AxialPositionReferenceType { get; set; } = null;
+        public string? SemanticBernoulliDeterministVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.AbscissaReferenceType? AbscissaReferenceType { get; set; } = null;
+        public double? SemanticBernoulliDeterministDefaultUncertainty { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.AzimuthReferenceType?  AzimuthReferenceType { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.DepthReferenceType? DepthReferenceType { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.TimeReferenceType? TimeReferenceType { get; set; } = null;
+        public List<byte[]>? SemanticExclusiveOrs {  get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public CommonProperty.MandatoryType? MandatoryType { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.PositionReferenceType? PositionReferenceType { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public CommonProperty.PressureReferenceType? PressureReferenceType { get; set;} = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public PhysicalQuantity.QuantityEnum? PhysicalQuantity { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public DrillingPhysicalQuantity.QuantityEnum? DrillingPhysicalQuantity { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<SemanticFact>? SemanticFacts { get; set; } = null;
         public List<OptionalFact>? OptionalFacts { get; set; } = null;

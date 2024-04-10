@@ -167,19 +167,41 @@ Realized values: value1 = 1.00 value2 = 0.38 value3 = 9.99 value4 = 0.96 value5 
 Realized values: value1 = 1.00 value2 = 0.74 value3 = 9.61 value4 = 2.94 value5 = 0.95 value6 = 1.01
 ```
 
+## `DiscreteDrillingProperty`
+Similarly, there is an abstract class called `DiscreteDrillingProperty` to describe booleans or enumerated values. It has also a property called `Value`, which is a 
+`DiscreteDistribution`. It has three direct sub-classes:
+- `DeterministicBooleanDrillingProperty`: used to represent a boolean value with no uncertainty, i.e., deterministic. It defines a specific property called `DeterministicDiscreteProperty`
+that allows to access with the correct type the underlying statistical probability distribution. It has a `Probability` property which returns the probability of the underlying
+`DeterministicDiscreteDistribution` for the target `0`. It has also a `BooleanValue` that defines the boolean state of the instance, which is determinstic for this class.
+- `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. The `Probability` property is used to define the uncertainty. The `BooleanValue` property
+is true if the `Probability` is greater than 0.5 and false otherwise. 
+- `GeneralDiscreteDrillingProperty`: used to represent a general discrete probability for a boolean value.
+
+```mermaid
+classDiagram
+    DiscreteDrillingProperty <|-- DeterministicBooleanDrillingProperty
+    DiscreteDrillingProperty <|-- BernoulliDrillingProperty
+    DiscreteDrillingProperty <|-- GeneralDiscreteDrillingProperty
+    DiscreteDrillingProperty : +DiscreteDrillingDistribution Value
+    DiscreteDrillingProperty : +bool? Realize()
+    class DeterministicBooleanDrillingProperty {
+        +DeterministicDiscreteDistribution DeterministicDiscreteValue
+        +double? Probability
+        +bool? BooleanValue
+    }
+    class BernoulliDrillingProperty {
+        +BernoulliDistribution BernoulliValue
+        +double? Probability
+        +bool? BooleanValue
+    }
+    class GeneralDiscreteDrillingProperty {
+    }
+end
+```
+
 # Providing Meta Information
 There is the possibility to provide meta information with the declation of a `DrillingProperty`. This is achieved using
 specific attributes. The possible attributes are:
-- `PhysicalQuantityAttribute`: It takes one argument, which is a value of the `PhysicalQuantity.QuantityEnum` defined in the library
-`OSDC.UnitConversion.Conversion`. This attribute is to be used to declare the physical quantity of the property, more precisely
-a general quantity that is not further specialized as a `DrillingPhysicalQuantity`. This attribute shall be defined only once for the property.
-`PhysicalQuantityAttribute` and `DrillingPhysicalQuantityAttribute` are supposed to be exclusive from eachothers, even there is no
-enforcement of that rule by the compiler.
-- `DrillingPhysicalQuantityAttribute`: It takes one argument of the type `DrillingPhysicalQuantity.QuantityEnum`, which is defined
-in the library `OSDC.UnitConversion.Conversion.DrillingEngineering`. This attribute is intended to be used for properties 
-that have a physical quantity that is described in `DrillingPhysicalQuantity`. This attribute shall be defined only once for the property.
-`PhysicalQuantityAttribute` and `DrillingPhysicalQuantityAttribute` are supposed to be exclusive from eachothers, even there is no
-enforcement of that rule by the compiler.
 - `AccessToVariableAttribute` : It takes one argument of the type `CommonProperty.VariableAccessType`. This attribute is used to inform whether
 the property will be only fetched (`CommonProperty.VariableAccessType.Readable`) or if it can be assigned (`CommonProperty.VariableAccessType.Assignable`).
 In relation with the semantic definition of the property that is interpreted as the semantic will be turned into a sparql query (readable)
@@ -189,8 +211,9 @@ the property is mandatory and in the affirmative in which context. The value `Ge
 The value `None` means that it is always optional. Other values can be combined together using a logical "or", therefore allowing
 to state that the property can be mandatory in one or several context. Example contexts are: `Mechanical`, `Hydraulic`, `Directional`, ...
 This attribute shall be defined only once for the property.
-- `SemanticFactAttribute`: It takes three or more arguments: `Subject`, `Verb` and `Object`. `Subject` and `Object` belongs to either the enumeration
-`Nouns.Enum` or a `string`, while `Verb` is a choice from the enum `Verbs.Enum`. Both `Nouns.Enum` and `Verbs.Enum` are defined in the library
+- `SemanticFactAttribute`: It takes two, three or more arguments: `Subject`, `Verb` and `Object`. `Subject` and `Object` belongs to either the enumeration
+`Nouns.Enum` or a `string`, while `Verb` is a choice from the enum `Verbs.Enum`. If `Verb` is ommitted then it is supposed to be `BelongsToClass` and the `Object`
+must be a `Nouns.Enum`. Both `Nouns.Enum` and `Verbs.Enum` are defined in the library
 `DWIS.Vocabulary.Schemas` which contains the vocabulary defined in the D-WIS project (see [D-WIS.org](https://d-wis.org/)). If there are more
 than three arguments, the additional one must come in pair and are strings. They correspond to `attribute` and `value` for the `Object`. This 
 attribute is used to defined a true assertion about that property. The use of a `string` for the `Subject` or the `Object` is to
@@ -201,46 +224,41 @@ to describe multiple facts about the property, i.e., a semantic network.
     may be dropped in the sparql query in case there are no matching data. `OptionalFactAttribute` has an additional property called `GroupIndex`, a `byte`.
     The purpose of `GroupIndex` is to state that a set of `OptionalFactAttribute` are bound together when they use the same value for `GroupIndex`.
     This information is used to generate the multiple variant of Sparql queries that result from the combinatorial choices related to the `OptionalFactAttribute`.
+    It can also have both a `ParentGroupIndex` and a `GroupIndex`. In that case, this is an option relative to the `ParentGroupIndex` option.
+    - `ExcludeFact` and `OptionalExcludeFact` are used to define facts that will exclude data in a SparQL query, meaning that if the fact is present
+    then the query will not select this data. The difference between `ExcludeFact` and `OptionalExcludeFact` is that an `ExcludeFact` is always tested 
+    while an `OptionalExcludeFact` will be tested only for the optional group index.
 - `SemanticDiracVariableAttribute`: It takes one argument that is the name used for a `DrillingSignal` that will be used for the `Value` of this
 property.
-- `SemanticGaussianVariableAttribute`: It takes two arguments. The first one is the name of a `DrillingSignal` used in the semantic facts
+- `SemanticGaussianVariableAttribute`: It takes 2 arguments or 3 arguments. The first one is the name of a `DrillingSignal` used in the semantic facts
  that is used as the `Mean` value of this property. The second argument is the name of a `DrillingSignal` used in the semantic facts
- and that is used as the `StandardDeviation` value of this property.
+ and that is used as the `StandardDeviation` value of this property. The third one is a default 
+ value for the `StandardDeviation`.
+- `SemanticSensorVariableAttribute`: It takes from 3 to 5 arguments. The three string arguments are
+respectively the variable names for the `Mean`, `Precision` and `Accuracy`. The two double arguments are
+respectively the default values for the `Precision` and `Accuracy`.
+- `SemanticFullScaleAttribute`: It takes from 3 to 5 arguments. The three string arguments are
+respectively the variable names for the `Mean`, `FullScale` and `ProportionError`. The two double  arguments are
+respectively the default values for the `FullScale` and `ProportionError`.
 - `SemanticUniformVariableAttribute`: It takes two arguments that are the names of a `DrillingSignal` used in the semantic facts
 that are used as the `Min` and the `Max` value of this property.
 - `SemanticGeneralDistributionVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used in the semantic facts
 to access the `Histogram` value of this property.
-- `AbscissaReferenceAttribute`: It takes one argument of type `CommonProperty.AbscissaReferenceType`. It allows to specify
-the reference of the property with regards to a curvilinear abscissa coordinate system. For example whether a distance is relative
-to the top or the bottom of an element.
-- `AnglePositionReferenceAttribute`: It takes one argument of type `CommonProperty.AnglePositionReferenceType`. It allows to specify
-the reference of the property with regards to an angular position.
-- `AxialPositionReferenceAttribute`: It takes one argument of type `CommonProperty.AxialPositionReferenceType`. It allows to specify
-the reference of the property with regards to an axial position.
-- `AzimuthReferenceAttribute`: It takes one argument of type `CommonProperty.AzimuthReferenceType`. It allows to specify the
-reference of the property with regards to the origin of azimuth.
-- `DepthReferenceAttribute`: It takes one argument of type `CommonProperty.DepthReferenceType`. It allows to specify the reference
-of the property with regards to the origin of depth.
-- `PositionReferenceAttribute`: It takes one argument of type `CommonProperty.PositionReferenceType`. It allows to specify
-the reference of the property with regards to the origin of position.
-- `PressureReferenceAttribute`: It takes one argument of type `CommonProperty.PressureReferenceType`. It allows to specify
-the reference for pressure of the property.
-- `TimeReferenceAttribute`: It takes one argument of type `CommonProperty.TimeReferenceType`. It allows to specify the 
-reference for time of a property.
+- `SemanticExclusiveOrAttribute`: It takes at least 2 arguments. This attribute is used to defined
+a list of the optional semantic facts that are exclusive from each other's. 
 
 ```mermaid
 classDiagram
-    PhysicalQuantityAttribute <|-- DrillingPhysicalQuantityAttribute
-    PhysicalQuantityAttribute : +PhysicalQuantity.QuantityEnum PhysicalQuantity
-    class DrillingPhysicalQuantityAttribute {
-        +DrillingPhysicalQuantity.QuantityEnum PhysicalQuantity
-    }
     class AccessToVariableAttribute {
         +CommonProperty.VariableAccessType AccessType
     }
     class MandatoryAttribute {
         +CommonProperty.MandatoryType Mandatory
     }
+```
+
+```mermaid
+classDiagram
     SemanticFactAttribute <|-- OptionalFactAttribute
     SemanticFactAttribute : +Nouns.Enum? Subject
     SemanticFactAttribute : +string? SubjectName
@@ -256,6 +274,7 @@ classDiagram
     class SemanticGaussianVariableAttribute {
         +string? Mean
         +string? StandardDeviation
+        +double? DefaultStandardDeviation
     }
     class SemanticUniformVariableAttribute {
         +string? Min
@@ -264,43 +283,26 @@ classDiagram
     class SemanticGeneralDistributionVariableAttribute {
         +string? Histogram
     }
+    class SemanticSensorVariableAttribute {
+        +string? MeanVariable
+        +string? PrecisionVariable
+        +string? AccuracyVariable
+        +double? DefaultPrecision
+        +double? DefaultAccuracy
+   }
+   class SemanticFullScaleVariableAttribute {
+        +string? MeanVariable
+        +string? FullScaleVariable
+        +string? PrecisionErrorVariable
+        +double? DefaultFullScale
+        +double? DefaultPrecisionError
+   }
+   class SemanticExclusiveOrAttribute {
+        +byte[]? ExclusiveOr
+   }
 ```
 
-```mermaid
-classDiagram
-    ReferenceAttribute <|-- AbscissaReferenceAttribute
-    ReferenceAttribute <|-- AnglePositionReferenceAttribute
-    ReferenceAttribute <|-- AxialPositionReferenceAttribute
-    ReferenceAttribute <|-- AzimuthReferenceAttribute
-    ReferenceAttribute <|-- DepthReferenceAttribute
-    ReferenceAttribute <|-- PositionReferenceAttribute
-    ReferenceAttribute <|-- PressureReferenceAttribute
-    ReferenceAttribute <|-- TimeReferenceAttribute
-    class AbscissaReferenceAttribute {
-        +CommonProperty.AbscissaReferenceType ReferenceType
-    }
-    class AnglePositionReferenceAttribute {
-        +CommonProperty.AnglePositionReferenceType ReferenceType
-    }
-    class AxialPositionReferenceAttribute {
-        +CommonProperty.AxialPositionReferenceType ReferenceType
-    }
-    class AzimuthReferenceAttribute {
-        +CommonProperty.AzimuthReferenceType ReferenceType
-    }
-    class DepthReferenceAttribute {
-        +CommonProperty.DepthReferenceType ReferenceType
-    }
-    class PositionReferenceAttribute {
-        +CommonProperty.PositionReferenceType ReferenceType
-    }
-    class PressureReferenceAttribute {
-        +CommonProperty.PressureReferenceType ReferenceType
-    }
-    class TimeReferenceAttribute {
-        +CommonProperty.TimeReferenceType ReferenceType
-    }
-```
+
 ## Example
 Here is an example:
 
@@ -312,75 +314,84 @@ using DWIS.Vocabulary.Schemas;
 
 namespace DrillingProperties
 {
-    public class TestClass
+      public class TestClass
     {
         [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
-        [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
         [Mandatory(CommonProperty.MandatoryType.General)]
-        [SemanticGaussianVariables("BitDepthValue#01", "BitDepthStandardDeviationValue#01")]
-        [SemanticFact("BitDepthValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("BitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.BitDepth)]
-        [SemanticFact("BitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DerivedMeasurement)]
+        [SemanticGaussianVariable("BitDepthValue#01", "BitDepthStandardDeviationValue#01")]
+        [SemanticFact("BitDepthValue#01", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("BitDepth#01", Nouns.Enum.BitDepth)]
+        [SemanticFact("BitDepth#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.Depth)]
+        [SemanticFact("BitDepth#01", Nouns.Enum.DerivedMeasurement)]
         [SemanticFact("BitDepth#01", Verbs.Enum.HasDynamicValue, "BitDepthValue#01")]
         [SemanticFact("BitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
-        [SemanticFact("BitDepthStandardDeviation#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("BitDepthStandardDeviationValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("WGS84VerticalDatum", Nouns.Enum.WGS84VerticalLocation)]
+        [SemanticFact("VerticalDepthFrame", Nouns.Enum.VerticalDepthFrame)]
+        [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
+        [SemanticFact("BitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
+        [SemanticFact("Bit#01", Nouns.Enum.Bit)]
+        [SemanticFact("BitDepthStandardDeviation#01", Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("BitDepthStandardDeviationValue#01", Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("BitDepthStandardDeviation#01", Verbs.Enum.HasDynamicValue, "BitDepthStandardDeviationValue#01")]
-        [SemanticFact("GaussianUncertainty#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GaussianUncertainty)]
+        [SemanticFact("GaussianUncertainty#01", Nouns.Enum.GaussianUncertainty)]
         [SemanticFact("BitDepth#01", Verbs.Enum.HasUncertainty, "GaussianUncertainty")]
         [SemanticFact("GaussianUncertainty#01", Verbs.Enum.HasUncertaintyStandardDeviation, "BitDepthStandardDeviation#01")]
         public GaussianDrillingProperty MeasuredBitDepth { get; set; } = new GaussianDrillingProperty();
 
         [AccessToVariable(CommonProperty.VariableAccessType.Readable)]
-        [PhysicalQuantity(PhysicalQuantity.QuantityEnum.StandardLength)]
-        [DepthReference(CommonProperty.DepthReferenceType.DerrickFloor)]
         [Mandatory(CommonProperty.MandatoryType.PipeHandling| CommonProperty.MandatoryType.Mechanical | CommonProperty.MandatoryType.Hydraulic)]
         [SemanticDiracVariable("BlockPositionSPValue#01")]
-        [SemanticFact("BlockPositionSPValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("BlockPositionSP#01", Verbs.Enum.BelongsToClass, Nouns.Enum.HookPosition)]
-        [SemanticFact("BlockPositionSP#01", Verbs.Enum.BelongsToClass, Nouns.Enum.SetPoint)]
+        [SemanticFact("BlockPositionSPValue#01", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("BlockPositionSPValue#01", Verbs.Enum.IsOfMeasurableQuantity, PhysicalQuantity.QuantityEnum.StandardLength)]
+        [SemanticFact("BlockPositionSP#01", Nouns.Enum.HookPosition)]
+        [SemanticFact("BlockPositionSP#01", Nouns.Enum.SetPoint)]
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.HasDynamicValue, "BlockPositionSPValue#01")]
+        [SemanticFact("DrillFloorDatum", Nouns.Enum.DerrickFloorVerticalLocation)]
+        [SemanticFact("VerticalDepthFrame", Nouns.Enum.VerticalDepthFrame)]
+        [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "DrillFloorDatum")]
+        [SemanticFact("BlockPositionSP#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.IsMechanicallyLocatedAt, "Elevator#01")]
-        [SemanticFact("Elevator#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Elevator)]
+        [SemanticFact("Elevator#01", Nouns.Enum.Elevator)]
         public ScalarDrillingProperty BlockPositionSetPoint { get; set;} = new ScalarDrillingProperty();
 
         [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.BlockVelocity)]
         [Mandatory(CommonProperty.MandatoryType.Mechanical | CommonProperty.MandatoryType.Hydraulic | CommonProperty.MandatoryType.MaterialTransport)]
         [SemanticUniformVariable("TopOfStringVelocityUpwardMinValue#01", "TopOfStringVelocityUpwardMaxValue#01")]
-        [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.BelongsToClass, Nouns.Enum.HookVelocity)]
-        [SemanticFact("TopOfStringVelocityUpwardMin#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("TopOfStringVelocityUpwardMax#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("TopOfStringVelocityUpwardMinValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("TopOfStringVelocityUpwardMaxValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("TopOfStringVelocityUpward#01", Nouns.Enum.HookVelocity)]
+        [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.BlockVelocity)]
+        [SemanticFact("TopOfStringVelocityUpwardMin#01", Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("TopOfStringVelocityUpwardMax#01", Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("TopOfStringVelocityUpwardMinValue#01", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("TopOfStringVelocityUpwardMaxValue#01", Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("TopOfStringVelocityUpwardMin#01", Verbs.Enum.HasDynamicValue, "TopOfStringVelocityUpwardMinValue#01")]
         [SemanticFact("TopOfStringVelocityUpwardMax#01", Verbs.Enum.HasDynamicValue, "TopOfStringVelocityUpwardMaxValue#01")]
-        [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Limit)]
+        [SemanticFact("TopOfStringVelocityUpward#01",  Nouns.Enum.Limit)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsMechanicallyLocatedAt, Nouns.Enum.DrillString)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsPhysicallyLocatedAt, Nouns.Enum.TopOfStringReferenceLocation)]
-        [SemanticFact("UniformUncertainty#01", Verbs.Enum.BelongsToClass, Nouns.Enum.MinMaxUncertainty)]
+        [SemanticFact("UniformUncertainty#01", Nouns.Enum.MinMaxUncertainty)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.HasUncertainty, "UniformUncertainty#01")]
         [SemanticFact("UniformUncertainty#01", Verbs.Enum.HasUncertaintyMin, "TopOfStringVelocityUpwardMin#01")]
         [SemanticFact("UniformUncertainty#01", Verbs.Enum.HasUncertaintyMax, "TopOfStringVelocityUpwardMax#01")]
         public UniformDrillingProperty TopOfStringSpeedUpwardLimit { get; set;} = new UniformDrillingProperty();
 
         [AccessToVariable(CommonProperty.VariableAccessType.Readable)]
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
-        [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
         [Mandatory(CommonProperty.MandatoryType.None)]
         [SemanticGeneralDistributionVariable("EstimatedBitDepthHistogramValue#01")]
-        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.BitDepth)]
-        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputedData)]
+        [SemanticFact("EstimatedBitDepth#01", Nouns.Enum.BitDepth)]
+        [SemanticFact("EstimatedBitDepth#01", Nouns.Enum.ComputedData)]
+        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.Depth)]
+        [SemanticFact("WGS84VerticalDatum", Nouns.Enum.WGS84VerticalLocation)]
+        [SemanticFact("VerticalDepthFrame", Nouns.Enum.VerticalDepthFrame)]
+        [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
+        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
-        [SemanticFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputationUnit)]
-        [OptionalFact(0, "TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
+        [SemanticFact("Bit#01", Nouns.Enum.Bit)]
+        [SemanticFact("TransientT&D#01", Nouns.Enum.ComputationUnit)]
+        [OptionalFact(0, "TransientT&D#01", Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsTransformationOutput, "TransientT&D#01")]
-        [SemanticFact("EstimatedBitDepthHistogramValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("EstimatedBitDepthHistogram#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GenericUncertainty)]
-        [SemanticFact("GeneralUncertaintyDistribution#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GenericUncertainty)]
+        [SemanticFact("EstimatedBitDepthHistogramValue#01", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("EstimatedBitDepthHistogram#01", Nouns.Enum.GenericUncertainty)]
+        [SemanticFact("GeneralUncertaintyDistribution#01", Nouns.Enum.GenericUncertainty)]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.HasUncertainty, "GeneralUncertaintyDistribution#01")]
         [SemanticFact("GeneralUncertaintyDistribution#01", Verbs.Enum.HasUncertaintyHistogram, "EstimatedBitDepthHistogram#01")]
         public GeneralDistributionDrillingProperty EstimatedBitDepth { get; set; } = new GeneralDistributionDrillingProperty();
@@ -419,17 +430,7 @@ The values are instances of the class `MetaDataDrillingProperty`. A `MetaDataDri
 - `Namespace`, a string that contains the namespace of the class where this property is defined
 - `ClassName`, a string that contains the class name where this property is defined
 - `PropertyName`, a string that contains the name of the property
-- `AbscissaReferenceType`, which is of type `CommonProperty.AbscissaReferenceType?`
-- `AnglePositionReferenceType`, which is type `CommonProperty.AnglePositionReferenceType`
-- `AxialPositionReferenceType`, which is type `CommonProperty.AxialPositionReferenceType`
-- `AzimuthReferenceType`, which is of type `CommonProperty.AzimuthReferenceType?`
-- `DepthReferenceType`, which is of type `CommonProperty.DepthReferenceType?`
 - `MandatoryType`, which is of type `CommonProperty.MandatoryType?`
-- `PositionReferenceType`, which is of type `CommonProperty.PositionReferenceType?`
-- `PressureReferenceType`, which is of type `CommonProperty.PressureReferenceType?`
-- `TimeReferenceType`, which is of type `CommonProperty.TimeReferenceType?`
-- `PhysicalQuantity`, which is of type `PhysicalQuantity.QuantityEnum?`
-- `DrillingPhysicalQuantity`, which is of type `DrillingPhysicalQuantity.QuantityEnum?`
 - `SemanticFacts`, which is of type `List<SemanticFact>?`
 
 This method can be used to generate the meta information of all the properties defined in an `Assembly`. 
@@ -459,72 +460,81 @@ namespace DrillingProperties
     public class TestClass
     {
         [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
-        [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
         [Mandatory(CommonProperty.MandatoryType.General)]
-        [SemanticGaussianVariables("BitDepthValue#01", "BitDepthStandardDeviationValue#01")]
-        [SemanticFact("BitDepthValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("BitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.BitDepth)]
-        [SemanticFact("BitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DerivedMeasurement)]
+        [SemanticGaussianVariable("BitDepthValue#01", "BitDepthStandardDeviationValue#01")]
+        [SemanticFact("BitDepthValue#01",  Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("BitDepth#01",  Nouns.Enum.BitDepth)]
+        [SemanticFact("BitDepth#01",  Nouns.Enum.DerivedMeasurement)]
+        [SemanticFact("BitDepth#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.Depth)]
         [SemanticFact("BitDepth#01", Verbs.Enum.HasDynamicValue, "BitDepthValue#01")]
+        [SemanticFact("WGS84VerticalDatum",  Nouns.Enum.WGS84VerticalLocation)]
+        [SemanticFact("VerticalDepthFrame",  Nouns.Enum.VerticalDepthFrame)]
+        [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
+        [SemanticFact("BitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("BitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
-        [SemanticFact("BitDepthStandardDeviation#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("BitDepthStandardDeviationValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("Bit#01",  Nouns.Enum.Bit)]
+        [SemanticFact("BitDepthStandardDeviation#01",  Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("BitDepthStandardDeviationValue#01",  Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("BitDepthStandardDeviation#01", Verbs.Enum.HasDynamicValue, "BitDepthStandardDeviationValue#01")]
-        [SemanticFact("GaussianUncertainty#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GaussianUncertainty)]
+        [SemanticFact("GaussianUncertainty#01",  Nouns.Enum.GaussianUncertainty)]
         [SemanticFact("BitDepth#01", Verbs.Enum.HasUncertainty, "GaussianUncertainty")]
         [SemanticFact("GaussianUncertainty#01", Verbs.Enum.HasUncertaintyStandardDeviation, "BitDepthStandardDeviation#01")]
         public GaussianDrillingProperty MeasuredBitDepth { get; set; } = new GaussianDrillingProperty();
 
         [AccessToVariable(CommonProperty.VariableAccessType.Readable)]
-        [PhysicalQuantity(PhysicalQuantity.QuantityEnum.StandardLength)]
-        [DepthReference(CommonProperty.DepthReferenceType.DerrickFloor)]
         [Mandatory(CommonProperty.MandatoryType.PipeHandling | CommonProperty.MandatoryType.Mechanical | CommonProperty.MandatoryType.Hydraulic)]
         [SemanticDiracVariable("BlockPositionSPValue#01")]
-        [SemanticFact("BlockPositionSPValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("BlockPositionSP#01", Verbs.Enum.BelongsToClass, Nouns.Enum.HookPosition)]
-        [SemanticFact("BlockPositionSP#01", Verbs.Enum.BelongsToClass, Nouns.Enum.SetPoint)]
+        [SemanticFact("BlockPositionSPValue#01",  Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("BlockPositionSP#01",  Nouns.Enum.HookPosition)]
+        [SemanticFact("BlockPositionSP#01",  Nouns.Enum.SetPoint)]
+        [SemanticFact("BlockPositionSP#01", Verbs.Enum.IsOfMeasurableQuantity, PhysicalQuantity.QuantityEnum.StandardLength)]
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.HasDynamicValue, "BlockPositionSPValue#01")]
+        [SemanticFact("DrillFloorDatum",  Nouns.Enum.DerrickFloorVerticalLocation)]
+        [SemanticFact("VerticalDepthFrame",  Nouns.Enum.VerticalDepthFrame)]
+        [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "DrillFloorDatum")]
+        [SemanticFact("BlockPositionSP#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.IsMechanicallyLocatedAt, "Elevator#01")]
-        [SemanticFact("Elevator#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Elevator)]
+        [SemanticFact("Elevator#01",  Nouns.Enum.Elevator)]
         public ScalarDrillingProperty BlockPositionSetPoint { get; set; } = new ScalarDrillingProperty();
 
         [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.BlockVelocity)]
         [Mandatory(CommonProperty.MandatoryType.Mechanical | CommonProperty.MandatoryType.Hydraulic | CommonProperty.MandatoryType.MaterialTransport)]
         [SemanticUniformVariable("TopOfStringVelocityUpwardMinValue#01", "TopOfStringVelocityUpwardMaxValue#01")]
-        [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.BelongsToClass, Nouns.Enum.HookVelocity)]
-        [SemanticFact("TopOfStringVelocityUpwardMin#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("TopOfStringVelocityUpwardMax#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("TopOfStringVelocityUpwardMinValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("TopOfStringVelocityUpwardMaxValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("TopOfStringVelocityUpward#01",  Nouns.Enum.HookVelocity)]
+        [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.BlockVelocity)]
+        [SemanticFact("TopOfStringVelocityUpwardMin#01",  Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("TopOfStringVelocityUpwardMax#01",  Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("TopOfStringVelocityUpwardMinValue#01",  Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("TopOfStringVelocityUpwardMaxValue#01",  Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("TopOfStringVelocityUpwardMin#01", Verbs.Enum.HasDynamicValue, "TopOfStringVelocityUpwardMinValue#01")]
         [SemanticFact("TopOfStringVelocityUpwardMax#01", Verbs.Enum.HasDynamicValue, "TopOfStringVelocityUpwardMaxValue#01")]
-        [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Limit)]
+        [SemanticFact("TopOfStringVelocityUpward#01",  Nouns.Enum.Limit)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsMechanicallyLocatedAt, Nouns.Enum.DrillString)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.IsPhysicallyLocatedAt, Nouns.Enum.TopOfStringReferenceLocation)]
-        [SemanticFact("UniformUncertainty#01", Verbs.Enum.BelongsToClass, Nouns.Enum.MinMaxUncertainty)]
+        [SemanticFact("UniformUncertainty#01",  Nouns.Enum.MinMaxUncertainty)]
         [SemanticFact("TopOfStringVelocityUpward#01", Verbs.Enum.HasUncertainty, "UniformUncertainty#01")]
         [SemanticFact("UniformUncertainty#01", Verbs.Enum.HasUncertaintyMin, "TopOfStringVelocityUpwardMin#01")]
         [SemanticFact("UniformUncertainty#01", Verbs.Enum.HasUncertaintyMax, "TopOfStringVelocityUpwardMax#01")]
         public UniformDrillingProperty TopOfStringSpeedUpwardLimit { get; set; } = new UniformDrillingProperty();
 
         [AccessToVariable(CommonProperty.VariableAccessType.Readable)]
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
-        [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
         [Mandatory(CommonProperty.MandatoryType.None)]
         [SemanticGeneralDistributionVariable("EstimatedBitDepthHistogramValue#01")]
-        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.BitDepth)]
-        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputedData)]
+        [SemanticFact("EstimatedBitDepth#01",  Nouns.Enum.BitDepth)]
+        [SemanticFact("EstimatedBitDepth#01",  Nouns.Enum.ComputedData)]
+        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.Depth)]
+        [SemanticFact("WGS84VerticalDatum",  Nouns.Enum.WGS84VerticalLocation)]
+        [SemanticFact("VerticalDepthFrame",  Nouns.Enum.VerticalDepthFrame)]
+        [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
+        [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01", Verbs.Enum.BelongsToClass, Nouns.Enum.Bit)]
-        [SemanticFact("TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ComputationUnit)]
-        [OptionalFact(0, "TransientT&D#01", Verbs.Enum.BelongsToClass, Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
+        [SemanticFact("Bit#01",  Nouns.Enum.Bit)]
+        [SemanticFact("TransientT&D#01",  Nouns.Enum.ComputationUnit)]
+        [OptionalFact(0, "TransientT&D#01",  Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsTransformationOutput, "TransientT&D#01")]
-        [SemanticFact("EstimatedBitDepthHistogramValue#01", Verbs.Enum.BelongsToClass, Nouns.Enum.DynamicDrillingSignal)]
-        [SemanticFact("EstimatedBitDepthHistogram#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GenericUncertainty)]
-        [SemanticFact("GeneralUncertaintyDistribution#01", Verbs.Enum.BelongsToClass, Nouns.Enum.GenericUncertainty)]
+        [SemanticFact("EstimatedBitDepthHistogramValue#01",  Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("EstimatedBitDepthHistogram#01",  Nouns.Enum.GenericUncertainty)]
+        [SemanticFact("GeneralUncertaintyDistribution#01",  Nouns.Enum.GenericUncertainty)]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.HasUncertainty, "GeneralUncertaintyDistribution#01")]
         [SemanticFact("GeneralUncertaintyDistribution#01", Verbs.Enum.HasUncertaintyHistogram, "EstimatedBitDepthHistogram#01")]
         public GeneralDistributionDrillingProperty EstimatedBitDepth { get; set; } = new GeneralDistributionDrillingProperty();
@@ -550,10 +560,10 @@ namespace DrillingProperties
 The output is the following:
 
 ```
-(TestClass, MeasuredBitDepth) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"MeasuredBitDepth","DepthReferenceType":1,"MandatoryType":65535,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"BitDepthValue#01","Verb":59,"Object":142,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":59,"Object":138,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":54,"ObjectName":"BitDepthValue#01","ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]},{"SubjectName":"BitDepthStandardDeviation#01","Verb":59,"Object":76,"ObjectAttributes":[]},{"SubjectName":"BitDepthStandardDeviationValue#01","Verb":59,"Object":142,"ObjectAttributes":[]},{"SubjectName":"BitDepthStandardDeviation#01","Verb":54,"ObjectName":"BitDepthStandardDeviationValue#01","ObjectAttributes":[]},{"SubjectName":"GaussianUncertainty#01","Verb":59,"Object":349,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":115,"ObjectName":"GaussianUncertainty","ObjectAttributes":[]},{"SubjectName":"GaussianUncertainty#01","Verb":122,"ObjectName":"BitDepthStandardDeviation#01","ObjectAttributes":[]}]}
-(TestClass, BlockPositionSetPoint) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"BlockPositionSetPoint","DepthReferenceType":4,"MandatoryType":19,"PhysicalQuantity":65,"SemanticFacts":[{"SubjectName":"BlockPositionSPValue#01","Verb":59,"Object":142,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":91,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":59,"Object":124,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":54,"ObjectName":"BlockPositionSPValue#01","ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":95,"ObjectName":"Elevator#01","ObjectAttributes":[]},{"SubjectName":"Elevator#01","Verb":59,"Object":182,"ObjectAttributes":[]}]}
-(TestClass, TopOfStringSpeedUpwardLimit) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"TopOfStringSpeedUpwardLimit","MandatoryType":11,"DrillingPhysicalQuantity":0,"SemanticFacts":[{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":92,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMin#01","Verb":59,"Object":76,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMax#01","Verb":59,"Object":76,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMinValue#01","Verb":59,"Object":142,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMaxValue#01","Verb":59,"Object":142,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMin#01","Verb":54,"ObjectName":"TopOfStringVelocityUpwardMinValue#01","ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMax#01","Verb":54,"ObjectName":"TopOfStringVelocityUpwardMaxValue#01","ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":59,"Object":134,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":95,"Object":176,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":99,"Object":274,"ObjectAttributes":[]},{"SubjectName":"UniformUncertainty#01","Verb":59,"Object":351,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":115,"ObjectName":"UniformUncertainty#01","ObjectAttributes":[]},{"SubjectName":"UniformUncertainty#01","Verb":119,"ObjectName":"TopOfStringVelocityUpwardMin#01","ObjectAttributes":[]},{"SubjectName":"UniformUncertainty#01","Verb":117,"ObjectName":"TopOfStringVelocityUpwardMax#01","ObjectAttributes":[]}]}
-(TestClass, EstimatedBitDepth) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"EstimatedBitDepth","DepthReferenceType":1,"MandatoryType":0,"DrillingPhysicalQuantity":3,"SemanticFacts":[{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":79,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":59,"Object":140,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":95,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":59,"Object":163,"ObjectAttributes":[]},{"SubjectName":"TransientT\u0026D#01","Verb":59,"Object":16,"ObjectAttributes":[]},{"SubjectName":"TransientT\u0026D#01","Verb":59,"Object":254,"ObjectAttributes":[{"Item1":"DegreeOfFreedom","Item2":"4"}]},{"SubjectName":"EstimatedBitDepth#01","Verb":37,"ObjectName":"TransientT\u0026D#01","ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepthHistogramValue#01","Verb":59,"Object":142,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepthHistogram#01","Verb":59,"Object":350,"ObjectAttributes":[]},{"SubjectName":"GeneralUncertaintyDistribution#01","Verb":59,"Object":350,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":115,"ObjectName":"GeneralUncertaintyDistribution#01","ObjectAttributes":[]},{"SubjectName":"GeneralUncertaintyDistribution#01","Verb":123,"ObjectName":"EstimatedBitDepthHistogram#01","ObjectAttributes":[]}]}
+(TestClass, MeasuredBitDepth) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"MeasuredBitDepth","AccessType":2,"SemanticGaussianMeanVariable":"BitDepthValue#01","SemanticGaussianStandardDeviationVariable":"BitDepthStandardDeviationValue#01","SemanticProportionErrorVariable":null,"SemanticExclusiveOrs":[],"MandatoryType":65535,"SemanticFacts":[{"SubjectName":"BitDepthValue#01","Verb":58,"Object":143,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":58,"Object":79,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":58,"Object":139,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":104,"ObjectDrillingQuantity":3,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":54,"ObjectName":"BitDepthValue#01","ObjectAttributes":[]},{"SubjectName":"WGS84VerticalDatum","Verb":58,"Object":274,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":58,"Object":318,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":97,"ObjectName":"WGS84VerticalDatum","ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":96,"ObjectName":"VerticalDepthFrame","ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":94,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":58,"Object":164,"ObjectAttributes":[]},{"SubjectName":"BitDepthStandardDeviation#01","Verb":58,"Object":76,"ObjectAttributes":[]},{"SubjectName":"BitDepthStandardDeviationValue#01","Verb":58,"Object":143,"ObjectAttributes":[]},{"SubjectName":"BitDepthStandardDeviation#01","Verb":54,"ObjectName":"BitDepthStandardDeviationValue#01","ObjectAttributes":[]},{"SubjectName":"GaussianUncertainty#01","Verb":58,"Object":385,"ObjectAttributes":[]},{"SubjectName":"BitDepth#01","Verb":114,"ObjectName":"GaussianUncertainty","ObjectAttributes":[]},{"SubjectName":"GaussianUncertainty#01","Verb":120,"ObjectName":"BitDepthStandardDeviation#01","ObjectAttributes":[]}],"OptionalFacts":null}
+(TestClass, BlockPositionSetPoint) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"BlockPositionSetPoint","AccessType":1,"SemanticDiracVariable":"BlockPositionSPValue#01","SemanticProportionErrorVariable":null,"SemanticExclusiveOrs":[],"MandatoryType":19,"SemanticFacts":[{"SubjectName":"BlockPositionSPValue#01","Verb":58,"Object":143,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":58,"Object":91,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":58,"Object":125,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":104,"ObjectPhysicalQuantity":65,"ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":54,"ObjectName":"BlockPositionSPValue#01","ObjectAttributes":[]},{"SubjectName":"DrillFloorDatum","Verb":58,"Object":277,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":58,"Object":318,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":97,"ObjectName":"DrillFloorDatum","ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":96,"ObjectName":"VerticalDepthFrame","ObjectAttributes":[]},{"SubjectName":"BlockPositionSP#01","Verb":94,"ObjectName":"Elevator#01","ObjectAttributes":[]},{"SubjectName":"Elevator#01","Verb":58,"Object":183,"ObjectAttributes":[]}],"OptionalFacts":null}
+(TestClass, TopOfStringSpeedUpwardLimit) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"TopOfStringSpeedUpwardLimit","AccessType":2,"SemanticProportionErrorVariable":null,"SemanticUniformMinVariable":"TopOfStringVelocityUpwardMinValue#01","SemanticUniformMaxVariable":"TopOfStringVelocityUpwardMaxValue#01","SemanticExclusiveOrs":[],"MandatoryType":11,"SemanticFacts":[{"SubjectName":"TopOfStringVelocityUpward#01","Verb":58,"Object":92,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":104,"ObjectDrillingQuantity":0,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMin#01","Verb":58,"Object":76,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMax#01","Verb":58,"Object":76,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMinValue#01","Verb":58,"Object":143,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMaxValue#01","Verb":58,"Object":143,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMin#01","Verb":54,"ObjectName":"TopOfStringVelocityUpwardMinValue#01","ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpwardMax#01","Verb":54,"ObjectName":"TopOfStringVelocityUpwardMaxValue#01","ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":58,"Object":135,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":94,"Object":177,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":98,"Object":301,"ObjectAttributes":[]},{"SubjectName":"UniformUncertainty#01","Verb":58,"Object":387,"ObjectAttributes":[]},{"SubjectName":"TopOfStringVelocityUpward#01","Verb":114,"ObjectName":"UniformUncertainty#01","ObjectAttributes":[]},{"SubjectName":"UniformUncertainty#01","Verb":117,"ObjectName":"TopOfStringVelocityUpwardMin#01","ObjectAttributes":[]},{"SubjectName":"UniformUncertainty#01","Verb":118,"ObjectName":"TopOfStringVelocityUpwardMax#01","ObjectAttributes":[]}],"OptionalFacts":null}
+(TestClass, EstimatedBitDepth) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"EstimatedBitDepth","AccessType":1,"SemanticProportionErrorVariable":null,"SemanticGeneralDistributionHistogramVariable":"EstimatedBitDepthHistogramValue#01","SemanticExclusiveOrs":[],"MandatoryType":0,"SemanticFacts":[{"SubjectName":"EstimatedBitDepth#01","Verb":58,"Object":79,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":58,"Object":141,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":104,"ObjectDrillingQuantity":3,"ObjectAttributes":[]},{"SubjectName":"WGS84VerticalDatum","Verb":58,"Object":274,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":58,"Object":318,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":97,"ObjectName":"WGS84VerticalDatum","ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":96,"ObjectName":"VerticalDepthFrame","ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":94,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":58,"Object":164,"ObjectAttributes":[]},{"SubjectName":"TransientT\u0026D#01","Verb":58,"Object":16,"ObjectAttributes":[]},{"SubjectName":"TransientT\u0026D#01","Verb":58,"Object":255,"ObjectAttributes":[{"Item1":"DegreeOfFreedom","Item2":"4"}]},{"SubjectName":"EstimatedBitDepth#01","Verb":37,"ObjectName":"TransientT\u0026D#01","ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepthHistogramValue#01","Verb":58,"Object":143,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepthHistogram#01","Verb":58,"Object":386,"ObjectAttributes":[]},{"SubjectName":"GeneralUncertaintyDistribution#01","Verb":58,"Object":386,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":114,"ObjectName":"GeneralUncertaintyDistribution#01","ObjectAttributes":[]},{"SubjectName":"GeneralUncertaintyDistribution#01","Verb":123,"ObjectName":"EstimatedBitDepthHistogram#01","ObjectAttributes":[]}],"OptionalFacts":[{"GroupIndex":0,"SubjectName":"TransientT\u0026D#01","Verb":58,"Object":255,"ObjectAttributes":[{"Item1":"DegreeOfFreedom","Item2":"4"}]}]}
 ```
 
 # Dependence

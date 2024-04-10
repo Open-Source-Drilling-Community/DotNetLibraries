@@ -4,29 +4,28 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Title>Standard surveying calculations</Title>
-    <Version>1.0.5</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Generation of SparQL qeries and node injection descriptions for the DDHub</Title>
+    <Version>1.0.1</Version>
     <Authors>Eric Cayeux</Authors>
     <Company>NORCE Norwegian Research Centre</Company>
-    <Description>Standard surveying calculations</Description>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSDC.DotnetLibraries.Drilling.DrillingProperties" Version="2.0.1" />
+    <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.0.0" />
+    <PackageReference Include="OSDC.DotnetLibraries.Drilling.DrillingProperties" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="LICENSE">
-      <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
     </None>
     <None Update="readme.md">
-      <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
 
