@@ -142,17 +142,20 @@ namespace DrillingProperties
     }
     class Example
     {
-        static void GenerateSparQLForMD(StreamWriter writer, string propertyName, Dictionary<string, string>? queries)
+        static void GenerateSparQLForMD(StreamWriter writer, string propertyName, Dictionary<string, Tuple<int, string>>? queries)
         {
             if (writer != null && !string.IsNullOrEmpty(propertyName) && queries != null)
             {
                 writer.WriteLine("# Semantic Queries for `" + propertyName + "`");
                 foreach (var query in queries)
                 {
-                    writer.WriteLine("## " + query.Key);
-                    writer.WriteLine("```sparql");
-                    writer.WriteLine(query.Value);
-                    writer.WriteLine("```");
+                    if (query.Value != null)
+                    {
+                        writer.WriteLine("## " + query.Key);
+                        writer.WriteLine("```sparql");
+                        writer.WriteLine(query.Value.Item2);
+                        writer.WriteLine("```");
+                    }
                 }
             }
         }
@@ -170,15 +173,15 @@ namespace DrillingProperties
                     string tempFile = Path.Combine(dir.FullName, "Example05.md");
                     using (StreamWriter writer = new StreamWriter(tempFile))
                     {
-                        //var queries1 = testClass.FluidDensityEstimated.GetSparQLQueries("test", assembly, typeof(TestClass).FullName, "FluidDensitySetPoint");
-                        //GenerateSparQLForMD(writer, "FluidDensitySetPoint", queries1);
-                        //var queries2 = testClass.FluidDensityEstimated.GetSparQLQueries("test", assembly, typeof(TestClass).FullName, "FluidDensityMargin");
-                        //GenerateSparQLForMD(writer, "FluidDensityMargin", queries2);
-                        //var queries3 = testClass.FluidDensityEstimated.GetSparQLQueries("test", assembly, typeof(TestClass).FullName, "FluidDensityEstimated");
-                        //GenerateSparQLForMD(writer, "FluidDensityEstimated", queries3);
-                        var queries4 = testClass.FluidDensityEstimated.GetSparQLQueries("test", assembly, typeof(TestClass).FullName, "FluidDensityMeasured");
+                        var queries1 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensitySetPoint");
+                        GenerateSparQLForMD(writer, "FluidDensitySetPoint", queries1);
+                        var queries2 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMargin");
+                        GenerateSparQLForMD(writer, "FluidDensityMargin", queries2);
+                        var queries3 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityEstimated");
+                        GenerateSparQLForMD(writer, "FluidDensityEstimated", queries3);
+                        var queries4 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMeasured");
                         GenerateSparQLForMD(writer, "FluidDensityMeasured", queries4);
-                        var queries5 = testClass.FluidDensityEstimated.GetSparQLQueries("test", assembly, typeof(TestClass).FullName, "CuttingsDensityMeasured");
+                        var queries5 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "CuttingsDensityMeasured");
                         GenerateSparQLForMD(writer, "CuttingsDensityMeasured", queries5);
                     }
                 }

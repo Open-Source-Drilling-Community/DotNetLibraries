@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class GaussianDrillingProperty : DrillingProperty
+    public class GaussianDrillingProperty : ContinuousDrillingProperty
     {
         /// <summary>
         /// redefined to use the synonym property that is of the correct type

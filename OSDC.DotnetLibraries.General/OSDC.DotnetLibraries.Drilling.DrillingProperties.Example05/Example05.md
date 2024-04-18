@@ -1,3 +1,87 @@
+# Semantic Queries for `FluidDensitySetPoint`
+## Query-DrillingProperties.TestClass-FluidDensitySetPoint-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensitySetPoint
+WHERE {
+	?FluidDensitySetPoint rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensitySetPoint#01 rdf:type ddhub:SetPoint .
+	?FluidDensitySetPoint#01 ddhub:HasDynamicValue ?FluidDensitySetPoint .
+	?FluidDensitySetPoint#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+}
+
+```
+# Semantic Queries for `FluidDensityMargin`
+## Query-DrillingProperties.TestClass-FluidDensityMargin-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMin, ?FluidDensityMax
+WHERE {
+	?FluidDensityMin rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMax rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityUniform#01 rdf:type ddhub:ComputedData .
+	?FluidDensityUniform#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FDEUncertainty#01 rdf:type ddhub:MinMaxUncertainty .
+	?FluidDensityUniform#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
+	?FluidDensityMin#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMax#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMin#01 ddhub:HasDynamicValue ?FluidDensityMin .
+	?FluidDensityMax#01 ddhub:HasDynamicValue ?FluidDensityMax .
+	?FDEUncertainty#01 ddhub:HasUncertaintyMin ?FluidDensityMin#01 .
+	?FDEUncertainty#01 ddhub:HasUncertaintyMax ?FluidDensityMax#01 .
+}
+
+```
+# Semantic Queries for `FluidDensityEstimated`
+## Query-DrillingProperties.TestClass-FluidDensityEstimated-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev
+WHERE {
+	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
+	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
+	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
+	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimatedStdDev#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityEstimatedStdDev#01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
+	?FDEUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev#01 .
+}
+
+```
+## Query-DrillingProperties.TestClass-FluidDensityEstimated-001
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev
+WHERE {
+	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
+	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
+	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
+	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimatedStdDev#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityEstimatedStdDev#01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
+	?FDEUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev#01 .
+	?FDEUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityEstimated#01 .
+}
+
+```
 # Semantic Queries for `FluidDensityMeasured`
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-000
 ```sparql

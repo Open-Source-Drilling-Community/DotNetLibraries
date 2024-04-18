@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class GeneralDistributionDrillingProperty : DrillingProperty
+    public class GeneralDistributionDrillingProperty : ContinuousDrillingProperty
     {
         /// <summary>
         /// redefined property to utilize the synonym one with the correct type

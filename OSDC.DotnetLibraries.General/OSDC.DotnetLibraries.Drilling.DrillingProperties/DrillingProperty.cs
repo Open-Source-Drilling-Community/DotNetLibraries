@@ -1,48 +1,113 @@
 ﻿using DWIS.API.DTO;
 using DWIS.Vocabulary.Schemas;
-using OSDC.DotnetLibraries.General.Statistics;
 using System.Reflection;
 
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public abstract class DrillingProperty
+    public abstract class DrillingProperty : IDrillingProperty
     {
-        /// <summary>
-        /// the probability distribution for the property
-        /// </summary>
-        public virtual ContinuousDistribution? Value { get; set; } = null;
-
-        /// <summary>
-        /// Default Constructor
-        /// </summary>
-        public DrillingProperty() { }
-        /// <summary>
-        /// Copy constructor
-        /// </summary>
-        /// <param name="src"></param>
-        public DrillingProperty(DrillingProperty src)
+        public ManifestFile? GetManifestFile(Assembly? assembly, string? typeName, string? propertyName)
         {
-            if (src != null)
+            if (assembly == null || typeName == null || propertyName == null)
             {
-                if (src.Value != null)
+                return null;
+            }
+            Type[] types = assembly.GetTypes();
+            if (types != null)
+            {
+                ManifestFile manifestFile = new ();
+                foreach (Type type in types)
                 {
-                    Value = src.Value.Clone();
+                    if (type.FullName == typeName && type.IsClass)
+                    {
+                        PropertyInfo[] properties = type.GetProperties();
+                        // Print property information
+                        foreach (PropertyInfo property in properties)
+                        {
+                            if (property.Name == propertyName &&
+                                (property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty))))
+                            {
+                                var accessToVariableAttribute = property.GetCustomAttribute<AccessToVariableAttribute>();
+                                var mandatoryAttribute = property.GetCustomAttribute<MandatoryAttribute>();
+                                var workingSemanticFactAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
+                                var excludeFactAttributes = property.GetCustomAttributes<ExcludeFactAttribute>();
+                                var optionalFactAttributes = property.GetCustomAttributes<OptionalFactAttribute>();
+                                var excludeOptionalFactAttributes = property.GetCustomAttributes<OptionalExcludeFactAttribute>();
+                                var semanticDiracVariableAttribute = property.GetCustomAttribute<SemanticDiracVariableAttribute>();
+                                var semanticGaussianVariableAttribute = property.GetCustomAttribute<SemanticGaussianVariableAttribute>();
+                                var semanticSensorVariableAttribute = property.GetCustomAttribute<SemanticSensorVariableAttribute>();
+                                var semanticFullScaleVariableAttribute = property.GetCustomAttribute<SemanticFullScaleVariableAttribute>();
+                                var semanticUniformVariableAttribute = property.GetCustomAttribute<SemanticUniformVariableAttribute>();
+                                var semanticGeneralDistributionVariableAttribute = property.GetCustomAttribute<SemanticGeneralDistributionVariableAttribute>();
+                                var semanticDeterministicBooleanVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBooleanVariableAttribute>();
+                                var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
+                                var semanticExclusiveOrAttributes = property.GetCustomAttributes<SemanticExclusiveOrAttribute>();
+                                // remove the optional facts from the list of facts
+                                List<SemanticFactAttribute> semanticFactAttributes = new List<SemanticFactAttribute>();
+                                foreach (var attr in workingSemanticFactAttributes)
+                                {
+                                    if (!optionalFactAttributes.Contains(attr))
+                                    {
+                                        semanticFactAttributes.Add(attr);
+                                    }
+                                }
+                                if (accessToVariableAttribute != null ||
+                                    semanticDiracVariableAttribute != null ||
+                                    semanticGaussianVariableAttribute != null ||
+                                    semanticSensorVariableAttribute != null ||
+                                    semanticFullScaleVariableAttribute != null ||
+                                    semanticUniformVariableAttribute != null ||
+                                    semanticGeneralDistributionVariableAttribute != null ||
+                                    semanticBernoulliVariableAttribute != null ||
+                                    semanticDeterministicBooleanVariableAttribute != null ||
+                                    (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
+                                    mandatoryAttribute != null ||
+                                    (semanticFactAttributes != null && semanticFactAttributes.Any()) ||
+                                    (excludeFactAttributes != null && excludeFactAttributes.Any()) ||
+                                    (optionalFactAttributes != null && optionalFactAttributes.Any()) ||
+                                    (excludeOptionalFactAttributes != null && excludeOptionalFactAttributes.Any()))
+                                {
+                                    if (semanticDiracVariableAttribute != null ||
+                                        semanticGaussianVariableAttribute != null ||
+                                        semanticSensorVariableAttribute != null ||
+                                        semanticFullScaleVariableAttribute != null ||
+                                        semanticUniformVariableAttribute != null ||
+                                        semanticGeneralDistributionVariableAttribute != null ||
+                                        semanticDeterministicBooleanVariableAttribute != null ||
+                                        semanticBernoulliVariableAttribute != null)
+                                    {
+                                        List<OptionalFactAttribute> topLevelOptionalFacts = new List<OptionalFactAttribute>();
+                                        List<OptionalFactAttribute> subLevelOptionalFacts = new List<OptionalFactAttribute>();
+                                        if (optionalFactAttributes != null)
+                                        {
+                                            foreach (var optionalFact in optionalFactAttributes)
+                                            {
+                                                if (optionalFact != null)
+                                                {
+                                                    if (optionalFact.ParentGroupIndex == 0)
+                                                    {
+                                                        topLevelOptionalFacts.Add(optionalFact);
+                                                    }
+                                                    else
+                                                    {
+                                                        subLevelOptionalFacts.Add(optionalFact);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    return manifestFile;
                 }
             }
+            return null;
         }
-
-        /// <summary>
-        /// Draw a value according to the probability distribution defined in Value
-        /// </summary>
-        /// <returns></returns>
-        public virtual double? Realize()
-        {
-            if (Value == null) return null;
-            return Value.Realize();
-        }
-
-        public Dictionary<string, string>? GetSparQLQueries(string name, Assembly? assembly, string? typeName, string? propertyName)
+        public Dictionary<string, Tuple<int, string>>? GetSparQLQueries(Assembly? assembly, string? typeName, string? propertyName)
         {
             if (assembly == null || typeName == null || propertyName == null)
             {
@@ -52,7 +117,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             if (types != null)
             {
                 int count = 0;
-                Dictionary<string, string> queries = new Dictionary<string, string>();
+                Dictionary<string, Tuple<int, string>> queries = new Dictionary<string, Tuple<int, string>>();
                 foreach (Type type in types)
                 {
                     if (type.FullName == typeName && type.IsClass)
@@ -77,6 +142,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 var semanticFullScaleVariableAttribute = property.GetCustomAttribute<SemanticFullScaleVariableAttribute>();
                                 var semanticUniformVariableAttribute = property.GetCustomAttribute<SemanticUniformVariableAttribute>();
                                 var semanticGeneralDistributionVariableAttribute = property.GetCustomAttribute<SemanticGeneralDistributionVariableAttribute>();
+                                var semanticDeterministicBooleanVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBooleanVariableAttribute>();
                                 var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
                                 var semanticExclusiveOrAttributes = property.GetCustomAttributes<SemanticExclusiveOrAttribute>();
                                 // remove the optional facts from the list of facts
@@ -95,6 +161,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     semanticFullScaleVariableAttribute != null ||
                                     semanticUniformVariableAttribute != null ||
                                     semanticGeneralDistributionVariableAttribute != null ||
+                                    semanticDeterministicBooleanVariableAttribute != null ||
                                     semanticBernoulliVariableAttribute != null ||
                                     (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
                                     mandatoryAttribute != null ||
@@ -109,6 +176,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         semanticFullScaleVariableAttribute != null ||
                                         semanticUniformVariableAttribute != null ||
                                         semanticGeneralDistributionVariableAttribute != null ||
+                                        semanticDeterministicBooleanVariableAttribute != null ||
                                         semanticBernoulliVariableAttribute != null)
                                     {
                                         List<OptionalFactAttribute> topLevelOptionalFacts = new List<OptionalFactAttribute>();
@@ -155,6 +223,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             foreach (var combination in combinations)
                                             {
                                                 string sparql = string.Empty;
+                                                int argCount = 0;
                                                 sparql += "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
                                                 sparql += "PREFIX ddhub: <http://ddhub.no/>\n";
                                                 sparql += "PREFIX quantity: <http://ddhub.no/UnitAndQuantity>\n\n";
@@ -164,6 +233,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string var1 = ProcessQueryVariable(semanticDiracVariableAttribute.ValueVariable);
                                                     sparql += "SELECT " + var1 + "\n";
+                                                    argCount = 1;
                                                 }
                                                 else if (semanticUniformVariableAttribute != null && 
                                                          !string.IsNullOrEmpty(semanticUniformVariableAttribute.MinValueVariable) && 
@@ -174,6 +244,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     string min = ProcessQueryVariable(semanticUniformVariableAttribute.MinValueVariable);
                                                     string max = ProcessQueryVariable(semanticUniformVariableAttribute.MaxValueVariable);
                                                     sparql += "SELECT " + min + ", " + max + "\n";
+                                                    argCount = 2;
                                                 }
                                                 else if (semanticSensorVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticSensorVariableAttribute.MeanVariable) &&
@@ -193,19 +264,23 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string mean = ProcessQueryVariable(semanticSensorVariableAttribute.MeanVariable);
                                                     sparql += "SELECT " + mean;
+                                                    argCount = 1;
                                                     if (!string.IsNullOrEmpty(semanticSensorVariableAttribute.PrecisionVariable) &&
                                                         IsUsed(combination, semanticSensorVariableAttribute.PrecisionVariable))
                                                     {
                                                         string precision = ProcessQueryVariable(semanticSensorVariableAttribute.PrecisionVariable);
                                                         sparql += ", " + precision;
+                                                        argCount++;
                                                     }
                                                     if (!string.IsNullOrEmpty(semanticSensorVariableAttribute.AccuracyVariable) &&
                                                         IsUsed(combination, semanticSensorVariableAttribute.AccuracyVariable))
                                                     {
                                                         string accuracy = ProcessQueryVariable(semanticSensorVariableAttribute.AccuracyVariable);
                                                         sparql += ", " + accuracy;
+                                                        argCount++;
                                                     }
                                                     sparql += "\n";
+                                                    
                                                 }
                                                 else if (semanticFullScaleVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticFullScaleVariableAttribute.MeanVariable) &&
@@ -225,17 +300,20 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string mean = ProcessQueryVariable(semanticFullScaleVariableAttribute.MeanVariable);
                                                     sparql += "SELECT " + mean;
+                                                    argCount = 1;
                                                     if (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.FullScaleVariable) &&
                                                         IsUsed(combination, semanticFullScaleVariableAttribute.FullScaleVariable))
                                                     {
                                                         string fullScale = ProcessQueryVariable(semanticFullScaleVariableAttribute.FullScaleVariable);
                                                         sparql += ", " + fullScale;
+                                                        argCount++;
                                                     }
                                                     if (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.ProportionErrorVariable) &&
                                                         IsUsed(combination, semanticFullScaleVariableAttribute.ProportionErrorVariable))
                                                     {
                                                         string proportionError = ProcessQueryVariable(semanticFullScaleVariableAttribute.ProportionErrorVariable);
                                                         sparql += ", " + proportionError;
+                                                        argCount++;
                                                     }
                                                     sparql += "\n";
                                                 }
@@ -249,11 +327,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string mean = ProcessQueryVariable(semanticGaussianVariableAttribute.MeanVariable);
                                                     sparql += "SELECT " + mean;
+                                                    argCount = 1;
                                                     if (!string.IsNullOrEmpty(semanticGaussianVariableAttribute.StandardDeviationVariable) &&
                                                         IsUsed(combination, semanticGaussianVariableAttribute.StandardDeviationVariable))
                                                     {
                                                         string stdDev = ProcessQueryVariable(semanticGaussianVariableAttribute.StandardDeviationVariable);
                                                         sparql += ", " + stdDev;
+                                                        argCount++;
                                                     }
                                                     sparql += "\n";
                                                 }
@@ -263,6 +343,15 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string histoVar = ProcessQueryVariable(semanticGeneralDistributionVariableAttribute.HistogramVariable);
                                                     sparql += "SELECT " + histoVar + "\n";
+                                                    argCount = 1;
+                                                }
+                                                else if (semanticDeterministicBooleanVariableAttribute != null &&
+                                                         !string.IsNullOrEmpty(semanticDeterministicBooleanVariableAttribute.Variable) &&
+                                                         IsUsed(combination, semanticDeterministicBooleanVariableAttribute.Variable))
+                                                {
+                                                    string variable = ProcessQueryVariable(semanticDeterministicBooleanVariableAttribute.Variable);
+                                                    sparql += "SELECT " + variable + "\n";
+                                                    argCount = 1;
                                                 }
                                                 else if (semanticBernoulliVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.ProbabilistVariable) &&
@@ -276,11 +365,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string probabilistic = ProcessQueryVariable(semanticBernoulliVariableAttribute.ProbabilistVariable);
                                                     sparql += "SELECT " + probabilistic;
+                                                    argCount = 1;
                                                     if (!string.IsNullOrEmpty(semanticBernoulliVariableAttribute.DeterministVariable) &&
                                                         IsUsed(combination, semanticBernoulliVariableAttribute.DeterministVariable))
                                                     {
                                                         string deterministic = ProcessQueryVariable(semanticBernoulliVariableAttribute.DeterministVariable);
                                                         sparql += ", " + deterministic;
+                                                        argCount++;
                                                     }
                                                     sparql += "\n";
                                                 }
@@ -316,7 +407,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     sparql += "  }";
                                                 }
                                                 sparql += "}\n";
-                                                queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), sparql);
+                                                queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), new Tuple<int, string>(argCount, sparql));
                                                 count++;
                                             }
                                         }

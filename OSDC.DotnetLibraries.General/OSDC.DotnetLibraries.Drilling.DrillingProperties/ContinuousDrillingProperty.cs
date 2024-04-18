@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.DotnetLibraries.General.Statistics;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public abstract class DiscreteDrillingProperty : DrillingProperty
+    public abstract class ContinuousDrillingProperty : DrillingProperty
     {
         /// <summary>
         /// the probability distribution for the property
         /// </summary>
-        public virtual DiscreteDistribution? Value { get; set; } = null;
+        public virtual ContinuousDistribution? Value { get; set; } = null;
 
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public DiscreteDrillingProperty() { }
+        public ContinuousDrillingProperty() { }
         /// <summary>
         /// Copy constructor
         /// </summary>
         /// <param name="src"></param>
-        public DiscreteDrillingProperty(DiscreteDrillingProperty src)
+        public ContinuousDrillingProperty(ContinuousDrillingProperty src)
         {
             if (src != null)
             {
@@ -34,7 +32,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// Draw a value according to the probability distribution defined in Value
         /// </summary>
         /// <returns></returns>
-        public virtual int? Realize()
+        public virtual double? Realize()
         {
             if (Value == null) return null;
             return Value.Realize();

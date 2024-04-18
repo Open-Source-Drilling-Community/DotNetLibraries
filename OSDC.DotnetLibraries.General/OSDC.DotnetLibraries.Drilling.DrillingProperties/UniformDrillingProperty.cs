@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class UniformDrillingProperty : DrillingProperty
+    public class UniformDrillingProperty : ContinuousDrillingProperty
     {
         /// <summary>
         /// synonym property to UniformValue

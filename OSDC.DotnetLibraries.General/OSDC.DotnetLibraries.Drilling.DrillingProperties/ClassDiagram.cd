@@ -1,35 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.GeneralDistributionDrillingProperty">
-    <Position X="8.25" Y="13.25" Width="2.75" />
+    <Position X="19.25" Y="6.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAAAACAAAgAAAAAAA=</HashCode>
       <FileName>GeneralDistributionDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.MandatoryAttribute">
-    <Position X="16.5" Y="2" Width="2.5" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.MandatoryAttribute" Collapsed="true">
+    <Position X="33.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>MandatoryAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.ScalarDrillingProperty">
-    <Position X="5.5" Y="13.25" Width="2" />
+    <Position X="16.25" Y="6.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAA=</HashCode>
       <FileName>ScalarDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticFact">
-    <Position X="16.25" Y="4.5" Width="2.5" />
+    <Position X="9.25" Y="12.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>QIAAACAAAAAAAAAgQIAAIAAAAAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>SemanticFact.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticFactAttribute">
-    <Position X="3.5" Y="16.5" Width="2.25" />
+    <Position X="3" Y="12.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>QIAAACAAAAAAAAAgQIAAIgAAAAAAgAAAAAAAACAAAAA=</HashCode>
       <FileName>SemanticFactAttribute.cs</FileName>
@@ -37,137 +37,224 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty">
-    <Position X="13.75" Y="13.25" Width="2.75" />
+    <Position X="26.25" Y="6.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAACAAAAAAABAAAAAAEAAAgAAAAAAA=</HashCode>
       <FileName>GaussianDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.UniformDrillingProperty">
-    <Position X="2.5" Y="13.25" Width="2.25" />
+    <Position X="13" Y="6.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAABAAAAAAEAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>UniformDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.FullScaleDrillingProperty">
-    <Position X="15.5" Y="16.25" Width="3" />
+    <Position X="26.5" Y="9.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAEAAAAAAAAIAAAAAAQAAUAAAAAAAAAAA=</HashCode>
       <FileName>FullScaleDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SensorDrillingProperty">
-    <Position X="11.75" Y="16.25" Width="3" />
+    <Position X="22.75" Y="9.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AEAAAAAIAAAAAAgAAAAIAAAAAAAAAAAEAAAAAAAAEAA=</HashCode>
       <FileName>SensorDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticGaussianVariableAttribute">
-    <Position X="24" Y="8" Width="2.75" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticGaussianVariableAttribute" Collapsed="true">
+    <Position X="35.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABAAAAAAMAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAIAAAAACAAAAA=</HashCode>
       <FileName>SemanticGaussianVariableAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticDiracVariableAttribute">
-    <Position X="26" Y="3.5" Width="3" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticDiracVariableAttribute" Collapsed="true">
+    <Position X="35.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SemanticDiracVariableAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticExclusiveOrAttribute">
-    <Position X="26" Y="5.5" Width="3" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticExclusiveOrAttribute" Collapsed="true">
+    <Position X="37" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SemanticExclusiveOrAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticFullScaleVariableAttribute">
-    <Position X="30.5" Y="8" Width="3.25" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticFullScaleVariableAttribute" Collapsed="true">
+    <Position X="33.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAQEAA=</HashCode>
       <FileName>SemanticFullScaleVariableAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticGeneralDistributionVariableAttribute">
-    <Position X="19.75" Y="8" Width="3.5" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticGeneralDistributionVariableAttribute" Collapsed="true">
+    <Position X="37" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SemanticGeneralDistributionVariableAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticSensorVariableAttribute">
-    <Position X="27.25" Y="8" Width="2.75" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticSensorVariableAttribute" Collapsed="true">
+    <Position X="33.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAIAAAAQAAAAAAAAAAAAABAAAAAAABAAAAAAA=</HashCode>
       <FileName>SemanticSensorVariableAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticUniformVariableAttribute">
-    <Position X="34" Y="8" Width="2.5" />
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SemanticUniformVariableAttribute" Collapsed="true">
+    <Position X="35.25" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAAAQAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SemanticUniformVariableAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.DiscreteDrillingProperty">
-    <Position X="6.75" Y="3.5" Width="3" />
+    <Position X="5.75" Y="4" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>DiscreteDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.BernoulliDrillingProperty">
-    <Position X="2.25" Y="6" Width="2" />
+    <Position X="2.25" Y="6.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAgAAAAAAAIgAAAAAAA=</HashCode>
       <FileName>BernoulliDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.DeterministicBooleanDrillingProperty">
-    <Position X="5" Y="6" Width="3" />
+    <Position X="5.5" Y="6.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAIgAAAgAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>DeterministicBooleanDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.GeneralDiscreteDrillingProperty">
-    <Position X="8.75" Y="6" Width="2.5" />
+    <Position X="9.75" Y="6.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GeneralDiscreteDrillingProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.ExcludeFactAttribute">
-    <Position X="1.25" Y="20.75" Width="3" />
+    <Position X="1" Y="17" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
       <FileName>ExcludeFactAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.OptionalFactAttribute">
-    <Position X="5.5" Y="20.75" Width="2.75" />
+    <Position X="4.75" Y="17" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAQAAgAAAAAAAAAAAAAA=</HashCode>
       <FileName>OptionalFactAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.OptionalExcludeFactAttribute">
-    <Position X="5.5" Y="23.5" Width="2.75" />
+    <Position X="4.75" Y="19.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
       <FileName>OptionalExcludeFactAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.ExcludeFact">
-    <Position X="15.75" Y="8" Width="3.5" />
+    <Position X="8.75" Y="16.5" Width="3.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ExcludeFact.cs</FileName>
     </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.DrillingProperty">
+    <Position X="15.75" Y="0.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>hAAAAAQEIAAQAAAIAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>DrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.ContinuousDrillingProperty">
+    <Position X="21.25" Y="4" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>ContinuousDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.ScalarRDFDrillingProperty">
+    <Position X="16" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>ScalarRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.UniformRDFDrillingProperty">
+    <Position X="13" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>UniformRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.GeneralDistributionRDFDrillingProperty">
+    <Position X="19" Y="9.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>GeneralDistributionRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianRDFDrillingProperty">
+    <Position X="30.25" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>GaussianRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.SensorRDFDrillingProperty">
+    <Position X="23" Y="13.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>SensorRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.FullScaleRDFDrillingProperty">
+    <Position X="27" Y="13.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>FullScaleRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.DeterministicBooleanRDFDrillingProperty">
+    <Position X="5.25" Y="9.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>DeterministicBooleanRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.BernoulliRDFDrillingProperty">
+    <Position X="2" Y="9.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>BernoulliRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.Drilling.DrillingProperties.GeneralDiscreteRDFDrillingProperty">
+    <Position X="9.5" Y="8.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>GeneralDiscreteRDFDrillingProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

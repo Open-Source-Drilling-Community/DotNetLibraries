@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class ScalarDrillingProperty : DrillingProperty
+    public class ScalarDrillingProperty : ContinuousDrillingProperty
     {
 
         /// <summary>

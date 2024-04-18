@@ -7,18 +7,32 @@ that allow to decorate the properties. There is also a function to generate a di
 the drilling properties that can therefore be serialized in json.
 
 # Principles
-A `DrillingProperty` is an abstract class that defines one property: `Value`. A `Value` is a `ContinuousDistribution` 
+
+There are two groups of drilling properties:
+- the continuous drilling properties
+- the discrete drilling properties
+
+A `DrillingProperty` is an abstract class.
+
+```mermaid
+classDiagram
+    DrillingProperty <|-- ContinuousDrillingProperty
+    DrillingProperty <|-- DiscreteDrillingProperty
+```
+
+## Continuous Drilling Properties
+A `ContinuousDrillingProperty` is an abstract class that defines one property: `Value`. A `Value` is a `ContinuousDistribution` 
 and therefore represents any continuous probability distrutions. `ContinuousDistribution`and other probability distributions are defined
 in `OSDC.DotnetLibraries.General.Statistics`, which is available as a nuget on nuget.org 
-([see here](https://www.nuget.org/packages/OSDC.DotnetLibraries.General.Statistics/)). `DrillingProperty` has a method called `Realize` that is used to draw a value (`double?`) using the
+([see here](https://www.nuget.org/packages/OSDC.DotnetLibraries.General.Statistics/)). `ContinuousDrillingProperty` has a method called `Realize` that is used to draw a value (`double?`) using the
 probability distribution defined in `Value`. It may return `null`.
 
-`DrillingProperty`has four direct sub-classes:
+`ContinuousDrillingProperty`has four direct sub-classes:
 - `ScalarDrillingProperty`: used to represent a scalar value with no uncertainty. The value is maintained as a `DiracDistribution`. 
-There is redefinition of the `Value` property which is strongly typed to `DiracDistribution`. It is called `DiracDistributionValue`. 
-The `Value` property points to the value contained in `DiracDistrutionValue`. The `Realize` method always return the value of the
+There is a redefinition of the `Value` property which is strongly typed to `DiracDistribution`. It is called `DiracDistributionValue`. 
+The `Value` property points to the value contained in `DiracDistrutionValue`. The `Realize` method always returns the value of the
 `DiracDistribution` or `null` if the value is not defined. So the `ScalarDrillingProperty` is equivalent to a fixed value. A convenience
-property is defined called `ScalarValue`. It allows to access directly the `Value` of the `DiracDistribution`.
+property is defined and is called `ScalarValue`. It allows to directly access  the `Value` of the `DiracDistribution`.
 - `GaussianDrillingProperty`: used to represent normal distributions defined by a `Mean` and a `StandardDeviation`. The probability
 distribution is defined as a `GaussianDistribution`. In order to benefits from strong typing, a property called `GaussianValue` is defined
 of the type `GaussianDistribution`. The `Value` property is redefined to point to the instance managed by `GaussianValue`. The `Realize` method
@@ -49,12 +63,12 @@ It is called `Histogram`.
 
 ```mermaid
 classDiagram
-    DrillingProperty <|-- ScalarDrillingProperty
-    DrillingProperty <|-- GaussianDrillingProperty
-    DrillingProperty <|-- UniformDrillingProperty
-    DrillingProperty <|-- GeneralDistributionDrillingProperty
-    DrillingProperty : +ContinuousDistribution Value
-    DrillingProperty : +double? Realize()
+    ContinuousDrillingProperty <|-- ScalarDrillingProperty
+    ContinuousDrillingProperty <|-- GaussianDrillingProperty
+    ContinuousDrillingProperty <|-- UniformDrillingProperty
+    ContinuousDrillingProperty <|-- GeneralDistributionDrillingProperty
+    ContinuousDrillingProperty : +ContinuousDistribution Value
+    ContinuousDrillingProperty : +double? Realize()
     class ScalarDrillingProperty {
         +DiracDistribution DiracDistributionValue
     }
@@ -167,12 +181,12 @@ Realized values: value1 = 1.00 value2 = 0.38 value3 = 9.99 value4 = 0.96 value5 
 Realized values: value1 = 1.00 value2 = 0.74 value3 = 9.61 value4 = 2.94 value5 = 0.95 value6 = 1.01
 ```
 
-## `DiscreteDrillingProperty`
+## Discrete Drilling Properties
 Similarly, there is an abstract class called `DiscreteDrillingProperty` to describe booleans or enumerated values. It has also a property called `Value`, which is a 
 `DiscreteDistribution`. It has three direct sub-classes:
 - `DeterministicBooleanDrillingProperty`: used to represent a boolean value with no uncertainty, i.e., deterministic. It defines a specific property called `DeterministicDiscreteProperty`
 that allows to access with the correct type the underlying statistical probability distribution. It has a `Probability` property which returns the probability of the underlying
-`DeterministicDiscreteDistribution` for the target `0`. It has also a `BooleanValue` that defines the boolean state of the instance, which is determinstic for this class.
+`DeterministicDiscreteDistribution` for the target `0`. It has also a `BooleanValue` that defines the boolean state of the instance, which is deterministic for this class.
 - `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. The `Probability` property is used to define the uncertainty. The `BooleanValue` property
 is true if the `Probability` is greater than 0.5 and false otherwise. 
 - `GeneralDiscreteDrillingProperty`: used to represent a general discrete probability for a boolean value.
@@ -200,7 +214,9 @@ end
 ```
 
 # Providing Meta Information
-There is the possibility to provide meta information with the declation of a `DrillingProperty`. This is achieved using
+There is the possibility to provide meta information with the declation of a `DrillingProperty` or of a `class` or a `struct`.
+In the case of a `class` or a `struct`, the meta information are associated with instances of these `class`
+or `struct` seen as if they were serialized, typically in `json`. This is achieved using
 specific attributes. The possible attributes are:
 - `AccessToVariableAttribute` : It takes one argument of the type `CommonProperty.VariableAccessType`. This attribute is used to inform whether
 the property will be only fetched (`CommonProperty.VariableAccessType.Readable`) or if it can be assigned (`CommonProperty.VariableAccessType.Assignable`).
@@ -244,6 +260,11 @@ respectively the default values for the `FullScale` and `ProportionError`.
 that are used as the `Min` and the `Max` value of this property.
 - `SemanticGeneralDistributionVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used in the semantic facts
 to access the `Histogram` value of this property.
+- `SemanticBernoulliVariableAttribute`: It takes one to three arguments. The `string` arguments represent
+either the stochastic or the probabilistic variables that are used in the semantic facts. A `double` argument
+is used to define a default deterministic uncertainty. 
+- `SemanticDeterministicBooleanVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used
+in the semantic facts to describe the value a `DeterministicBooleanDrillingProperty`.
 - `SemanticExclusiveOrAttribute`: It takes at least 2 arguments. This attribute is used to defined
 a list of the optional semantic facts that are exclusive from each other's. 
 
@@ -268,6 +289,18 @@ classDiagram
     class OptionalFactAttribute {
         +byte GroupIndex
     }
+    SemanticFactAttribute <|-- ExcludeFactAttribute
+    class ExcludeFactAttribute {
+    }
+    OptionalFactAttribute <|-- OptionalExcludeFactAttribute
+    class OptionalExcludeFactAttribute {
+    }
+    class SemanticExclusiveOrAttribute {
+        +byte[]? ExclusiveOr
+   }
+```
+```mermaid
+classDiagram
     class SemanticDiracVariableAttribute {
         +string? Value
     }
@@ -297,12 +330,18 @@ classDiagram
         +double? DefaultFullScale
         +double? DefaultPrecisionError
    }
-   class SemanticExclusiveOrAttribute {
-        +byte[]? ExclusiveOr
+```
+```mermaid
+classDiagram
+   class SemanticBernoulliVariableAttribute {
+        +string? ProbabilistVariable
+        +string? DeterministVariable
+        +double? DeterministDefaultUncertainty
+   }
+   class SemanticDeterministicBooleanVariableAttribute {
+        +sting? Variable
    }
 ```
-
-
 ## Example
 Here is an example:
 
@@ -314,7 +353,7 @@ using DWIS.Vocabulary.Schemas;
 
 namespace DrillingProperties
 {
-      public class TestClass
+    public class TestClass
     {
         [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
         [Mandatory(CommonProperty.MandatoryType.General)]
@@ -329,7 +368,7 @@ namespace DrillingProperties
         [SemanticFact("VerticalDepthFrame", Nouns.Enum.VerticalDepthFrame)]
         [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
         [SemanticFact("BitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
-        [SemanticFact("Bit#01", Nouns.Enum.Bit)]
+        [SemanticFact("Bit#01", Nouns.Enum.DrillingBit)]
         [SemanticFact("BitDepthStandardDeviation#01", Nouns.Enum.DrillingDataPoint)]
         [SemanticFact("BitDepthStandardDeviationValue#01", Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("BitDepthStandardDeviation#01", Verbs.Enum.HasDynamicValue, "BitDepthStandardDeviationValue#01")]
@@ -385,7 +424,7 @@ namespace DrillingProperties
         [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01", Nouns.Enum.Bit)]
+        [SemanticFact("Bit#01", Nouns.Enum.DrillingBit)]
         [SemanticFact("TransientT&D#01", Nouns.Enum.ComputationUnit)]
         [OptionalFact(0, "TransientT&D#01", Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsTransformationOutput, "TransientT&D#01")]
@@ -472,7 +511,7 @@ namespace DrillingProperties
         [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
         [SemanticFact("BitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("BitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01",  Nouns.Enum.Bit)]
+        [SemanticFact("Bit#01",  Nouns.Enum.DrillingBit)]
         [SemanticFact("BitDepthStandardDeviation#01",  Nouns.Enum.DrillingDataPoint)]
         [SemanticFact("BitDepthStandardDeviationValue#01",  Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("BitDepthStandardDeviation#01", Verbs.Enum.HasDynamicValue, "BitDepthStandardDeviationValue#01")]
@@ -528,7 +567,7 @@ namespace DrillingProperties
         [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01",  Nouns.Enum.Bit)]
+        [SemanticFact("Bit#01",  Nouns.Enum.DrillingBit)]
         [SemanticFact("TransientT&D#01",  Nouns.Enum.ComputationUnit)]
         [OptionalFact(0, "TransientT&D#01",  Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsTransformationOutput, "TransientT&D#01")]
@@ -543,7 +582,7 @@ namespace DrillingProperties
     {
         static void Main()
         {          
-            var dict = GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData(Assembly.GetExecutingAssembly());
+            var dict = MetaDataDrillingProperty.GetDrillingPropertyMetaData(Assembly.GetExecutingAssembly());
             if (dict != null)
             {
                 foreach (var keyValue in dict)
@@ -566,11 +605,741 @@ The output is the following:
 (TestClass, EstimatedBitDepth) ={"Namespace":"DrillingProperties","ClassName":"TestClass","PropertyName":"EstimatedBitDepth","AccessType":1,"SemanticProportionErrorVariable":null,"SemanticGeneralDistributionHistogramVariable":"EstimatedBitDepthHistogramValue#01","SemanticExclusiveOrs":[],"MandatoryType":0,"SemanticFacts":[{"SubjectName":"EstimatedBitDepth#01","Verb":58,"Object":79,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":58,"Object":141,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":104,"ObjectDrillingQuantity":3,"ObjectAttributes":[]},{"SubjectName":"WGS84VerticalDatum","Verb":58,"Object":274,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":58,"Object":318,"ObjectAttributes":[]},{"SubjectName":"VerticalDepthFrame","Verb":97,"ObjectName":"WGS84VerticalDatum","ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":96,"ObjectName":"VerticalDepthFrame","ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":94,"ObjectName":"Bit#01","ObjectAttributes":[]},{"SubjectName":"Bit#01","Verb":58,"Object":164,"ObjectAttributes":[]},{"SubjectName":"TransientT\u0026D#01","Verb":58,"Object":16,"ObjectAttributes":[]},{"SubjectName":"TransientT\u0026D#01","Verb":58,"Object":255,"ObjectAttributes":[{"Item1":"DegreeOfFreedom","Item2":"4"}]},{"SubjectName":"EstimatedBitDepth#01","Verb":37,"ObjectName":"TransientT\u0026D#01","ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepthHistogramValue#01","Verb":58,"Object":143,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepthHistogram#01","Verb":58,"Object":386,"ObjectAttributes":[]},{"SubjectName":"GeneralUncertaintyDistribution#01","Verb":58,"Object":386,"ObjectAttributes":[]},{"SubjectName":"EstimatedBitDepth#01","Verb":114,"ObjectName":"GeneralUncertaintyDistribution#01","ObjectAttributes":[]},{"SubjectName":"GeneralUncertaintyDistribution#01","Verb":123,"ObjectName":"EstimatedBitDepthHistogram#01","ObjectAttributes":[]}],"OptionalFacts":[{"GroupIndex":0,"SubjectName":"TransientT\u0026D#01","Verb":58,"Object":255,"ObjectAttributes":[{"Item1":"DegreeOfFreedom","Item2":"4"}]}]}
 ```
 
+# Generation of SparQL Queries
+It is possible to generate a list of `SparQL` queries for a `DrillingProperty` or a `DiscreteDrillingProperty` 
+by calling the method `GetSparQLQueries`. The method takes three arguments: the assembly in which
+the class or struct that define the property belongs to, the full name of the class or struct, and the 
+name of the property.
+
+Here is an example:
+```csharp
+using OSDC.DotnetLibraries.Drilling.DrillingProperties;
+using OSDC.UnitConversion.Conversion.DrillingEngineering;
+using DWIS.Vocabulary.Schemas;
+using System.Reflection;
+
+namespace DrillingProperties
+{
+    public class TestClass
+    {
+        [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+        [SemanticDiracVariable("FluidDensitySetPoint")]
+        [SemanticFact("FluidDensitySetPoint", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensitySetPoint#01", Nouns.Enum.SetPoint)]
+        [SemanticFact("FluidDensitySetPoint#01", Verbs.Enum.HasDynamicValue, "FluidDensitySetPoint")]
+        [SemanticFact("FluidDensitySetPoint#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
+        public ScalarDrillingProperty FluidDensitySetPoint { get; set; } = new ScalarDrillingProperty();
+
+        [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+        [SemanticUniformVariable("FluidDensityMin", "FluidDensityMax")]
+        [SemanticFact("FluidDensityMin", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityMax", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityUniform#01", Nouns.Enum.ComputedData)]
+        [SemanticFact("FluidDensityUniform#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
+        [SemanticFact("FDEUncertainty#01", Nouns.Enum.MinMaxUncertainty)]
+        [SemanticFact("FluidDensityUniform#01", Verbs.Enum.HasUncertainty, "FDEUncertainty#01")]
+        [SemanticFact("FluidDensityMin#01", Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("FluidDensityMax#01", Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("FluidDensityMin#01", Verbs.Enum.HasDynamicValue, "FluidDensityMin")]
+        [SemanticFact("FluidDensityMax#01", Verbs.Enum.HasDynamicValue, "FluidDensityMax")]
+        [SemanticFact("FDEUncertainty#01", Verbs.Enum.HasUncertaintyMin, "FluidDensityMin#01")]
+        [SemanticFact("FDEUncertainty#01", Verbs.Enum.HasUncertaintyMax, "FluidDensityMax#01")]
+        public UniformDrillingProperty FluidDensityMargin { get; set; } = new UniformDrillingProperty();
+
+        [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+        [SemanticGaussianVariable("FluidDensityEstimated", "FluidDensityEstimatedStdDev")]
+        [SemanticFact("FluidDensityEstimated", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityEstimated#01", Nouns.Enum.ComputedData)]
+        [SemanticFact("FluidDensityEstimated#01", Verbs.Enum.HasDynamicValue, "FluidDensityEstimated")]
+        [SemanticFact("FluidDensityEstimated#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
+        [SemanticFact("FDEUncertainty#01", Nouns.Enum.GaussianUncertainty)]
+        [SemanticFact("FluidDensityEstimated#01", Verbs.Enum.HasUncertainty, "FDEUncertainty#01")]
+        [SemanticFact("FluidDensityEstimatedStdDev", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityEstimatedStdDev#01", Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("FluidDensityEstimatedStdDev#01", Verbs.Enum.HasStaticValue, "FluidDensityEstimatedStdDev")]
+        [SemanticFact("FDEUncertainty#01", Verbs.Enum.HasUncertaintyStandardDeviation, "FluidDensityEstimatedStdDev#01")]
+        [OptionalFact(1, "FDEUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityEstimated#01")]
+        public GaussianDrillingProperty FluidDensityEstimated { get; set; } = new GaussianDrillingProperty();
+
+        [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+        [SemanticGaussianVariable("FluidDensityMeasured", "sigma_FluidDensityMeasured")]
+        [SemanticSensorVariable("FluidDensityMeasured", "FluidDensityMeasured_prec", "FluidDensityMeasured_acc")]
+        [SemanticFullScaleVariable("FluidDensityMeasured", "FluidDensityMeasured_fs", "FluidDensityMeasured_prop")]
+        [SemanticExclusiveOr(1, 2, 3)]
+        [SemanticFact("FluidDensityMeasured", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityMeasured#01", Nouns.Enum.PhysicalData)]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.HasDynamicValue, "FluidDensityMeasured")]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
+        [SemanticFact("tos#01", Nouns.Enum.TopOfStringReferenceLocation)]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsPhysicallyLocatedAt, "tos#01")]
+        [SemanticFact("MovingAverage", Nouns.Enum.MovingAverage)]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsTransformationOutput, "MovingAverage")]
+        [OptionalFact(1, "sigma_FluidDensityMeasured", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(1, "sigma_FluidDensityMeasured#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(1, "sigma_FluidDensityMeasured#01", Verbs.Enum.HasValue, "sigma_FluidDensityMeasured")]
+        [OptionalFact(1, "GaussianUncertainty#01", Nouns.Enum.GaussianUncertainty)]
+        [OptionalFact(1, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "GaussianUncertainty#01")]
+        [OptionalFact(1, "GaussianUncertainty#01", Verbs.Enum.HasUncertaintyStandardDeviation, "sigma_FluidDensityMeasured#01")]
+        [OptionalFact(1, 11, "GaussianUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
+        [OptionalFact(2, "FluidDensityMeasured_prec", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(2, "FluidDensityMeasured_prec#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(2, "FluidDensityMeasured_prec#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prec")]
+        [OptionalFact(2, "FluidDensityMeasured_acc", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(2, "FluidDensityMeasured_acc#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(2, "FluidDensityMeasured_acc#01", Verbs.Enum.HasValue, "FluidDensityMeasured_acc")]
+        [OptionalFact(2, "SensorUncertainty#01", Nouns.Enum.SensorUncertainty)]
+        [OptionalFact(2, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyPrecision, "FluidDensityMeasured_prec#01")]
+        [OptionalFact(2, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyAccuracy, "FluidDensityMeasured_acc#01")]
+        [OptionalFact(2, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "SensorUncertainty#01")]
+        [OptionalFact(2, 21, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
+        [OptionalFact(3, "FluidDensityMeasured_fs", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(3, "FluidDensityMeasured_fs#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(3, "FluidDensityMeasured_fs#01", Verbs.Enum.HasValue, "FluidDensityMeasured_fs#01")]
+        [OptionalFact(3, "FluidDensityMeasured_prop", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(3, "FluidDensityMeasured_prop#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(3, "FluidDensityMeasured_prop#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prop#01")]
+        [OptionalFact(3, "FullScaleUncertainty#01", Nouns.Enum.FullScaleUncertainty)]
+        [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasFullScale, "FluidDensityMeasured_fs#01")]
+        [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasProportionError, "FluidDensityMeasured_prop#01")]
+        [OptionalFact(3, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "FullScaleUncertainty#01")]
+        [OptionalFact(3, 31, "FullScaleUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
+        public SensorDrillingProperty FluidDensityMeasured { get; set; } = new SensorDrillingProperty();
+
+        [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+        [SemanticGaussianVariable("CuttingsDensityMeasured", "sigma_CuttingsDensityMeasured")]
+        [SemanticSensorVariable("CuttingsDensityMeasured", "CuttingsDensityMeasured_prec", "CuttingsDensityMeasured_acc")]
+        [SemanticFullScaleVariable("CuttingsDensityMeasured", "CuttingsDensityMeasured_fs", "CuttingsDensityMeasured_prop")]
+        [SemanticExclusiveOr(1, 2, 3)]
+        [SemanticFact("CuttingsDensityMeasured", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("CuttingsDensityMeasured#01", Nouns.Enum.PhysicalData)]
+        [SemanticFact("CuttingsDensityMeasured#01", Verbs.Enum.HasDynamicValue, "CuttingsDensityMeasured")]
+        [SemanticFact("CuttingsDensityMeasured#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
+        [SemanticFact("tos#01", Nouns.Enum.TopOfStringReferenceLocation)]
+        [SemanticFact("CuttingsDensityMeasured#01", Verbs.Enum.IsPhysicallyLocatedAt, "tos#01")]
+        [SemanticFact("MovingAverage", Nouns.Enum.MovingAverage)]
+        [SemanticFact("CuttingsDensityMeasured#01", Verbs.Enum.IsTransformationOutput, "MovingAverage")]
+        [SemanticFact("LiquidComponent#01", Nouns.Enum.LiquidComponent)]
+        [SemanticFact("CuttingsComponent#01", Nouns.Enum.CuttingsComponent)]
+        [SemanticFact("GasComponent#01", Nouns.Enum.GasComponent)]
+        [SemanticFact("CuttingsDensityMeasured#01", Verbs.Enum.ConcernsAFluidComponent, "CuttingsComponent#01")]
+        [ExcludeFact("CuttingsDensityMeasured#01", Verbs.Enum.ConcernsAFluidComponent, "LiquidComponent#01")]
+        [ExcludeFact("CuttingsDensityMeasured#01", Verbs.Enum.ConcernsAFluidComponent, "GasComponent#01")]
+        [OptionalFact(1, "sigma_CuttingsDensityMeasured", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(1, "sigma_CuttingsDensityMeasured#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(1, "sigma_CuttingsDensityMeasured#01", Verbs.Enum.HasValue, "sigma_CuttingsDensityMeasured")]
+        [OptionalFact(1, "GaussianUncertainty#01", Nouns.Enum.GaussianUncertainty)]
+        [OptionalFact(1, "CuttingsDensityMeasured#01", Verbs.Enum.HasUncertainty, "GaussianUncertainty#01")]
+        [OptionalFact(1, "GaussianUncertainty#01", Verbs.Enum.HasUncertaintyStandardDeviation, "sigma_CuttingsDensityMeasured#01")]
+        [OptionalFact(1, 11, "GaussianUncertainty#01", Verbs.Enum.HasUncertaintyMean, "CuttingsDensityMeasured#01")]
+        [OptionalFact(2, "CuttingsDensityMeasured_prec", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(2, "CuttingsDensityMeasured_prec#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(2, "CuttingsDensityMeasured_prec#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_prec")]
+        [OptionalFact(2, "CuttingsDensityMeasured_acc", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(2, "CuttingsDensityMeasured_acc#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(2, "CuttingsDensityMeasured_acc#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_acc")]
+        [OptionalFact(2, "SensorUncertainty#01", Nouns.Enum.SensorUncertainty)]
+        [OptionalFact(2, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyPrecision, "CuttingsDensityMeasured_prec#01")]
+        [OptionalFact(2, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyAccuracy, "CuttingsDensityMeasured_acc#01")]
+        [OptionalFact(2, "CuttingsDensityMeasured#01", Verbs.Enum.HasUncertainty, "SensorUncertainty#01")]
+        [OptionalFact(2, 21, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyMean, "CuttingsDensityMeasured#01")]
+        [OptionalFact(3, "CuttingsDensityMeasured_fs", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_fs#01")]
+        [OptionalFact(3, "CuttingsDensityMeasured_prop", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_prop#01")]
+        [OptionalFact(3, "FullScaleUncertainty#01", Nouns.Enum.FullScaleUncertainty)]
+        [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasFullScale, "CuttingsDensityMeasured_fs#01")]
+        [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasProportionError, "CuttingsDensityMeasured_prop#01")]
+        [OptionalFact(3, "CuttingsDensityMeasured#01", Verbs.Enum.HasUncertainty, "FullScaleUncertainty#01")]
+        [OptionalFact(3, 31, "FullScaleUncertainty#01", Verbs.Enum.HasUncertaintyMean, "CuttingsDensityMeasured#01")]
+        public SensorDrillingProperty CuttingsDensityMeasured { get; set; } = new SensorDrillingProperty();
+    }
+    class Example
+    {
+        static void GenerateSparQLForMD(StreamWriter writer, string propertyName, Dictionary<string, Tuple<int, string>>? queries)
+        {
+            if (writer != null && !string.IsNullOrEmpty(propertyName) && queries != null)
+            {
+                writer.WriteLine("# Semantic Queries for `" + propertyName + "`");
+                foreach (var query in queries)
+                {
+                    if (query.Value != null)
+                    {
+                        writer.WriteLine("## " + query.Key);
+                        writer.WriteLine("```sparql");
+                        writer.WriteLine(query.Value.Item2);
+                        writer.WriteLine("```");
+                    }
+                }
+            }
+        }
+        static void Main()
+        {
+            TestClass testClass = new TestClass();
+            Assembly? assembly = Assembly.GetAssembly(typeof(TestClass));
+            if (assembly != null)
+            {
+                string tempPath = Directory.GetCurrentDirectory();
+                DirectoryInfo? dir = new DirectoryInfo(tempPath);
+                dir = dir?.Parent?.Parent?.Parent;
+                if (dir != null)
+                {
+                    string tempFile = Path.Combine(dir.FullName, "Example05.md");
+                    using (StreamWriter writer = new StreamWriter(tempFile))
+                    {
+                        var queries1 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensitySetPoint");
+                        GenerateSparQLForMD(writer, "FluidDensitySetPoint", queries1);
+                        var queries2 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMargin");
+                        GenerateSparQLForMD(writer, "FluidDensityMargin", queries2);
+                        var queries3 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityEstimated");
+                        GenerateSparQLForMD(writer, "FluidDensityEstimated", queries3);
+                        var queries4 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMeasured");
+                        GenerateSparQLForMD(writer, "FluidDensityMeasured", queries4);
+                        var queries5 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "CuttingsDensityMeasured");
+                        GenerateSparQLForMD(writer, "CuttingsDensityMeasured", queries5);
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+The result from generating this program is:
+## Semantic Queries for `FluidDensitySetPoint`
+### Query-DrillingProperties.TestClass-FluidDensitySetPoint-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensitySetPoint
+WHERE {
+	?FluidDensitySetPoint rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensitySetPoint#01 rdf:type ddhub:SetPoint .
+	?FluidDensitySetPoint#01 ddhub:HasDynamicValue ?FluidDensitySetPoint .
+	?FluidDensitySetPoint#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+}
+
+```
+## Semantic Queries for `FluidDensityMargin`
+### Query-DrillingProperties.TestClass-FluidDensityMargin-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMin, ?FluidDensityMax
+WHERE {
+	?FluidDensityMin rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMax rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityUniform#01 rdf:type ddhub:ComputedData .
+	?FluidDensityUniform#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FDEUncertainty#01 rdf:type ddhub:MinMaxUncertainty .
+	?FluidDensityUniform#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
+	?FluidDensityMin#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMax#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMin#01 ddhub:HasDynamicValue ?FluidDensityMin .
+	?FluidDensityMax#01 ddhub:HasDynamicValue ?FluidDensityMax .
+	?FDEUncertainty#01 ddhub:HasUncertaintyMin ?FluidDensityMin#01 .
+	?FDEUncertainty#01 ddhub:HasUncertaintyMax ?FluidDensityMax#01 .
+}
+
+```
+## Semantic Queries for `FluidDensityEstimated`
+### Query-DrillingProperties.TestClass-FluidDensityEstimated-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev
+WHERE {
+	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
+	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
+	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
+	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimatedStdDev#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityEstimatedStdDev#01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
+	?FDEUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev#01 .
+}
+
+```
+### Query-DrillingProperties.TestClass-FluidDensityEstimated-001
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev
+WHERE {
+	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
+	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
+	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
+	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityEstimatedStdDev#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityEstimatedStdDev#01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
+	?FDEUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev#01 .
+	?FDEUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityEstimated#01 .
+}
+
+```
+## Semantic Queries for `FluidDensityMeasured`
+### Query-DrillingProperties.TestClass-FluidDensityMeasured-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMeasured
+WHERE {
+	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+}
+
+```
+### Query-DrillingProperties.TestClass-FluidDensityMeasured-001
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured
+WHERE {
+	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?sigma_FluidDensityMeasured rdf:type ddhub:DrillingSignal .
+	?sigma_FluidDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_FluidDensityMeasured#01 ddhub:HasValue ?sigma_FluidDensityMeasured .
+	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
+	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured#01 .
+}
+
+```
+### Query-DrillingProperties.TestClass-FluidDensityMeasured-002
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured
+WHERE {
+	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?sigma_FluidDensityMeasured rdf:type ddhub:DrillingSignal .
+	?sigma_FluidDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_FluidDensityMeasured#01 ddhub:HasValue ?sigma_FluidDensityMeasured .
+	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
+	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured#01 .
+	?GaussianUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
+}
+
+```
+### Query-DrillingProperties.TestClass-FluidDensityMeasured-003
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc
+WHERE {
+	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_prec rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prec#01 ddhub:HasValue ?FluidDensityMeasured_prec .
+	?FluidDensityMeasured_acc rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_acc#01 ddhub:HasValue ?FluidDensityMeasured_acc .
+	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?FluidDensityMeasured_prec#01 .
+	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc#01 .
+	?FluidDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
+}
+
+```
+### Query-DrillingProperties.TestClass-FluidDensityMeasured-004
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc
+WHERE {
+	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_prec rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prec#01 ddhub:HasValue ?FluidDensityMeasured_prec .
+	?FluidDensityMeasured_acc rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_acc#01 ddhub:HasValue ?FluidDensityMeasured_acc .
+	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?FluidDensityMeasured_prec#01 .
+	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc#01 .
+	?FluidDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
+	?SensorUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
+}
+
+```
+### Query-DrillingProperties.TestClass-FluidDensityMeasured-005
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop
+WHERE {
+	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs#01 .
+	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop#01 .
+	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
+	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
+	?FluidDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
+}
+
+```
+### Query-DrillingProperties.TestClass-FluidDensityMeasured-006
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop
+WHERE {
+	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs#01 .
+	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
+	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop#01 .
+	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
+	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
+	?FluidDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
+	?FullScaleUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
+}
+
+```
+## Semantic Queries for `CuttingsDensityMeasured`
+### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?CuttingsDensityMeasured
+WHERE {
+	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent#01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  FILTER NOT EXISTS {
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  }}
+
+```
+### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-001
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured
+WHERE {
+	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent#01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?sigma_CuttingsDensityMeasured rdf:type ddhub:DrillingSignal .
+	?sigma_CuttingsDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_CuttingsDensityMeasured#01 ddhub:HasValue ?sigma_CuttingsDensityMeasured .
+	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
+	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_CuttingsDensityMeasured#01 .
+  FILTER NOT EXISTS {
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  }}
+
+```
+### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-002
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured
+WHERE {
+	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent#01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?sigma_CuttingsDensityMeasured rdf:type ddhub:DrillingSignal .
+	?sigma_CuttingsDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_CuttingsDensityMeasured#01 ddhub:HasValue ?sigma_CuttingsDensityMeasured .
+	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
+	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
+	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_CuttingsDensityMeasured#01 .
+	?GaussianUncertainty#01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured#01 .
+  FILTER NOT EXISTS {
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  }}
+
+```
+### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-003
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc
+WHERE {
+	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent#01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_prec rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prec#01 ddhub:HasValue ?CuttingsDensityMeasured_prec .
+	?CuttingsDensityMeasured_acc rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_acc#01 ddhub:HasValue ?CuttingsDensityMeasured_acc .
+	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?CuttingsDensityMeasured_prec#01 .
+	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?CuttingsDensityMeasured_acc#01 .
+	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
+  FILTER NOT EXISTS {
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  }}
+
+```
+### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-004
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc
+WHERE {
+	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent#01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_prec rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prec#01 ddhub:HasValue ?CuttingsDensityMeasured_prec .
+	?CuttingsDensityMeasured_acc rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_acc#01 ddhub:HasValue ?CuttingsDensityMeasured_acc .
+	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?CuttingsDensityMeasured_prec#01 .
+	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?CuttingsDensityMeasured_acc#01 .
+	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
+	?SensorUncertainty#01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured#01 .
+  FILTER NOT EXISTS {
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  }}
+
+```
+### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-005
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop
+WHERE {
+	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent#01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs#01 .
+	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop#01 .
+	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
+	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .
+	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
+  FILTER NOT EXISTS {
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  }}
+
+```
+### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-006
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop
+WHERE {
+	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
+	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?MovingAverage rdf:type ddhub:MovingAverage .
+	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent#01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs#01 .
+	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
+	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop#01 .
+	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
+	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .
+	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
+	?FullScaleUncertainty#01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured#01 .
+  FILTER NOT EXISTS {
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
+	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+  }}
+
+```
+
 # Dependence
 This library depends on the following nugets:
 
 - `DWIS.Vocabulary.Schemas`
+- `DWIS.Client.ReferenceImplementation`
 - `OSDC.DotnetLibraries.General.Statistics`
 - `OSDC.UnitConversion.Conversion.DrillingEngineering`
+
 
 

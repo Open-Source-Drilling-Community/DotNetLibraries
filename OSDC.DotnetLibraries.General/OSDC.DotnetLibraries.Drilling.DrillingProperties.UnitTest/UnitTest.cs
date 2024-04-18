@@ -117,7 +117,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
         public void Test6()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var results = GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData(assembly);
+            var results = MetaDataDrillingProperty.GetDrillingPropertyMetaData(assembly);
             Assert.IsNotNull(results);
             Assert.AreEqual(4, results.Count);
         }

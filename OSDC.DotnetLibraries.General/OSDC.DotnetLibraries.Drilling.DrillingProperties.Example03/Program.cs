@@ -22,7 +22,7 @@ namespace DrillingProperties
         [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
         [SemanticFact("BitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("BitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01",  Nouns.Enum.Bit)]
+        [SemanticFact("Bit#01",  Nouns.Enum.DrillingBit)]
         [SemanticFact("BitDepthStandardDeviation#01",  Nouns.Enum.DrillingDataPoint)]
         [SemanticFact("BitDepthStandardDeviationValue#01",  Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("BitDepthStandardDeviation#01", Verbs.Enum.HasDynamicValue, "BitDepthStandardDeviationValue#01")]
@@ -78,7 +78,7 @@ namespace DrillingProperties
         [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "WGS84VerticalDatum")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsMechanicallyLocatedAt, "Bit#01")]
-        [SemanticFact("Bit#01",  Nouns.Enum.Bit)]
+        [SemanticFact("Bit#01",  Nouns.Enum.DrillingBit)]
         [SemanticFact("TransientT&D#01",  Nouns.Enum.ComputationUnit)]
         [OptionalFact(0, "TransientT&D#01",  Nouns.Enum.ModelledDegreeOfFreedom, "DegreeOfFreedom", "4")]
         [SemanticFact("EstimatedBitDepth#01", Verbs.Enum.IsTransformationOutput, "TransientT&D#01")]
@@ -93,7 +93,7 @@ namespace DrillingProperties
     {
         static void Main()
         {          
-            var dict = GenerateDrillingPropertyMetaData.GetDrillingPropertyMetaData(Assembly.GetExecutingAssembly());
+            var dict = MetaDataDrillingProperty.GetDrillingPropertyMetaData(Assembly.GetExecutingAssembly());
             if (dict != null)
             {
                 foreach (var keyValue in dict)
