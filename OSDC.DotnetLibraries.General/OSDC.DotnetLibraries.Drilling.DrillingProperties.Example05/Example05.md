@@ -230,10 +230,10 @@ WHERE {
 	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
 	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs#01 .
+	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs .
 	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop#01 .
+	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
@@ -259,10 +259,10 @@ WHERE {
 	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
 	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs#01 .
+	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs .
 	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop#01 .
+	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
@@ -470,10 +470,10 @@ WHERE {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
 	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs#01 .
+	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
 	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop#01 .
+	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .
@@ -508,10 +508,10 @@ WHERE {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
 	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs#01 .
+	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
 	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop#01 .
+	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .

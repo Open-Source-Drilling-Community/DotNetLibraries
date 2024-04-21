@@ -1,7 +1,7 @@
 ﻿
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Struct | AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class SemanticBernoulliVariableAttribute : Attribute
     {
         public string? ProbabilistVariable { get; } = null;

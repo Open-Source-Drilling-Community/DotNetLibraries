@@ -53,7 +53,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.RDF", "OSDC.DotnetLibraries.Drilling.DrillingProperties.RDF\OSDC.DotnetLibraries.Drilling.DrillingProperties.RDF.csproj", "{9510A653-7789-4F1F-B744-890EF5C8EA0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05.csproj", "{B39B9F97-E04D-439B-A234-B15250994EBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05.csproj", "{B39B9F97-E04D-439B-A234-B15250994EBB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example06", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example06\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example06.csproj", "{E9F8D639-35D9-4249-A0E0-0F2F3BFBEFCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example07", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example07\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example07.csproj", "{65E0BF7C-AB29-4005-A962-435DCFD6D4A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +169,14 @@ Global
 		{B39B9F97-E04D-439B-A234-B15250994EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B39B9F97-E04D-439B-A234-B15250994EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B39B9F97-E04D-439B-A234-B15250994EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9F8D639-35D9-4249-A0E0-0F2F3BFBEFCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9F8D639-35D9-4249-A0E0-0F2F3BFBEFCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9F8D639-35D9-4249-A0E0-0F2F3BFBEFCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9F8D639-35D9-4249-A0E0-0F2F3BFBEFCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65E0BF7C-AB29-4005-A962-435DCFD6D4A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65E0BF7C-AB29-4005-A962-435DCFD6D4A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65E0BF7C-AB29-4005-A962-435DCFD6D4A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65E0BF7C-AB29-4005-A962-435DCFD6D4A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

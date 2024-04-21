@@ -79,10 +79,10 @@ namespace DrillingProperties
         [OptionalFact(2, 21, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
         [OptionalFact(3, "FluidDensityMeasured_fs", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "FluidDensityMeasured_fs#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "FluidDensityMeasured_fs#01", Verbs.Enum.HasValue, "FluidDensityMeasured_fs#01")]
+        [OptionalFact(3, "FluidDensityMeasured_fs#01", Verbs.Enum.HasValue, "FluidDensityMeasured_fs")]
         [OptionalFact(3, "FluidDensityMeasured_prop", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "FluidDensityMeasured_prop#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "FluidDensityMeasured_prop#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prop#01")]
+        [OptionalFact(3, "FluidDensityMeasured_prop#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prop")]
         [OptionalFact(3, "FullScaleUncertainty#01", Nouns.Enum.FullScaleUncertainty)]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasFullScale, "FluidDensityMeasured_fs#01")]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasProportionError, "FluidDensityMeasured_prop#01")]
@@ -129,10 +129,10 @@ namespace DrillingProperties
         [OptionalFact(2, 21, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyMean, "CuttingsDensityMeasured#01")]
         [OptionalFact(3, "CuttingsDensityMeasured_fs", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_fs#01")]
+        [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_fs")]
         [OptionalFact(3, "CuttingsDensityMeasured_prop", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_prop#01")]
+        [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_prop")]
         [OptionalFact(3, "FullScaleUncertainty#01", Nouns.Enum.FullScaleUncertainty)]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasFullScale, "CuttingsDensityMeasured_fs#01")]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasProportionError, "CuttingsDensityMeasured_prop#01")]
@@ -173,15 +173,15 @@ namespace DrillingProperties
                     string tempFile = Path.Combine(dir.FullName, "Example05.md");
                     using (StreamWriter writer = new StreamWriter(tempFile))
                     {
-                        var queries1 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensitySetPoint");
+                        var queries1 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensitySetPoint");
                         GenerateSparQLForMD(writer, "FluidDensitySetPoint", queries1);
-                        var queries2 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMargin");
+                        var queries2 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMargin");
                         GenerateSparQLForMD(writer, "FluidDensityMargin", queries2);
-                        var queries3 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityEstimated");
+                        var queries3 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityEstimated");
                         GenerateSparQLForMD(writer, "FluidDensityEstimated", queries3);
-                        var queries4 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMeasured");
+                        var queries4 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMeasured");
                         GenerateSparQLForMD(writer, "FluidDensityMeasured", queries4);
-                        var queries5 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "CuttingsDensityMeasured");
+                        var queries5 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "CuttingsDensityMeasured");
                         GenerateSparQLForMD(writer, "CuttingsDensityMeasured", queries5);
                     }
                 }

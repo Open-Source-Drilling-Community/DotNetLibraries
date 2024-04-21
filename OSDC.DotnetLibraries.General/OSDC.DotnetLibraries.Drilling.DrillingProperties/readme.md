@@ -606,8 +606,8 @@ The output is the following:
 ```
 
 # Generation of SparQL Queries
-It is possible to generate a list of `SparQL` queries for a `DrillingProperty` or a `DiscreteDrillingProperty` 
-by calling the method `GetSparQLQueries`. The method takes three arguments: the assembly in which
+It is possible to generate a list of `SparQL` queries for a `DrillingProperty` 
+by calling the static method `GetSparQLQueries` of `GeneratorSparQLManifestFile`. The method takes three arguments: the assembly in which
 the class or struct that define the property belongs to, the full name of the class or struct, and the 
 name of the property.
 
@@ -694,10 +694,10 @@ namespace DrillingProperties
         [OptionalFact(2, 21, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
         [OptionalFact(3, "FluidDensityMeasured_fs", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "FluidDensityMeasured_fs#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "FluidDensityMeasured_fs#01", Verbs.Enum.HasValue, "FluidDensityMeasured_fs#01")]
+        [OptionalFact(3, "FluidDensityMeasured_fs#01", Verbs.Enum.HasValue, "FluidDensityMeasured_fs")]
         [OptionalFact(3, "FluidDensityMeasured_prop", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "FluidDensityMeasured_prop#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "FluidDensityMeasured_prop#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prop#01")]
+        [OptionalFact(3, "FluidDensityMeasured_prop#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prop")]
         [OptionalFact(3, "FullScaleUncertainty#01", Nouns.Enum.FullScaleUncertainty)]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasFullScale, "FluidDensityMeasured_fs#01")]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasProportionError, "FluidDensityMeasured_prop#01")]
@@ -744,10 +744,10 @@ namespace DrillingProperties
         [OptionalFact(2, 21, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyMean, "CuttingsDensityMeasured#01")]
         [OptionalFact(3, "CuttingsDensityMeasured_fs", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_fs#01")]
+        [OptionalFact(3, "CuttingsDensityMeasured_fs#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_fs")]
         [OptionalFact(3, "CuttingsDensityMeasured_prop", Nouns.Enum.DrillingSignal)]
         [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Nouns.Enum.DrillingDataPoint)]
-        [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_prop#01")]
+        [OptionalFact(3, "CuttingsDensityMeasured_prop#01", Verbs.Enum.HasValue, "CuttingsDensityMeasured_prop")]
         [OptionalFact(3, "FullScaleUncertainty#01", Nouns.Enum.FullScaleUncertainty)]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasFullScale, "CuttingsDensityMeasured_fs#01")]
         [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasProportionError, "CuttingsDensityMeasured_prop#01")]
@@ -788,15 +788,15 @@ namespace DrillingProperties
                     string tempFile = Path.Combine(dir.FullName, "Example05.md");
                     using (StreamWriter writer = new StreamWriter(tempFile))
                     {
-                        var queries1 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensitySetPoint");
+                        var queries1 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensitySetPoint");
                         GenerateSparQLForMD(writer, "FluidDensitySetPoint", queries1);
-                        var queries2 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMargin");
+                        var queries2 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMargin");
                         GenerateSparQLForMD(writer, "FluidDensityMargin", queries2);
-                        var queries3 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityEstimated");
+                        var queries3 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityEstimated");
                         GenerateSparQLForMD(writer, "FluidDensityEstimated", queries3);
-                        var queries4 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMeasured");
+                        var queries4 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "FluidDensityMeasured");
                         GenerateSparQLForMD(writer, "FluidDensityMeasured", queries4);
-                        var queries5 = testClass.FluidDensityEstimated.GetSparQLQueries(assembly, typeof(TestClass).FullName, "CuttingsDensityMeasured");
+                        var queries5 = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName, "CuttingsDensityMeasured");
                         GenerateSparQLForMD(writer, "CuttingsDensityMeasured", queries5);
                     }
                 }
@@ -807,8 +807,8 @@ namespace DrillingProperties
 ```
 
 The result from generating this program is:
-## Semantic Queries for `FluidDensitySetPoint`
-### Query-DrillingProperties.TestClass-FluidDensitySetPoint-000
+# Semantic Queries for `FluidDensitySetPoint`
+## Query-DrillingProperties.TestClass-FluidDensitySetPoint-000
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -823,8 +823,8 @@ WHERE {
 }
 
 ```
-## Semantic Queries for `FluidDensityMargin`
-### Query-DrillingProperties.TestClass-FluidDensityMargin-000
+# Semantic Queries for `FluidDensityMargin`
+## Query-DrillingProperties.TestClass-FluidDensityMargin-000
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -847,8 +847,8 @@ WHERE {
 }
 
 ```
-## Semantic Queries for `FluidDensityEstimated`
-### Query-DrillingProperties.TestClass-FluidDensityEstimated-000
+# Semantic Queries for `FluidDensityEstimated`
+## Query-DrillingProperties.TestClass-FluidDensityEstimated-000
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -869,7 +869,7 @@ WHERE {
 }
 
 ```
-### Query-DrillingProperties.TestClass-FluidDensityEstimated-001
+## Query-DrillingProperties.TestClass-FluidDensityEstimated-001
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -891,8 +891,8 @@ WHERE {
 }
 
 ```
-## Semantic Queries for `FluidDensityMeasured`
-### Query-DrillingProperties.TestClass-FluidDensityMeasured-000
+# Semantic Queries for `FluidDensityMeasured`
+## Query-DrillingProperties.TestClass-FluidDensityMeasured-000
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -911,7 +911,7 @@ WHERE {
 }
 
 ```
-### Query-DrillingProperties.TestClass-FluidDensityMeasured-001
+## Query-DrillingProperties.TestClass-FluidDensityMeasured-001
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -936,7 +936,7 @@ WHERE {
 }
 
 ```
-### Query-DrillingProperties.TestClass-FluidDensityMeasured-002
+## Query-DrillingProperties.TestClass-FluidDensityMeasured-002
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -962,7 +962,7 @@ WHERE {
 }
 
 ```
-### Query-DrillingProperties.TestClass-FluidDensityMeasured-003
+## Query-DrillingProperties.TestClass-FluidDensityMeasured-003
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -991,7 +991,7 @@ WHERE {
 }
 
 ```
-### Query-DrillingProperties.TestClass-FluidDensityMeasured-004
+## Query-DrillingProperties.TestClass-FluidDensityMeasured-004
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1021,7 +1021,7 @@ WHERE {
 }
 
 ```
-### Query-DrillingProperties.TestClass-FluidDensityMeasured-005
+## Query-DrillingProperties.TestClass-FluidDensityMeasured-005
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1039,10 +1039,10 @@ WHERE {
 	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
 	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs#01 .
+	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs .
 	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop#01 .
+	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
@@ -1050,7 +1050,7 @@ WHERE {
 }
 
 ```
-### Query-DrillingProperties.TestClass-FluidDensityMeasured-006
+## Query-DrillingProperties.TestClass-FluidDensityMeasured-006
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1068,10 +1068,10 @@ WHERE {
 	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
 	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs#01 .
+	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs .
 	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop#01 .
+	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
@@ -1080,8 +1080,8 @@ WHERE {
 }
 
 ```
-## Semantic Queries for `CuttingsDensityMeasured`
-### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-000
+# Semantic Queries for `CuttingsDensityMeasured`
+## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-000
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1109,7 +1109,7 @@ WHERE {
   }}
 
 ```
-### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-001
+## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-001
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1143,7 +1143,7 @@ WHERE {
   }}
 
 ```
-### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-002
+## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-002
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1178,7 +1178,7 @@ WHERE {
   }}
 
 ```
-### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-003
+## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-003
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1216,7 +1216,7 @@ WHERE {
   }}
 
 ```
-### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-004
+## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-004
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1255,7 +1255,7 @@ WHERE {
   }}
 
 ```
-### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-005
+## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-005
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1279,10 +1279,10 @@ WHERE {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
 	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs#01 .
+	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
 	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop#01 .
+	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .
@@ -1293,7 +1293,7 @@ WHERE {
   }}
 
 ```
-### Query-DrillingProperties.TestClass-CuttingsDensityMeasured-006
+## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-006
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
@@ -1317,10 +1317,10 @@ WHERE {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
 	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs#01 .
+	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
 	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
 	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop#01 .
+	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
 	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .
@@ -1331,6 +1331,346 @@ WHERE {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
   }}
 
+```
+
+# Generation of Manifest Files
+A `DrillingProperty` may also be a source of information on the `DDHub` server. In that case, it is necessary to define
+the semantic of the associated signals and to inject the semantic on the server. The injection is based on using a 
+`ManifestFile`. There is static method defined in `GeneratorSparQLManifestFile` that can generate the `ManifestFile`. This method uses
+the `SemanticFact` that are described as attributes of the property. It also utilizes the definition of the variables
+as described by `SemanticDiracVariableAttribute` and similar. An additional attribute is introduced: `SemanticManifestOptionAttribute`.
+Its role is to list the group of optional facts that shall be included in the semantic description. If there are several
+semantic variable attributes that are declared for the `DrillingProperty`, only those for which the variables are described
+in the chosen optional facts will be used during the generation of the semantic description.
+```csharp
+using OSDC.DotnetLibraries.Drilling.DrillingProperties;
+using OSDC.UnitConversion.Conversion.DrillingEngineering;
+using DWIS.Vocabulary.Schemas;
+using System.Reflection;
+using DWIS.API.DTO;
+
+namespace DrillingProperties
+{
+    public class TestClass
+    {
+        [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+        [SemanticGaussianVariable("FluidDensityEstimated", "FluidDensityEstimatedStdDev")]
+        [SemanticFact("FluidDensityEstimated", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityEstimated#01", Nouns.Enum.ComputedData)]
+        [SemanticFact("FluidDensityEstimated#01", Verbs.Enum.HasDynamicValue, "FluidDensityEstimated")]
+        [SemanticFact("FluidDensityEstimated#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
+        [SemanticFact("FDEUncertainty#01", Nouns.Enum.GaussianUncertainty)]
+        [SemanticFact("FluidDensityEstimated#01", Verbs.Enum.HasUncertainty, "FDEUncertainty#01")]
+        [SemanticFact("FluidDensityEstimatedStdDev", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityEstimatedStdDev#01", Nouns.Enum.DrillingDataPoint)]
+        [SemanticFact("FluidDensityEstimatedStdDev#01", Verbs.Enum.HasStaticValue, "FluidDensityEstimatedStdDev")]
+        [SemanticFact("FDEUncertainty#01", Verbs.Enum.HasUncertaintyStandardDeviation, "FluidDensityEstimatedStdDev#01")]
+        [OptionalFact(1, "FDEUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityEstimated#01")]
+        public GaussianDrillingProperty FluidDensityEstimated { get; set; } = new GaussianDrillingProperty();
+
+        [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+        [SemanticGaussianVariable("FluidDensityMeasured", "sigma_FluidDensityMeasured")]
+        [SemanticSensorVariable("FluidDensityMeasured", "FluidDensityMeasured_prec", "FluidDensityMeasured_acc")]
+        [SemanticFullScaleVariable("FluidDensityMeasured", "FluidDensityMeasured_fs", "FluidDensityMeasured_prop")]
+        [SemanticExclusiveOr(1, 2, 3)]
+        [SemanticManifestOptions(2, 21)]
+        [SemanticFact("FluidDensityMeasured", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("FluidDensityMeasured#01", Nouns.Enum.PhysicalData)]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.HasDynamicValue, "FluidDensityMeasured")]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
+        [SemanticFact("tos#01", Nouns.Enum.TopOfStringReferenceLocation)]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsPhysicallyLocatedAt, "tos#01")]
+        [SemanticFact("MovingAverage", Nouns.Enum.MovingAverage)]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsTransformationOutput, "MovingAverage")]
+        [OptionalFact(1, "sigma_FluidDensityMeasured", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(1, "sigma_FluidDensityMeasured#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(1, "sigma_FluidDensityMeasured#01", Verbs.Enum.HasValue, "sigma_FluidDensityMeasured")]
+        [OptionalFact(1, "GaussianUncertainty#01", Nouns.Enum.GaussianUncertainty)]
+        [OptionalFact(1, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "GaussianUncertainty#01")]
+        [OptionalFact(1, "GaussianUncertainty#01", Verbs.Enum.HasUncertaintyStandardDeviation, "sigma_FluidDensityMeasured#01")]
+        [OptionalFact(1, 11, "GaussianUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
+        [OptionalFact(2, "FluidDensityMeasured_prec", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(2, "FluidDensityMeasured_prec#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(2, "FluidDensityMeasured_prec#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prec")]
+        [OptionalFact(2, "FluidDensityMeasured_acc", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(2, "FluidDensityMeasured_acc#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(2, "FluidDensityMeasured_acc#01", Verbs.Enum.HasValue, "FluidDensityMeasured_acc")]
+        [OptionalFact(2, "SensorUncertainty#01", Nouns.Enum.SensorUncertainty)]
+        [OptionalFact(2, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyPrecision, "FluidDensityMeasured_prec#01")]
+        [OptionalFact(2, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyAccuracy, "FluidDensityMeasured_acc#01")]
+        [OptionalFact(2, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "SensorUncertainty#01")]
+        [OptionalFact(2, 21, "SensorUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
+        [OptionalFact(3, "FluidDensityMeasured_fs", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(3, "FluidDensityMeasured_fs#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(3, "FluidDensityMeasured_fs#01", Verbs.Enum.HasValue, "FluidDensityMeasured_fs")]
+        [OptionalFact(3, "FluidDensityMeasured_prop", Nouns.Enum.DrillingSignal)]
+        [OptionalFact(3, "FluidDensityMeasured_prop#01", Nouns.Enum.DrillingDataPoint)]
+        [OptionalFact(3, "FluidDensityMeasured_prop#01", Verbs.Enum.HasValue, "FluidDensityMeasured_prop")]
+        [OptionalFact(3, "FullScaleUncertainty#01", Nouns.Enum.FullScaleUncertainty)]
+        [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasFullScale, "FluidDensityMeasured_fs#01")]
+        [OptionalFact(3, "FullScaleUncertainty#01", Verbs.Enum.HasProportionError, "FluidDensityMeasured_prop#01")]
+        [OptionalFact(3, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "FullScaleUncertainty#01")]
+        [OptionalFact(3, 31, "FullScaleUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
+        public SensorDrillingProperty FluidDensityMeasured { get; set; } = new SensorDrillingProperty();
+    }
+    class Example
+    {
+        static void GenerateMermaidForMD(StreamWriter writer, string propertyName, string? mermaid)
+        {
+            if (writer != null && !string.IsNullOrEmpty(propertyName) && !string.IsNullOrEmpty(mermaid))
+            {
+                writer.WriteLine("# Semantic Graph for `" + propertyName + "`");
+                writer.WriteLine(mermaid);
+            }
+        }
+ 
+        static void Main()
+        {
+            TestClass testClass = new TestClass();
+            Assembly? assembly = Assembly.GetAssembly(typeof(TestClass));
+            if (assembly != null)
+            {
+                string tempPath = Directory.GetCurrentDirectory();
+                DirectoryInfo? dir = new DirectoryInfo(tempPath);
+                dir = dir?.Parent?.Parent?.Parent;
+                if (dir != null)
+                {
+                    string tempFile = Path.Combine(dir.FullName, "Example06.md");
+                    using (StreamWriter writer = new StreamWriter(tempFile))
+                    {
+                        var manifestFile1 = GeneratorSparQLManifestFile.GetManifestFile(assembly, typeof(TestClass).FullName, "FluidDensityEstimated", "SampleManifest", "ExampleCompany", "Test:");
+                        if (manifestFile1 != null)
+                        {
+                            GenerateMermaidForMD(writer, "FluidDensityEstimated", GeneratorSparQLManifestFile.GetMermaid(manifestFile1));
+                        }
+                        var manifestFile2 = GeneratorSparQLManifestFile.GetManifestFile(assembly, typeof(TestClass).FullName, "FluidDensityMeasured", "SampleManifest", "ExampleCompany", "Test:");
+                        if (manifestFile2 != null)
+                        {
+                            GenerateMermaidForMD(writer, "FluidDensityMeasured", GeneratorSparQLManifestFile.GetMermaid(manifestFile2));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+And the results of this program are:
+## Semantic Graph for `FluidDensityEstimated`
+```mermaid
+flowchart TD
+	 classDef typeClass fill:#f96;
+	 classDef classClass fill:#9dd0ff;
+	 classDef opcClass fill:#ff9dd0;
+	 classDef quantityClass fill:#d0ff9d;
+	Test:FluidDensityEstimated([Test:FluidDensityEstimated]) --> opc:double([opc:double]):::opcClass
+	Test:FluidDensityEstimatedStdDev([Test:FluidDensityEstimatedStdDev]) --> opc:double([opc:double]):::opcClass
+	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) --> ComputedData([ComputedData]):::typeClass
+	Test:FDEUncertainty_01([Test:FDEUncertainty_01]) --> GaussianUncertainty([GaussianUncertainty]):::typeClass
+	Test:FluidDensityEstimatedStdDev_01([Test:FluidDensityEstimatedStdDev_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
+	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) -- http://ddhub.no/HasDynamicValue --> Test:FluidDensityEstimated([Test:FluidDensityEstimated]):::classClass
+	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingDensity([Test:DrillingDensity]):::quantityClass
+	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) -- http://ddhub.no/HasUncertainty --> Test:FDEUncertainty_01([Test:FDEUncertainty_01]):::classClass
+	Test:FluidDensityEstimatedStdDev_01([Test:FluidDensityEstimatedStdDev_01]) -- http://ddhub.no/HasStaticValue --> Test:FluidDensityEstimatedStdDev([Test:FluidDensityEstimatedStdDev]):::classClass
+	Test:FDEUncertainty_01([Test:FDEUncertainty_01]) -- http://ddhub.no/HasUncertaintyStandardDeviation --> Test:FluidDensityEstimatedStdDev_01([Test:FluidDensityEstimatedStdDev_01]):::classClass
+```
+
+## Semantic Graph for `FluidDensityMeasured`
+```mermaid
+flowchart TD
+	 classDef typeClass fill:#f96;
+	 classDef classClass fill:#9dd0ff;
+	 classDef opcClass fill:#ff9dd0;
+	 classDef quantityClass fill:#d0ff9d;
+	Test:FluidDensityMeasured([Test:FluidDensityMeasured]) --> opc:double([opc:double]):::opcClass
+	Test:FluidDensityMeasured_acc([Test:FluidDensityMeasured_acc]) --> opc:double([opc:double]):::opcClass
+	Test:FluidDensityMeasured_prec([Test:FluidDensityMeasured_prec]) --> opc:double([opc:double]):::opcClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) --> PhysicalData([PhysicalData]):::typeClass
+	Test:tos_01([Test:tos_01]) --> TopOfStringReferenceLocation([TopOfStringReferenceLocation]):::typeClass
+	Test:MovingAverage([Test:MovingAverage]) --> MovingAverage([MovingAverage]):::typeClass
+	Test:FluidDensityMeasured_prec_01([Test:FluidDensityMeasured_prec_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
+	Test:FluidDensityMeasured_acc_01([Test:FluidDensityMeasured_acc_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
+	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) --> SensorUncertainty([SensorUncertainty]):::typeClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasDynamicValue --> Test:FluidDensityMeasured([Test:FluidDensityMeasured]):::classClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingDensity([Test:DrillingDensity]):::quantityClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsPhysicallyLocatedAt --> Test:tos_01([Test:tos_01]):::classClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
+	Test:FluidDensityMeasured_prec_01([Test:FluidDensityMeasured_prec_01]) -- http://ddhub.no/HasValue --> Test:FluidDensityMeasured_prec([Test:FluidDensityMeasured_prec]):::classClass
+	Test:FluidDensityMeasured_acc_01([Test:FluidDensityMeasured_acc_01]) -- http://ddhub.no/HasValue --> Test:FluidDensityMeasured_acc([Test:FluidDensityMeasured_acc]):::classClass
+	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) -- http://ddhub.no/HasUncertaintyPrecision --> Test:FluidDensityMeasured_prec_01([Test:FluidDensityMeasured_prec_01]):::classClass
+	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) -- http://ddhub.no/HasUncertaintyAccuracy --> Test:FluidDensityMeasured_acc_01([Test:FluidDensityMeasured_acc_01]):::classClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasUncertainty --> Test:SensorUncertainty_01([Test:SensorUncertainty_01]):::classClass
+	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) -- http://ddhub.no/HasUncertaintyMean --> Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]):::classClass
+```
+It can be noted that even though there both `SemanticGaussianVariable`, `SemanticSensorVariable` and `SemanticFullScaleVariable`
+are defined as attributes to the property `FluidDensityMeasured`, only the variables defined by `SemanticSensorVariable` are used
+in the `ManifestFile`. This is because of the attribute `SemanticManifestOptions` that declares that the semantic shall
+use the options 2 and 21, which define the variables described in `SemanticSensorVariable`, i.e., "FluidDensityMeasured", "FluidDensityMeasured_prec", "FluidDensityMeasured_acc".
+
+# Semantic Declations at Class Level
+Sometime it is necessary to store on the DDHub more complex information than numerical or boolan values. For instance,
+it may be necessary to pass structured information in their serialized form. Typically, the serialization is made using
+`Json`. Similarly to semantic definitions made at the property level for `DrillingProperty`, it is possible to set 
+semantic information at the class or struct level. The available attributes are then: 
+- `AccessToVariableAttribute`
+- `ExcludeFactAttribute`
+- `OptionalExcludeFactAttribute`
+- `OptionalFactAttribute`
+- `SemanticExclusiveOrAttribute`
+- `SemanticFactAttribute`
+- `SemanticManifestOptionsAttribute`
+
+There is in addition an additional `Attribute` reserved only for `class` and `struct`: `SemanticTypeVariableAttribute`. 
+this attibute is used to define the variable name that is used in the semantic facts for accessing the serialized value of 
+the instance of the class or struct. It takes only one argument, namely the variable name.
+
+Here is an example that shows how a class `TestClass` can be declared on the `DDHub` using a `ManifestFile` and retrieved
+from the `DDHub` using a semantic query. The semantic of the test class corresponds to the a microstate generated by the
+`DWIS` drilling process state interpreter.
+
+```csharp
+using OSDC.DotnetLibraries.Drilling.DrillingProperties;
+using OSDC.UnitConversion.Conversion.DrillingEngineering;
+using DWIS.Vocabulary.Schemas;
+using System.Reflection;
+using DWIS.API.DTO;
+
+namespace DrillingProperties
+{
+
+    [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
+    [SemanticTypeVariable("ComputedData")]
+    [SemanticFact("ComputedData", Nouns.Enum.DynamicDrillingSignal)]
+    [SemanticFact("ComputedData#01", Nouns.Enum.ComputedData)]
+    [SemanticFact("ComputedData#01", Verbs.Enum.HasDynamicValue, "ComputedData")]
+    [SemanticFact("ProcessState", Nouns.Enum.ProcessState)]
+    [SemanticFact("ProcessState", Nouns.Enum.DeterministicModel)]
+    [SemanticFact("ComputedData#01", Verbs.Enum.IsGeneratedBy, "ProcessState")]
+    [SemanticFact("DrillingProcessStateInterpreter", Nouns.Enum.DWISDrillingProcessStateInterpreter)]
+    [SemanticFact("ProcessState", Verbs.Enum.IsProvidedBy, "DrillingProcessStateInterpreter")]
+    public class TestClass
+    {
+        /// <summary>
+        /// the time stamp in UTC when the state has been updated
+        /// </summary>
+        public DateTime TimeStampUTC { get; set; }
+        /// <summary>
+        /// Part1: microstates from 0 to 15
+        /// </summary>
+        public int Part1 { get; set; }
+        /// <summary>
+        /// Part2: microstates from 16 to 31
+        /// </summary>
+        public int Part2 { get; set; }
+        /// <summary>
+        /// Part3: microstates from 32 to 47
+        /// </summary>
+        public int Part3 { get; set; }
+        /// <summary>
+        /// Part4: microstates from 48 to 63
+        /// </summary>
+        public int Part4 { get; set; }
+        /// <summary>
+        /// Part5: microstates from 64 to 79
+        /// </summary>
+        public int Part5 { get; set; }
+    }
+    class Example
+    {
+        static void GenerateMermaidForMD(StreamWriter writer, string? typeName, string? mermaid)
+        {
+            if (writer != null && !string.IsNullOrEmpty(typeName) && !string.IsNullOrEmpty(mermaid))
+            {
+                writer.WriteLine("# Semantic Graph for `" + typeName + "`");
+                writer.WriteLine(mermaid);
+            }
+        }
+        static void GenerateSparQLForMD(StreamWriter writer, string? typeName, Dictionary<string, Tuple<int, string>>? queries)
+        {
+            if (writer != null && !string.IsNullOrEmpty(typeName) && queries != null)
+            {
+                writer.WriteLine("# Semantic Queries for `" + typeName + "`");
+                foreach (var query in queries)
+                {
+                    if (query.Value != null)
+                    {
+                        writer.WriteLine("## " + query.Key);
+                        writer.WriteLine("```sparql");
+                        writer.WriteLine(query.Value.Item2);
+                        writer.WriteLine("```");
+                    }
+                }
+            }
+        }
+        static void Main()
+        {
+            TestClass testClass = new TestClass();
+            Assembly? assembly = Assembly.GetAssembly(typeof(TestClass));
+            if (assembly != null)
+            {
+                string tempPath = Directory.GetCurrentDirectory();
+                DirectoryInfo? dir = new DirectoryInfo(tempPath);
+                dir = dir?.Parent?.Parent?.Parent;
+                if (dir != null)
+                {
+                    string tempFile = Path.Combine(dir.FullName, "Example07.md");
+                    using (StreamWriter writer = new StreamWriter(tempFile))
+                    {
+                        var queries = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeof(TestClass).FullName);
+                        if (queries != null)
+                        {
+                            GenerateSparQLForMD(writer, typeof(TestClass).FullName, queries);
+                        }
+                        var manifestFile = GeneratorSparQLManifestFile.GetManifestFile(assembly, typeof(TestClass).FullName, "SampleManifest", "ExampleCompany", "Test:");
+                        if (manifestFile != null)
+                        {
+                            GenerateMermaidForMD(writer, typeof(TestClass).FullName, GeneratorSparQLManifestFile.GetMermaid(manifestFile));
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+The results of this program are:
+## Semantic Queries for `DrillingProperties.TestClass`
+### Query-DrillingProperties.TestClass-000
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub: <http://ddhub.no/>
+PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+
+SELECT ?ComputedData
+WHERE {
+	?ComputedData rdf:type ddhub:DynamicDrillingSignal .
+	?ComputedData#01 rdf:type ddhub:ComputedData .
+	?ComputedData#01 ddhub:HasDynamicValue ?ComputedData .
+	?ProcessState rdf:type ddhub:ProcessState .
+	?ProcessState ddhub:BelongsToClass ddhub:DeterministicModel .
+	?ComputedData#01 ddhub:IsGeneratedBy ?ProcessState .
+	?DrillingProcessStateInterpreter rdf:type ddhub:DWISDrillingProcessStateInterpreter .
+	?ProcessState ddhub:IsProvidedBy ?DrillingProcessStateInterpreter .
+}
+
+```
+## Semantic Graph for `DrillingProperties.TestClass`
+```mermaid
+flowchart TD
+	 classDef typeClass fill:#f96;
+	 classDef classClass fill:#9dd0ff;
+	 classDef opcClass fill:#ff9dd0;
+	 classDef quantityClass fill:#d0ff9d;
+	Test:ComputedData([Test:ComputedData]) --> opc:string([opc:string]):::opcClass
+	Test:ComputedData_01([Test:ComputedData_01]) --> ComputedData([ComputedData]):::typeClass
+	Test:ProcessState([Test:ProcessState]) --> ProcessState([ProcessState]):::typeClass
+	Test:DrillingProcessStateInterpreter([Test:DrillingProcessStateInterpreter]) --> DWISDrillingProcessStateInterpreter([DWISDrillingProcessStateInterpreter]):::typeClass
+	Test:ProcessState([Test:ProcessState]) -- http://ddhub.no/BelongsToClass --> http://ddhub.no/DeterministicModel([http://ddhub.no/DeterministicModel]):::classClass
+	Test:ComputedData_01([Test:ComputedData_01]) -- http://ddhub.no/HasDynamicValue --> Test:ComputedData([Test:ComputedData]):::classClass
+	Test:ComputedData_01([Test:ComputedData_01]) -- http://ddhub.no/IsGeneratedBy --> Test:ProcessState([Test:ProcessState]):::classClass
+	Test:ProcessState([Test:ProcessState]) -- http://ddhub.no/IsProvidedBy --> Test:DrillingProcessStateInterpreter([Test:DrillingProcessStateInterpreter]):::classClass
 ```
 
 # Dependence

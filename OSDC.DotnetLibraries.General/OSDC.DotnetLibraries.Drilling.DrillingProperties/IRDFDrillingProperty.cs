@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public interface IRDFDrillingProperty : IDrillingProperty
+    public interface IRDFDrillingProperty 
     {
         public Dictionary<string, Tuple<int, string>>? SparQLQueries { get; set; }
 
@@ -16,7 +16,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         {
             if (assembly != null && !string.IsNullOrEmpty(typeName) && !string.IsNullOrEmpty(propName))
             {
-                SparQLQueries = GetSparQLQueries(assembly, typeName, propName);
+                SparQLQueries = GeneratorSparQLManifestFile.GetSparQLQueries(assembly, typeName, propName);
             }
         }
 
@@ -42,11 +42,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             }
         }
 
-        public void CreateManifestFile(Assembly? assembly, string? typeName, string? propName)
+        public void CreateManifestFile(Assembly? assembly, string? typeName, string? propName, string manifestName, string companyName, string prefix)
         {
             if (assembly != null && !string.IsNullOrEmpty(typeName) && !string.IsNullOrEmpty(propName))
             {
-                ManifestFile = GetManifestFile(assembly, typeName, propName);
+                ManifestFile = GeneratorSparQLManifestFile.GetManifestFile(assembly, typeName, propName, manifestName, companyName, prefix);
             }
         }
 
