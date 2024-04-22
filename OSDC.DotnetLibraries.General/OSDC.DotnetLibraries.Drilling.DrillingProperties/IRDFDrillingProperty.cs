@@ -6,7 +6,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public interface IRDFDrillingProperty 
     {
-        public Dictionary<string, Tuple<int, string>>? SparQLQueries { get; set; }
+        public Dictionary<string, QuerySpecification>? SparQLQueries { get; set; }
 
         public AcquiredSignals[]? SubscribedSignals { get; set; }
 
@@ -26,15 +26,15 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             {
                 foreach (var kvp in SparQLQueries)
                 {
-                    if (!string.IsNullOrEmpty(kvp.Key) && kvp.Value != null && kvp.Value.Item1 > 0 && !string.IsNullOrEmpty(kvp.Value.Item2))
+                    if (!string.IsNullOrEmpty(kvp.Key) && kvp.Value != null && kvp.Value.NumberOfArguments > 0 && !string.IsNullOrEmpty(kvp.Value.SparQL))
                     {
-                        var result = ddhubClient.GetQueryResult(kvp.Value.Item2);
+                        var result = ddhubClient.GetQueryResult(kvp.Value.SparQL);
                         if (result != null && result.Results != null && result.Results.Count > 0)
                         {
-                            SubscribedSignals = new AcquiredSignals[kvp.Value.Item1];
-                            for (int i = 0; i < kvp.Value.Item1; i++)
+                            SubscribedSignals = new AcquiredSignals[kvp.Value.NumberOfArguments];
+                            for (int i = 0; i < kvp.Value.NumberOfArguments; i++)
                             {
-                                SubscribedSignals[i] = AcquiredSignals.CreateWithSubscription([kvp.Value.Item2], [kvp.Key], i, ddhubClient);
+                                SubscribedSignals[i] = AcquiredSignals.CreateWithSubscription([kvp.Value.SparQL], [kvp.Key], i, ddhubClient);
                             }
                         }
                     }
@@ -58,9 +58,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 bool found = false;
                 foreach (var kvp in SparQLQueries)
                 {
-                    if (kvp.Value != null && kvp.Value.Item1 > 0 && !string.IsNullOrEmpty(kvp.Value.Item2))
+                    if (kvp.Value != null && kvp.Value.NumberOfArguments > 0 && !string.IsNullOrEmpty(kvp.Value.SparQL))
                     {
-                        var result = ddhubClient.GetQueryResult(kvp.Value.Item2);
+                        var result = ddhubClient.GetQueryResult(kvp.Value.SparQL);
                         if (result != null && result.Results != null && result.Results.Count > 0)
                         {
                             found = true;

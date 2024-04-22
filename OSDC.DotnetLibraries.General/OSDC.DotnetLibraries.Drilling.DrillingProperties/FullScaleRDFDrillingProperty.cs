@@ -10,7 +10,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public class FullScaleRDFDrillingProperty : FullScaleDrillingProperty, IRDFDrillingProperty
     {
-        public Dictionary<string, Tuple<int, string>>? SparQLQueries { get; set; } = null;
+        public Dictionary<string, QuerySpecification>? SparQLQueries { get; set; } = null;
 
         public AcquiredSignals[]? SubscribedSignals { get; set; } = null;
 

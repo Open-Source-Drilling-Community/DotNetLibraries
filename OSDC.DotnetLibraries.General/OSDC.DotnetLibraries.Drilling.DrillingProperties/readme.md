@@ -757,7 +757,7 @@ namespace DrillingProperties
     }
     class Example
     {
-        static void GenerateSparQLForMD(StreamWriter writer, string propertyName, Dictionary<string, Tuple<int, string>>? queries)
+        static void GenerateSparQLForMD(StreamWriter writer, string propertyName, Dictionary<string, QuerySpecification>? queries)
         {
             if (writer != null && !string.IsNullOrEmpty(propertyName) && queries != null)
             {
@@ -768,7 +768,7 @@ namespace DrillingProperties
                     {
                         writer.WriteLine("## " + query.Key);
                         writer.WriteLine("```sparql");
-                        writer.WriteLine(query.Value.Item2);
+                        writer.WriteLine(query.Value.SparQL);
                         writer.WriteLine("```");
                     }
                 }
@@ -1585,7 +1585,7 @@ namespace DrillingProperties
                 writer.WriteLine(mermaid);
             }
         }
-        static void GenerateSparQLForMD(StreamWriter writer, string? typeName, Dictionary<string, Tuple<int, string>>? queries)
+        static void GenerateSparQLForMD(StreamWriter writer, string? typeName, Dictionary<string, QuerySpecification>? queries)
         {
             if (writer != null && !string.IsNullOrEmpty(typeName) && queries != null)
             {
@@ -1596,7 +1596,7 @@ namespace DrillingProperties
                     {
                         writer.WriteLine("## " + query.Key);
                         writer.WriteLine("```sparql");
-                        writer.WriteLine(query.Value.Item2);
+                        writer.WriteLine(query.Value.SparQL);
                         writer.WriteLine("```");
                     }
                 }

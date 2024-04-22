@@ -1,5 +1,6 @@
 ﻿using DWIS.API.DTO;
 using DWIS.Vocabulary.Schemas;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -640,7 +641,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         {
             return str.Replace('#', '_');
         }
-        public static Dictionary<string, Tuple<int, string>>? GetSparQLQueries(Assembly? assembly, string? typeName)
+        public static Dictionary<string, QuerySpecification>? GetSparQLQueries(Assembly? assembly, string? typeName)
         {
             if (assembly == null || typeName == null)
             {
@@ -650,7 +651,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             if (types != null)
             {
                 int count = 0;
-                Dictionary<string, Tuple<int, string>> queries = new Dictionary<string, Tuple<int, string>>();
+                Dictionary<string, QuerySpecification> queries = [];
                 foreach (Type type in types)
                 {
                     if (type.FullName == typeName && type.IsClass)
@@ -672,7 +673,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         }
                         if (semanticTypeVariableAttribute != null ||
                             (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
-                            (semanticFactAttributes != null && semanticFactAttributes.Any()) ||
+                            (semanticFactAttributes != null && semanticFactAttributes.Count > 0) ||
                             (excludeFactAttributes != null && excludeFactAttributes.Any()) ||
                             (optionalFactAttributes != null && optionalFactAttributes.Any()) ||
                             (excludeOptionalFactAttributes != null && excludeOptionalFactAttributes.Any()))
@@ -701,7 +702,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 List<List<SemanticFact>>? combinations = GetCombinations(semanticFactAttributes, topLevelOptionalFacts, subLevelOptionalFacts, semanticExclusiveOrAttributes);
                                 if (combinations != null)
                                 {
-                                    List<ExcludeFact> excludeFacts = new List<ExcludeFact>();
+                                    List<ExcludeFact> excludeFacts = [];
                                     if (excludeFactAttributes != null)
                                     {
                                         foreach (var excludedFactAttribute in excludeFactAttributes)
@@ -722,53 +723,57 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     }
                                     foreach (var combination in combinations)
                                     {
-                                        string sparql = string.Empty;
-                                        int argCount = 0;
-                                        sparql += "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
-                                        sparql += "PREFIX ddhub: <http://ddhub.no/>\n";
-                                        sparql += "PREFIX quantity: <http://ddhub.no/UnitAndQuantity>\n\n";
-                                        if (semanticTypeVariableAttribute != null &&
-                                            !string.IsNullOrEmpty(semanticTypeVariableAttribute.ValueVariable) &&
-                                            IsUsed(combination, semanticTypeVariableAttribute.ValueVariable))
+                                        if (combination != null) 
                                         {
-                                            string var1 = ProcessQueryVariable(semanticTypeVariableAttribute.ValueVariable);
-                                            sparql += "SELECT " + var1 + "\n";
-                                            argCount = 1;
-                                        }
-                                        sparql += "WHERE {\n";
-                                        List<string> alreadyTyped = new List<string>();
-                                        foreach (var fact in combination)
-                                        {
-                                            if (!string.IsNullOrEmpty(fact.SubjectName))
+                                            string sparql = string.Empty;
+                                            int argCount = 0;
+                                            sparql += "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
+                                            sparql += "PREFIX ddhub: <http://ddhub.no/>\n";
+                                            sparql += "PREFIX quantity: <http://ddhub.no/UnitAndQuantity>\n\n";
+                                            if (semanticTypeVariableAttribute != null &&
+                                                !string.IsNullOrEmpty(semanticTypeVariableAttribute.ValueVariable) &&
+                                                IsUsed(combination, semanticTypeVariableAttribute.ValueVariable))
                                             {
-                                                fact.SubjectName = ProcessQueryVariable(fact.SubjectName);
+                                                string var1 = ProcessQueryVariable(semanticTypeVariableAttribute.ValueVariable);
+                                                sparql += "SELECT " + var1 + "\n";
+                                                argCount = 1;
                                             }
-                                            if (!string.IsNullOrEmpty(fact.ObjectName))
+                                            sparql += "WHERE {\n";
+                                            List<string> alreadyTyped = new List<string>();
+                                            foreach (var fact in combination)
                                             {
-                                                fact.ObjectName = ProcessQueryVariable(fact.ObjectName);
-                                            }
-                                            sparql += GenerateWhereStatement(fact, alreadyTyped);
-                                        }
-                                        if (excludeFactAttributes != null && excludeFactAttributes.Any())
-                                        {
-                                            sparql += "  FILTER NOT EXISTS {\n";
-                                            foreach (var excluded in excludeFacts)
-                                            {
-                                                if (!string.IsNullOrEmpty(excluded.SubjectName))
+                                                if (!string.IsNullOrEmpty(fact.SubjectName))
                                                 {
-                                                    excluded.SubjectName = ProcessQueryVariable(excluded.SubjectName);
+                                                    fact.SubjectName = ProcessQueryVariable(fact.SubjectName);
                                                 }
-                                                if (!string.IsNullOrEmpty(excluded.ObjectName))
+                                                if (!string.IsNullOrEmpty(fact.ObjectName))
                                                 {
-                                                    excluded.ObjectName = ProcessQueryVariable(excluded.ObjectName);
+                                                    fact.ObjectName = ProcessQueryVariable(fact.ObjectName);
                                                 }
-                                                sparql += GenerateWhereStatement(excluded, alreadyTyped);
+                                                sparql += GenerateWhereStatement(fact, alreadyTyped);
                                             }
-                                            sparql += "  }";
+                                            if (excludeFactAttributes != null && excludeFactAttributes.Any())
+                                            {
+                                                sparql += "  FILTER NOT EXISTS {\n";
+                                                foreach (var excluded in excludeFacts)
+                                                {
+                                                    if (!string.IsNullOrEmpty(excluded.SubjectName))
+                                                    {
+                                                        excluded.SubjectName = ProcessQueryVariable(excluded.SubjectName);
+                                                    }
+                                                    if (!string.IsNullOrEmpty(excluded.ObjectName))
+                                                    {
+                                                        excluded.ObjectName = ProcessQueryVariable(excluded.ObjectName);
+                                                    }
+                                                    sparql += GenerateWhereStatement(excluded, alreadyTyped);
+                                                }
+                                                sparql += "  }";
+                                            }
+                                            sparql += "}\n";
+                                            List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
+                                            queries.Add("Query-" + typeName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
+                                            count++;
                                         }
-                                        sparql += "}\n";
-                                        queries.Add("Query-" + typeName + "-" + count.ToString("000"), new Tuple<int, string>(argCount, sparql));
-                                        count++;
                                     }
                                 }
                             }
@@ -779,7 +784,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             }
             return null;
         }
-        public static Dictionary<string, Tuple<int, string>>? GetSparQLQueries(Assembly? assembly, string? typeName, string? propertyName)
+        public static Dictionary<string, QuerySpecification>? GetSparQLQueries(Assembly? assembly, string? typeName, string? propertyName)
         {
             if (assembly == null || typeName == null || propertyName == null)
             {
@@ -789,7 +794,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             if (types != null)
             {
                 int count = 0;
-                Dictionary<string, Tuple<int, string>> queries = new Dictionary<string, Tuple<int, string>>();
+                Dictionary<string, QuerySpecification> queries = [];
                 foreach (Type type in types)
                 {
                     if (type.FullName == typeName && type.IsClass)
@@ -1075,7 +1080,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     sparql += "  }";
                                                 }
                                                 sparql += "}\n";
-                                                queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), new Tuple<int, string>(argCount, sparql));
+                                                List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
+                                                queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
                                                 count++;
                                             }
                                         }
@@ -1091,6 +1097,68 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             return null;
         }
 
+        private static List<byte> GetOptions(List<SemanticFact> facts, List<OptionalFactAttribute> topLevelOptionalFacts, List<OptionalFactAttribute> subLevelOptionalFacts)
+        {
+            List<byte> options = [];
+            if (facts != null)
+            {
+                foreach (var fact in facts)
+                {
+                    if (fact != null)
+                    {
+                        byte optionID = 0;
+                        if (topLevelOptionalFacts != null)
+                        {
+                            foreach (var optFact in topLevelOptionalFacts)
+                            {
+                                if (optFact != null &&
+                                    optFact.Object == fact.Object &&
+                                    optFact.Subject == fact.Subject &&
+                                    optFact.ObjectAttributes == fact.ObjectAttributes &&
+                                    optFact.ObjectDrillingQuantity == fact.ObjectDrillingQuantity &&
+                                    optFact.ObjectPhysicalQuantity == fact.ObjectPhysicalQuantity &&
+                                    optFact.ObjectName == fact.ObjectName &&
+                                    optFact.SubjectName == fact.SubjectName)
+                                {
+                                    byte id = optFact.GroupIndex;
+                                    if (!options.Contains(id))
+                                    {
+                                        options.Add(id);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (optionID == 0)
+                        {
+                            if (topLevelOptionalFacts != null)
+                            {
+                                foreach (var optFact in subLevelOptionalFacts)
+                                {
+                                    if (optFact != null &&
+                                    optFact.Object == fact.Object &&
+                                    optFact.Subject == fact.Subject &&
+                                    optFact.ObjectAttributes == fact.ObjectAttributes &&
+                                    optFact.ObjectDrillingQuantity == fact.ObjectDrillingQuantity &&
+                                    optFact.ObjectPhysicalQuantity == fact.ObjectPhysicalQuantity &&
+                                    optFact.ObjectName == fact.ObjectName &&
+                                    optFact.SubjectName == fact.SubjectName)
+                                    {
+                                        byte id = optFact.GroupIndex;
+                                        if (!options.Contains(id))
+                                        {
+                                            options.Add(id);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return options;
+        }
         private static bool IsUsed(List<SemanticFact> combination, string? variable)
         {
             bool isUsed = false;
