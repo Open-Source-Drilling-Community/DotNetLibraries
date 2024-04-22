@@ -130,6 +130,14 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// </summary>
         public CategoricalDrillingProperty() : base() { }
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="numberOfStates"></param>
+        public CategoricalDrillingProperty(uint numberOfStates) : base()
+        {
+            NumberOfStates = numberOfStates;
+        }
+        /// <summary>
         /// Copy constructor
         /// </summary>
         /// <param name="src"></param>
