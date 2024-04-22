@@ -27,7 +27,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public virtual double GetCumulativeProbability(int target)
+        public virtual double? GetCumulativeProbability(int target)
         {
             throw new Exception("The method or operation cannot be implemented.");
         }

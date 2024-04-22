@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class BernoulliDrillingProperty : DiscreteDrillingProperty
+    public class BernoulliDrillingProperty : CategoricalDrillingProperty
     {
         /// <summary>
         /// redefined to use the synonym property that is of the correct type

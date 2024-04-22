@@ -40,7 +40,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public override double GetCumulativeProbability(int target)
+        public override double? GetCumulativeProbability(int target)
         {
             return target < 0 ? 0 : 1;
         }

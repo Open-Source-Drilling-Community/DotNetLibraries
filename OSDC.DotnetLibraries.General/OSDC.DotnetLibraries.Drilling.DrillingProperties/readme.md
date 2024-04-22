@@ -187,17 +187,29 @@ Similarly, there is an abstract class called `DiscreteDrillingProperty` to descr
 - `DeterministicBooleanDrillingProperty`: used to represent a boolean value with no uncertainty, i.e., deterministic. It defines a specific property called `DeterministicDiscreteProperty`
 that allows to access with the correct type the underlying statistical probability distribution. It has a `Probability` property which returns the probability of the underlying
 `DeterministicDiscreteDistribution` for the target `0`. It has also a `BooleanValue` that defines the boolean state of the instance, which is deterministic for this class.
-- `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. The `Probability` property is used to define the uncertainty. The `BooleanValue` property
+- `CategoricalDrillingProperty`: used to represent a multinomial value with uncertainty. The `NumberOfStates` property defines how many
+state the drilling property can take. It should be at least 2. The `Probabilities` property defines the probability of each of the states.
+The `StateValue` tells which state has the largest probability. If assigned, then that state gets a probability of 1 and all the others 
+a zero probability.
+- `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. It is subclass of `CategoricalDrillingProperty` for which
+- te number of states is 2. The `Probability` property is used to define the uncertainty. The `BooleanValue` property
 is true if the `Probability` is greater than 0.5 and false otherwise. 
 - `GeneralDiscreteDrillingProperty`: used to represent a general discrete probability for a boolean value.
 
 ```mermaid
 classDiagram
     DiscreteDrillingProperty <|-- DeterministicBooleanDrillingProperty
-    DiscreteDrillingProperty <|-- BernoulliDrillingProperty
+    DiscreteDrillingProperty <|-- CategoricalDrillingProperty
     DiscreteDrillingProperty <|-- GeneralDiscreteDrillingProperty
     DiscreteDrillingProperty : +DiscreteDrillingDistribution Value
     DiscreteDrillingProperty : +bool? Realize()
+    CategoricalDrillingProperty <|-- BernoulliDrillingProperty
+    class CategoricalDrillingProperty {
+      +CategoricalDistribution CategoricalValue
+      +uint? NumberOfStates
+      +double[]? Probabilities
+      +uint? StateValue
+    }
     class DeterministicBooleanDrillingProperty {
         +DeterministicDiscreteDistribution DeterministicDiscreteValue
         +double? Probability
@@ -263,6 +275,7 @@ to access the `Histogram` value of this property.
 - `SemanticBernoulliVariableAttribute`: It takes one to three arguments. The `string` arguments represent
 either the stochastic or the probabilistic variables that are used in the semantic facts. A `double` argument
 is used to define a default deterministic uncertainty. 
+- `SemanticCategoricalVariableAttribute`: It takes as many arguments as there are states for the corresponding `CategoricalDrillingProperty`.
 - `SemanticDeterministicBooleanVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used
 in the semantic facts to describe the value a `DeterministicBooleanDrillingProperty`.
 - `SemanticExclusiveOrAttribute`: It takes at least 2 arguments. This attribute is used to defined
@@ -340,6 +353,9 @@ classDiagram
    }
    class SemanticDeterministicBooleanVariableAttribute {
         +sting? Variable
+   }
+   class SemanticCategoricalVariableAttribute {
+        +sting[]? Variables
    }
 ```
 ## Example

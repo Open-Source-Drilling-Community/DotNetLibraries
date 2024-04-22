@@ -32,7 +32,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public override int? Realize()
         {
             double uniform = RandomGenerator.Instance.NextDouble();
-            if (uniform < probability_)
+            if (uniform < Probability)
             {
                 return 0;
             }
@@ -48,7 +48,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override DiscreteDistribution Clone()
         {
-            return new BernoulliDistribution(probability_);
+            return new BernoulliDistribution(Probability);
         }
         /// <summary>
         /// 
@@ -58,7 +58,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         {
             if (from is BernoulliDistribution)
             {
-                probability_ = ((BernoulliDistribution)from).probability_;
+                Probability = ((BernoulliDistribution)from).Probability;
             }
         }
     }

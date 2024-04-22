@@ -1,40 +1,104 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="OSDC.DotnetLibraries.General.Statistics.ContinuousDistribution" Collapsed="true">
-    <Position X="4.75" Y="1" Width="2" />
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.ContinuousDistribution">
+    <Position X="4.75" Y="15" Width="2" />
     <TypeIdentifier>
-      <HashCode>ACAAGgAAAAREDQoAIAAIKIAAAgAAgGAAEAAgCgAAIBA=</HashCode>
+      <HashCode>ACAAGgAAAAREBQoAIAgIKIAAAgAAgGAAEAAgCgAAIBA=</HashCode>
       <FileName>ContinuousDistribution.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.Statistics.DiracDistribution">
-    <Position X="0.5" Y="2.25" Width="1.5" />
+    <Position X="0.5" Y="23" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEgAAAAQECAAAIAAACAAAAgAAgEAAEAAgCAAAIBA=</HashCode>
+      <HashCode>AAAAEgAAAAQEAAAAIAgACAAAAgAAgEAAEAAgCAAAIBA=</HashCode>
       <FileName>DiracDistribution.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.Statistics.GaussianDistribution">
-    <Position X="8.75" Y="2.25" Width="2" />
+    <Position X="8.75" Y="23" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAEgAAAAQECAAAoAAACAAABgAAAEAEEAAgCAAAIBA=</HashCode>
+      <HashCode>AAAAEgAAAAQEAAAAoAgACAAABgAAAEAEEAAgCAAAIBA=</HashCode>
       <FileName>GaussianDistribution.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.Statistics.GeneralContinuousDistribution">
-    <Position X="2.75" Y="2.25" Width="2.5" />
+    <Position X="2.75" Y="23" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>ACAAEoAAAASECAAwIgAADAIAAgAggBAIkAAgKAAAgBA=</HashCode>
+      <HashCode>ACAAEoAAAASEAAAwIggADAIAAgAggBAIkAAgKAAAgBA=</HashCode>
       <FileName>GeneralContinuousDistribution.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="OSDC.DotnetLibraries.General.Statistics.UniformDistribution">
-    <Position X="6" Y="2.25" Width="2" />
+    <Position X="6" Y="23" Width="2" />
     <TypeIdentifier>
-      <HashCode>ACAAGgAAABQECAIAMAAACIAAAgAAgEAAEAAgCAAAIBA=</HashCode>
+      <HashCode>ACAAGgAAABQEAAIAMAgACIAAAgAAgEAAEAAgCAAAIBA=</HashCode>
       <FileName>UniformDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.DiscreteDistribution">
+    <Position X="8.75" Y="1" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAQECAAAAAgAAAAAAgAAAAAAEAAgCgAAIBA=</HashCode>
+      <FileName>DiscreteDistribution.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.BernoulliDistribution">
+    <Position X="10.25" Y="12.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAgAAAAABA=</HashCode>
+      <FileName>BernoulliDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.BinomialDistribution">
+    <Position X="12" Y="8.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQEAAAAAAgAAIAAAgAAAAAAEAAgAAAAIBA=</HashCode>
+      <FileName>BinomialDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.GeneralDiscreteDistribution">
+    <Position X="4.25" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAQAAAAAAAgAAAAAAgAAAAAAAAggAAAAABA=</HashCode>
+      <FileName>GeneralDiscreteDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.NegativeBinomialDistribution">
+    <Position X="13.25" Y="12.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQEAAAAAAgAAAAAAgAAAAAAEAAgAAAAIBA=</HashCode>
+      <FileName>NegativeBinomialDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.PoissonDistribution">
+    <Position X="7.25" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAAAgAAAAQEAAAAAAgAAAAAAgAAAAAAEAAgCAAAIAA=</HashCode>
+      <FileName>PoissonDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.DeterministicDiscreteDistribution">
+    <Position X="1" Y="5.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAQEAAAAAAgAACAAAAAAAAAAEAAgAAAAIAA=</HashCode>
+      <FileName>DeterministicDiscreteDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.MultinomialDistribution">
+    <Position X="13.5" Y="5.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAEIAAAAARQEAAAQAAgAAAAAAgQAAAAAEAggAAAAIBA=</HashCode>
+      <FileName>MultinomialDistribution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSDC.DotnetLibraries.General.Statistics.CategoricalDistribution">
+    <Position X="16.75" Y="8.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CategoricalDistribution.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

@@ -53,6 +53,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public string? SemanticBernoulliDeterministVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public double? SemanticBernoulliDeterministDefaultUncertainty { get; set; } = null;
+        public string[]? SemanticCategoricalVariables { get; set; } = null; 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<byte[]>? SemanticExclusiveOrs {  get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -92,6 +93,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                             var semanticUniformVariableAttribute = property.GetCustomAttribute<SemanticUniformVariableAttribute>();
                             var semanticGeneralDistributionVariableAttribute = property.GetCustomAttribute<SemanticGeneralDistributionVariableAttribute>();
                             var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
+                            var semanticCategoricalVariableAttribute = property.GetCustomAttribute<SemanticCategoricalVariableAttribute>();
                             var semanticExclusiveOrAttributes = property.GetCustomAttributes<SemanticExclusiveOrAttribute>();
                             if (accessToVariableAttribute != null ||
                                 semanticDiracVariableAttribute != null ||
@@ -101,6 +103,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 semanticUniformVariableAttribute != null ||
                                 semanticGeneralDistributionVariableAttribute != null ||
                                 semanticBernoulliVariableAttribute != null ||
+                                semanticCategoricalVariableAttribute != null || 
                                 (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
                                 mandatoryAttritbute != null ||
                                 (semanticFactAttributes != null && semanticFactAttributes.Any()) ||
@@ -152,6 +155,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     metaData.SemanticBernoulliProbabilistVariable = semanticBernoulliVariableAttribute.ProbabilistVariable;
                                     metaData.SemanticBernoulliDeterministVariable = semanticBernoulliVariableAttribute.DeterministVariable;
                                     metaData.SemanticBernoulliDeterministDefaultUncertainty = semanticBernoulliVariableAttribute.DeterministDefaultUncertainty;
+                                }
+                                if (semanticCategoricalVariableAttribute != null)
+                                {
+                                    metaData.SemanticCategoricalVariables = semanticCategoricalVariableAttribute.Variables;
                                 }
                                 if (semanticExclusiveOrAttributes != null)
                                 {

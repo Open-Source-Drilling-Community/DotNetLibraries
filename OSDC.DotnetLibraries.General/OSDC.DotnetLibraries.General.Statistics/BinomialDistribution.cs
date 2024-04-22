@@ -3,13 +3,12 @@ using OSDC.DotnetLibraries.General.Math;
 
 namespace OSDC.DotnetLibraries.General.Statistics
 {
-    public class BinomialDistribution : DiscreteDistribution
+    public class BinomialDistribution : MultinomialDistribution
     {
-        protected uint? numberTrials_;
-        protected double? probability_;
 
         public BinomialDistribution() : base()
         {
+            numberOfStates_ = 2;
         }
 
         /// <summary>
@@ -19,22 +18,15 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <param name="p">probability of success</param>
         public BinomialDistribution(uint? n, double? p) : base()
         {
+            numberOfStates_ = 2;
             numberTrials_ = n;
-            probability_ = p;
-            Range = numberTrials_ + 1;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public uint? NumberTrials
-        {
-            get { return numberTrials_; }
-            set
+            if (p != null)
             {
-                numberTrials_ = value;
-                Range = numberTrials_ + 1;
+                probabilities_ = new double[2];
+                probabilities_[0] = p.Value;
+                probabilities_[1] = 1 - p.Value;
             }
+            Range = numberTrials_ + 1;
         }
 
         /// <summary>
@@ -42,8 +34,23 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         public double? Probability
         {
-            get { return probability_; }
-            set { probability_ = value; }
+            get { return (probabilities_ != null) ? probabilities_[0] : null; }
+            set
+            {
+                if (value == null)
+                {
+                    probabilities_ = null;
+                }
+                else
+                {
+                    if (probabilities_ == null) 
+                    {
+                        probabilities_ = new double[2];
+                    }
+                    probabilities_[0] = value.Value;
+                    probabilities_[1] = 1.0 - value.Value;
+                }
+            }
         }
 
         /// <summary>
@@ -53,11 +60,11 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetProbability(int target)
         {
-            if (IsValid() && numberTrials_ != null && probability_ != null)
+            if (IsValid() && numberTrials_ != null && Probability != null)
             {
                 int k = target;
                 int n = (int)numberTrials_.Value;
-                double p = probability_.Value;
+                double p = Probability.Value;
                 return SpecialFunctions.BinomialCoefficient(n, k) * System.Math.Pow(p, k) * System.Math.Pow(1 - p, n - k);
             }
             else return null;
@@ -68,16 +75,16 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public override double GetCumulativeProbability(int target)
+        public override double? GetCumulativeProbability(int target)
         {
-            if (IsValid() && numberTrials_ != null && probability_ != null)
+            if (IsValid() && numberTrials_ != null && Probability != null)
             {
                 double k = target;
                 double n = numberTrials_.Value;
-                double p = probability_.Value;
+                double p = Probability.Value;
                 return 1 - SpecialFunctions.IncompleteBetaRegularized(k + 1, n - k, p);
             }
-            else return Numeric.UNDEF_DOUBLE;
+            else return null;
         }
 
         /// <summary>
@@ -89,7 +96,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
             int successes = 0;
             for (int i = 0; i < numberTrials_; i++)
             {
-                if (RandomGenerator.Instance.NextDouble() < probability_) successes++;
+                if (RandomGenerator.Instance.NextDouble() < Probability) successes++;
             }
             return successes;
         }
@@ -103,7 +110,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
             if (from is BinomialDistribution)
             {
                 numberTrials_ = ((BinomialDistribution)from).numberTrials_;
-                probability_ = ((BinomialDistribution)from).probability_;
+                Probability = ((BinomialDistribution)from).Probability;
             }
         }
 
@@ -113,7 +120,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override DiscreteDistribution Clone()
         {
-            return new BinomialDistribution(numberTrials_, probability_);
+            return new BinomialDistribution(numberTrials_, Probability);
         }
 
         /// <summary>
@@ -122,7 +129,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetMean()
         {
-            return numberTrials_ * probability_;
+            return numberTrials_ * Probability;
         }
 
         /// <summary>
@@ -131,9 +138,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetStandardDeviation()
         {
-            if (IsValid() && numberTrials_ != null && probability_ != null)
+            if (IsValid() && numberTrials_ != null && Probability != null)
             {
-                return System.Math.Sqrt(numberTrials_.Value * probability_.Value * (1 - probability_.Value));
+                return System.Math.Sqrt(numberTrials_.Value * Probability.Value * (1 - Probability.Value));
             }
             else
             {
@@ -147,7 +154,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override bool IsValid()
         {
-            return numberTrials_ != null && Numeric.IsDefined(probability_) && probability_ >= 0 && probability_ <= 1;
+            return numberTrials_ != null && Numeric.IsDefined(Probability) && Probability >= 0 && Probability <= 1;
         }
     }
 }

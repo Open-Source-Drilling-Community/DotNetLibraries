@@ -102,7 +102,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
         }
 
-        public override double GetCumulativeProbability(int target)
+        public override double? GetCumulativeProbability(int target)
         {
             return base.GetCumulativeProbability(target);
         }

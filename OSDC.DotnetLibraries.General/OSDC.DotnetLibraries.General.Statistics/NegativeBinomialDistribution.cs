@@ -32,11 +32,11 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetProbability(int target)
         {
-            if (IsValid() && numberTrials_ != null && probability_ != null)
+            if (IsValid() && numberTrials_ != null && Probabilities != null && Probabilities.Length > 0)
             {
                 int k = target;
                 int r = (int)numberTrials_.Value;
-                double p = probability_.Value;
+                double p = Probabilities[0];
                 return SpecialFunctions.BinomialCoefficient(k + r - 1, k) * System.Math.Pow(1 - p, r) * System.Math.Pow(p, k);
             }
             else
@@ -50,18 +50,18 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public override double GetCumulativeProbability(int target)
+        public override double? GetCumulativeProbability(int target)
         {
-            if (IsValid() && numberTrials_ != null && probability_ != null)
+            if (IsValid() && numberTrials_ != null && Probabilities != null && Probabilities.Length > 0)
             {
                 int k = target;
                 int r = (int)numberTrials_.Value;
-                double p = probability_.Value;
+                double p = Probabilities[0];
                 return 1 - SpecialFunctions.IncompleteBetaRegularized(k + 1, r, p);
             }
             else
             {
-                return 0;
+                return null;
             }
         }
 
@@ -71,18 +71,18 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override int? Realize()
         {
-            if (numberTrials_ == null || probability_ == null)
+            if (numberTrials_ == null || Probabilities == null || Probabilities.Length == 0)
             {
                 return null;
             }
-            if (Numeric.EQ(probability_, 1)) return 0;
-            if (Numeric.EQ(probability_, 0)) return (int)numberTrials_.Value;
+            if (Numeric.EQ(Probabilities[0], 1)) return 0;
+            if (Numeric.EQ(Probabilities[0], 0)) return (int)numberTrials_.Value;
             int failureCount = 0;
             int r = (int)numberTrials_.Value;
             int trials = 0;
             while (failureCount < r)
             {
-                if (RandomGenerator.Instance.NextDouble() < (1 - probability_)) failureCount++;
+                if (RandomGenerator.Instance.NextDouble() < (1 - Probabilities[0])) failureCount++;
                 trials++;
             }
             return trials;
@@ -94,10 +94,11 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <param name="from"></param>
         public override void Copy(DiscreteDistribution from)
         {
-            if (from is NegativeBinomialDistribution)
+            if (from is NegativeBinomialDistribution and not null)
             {
-                numberTrials_ = ((NegativeBinomialDistribution)from).numberTrials_;
-                probability_ = ((NegativeBinomialDistribution)from).probability_;
+                NegativeBinomialDistribution other = (NegativeBinomialDistribution)from;
+                numberTrials_ = other.numberTrials_;
+                Probability = other.Probability;
             }
         }
 
@@ -107,7 +108,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override DiscreteDistribution Clone()
         {
-            return new NegativeBinomialDistribution(numberTrials_, probability_);
+            return new NegativeBinomialDistribution(numberTrials_, Probability);
         }
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetMean()
         {
-            return probability_ * numberTrials_ / (1 - probability_);
+            return Probability * numberTrials_ / (1 - Probability);
         }
 
         /// <summary>
@@ -125,13 +126,13 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetStandardDeviation()
         {
-            if (probability_ == null || numberTrials_ == null)
+            if (Probability == null || numberTrials_ == null)
             {
                 return null;
             }
             else
             {
-                return System.Math.Sqrt((probability_.Value * numberTrials_.Value) / System.Math.Pow(1 - probability_.Value, 2));
+                return System.Math.Sqrt((Probability.Value * numberTrials_.Value) / System.Math.Pow(1 - Probability.Value, 2));
             }
         }
 
@@ -142,11 +143,11 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public override bool IsValid()
         {
             return numberTrials_ != null && 
-                probability_ != null && 
+                Probability != null && 
                 numberTrials_ > 0 && 
-                Numeric.IsDefined(probability_) && 
-                probability_ >= 0 && 
-                probability_ <= 1;
+                Numeric.IsDefined(Probability) && 
+                Probability >= 0 && 
+                Probability <= 1;
         }
     }
 }
