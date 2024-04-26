@@ -405,7 +405,7 @@ namespace OSDC.DotnetLibraries.General.Common
         public static bool EQ(double? d1, double? d2, double acc)
         {
             return (IsUndefined(d1) && IsUndefined(d2)) || 
-                   (!IsUndefined(d1) && !IsUndefined(d2) && System.Math.Abs((double)d2 - (double)d1) < acc);
+                   (!IsUndefined(d1) && !IsUndefined(d2) && d1 != null && d2 != null && System.Math.Abs(d2.Value - d1.Value) < acc);
         }
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace OSDC.DotnetLibraries.General.Common
 
         public static bool EQ(DateTime? d1, DateTime? d2, double acc)
         {
-            return (IsUndefined(d1) && IsUndefined(d2)) || System.Math.Abs(((DateTime)d2 - (DateTime)d1).TotalSeconds) <= acc;
+            return (IsUndefined(d1) && IsUndefined(d2)) || (d1 != null && d2 != null && System.Math.Abs((d2.Value - d1.Value).TotalSeconds) <= acc);
         }
         /// <summary>
         /// 
@@ -504,7 +504,7 @@ namespace OSDC.DotnetLibraries.General.Common
         {
             return (IsMin(d2, acc) && !IsMin(d1, acc)) ||
                    (IsMax(d1, acc) && !IsMax(d2, acc)) ||
-                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && ((DateTime)d1 - acc).CompareTo(d2) > 0);
+                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && d1 != null && (d1.Value - acc).CompareTo(d2) > 0);
         }
         /// <summary>
         /// 
@@ -555,7 +555,7 @@ namespace OSDC.DotnetLibraries.General.Common
         {
             return IsMax(d1, acc) ||
                    IsMin(d2, acc) ||
-                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && ((DateTime)d1 + acc).CompareTo(d2) >= 0);
+                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && d1 != null && (d1.Value + acc).CompareTo(d2) >= 0);
         }
         /// <summary>
         /// 
@@ -606,7 +606,7 @@ namespace OSDC.DotnetLibraries.General.Common
         {
             return (IsMin(d1, acc) && !IsMin(d2, acc)) ||
                    (IsMax(d2, acc) && !IsMax(d1, acc)) ||
-                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && ((DateTime)d1 + acc).CompareTo(d2) < 0);
+                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && d1 != null && (d1.Value + acc).CompareTo(d2) < 0);
         }
         /// <summary>
         /// 
@@ -658,7 +658,7 @@ namespace OSDC.DotnetLibraries.General.Common
         {
             return IsMin(d1, acc) ||
                    IsMax(d2, acc) ||
-                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && ((DateTime)d1 - acc).CompareTo(d2) <= 0);
+                   (!IsUndefined(d1, acc) && !IsUndefined(d2, acc) && d1 != null && (d1.Value - acc).CompareTo(d2) <= 0);
         }
 
         /// <summary>

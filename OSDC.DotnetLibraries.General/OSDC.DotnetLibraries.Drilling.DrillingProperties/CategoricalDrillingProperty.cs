@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class CategoricalDrillingProperty : DiscreteDrillingProperty
+    public class CategoricalDrillingProperty : MultinomialDrillingProperty
     {
         [JsonIgnore]
         public uint? NumberOfStates
@@ -54,7 +54,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// convenience property to access directly the probability value of the BernoulliValue
         /// </summary>
         [JsonIgnore]
-        public double[]? Probabilities
+        public new double[]? Probabilities
         {
             get
             {
@@ -89,7 +89,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// When assigning, set the probability for that state to 1 and all the others to 0.
         /// </summary>
         [JsonIgnore]
-        public uint? StateValue
+        public new uint? StateValue
         {
             get
             {
@@ -144,6 +144,30 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public CategoricalDrillingProperty(CategoricalDrillingProperty src) : base(src)
         {
    
+        }
+
+        public override bool Equals(DrillingProperty? cmp)
+        {
+            if (cmp is not null and CategoricalDrillingProperty drillProp)
+            {
+                if (CategoricalValue != null && drillProp.CategoricalValue != null)
+                {
+                    return CategoricalValue.Equals(drillProp.CategoricalValue);
+                }
+                else
+                {
+                    return CategoricalValue == null && drillProp.CategoricalValue == null;
+                }
+            }
+            return false;
+        }
+
+        public override void CopyTo(DrillingProperty? dest)
+        {
+            if (CategoricalValue != null && dest is not null and CategoricalDrillingProperty drillProp && drillProp.CategoricalValue != null)
+            {
+                CategoricalValue.CopyTo(drillProp.CategoricalValue);
+            }
         }
     }
 }

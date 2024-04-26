@@ -356,7 +356,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     var semanticFullScaleVariableAttribute = property.GetCustomAttribute<SemanticFullScaleVariableAttribute>();
                                     var semanticUniformVariableAttribute = property.GetCustomAttribute<SemanticUniformVariableAttribute>();
                                     var semanticGeneralDistributionVariableAttribute = property.GetCustomAttribute<SemanticGeneralDistributionVariableAttribute>();
-                                    var semanticDeterministicBooleanVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBooleanVariableAttribute>();
+                                    var semanticDeterministicCategoricalVariableAttribute = property.GetCustomAttribute<SemanticDeterministicCategoricalVariableAttribute>();
+                                    var semanticDeterministicBernoulliVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBernoulliVariableAttribute>();
                                     var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
                                     var semanticCategoricalVariableAttribute = property.GetCustomAttribute<SemanticCategoricalVariableAttribute>();
                                     if (semanticDiracVariableAttribute != null &&
@@ -452,13 +453,21 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticGeneralDistributionVariableAttribute.HistogramVariable);
                                     }
-                                    else if (semanticDeterministicBooleanVariableAttribute != null &&
-                                             !string.IsNullOrEmpty(semanticDeterministicBooleanVariableAttribute.Variable) &&
-                                             IsUsed(facts, semanticDeterministicBooleanVariableAttribute.Variable))
+                                    else if (semanticDeterministicCategoricalVariableAttribute != null &&
+                                             !string.IsNullOrEmpty(semanticDeterministicCategoricalVariableAttribute.Variable) &&
+                                             IsUsed(facts, semanticDeterministicCategoricalVariableAttribute.Variable))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "short", VariableID = ProcessManifestVariable(semanticDeterministicBooleanVariableAttribute.Variable, prefix) };
+                                        ProvidedVariable providedVariable = new() { DataType = "short", VariableID = ProcessManifestVariable(semanticDeterministicCategoricalVariableAttribute.Variable, prefix) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
-                                        providedVariables.Add(semanticDeterministicBooleanVariableAttribute.Variable);
+                                        providedVariables.Add(semanticDeterministicCategoricalVariableAttribute.Variable);
+                                    }
+                                    else if (semanticDeterministicBernoulliVariableAttribute != null &&
+                                             !string.IsNullOrEmpty(semanticDeterministicBernoulliVariableAttribute.Variable) &&
+                                             IsUsed(facts, semanticDeterministicBernoulliVariableAttribute.Variable))
+                                    {
+                                        ProvidedVariable providedVariable = new() { DataType = "short", VariableID = ProcessManifestVariable(semanticDeterministicBernoulliVariableAttribute.Variable, prefix) };
+                                        manifestFile.ProvidedVariables.Add(providedVariable);
+                                        providedVariables.Add(semanticDeterministicBernoulliVariableAttribute.Variable);
                                     }
                                     else if (semanticBernoulliVariableAttribute != null &&
                                              !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.ProbabilistVariable) &&
@@ -832,7 +841,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 var semanticFullScaleVariableAttribute = property.GetCustomAttribute<SemanticFullScaleVariableAttribute>();
                                 var semanticUniformVariableAttribute = property.GetCustomAttribute<SemanticUniformVariableAttribute>();
                                 var semanticGeneralDistributionVariableAttribute = property.GetCustomAttribute<SemanticGeneralDistributionVariableAttribute>();
-                                var semanticDeterministicBooleanVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBooleanVariableAttribute>();
+                                var semanticDeterministicCategoricalVariableAttribute = property.GetCustomAttribute<SemanticDeterministicCategoricalVariableAttribute>();
+                                var semanticDeterministicBernoulliVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBernoulliVariableAttribute>();
                                 var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
                                 var semanticCategoricalVariableAttribute = property.GetCustomAttribute<SemanticCategoricalVariableAttribute>();
                                 var semanticExclusiveOrAttributes = property.GetCustomAttributes<SemanticExclusiveOrAttribute>();
@@ -851,7 +861,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     semanticFullScaleVariableAttribute != null ||
                                     semanticUniformVariableAttribute != null ||
                                     semanticGeneralDistributionVariableAttribute != null ||
-                                    semanticDeterministicBooleanVariableAttribute != null ||
+                                    semanticDeterministicCategoricalVariableAttribute != null ||
+                                    semanticDeterministicBernoulliVariableAttribute != null ||
                                     semanticBernoulliVariableAttribute != null ||
                                     semanticCategoricalVariableAttribute != null ||
                                     (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
@@ -866,7 +877,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         semanticFullScaleVariableAttribute != null ||
                                         semanticUniformVariableAttribute != null ||
                                         semanticGeneralDistributionVariableAttribute != null ||
-                                        semanticDeterministicBooleanVariableAttribute != null ||
+                                        semanticDeterministicCategoricalVariableAttribute != null ||
+                                        semanticDeterministicBernoulliVariableAttribute != null ||
                                         semanticBernoulliVariableAttribute != null ||
                                         semanticCategoricalVariableAttribute !=  null)
                                     {
@@ -1036,11 +1048,19 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     sparql += "SELECT " + histoVar + "\n";
                                                     argCount = 1;
                                                 }
-                                                else if (semanticDeterministicBooleanVariableAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticDeterministicBooleanVariableAttribute.Variable) &&
-                                                         IsUsed(combination, semanticDeterministicBooleanVariableAttribute.Variable))
+                                                else if (semanticDeterministicCategoricalVariableAttribute != null &&
+                                                         !string.IsNullOrEmpty(semanticDeterministicCategoricalVariableAttribute.Variable) &&
+                                                         IsUsed(combination, semanticDeterministicCategoricalVariableAttribute.Variable))
                                                 {
-                                                    string variable = ProcessQueryVariable(semanticDeterministicBooleanVariableAttribute.Variable);
+                                                    string variable = ProcessQueryVariable(semanticDeterministicCategoricalVariableAttribute.Variable);
+                                                    sparql += "SELECT " + variable + "\n";
+                                                    argCount = 1;
+                                                }
+                                                else if (semanticDeterministicBernoulliVariableAttribute != null &&
+                                                         !string.IsNullOrEmpty(semanticDeterministicBernoulliVariableAttribute.Variable) &&
+                                                         IsUsed(combination, semanticDeterministicBernoulliVariableAttribute.Variable))
+                                                {
+                                                    string variable = ProcessQueryVariable(semanticDeterministicBernoulliVariableAttribute.Variable);
                                                     sparql += "SELECT " + variable + "\n";
                                                     argCount = 1;
                                                 }

@@ -96,5 +96,29 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public UniformDrillingProperty(UniformDrillingProperty src) : base(src)
         {
         }
+
+        public override bool Equals(DrillingProperty? cmp)
+        {
+            if (cmp is not null and UniformDrillingProperty drillProp)
+            {
+                if (UniformValue != null && drillProp.UniformValue != null)
+                {
+                    return UniformValue.Equals(drillProp.UniformValue);
+                }
+                else
+                {
+                    return UniformValue == null && drillProp.UniformValue == null;
+                }
+            }
+            return false;
+        }
+
+        public override void CopyTo(DrillingProperty? dest)
+        {
+            if (UniformValue != null && dest is not null and UniformDrillingProperty drillProp && drillProp.UniformValue != null)
+            {
+                UniformValue.CopyTo(drillProp.UniformValue);
+            }
+        }
     }
 }

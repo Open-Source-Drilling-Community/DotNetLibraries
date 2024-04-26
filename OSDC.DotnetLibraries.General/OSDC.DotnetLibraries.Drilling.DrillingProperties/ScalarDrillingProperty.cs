@@ -75,5 +75,29 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         {
 
         }
+
+        public override bool Equals(DrillingProperty? cmp)
+        {
+            if (cmp is not null and ScalarDrillingProperty drillProp)
+            {
+                if (DiracDistributionValue != null && drillProp.DiracDistributionValue != null)
+                {
+                    return DiracDistributionValue.Equals(drillProp.DiracDistributionValue);
+                }
+                else
+                {
+                    return DiracDistributionValue == null && drillProp.DiracDistributionValue == null;
+                }
+            }
+            return false;
+        }
+
+        public override void CopyTo(DrillingProperty? dest)
+        {
+            if (DiracDistributionValue != null && dest is not null and ScalarDrillingProperty drillProp && drillProp.DiracDistributionValue != null)
+            {
+                DiracDistributionValue.CopyTo(drillProp.DiracDistributionValue);
+            }
+        }
     }
 }

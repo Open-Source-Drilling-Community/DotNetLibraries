@@ -44,7 +44,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// <summary>
         /// the current mean value
         /// </summary>
-        public double? Mean
+        public new double? Mean
         {
             get
             {

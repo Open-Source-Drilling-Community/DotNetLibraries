@@ -71,5 +71,29 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public GeneralDistributionDrillingProperty(UniformDrillingProperty src) : base(src)
         {
         }
+
+        public override bool Equals(DrillingProperty? cmp)
+        {
+            if (cmp is not null and GeneralDistributionDrillingProperty drillProp)
+            {
+                if (GeneralDistributionValue != null && drillProp.GeneralDistributionValue != null)
+                {
+                    return GeneralDistributionValue.Equals(drillProp.GeneralDistributionValue);
+                }
+                else
+                {
+                    return GeneralDistributionValue == null && drillProp.GeneralDistributionValue == null;
+                }
+            }
+            return false;
+        }
+
+        public override void CopyTo(DrillingProperty? dest)
+        {
+            if (GeneralDistributionValue != null && dest is not null and GeneralDistributionDrillingProperty drillProp && drillProp.GeneralDistributionValue != null)
+            {
+                GeneralDistributionValue.CopyTo(drillProp.GeneralDistributionValue);
+            }
+        }
     }
 }

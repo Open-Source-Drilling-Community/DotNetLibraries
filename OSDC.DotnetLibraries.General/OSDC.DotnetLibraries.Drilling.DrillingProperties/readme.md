@@ -198,27 +198,41 @@ is true if the `Probability` is greater than 0.5 and false otherwise.
 
 ```mermaid
 classDiagram
-    DiscreteDrillingProperty <|-- DeterministicBooleanDrillingProperty
-    DiscreteDrillingProperty <|-- CategoricalDrillingProperty
+    DiscreteDrillingProperty <|-- DeterministicCategoricalDrillingProperty
+    DeterministicCategoricalDrillingProperty <|-- DeterministicBernoulliDrillingProperty
+    DiscreteDrillingProperty <|-- MultinomialDrillingProperty
+    MultinomialDrillingProperty <|-- CategoricalDrillingProperty
+    MultinomialDrillingProperty <|-- BinomialDrillingProperty
+    BinomialDrillingProperty <|-- BernoulliDrillingProperty
     DiscreteDrillingProperty <|-- GeneralDiscreteDrillingProperty
     DiscreteDrillingProperty : +DiscreteDrillingDistribution Value
     DiscreteDrillingProperty : +bool? Realize()
-    CategoricalDrillingProperty <|-- BernoulliDrillingProperty
-    class CategoricalDrillingProperty {
-      +CategoricalDistribution CategoricalValue
+    class DeterministicCategoricalDrillingProperty {
+      +DeterministicCategoricalDistribution DeterministicCategoricalValue
       +uint? NumberOfStates
-      +double[]? Probabilities
       +uint? StateValue
     }
-    class DeterministicBooleanDrillingProperty {
-        +DeterministicDiscreteDistribution DeterministicDiscreteValue
-        +double? Probability
+    class DeterministicBernoulliDrillingProperty {
+        +DeterministicBernoulliDistribution DeterministicBernoulliValue
         +bool? BooleanValue
+    }
+    class MultinomialDrillingProperty {
+       +MultinomialDistribution MultinomialValue
+       +uint? NumberOfStates
+       +uint? NumberOfTrials
+       +double[]? Probabilities
+       +uint? StateValue
+    }
+    class BinomialDrillingProperty {
+      +BinomialDistribution BinomialValue
+      +double? Probability
+      +bool? BooleanValue
+  }
+    class CategoricalDrillingProperty {
+      +CategoricalDistribution CategoricalValue
     }
     class BernoulliDrillingProperty {
         +BernoulliDistribution BernoulliValue
-        +double? Probability
-        +bool? BooleanValue
     }
     class GeneralDiscreteDrillingProperty {
     }
@@ -276,8 +290,10 @@ to access the `Histogram` value of this property.
 either the stochastic or the probabilistic variables that are used in the semantic facts. A `double` argument
 is used to define a default deterministic uncertainty. 
 - `SemanticCategoricalVariableAttribute`: It takes as many arguments as there are states for the corresponding `CategoricalDrillingProperty`.
-- `SemanticDeterministicBooleanVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used
-in the semantic facts to describe the value a `DeterministicBooleanDrillingProperty`.
+- `SemanticDeterministicCategoricalVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used
+in the semantic facts to describe the value a `DeterministicCategoricalDrillingProperty`.
+- `SemanticDeterministicBernoulliVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used
+in the semantic facts to describe the value a `DeterministicBernoulliDrillingProperty`.
 - `SemanticExclusiveOrAttribute`: It takes at least 2 arguments. This attribute is used to defined
 a list of the optional semantic facts that are exclusive from each other's. 
 
@@ -351,7 +367,10 @@ classDiagram
         +string? DeterministVariable
         +double? DeterministDefaultUncertainty
    }
-   class SemanticDeterministicBooleanVariableAttribute {
+   class SemanticDeterministicCategoricalVariableAttribute {
+        +sting? Variable
+   }
+   class SemanticDeterministicBernoulliVariableAttribute {
         +sting? Variable
    }
    class SemanticCategoricalVariableAttribute {

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class BernoulliDrillingProperty : CategoricalDrillingProperty
+    public class BernoulliDrillingProperty : BinomialDrillingProperty
     {
         /// <summary>
         /// redefined to use the synonym property that is of the correct type
@@ -94,8 +94,37 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// Copy constructor
         /// </summary>
         /// <param name="src"></param>
-        public BernoulliDrillingProperty(BernoulliDrillingProperty src) : base(src)
+        public BernoulliDrillingProperty(BernoulliDrillingProperty src) : base()
         {
+            if (src != null && src.BernoulliValue != null)
+            {
+                BernoulliValue.Probability = src.BernoulliValue.Probability;
+            }
         }
+
+        public override bool Equals(DrillingProperty? cmp)
+        {
+            if (cmp is not null and BernoulliDrillingProperty drillProp)
+            {
+                if (BernoulliValue != null && drillProp.BernoulliValue != null)
+                {
+                    return BernoulliValue.Equals(drillProp.BernoulliValue);
+                }
+                else
+                {
+                    return BernoulliValue == null && drillProp.BernoulliValue == null;
+                }
+            }
+            return false;
+        }
+
+        public override void CopyTo(DrillingProperty? dest)
+        {
+            if (BernoulliValue != null && dest is not null and BernoulliDrillingProperty drillProp && drillProp.BernoulliValue != null)
+            {
+                BernoulliValue.CopyTo(drillProp.BernoulliValue);
+            }
+        }
+     
     }
 }

@@ -19,5 +19,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public GeneralDiscreteRDFDrillingProperty() : base()
         {
         }
+
     }
 }

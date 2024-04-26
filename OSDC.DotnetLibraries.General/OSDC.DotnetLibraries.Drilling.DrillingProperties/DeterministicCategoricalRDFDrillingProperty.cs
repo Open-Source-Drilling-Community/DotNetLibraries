@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class CategoricalRDFDrillingProperty : CategoricalDrillingProperty, IRDFDrillingProperty
+    public class DeterministicCategoricalRDFDrillingProperty : DeterministicCategoricalDrillingProperty, IRDFDrillingProperty
     {
         public Dictionary<string, QuerySpecification>? SparQLQueries { get; set; } = null;
 
@@ -16,11 +16,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 
         public ManifestFile? ManifestFile { get; set; } = null;
 
-        public CategoricalRDFDrillingProperty() : base()
-        {
-        }
-
-        public CategoricalRDFDrillingProperty(uint numberOfStates) : base(numberOfStates)
+        public DeterministicCategoricalRDFDrillingProperty() : base()
         {
         }
     }

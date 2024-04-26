@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    public class DeterministicBooleanRDFDrillingProperty : DeterministicBooleanDrillingProperty, IRDFDrillingProperty
+    public class DeterministicBernoulliRDFDrillingProperty : DeterministicBernoulliDrillingProperty, IRDFDrillingProperty
     {
         public Dictionary<string, QuerySpecification>? SparQLQueries { get; set; } = null;
 
@@ -16,7 +16,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 
         public ManifestFile? ManifestFile { get; set; } = null;
 
-        public DeterministicBooleanRDFDrillingProperty() : base()
+        public DeterministicBernoulliRDFDrillingProperty() : base()
         {
         }
     }
