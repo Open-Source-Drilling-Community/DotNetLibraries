@@ -289,9 +289,8 @@ to access the `Histogram` value of this property.
 - `SemanticBernoulliVariableAttribute`: It takes one to three arguments. The `string` arguments represent
 either the stochastic or the probabilistic variables that are used in the semantic facts. A `double` argument
 is used to define a default deterministic uncertainty. 
-- `SemanticCategoricalVariableAttribute`: It takes as many arguments as there are states for the corresponding `CategoricalDrillingProperty`.
-- `SemanticDeterministicCategoricalVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used
-in the semantic facts to describe the value a `DeterministicCategoricalDrillingProperty`.
+- `SemanticCategoricalVariableAttribute`: It takes two arguments: the name of the variable, and the number of states.
+- `SemanticDeterministicCategoricalVariableAttribute`: It takes two arguments: the name of the variable and the number of states. 
 - `SemanticDeterministicBernoulliVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used
 in the semantic facts to describe the value a `DeterministicBernoulliDrillingProperty`.
 - `SemanticExclusiveOrAttribute`: It takes at least 2 arguments. This attribute is used to defined
@@ -368,13 +367,15 @@ classDiagram
         +double? DeterministDefaultUncertainty
    }
    class SemanticDeterministicCategoricalVariableAttribute {
-        +sting? Variable
+        +string? Variable
+        +uint? NumberOfStates
    }
    class SemanticDeterministicBernoulliVariableAttribute {
-        +sting? Variable
+        +string? Variable
    }
    class SemanticCategoricalVariableAttribute {
-        +sting[]? Variables
+        +sting? Variable
+        +uint? NumberOfStates
    }
 ```
 ## Example

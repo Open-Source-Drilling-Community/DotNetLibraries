@@ -10,9 +10,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
     public class SemanticDeterministicCategoricalVariableAttribute : Attribute
     {
         public string? Variable { get; } = null;
-        public SemanticDeterministicCategoricalVariableAttribute(string variable)
+        public uint? NumberOfStates { get; } = null;
+        public SemanticDeterministicCategoricalVariableAttribute(string variable, uint numberOfStates)
         {
             Variable = variable;
+            NumberOfStates = numberOfStates;
         }
     }
 }

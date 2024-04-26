@@ -48,12 +48,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticGeneralDistributionHistogramVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? SemanticBernoulliProbabilistVariable { get; set; } = null;
+        public string? SemanticBernoulliVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? SemanticBernoulliDeterministVariable { get; set; } = null;
+        public string? SemanticCategoricalVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public double? SemanticBernoulliDeterministDefaultUncertainty { get; set; } = null;
-        public string[]? SemanticCategoricalVariables { get; set; } = null; 
+        public uint? SemanticCategoricalNumberOfStates { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<byte[]>? SemanticExclusiveOrs {  get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -152,13 +151,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 }
                                 if (semanticBernoulliVariableAttribute != null)
                                 {
-                                    metaData.SemanticBernoulliProbabilistVariable = semanticBernoulliVariableAttribute.ProbabilistVariable;
-                                    metaData.SemanticBernoulliDeterministVariable = semanticBernoulliVariableAttribute.DeterministVariable;
-                                    metaData.SemanticBernoulliDeterministDefaultUncertainty = semanticBernoulliVariableAttribute.DeterministDefaultUncertainty;
+                                    metaData.SemanticBernoulliVariable = semanticBernoulliVariableAttribute.Variable;
                                 }
                                 if (semanticCategoricalVariableAttribute != null)
                                 {
-                                    metaData.SemanticCategoricalVariables = semanticCategoricalVariableAttribute.Variables;
+                                    metaData.SemanticCategoricalVariable = semanticCategoricalVariableAttribute.Variable;
+                                    metaData.SemanticCategoricalNumberOfStates = semanticCategoricalVariableAttribute.NumberOfStates;
                                 }
                                 if (semanticExclusiveOrAttributes != null)
                                 {

@@ -349,7 +349,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     string ddhubURL = "http://ddhub.no/";
                                     string quantityNameSpace = "http://ddhub.no/UnitAndQuantity";
                                     // find the provided variables
-                                    List<string> providedVariables = new List<string>();
+                                    List<string> providedVariables = [];
                                     var semanticDiracVariableAttribute = property.GetCustomAttribute<SemanticDiracVariableAttribute>();
                                     var semanticGaussianVariableAttribute = property.GetCustomAttribute<SemanticGaussianVariableAttribute>();
                                     var semanticSensorVariableAttribute = property.GetCustomAttribute<SemanticSensorVariableAttribute>();
@@ -455,9 +455,15 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     }
                                     else if (semanticDeterministicCategoricalVariableAttribute != null &&
                                              !string.IsNullOrEmpty(semanticDeterministicCategoricalVariableAttribute.Variable) &&
-                                             IsUsed(facts, semanticDeterministicCategoricalVariableAttribute.Variable))
+                                             IsUsed(facts, semanticDeterministicCategoricalVariableAttribute.Variable) &&
+                                             semanticDeterministicCategoricalVariableAttribute.NumberOfStates != null)
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "short", VariableID = ProcessManifestVariable(semanticDeterministicCategoricalVariableAttribute.Variable, prefix) };
+                                        ProvidedVariable providedVariable = new() { 
+                                            DataType = "short", 
+                                            Rank = 1, 
+                                            Dimensions = [(int)semanticDeterministicCategoricalVariableAttribute.NumberOfStates.Value], 
+                                            VariableID = ProcessManifestVariable(semanticDeterministicCategoricalVariableAttribute.Variable, prefix) 
+                                        };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticDeterministicCategoricalVariableAttribute.Variable);
                                     }
@@ -470,34 +476,26 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         providedVariables.Add(semanticDeterministicBernoulliVariableAttribute.Variable);
                                     }
                                     else if (semanticBernoulliVariableAttribute != null &&
-                                             !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.ProbabilistVariable) &&
-                                             IsUsed(facts, semanticBernoulliVariableAttribute.ProbabilistVariable) &&
-                                             (string.IsNullOrEmpty(semanticBernoulliVariableAttribute.DeterministVariable) ||
-                                              IsUsed(facts, semanticBernoulliVariableAttribute.DeterministVariable)))
+                                             !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.Variable) &&
+                                             IsUsed(facts, semanticBernoulliVariableAttribute.Variable))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.ProbabilistVariable, prefix) };
+                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.Variable, prefix) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
-                                        providedVariables.Add(semanticBernoulliVariableAttribute.ProbabilistVariable);
-                                        if (!string.IsNullOrEmpty(semanticBernoulliVariableAttribute.DeterministVariable))
-                                        {
-                                            ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.DeterministVariable, prefix) };
-                                            manifestFile.ProvidedVariables.Add(providedVariable2);
-                                            providedVariables.Add(semanticBernoulliVariableAttribute.DeterministVariable);
-                                        }
+                                        providedVariables.Add(semanticBernoulliVariableAttribute.Variable);
                                     }
                                     else if (semanticCategoricalVariableAttribute != null &&
-                                             semanticCategoricalVariableAttribute.Variables != null &&
-                                             semanticCategoricalVariableAttribute.Variables.All(s => string.IsNullOrEmpty(s) || IsUsed(facts, s)))
+                                             !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.Variable) &&
+                                             IsUsed(facts, semanticCategoricalVariableAttribute.Variable) &&
+                                             semanticCategoricalVariableAttribute.NumberOfStates != null)
                                     {
-                                        foreach (var s in semanticCategoricalVariableAttribute.Variables)
-                                        {
-                                            if (!string.IsNullOrEmpty(s))
-                                            {
-                                                ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(s, prefix) };
-                                                manifestFile.ProvidedVariables.Add(providedVariable);
-                                                providedVariables.Add(s);
-                                            }
-                                        }
+                                        ProvidedVariable providedVariable = new() { 
+                                            DataType = "double", 
+                                            Rank = 1, 
+                                            Dimensions = [(int)semanticCategoricalVariableAttribute.NumberOfStates.Value], 
+                                            VariableID = ProcessManifestVariable(semanticCategoricalVariableAttribute.Variable, prefix) 
+                                        };
+                                        manifestFile.ProvidedVariables.Add(providedVariable);
+                                        providedVariables.Add(semanticCategoricalVariableAttribute.Variable);
                                     }
                                     // find the injected nodes and their types
                                     Dictionary<string, List<Nouns.Enum>> injectedNodes = FindInjectedNodes(facts, providedVariables);
@@ -1065,47 +1063,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     argCount = 1;
                                                 }
                                                 else if (semanticBernoulliVariableAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.ProbabilistVariable) &&
-                                                         IsUsed(combination, semanticBernoulliVariableAttribute.ProbabilistVariable) &&
-                                                         (!string.IsNullOrEmpty(semanticBernoulliVariableAttribute.DeterministVariable) ||
-                                                          semanticBernoulliVariableAttribute.DeterministDefaultUncertainty != null) &&
-                                                         (string.IsNullOrEmpty(semanticBernoulliVariableAttribute.DeterministVariable) ||
-                                                          IsUsed(combination, semanticBernoulliVariableAttribute.DeterministVariable)) &&
-                                                         (semanticBernoulliVariableAttribute.DeterministDefaultUncertainty == null ||
-                                                          !IsUsed(combination, semanticBernoulliVariableAttribute.DeterministVariable)))
+                                                         !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.Variable) &&
+                                                         IsUsed(combination, semanticBernoulliVariableAttribute.Variable))
                                                 {
-                                                    string probabilistic = ProcessQueryVariable(semanticBernoulliVariableAttribute.ProbabilistVariable);
-                                                    sparql += "SELECT " + probabilistic;
+                                                    string probabilistic = ProcessQueryVariable(semanticBernoulliVariableAttribute.Variable);
+                                                    sparql += "SELECT " + probabilistic + "\n";
                                                     argCount = 1;
-                                                    if (!string.IsNullOrEmpty(semanticBernoulliVariableAttribute.DeterministVariable) &&
-                                                        IsUsed(combination, semanticBernoulliVariableAttribute.DeterministVariable))
-                                                    {
-                                                        string deterministic = ProcessQueryVariable(semanticBernoulliVariableAttribute.DeterministVariable);
-                                                        sparql += ", " + deterministic;
-                                                        argCount++;
-                                                    }
-                                                    sparql += "\n";
                                                 }
                                                 else if (semanticCategoricalVariableAttribute != null &&
-                                                         semanticCategoricalVariableAttribute.Variables != null &&
-                                                         semanticCategoricalVariableAttribute.Variables.All(s => string.IsNullOrEmpty(s) || IsUsed(combination, s)))
+                                                         !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.Variable) &&
+                                                         IsUsed(combination, semanticCategoricalVariableAttribute.Variable))
                                                 {
-                                                    sparql += "SELECT ";
-                                                    argCount = 0;
-                                                    foreach (var s in semanticCategoricalVariableAttribute.Variables)
-                                                    {
-                                                        if (!string.IsNullOrEmpty(s))
-                                                        {
-                                                            string svar = ProcessQueryVariable(s);
-                                                            if (argCount > 0)
-                                                            {
-                                                                sparql += ", ";
-                                                            }
-                                                            sparql += svar;
-                                                            argCount++;
-                                                        }
-                                                    }
-                                                    sparql += "\n";
+                                                    sparql += "SELECT " + ProcessQueryVariable(semanticCategoricalVariableAttribute.Variable) + "\n";
                                                 }
                                                 sparql += "WHERE {\n";
                                                 List<string> alreadyTyped = new List<string>();
