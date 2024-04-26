@@ -215,10 +215,10 @@ namespace OSDC.DotnetLibraries.General.Statistics
             double[,] alpha = new double[a.Length, a.Length];
             double alambda = -1;
             int mfit = 0;
-            double[] atry = null;
-            double[] beta = null;
-            double[] da = null;
-            double[,] oneda = null;
+            double[]? atry = null;
+            double[]? beta = null;
+            double[]? da = null;
+            double[,]? oneda = null;
 
             // estimate chisquare with initial parameters
             double ichisq = 0;
@@ -444,7 +444,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <param name="func"></param>
         private static void mrqcof(double[] x, double[] y, double[] sig, double[] a, bool[] ia, double[,] alpha, double[] beta, out double chisq, UnaryFunctionDelegate func)
         {
-            double[] dyda = new double[a.Length];
+            double[]? dyda = new double[a.Length];
             int mfit = 0;
             for (int j = 0; j < a.Length; j++)
             {

@@ -34,7 +34,34 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// 
         /// </summary>
         public double? Max { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(UniformDistribution? cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                eq &= Numeric.EQ(Min, cmp.Min);
+                eq &= Numeric.EQ(Max, cmp.Max);
+            }
+            return eq;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dest"></param>
+        public void CopyTo(UniformDistribution? dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                dest.Min = Min;
+                dest.Max = Max;
+            }
+        }
         /// <summary>
         /// 
         /// </summary>

@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra.Factorization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,25 +6,58 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.General.Statistics
 {
-    public class DeterministicDiscreteDistribution : DiscreteDistribution
+    public class DeterministicCategoricalDistribution : DiscreteDistribution
     {
-        public uint? Target { get; set; } = 0;
-        /// <summary>
-        /// 
-        /// </summary>
-        public DeterministicDiscreteDistribution()
-        {
-            Range = 1;
-        }
+        public uint? NumberOfStates { get; protected set; }
+
+        public uint? State { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public override double? GetProbability(int target)
+        public DeterministicCategoricalDistribution()
         {
-            if (target == Target)
+            NumberOfStates = 2;
+        }
+
+        public DeterministicCategoricalDistribution(uint? numberOfStates)
+        {
+            NumberOfStates = numberOfStates;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(DeterministicCategoricalDistribution? cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                eq &= NumberOfStates == cmp.NumberOfStates;
+            }
+            return eq;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dest"></param>
+        public void CopyTo(DeterministicCategoricalDistribution? dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                dest.NumberOfStates = NumberOfStates;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        public override double? GetProbability(int state)
+        {
+            if (state == State)
             {
                 return 1;
             }
@@ -51,7 +83,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override int? Realize()
         {
-            return (Target == null) ? null : (int)Target.Value;
+            return (State == null) ? null : (int)State.Value;
         }
 
         /// <summary>
@@ -69,7 +101,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override double? GetMean()
         {
-            return Target;
+            return State;
         }
 
         /// <summary>
@@ -87,7 +119,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <returns></returns>
         public override bool IsValid()
         {
-            return true;
+            return NumberOfStates != null && NumberOfStates > 0;
         }
     }
 }

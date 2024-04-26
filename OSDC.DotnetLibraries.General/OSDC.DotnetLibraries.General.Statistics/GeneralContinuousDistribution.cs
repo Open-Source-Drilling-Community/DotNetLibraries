@@ -116,7 +116,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         [XmlArray("dataList")]
         [XmlArrayItem("data", typeof(double))]
-        public List<double> Data
+        public List<double>? Data
         {
             get { return data_; }
             set
@@ -129,7 +129,90 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 }
             }
         }
+        public bool Equals(GeneralContinuousDistribution? cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                eq &= NumberOfHistrogramPoints == cmp.NumberOfHistrogramPoints;
+                if (Data != null && cmp.Data != null)
+                {
+                    eq &= Data.Count == cmp.Data.Count;
+                    if (eq)
+                    {
+                        for (int i = 0; i < Data.Count; i++)
+                        {
+                            eq &= Numeric.EQ(Data[i], cmp.Data[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    eq &= Data == null && cmp.Data == null;
+                }
+                if (Function != null && cmp.Function != null)
+                {
+                    eq &= Function.Length == cmp.Function.Length;
+                    if (eq)
+                    {
+                        for (int i = 0; i < Function.Length; i++)
+                        {
+                            eq &= Function[i] != null && cmp.Function[i] != null;
+                            if (eq)
+                            {
+                                eq &= Numeric.EQ(Function[i].Item1, cmp.Function[i].Item1);
+                                eq &= Numeric.EQ(Function[i].Item2, cmp.Function[i].Item2);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    eq &= Function == null && cmp.Function == null;
+                }
+            }
+            return eq;
+        }
 
+        public void CopyTo(GeneralContinuousDistribution? dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                dest.NumberOfHistrogramPoints = this.NumberOfHistrogramPoints;
+                if (Function != null)
+                {
+                    if (dest.Function == null || dest.Function.Length != Function.Length)
+                    {
+                        dest.Function = new Tuple<double, double>[Function.Length];
+                    }
+                    for (int i = 0; i < Function.Length; i++)
+                    {
+                        dest.Function[i] = new Tuple<double, double>(Function[i].Item1, Function[i].Item2);
+                    }
+                }
+                else
+                {
+                    dest.Function = null;
+                }
+                if (Data != null)
+                {
+                    if (dest.Data == null || dest.Data.Count != Data.Count)
+                    {
+                        dest.Data = new List<double>();
+                    }
+                    dest.Data.Clear();
+                    for (int i = 0; i < Data.Count;i++)
+                    {
+                        dest.Data.Add(Data[i]);
+                    }
+                }
+                else
+                {
+                    dest.Data = null;
+                }
+            }
+        }
         private void ComputeFunction()
         {
             Tuple<double,double>[]? temp = GetHistogram();
@@ -243,12 +326,19 @@ namespace OSDC.DotnetLibraries.General.Statistics
             {
                 ComputeFunction();
             }
-            Tuple<double, double>[] result = new Tuple<double, double>[function_.Length];
-            for (int i = 0; i < function_.Length; i++)
+            if (function_ != null)
             {
-                result[i] = new Tuple<double, double>(function_[i].Item1, function_[i].Item2);
+                Tuple<double, double>[] result = new Tuple<double, double>[function_.Length];
+                for (int i = 0; i < function_.Length; i++)
+                {
+                    result[i] = new Tuple<double, double>(function_[i].Item1, function_[i].Item2);
+                }
+                return result;
             }
-            return result;
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -518,24 +608,31 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <param name="from"></param>
         public override void Copy(ContinuousDistribution? from)
         {
-            if (from != null)
+            if (from is not null and GeneralContinuousDistribution)
             {
-                if (from is GeneralContinuousDistribution)
+                GeneralContinuousDistribution? generalContinuousDistribution = from as GeneralContinuousDistribution;
+                if (generalContinuousDistribution != null)
                 {
-                    resolution_ = ((GeneralContinuousDistribution)from).resolution_;
-                    numberOfHistrogramPoints_ = ((GeneralContinuousDistribution)from).numberOfHistrogramPoints_;
-                    function_ = new Tuple<double, double>[((GeneralContinuousDistribution)from).Function.Length];
-                    if (from is GeneralContinuousDistribution)
+                    resolution_ = generalContinuousDistribution.resolution_;
+                    numberOfHistrogramPoints_ = generalContinuousDistribution.numberOfHistrogramPoints_;
+                    if (generalContinuousDistribution.Function != null)
                     {
-                        for (int i = 0; i < ((GeneralContinuousDistribution)from).Function.Length; i++)
+                        function_ = new Tuple<double, double>[generalContinuousDistribution.Function.Length];
+                        if (from is GeneralContinuousDistribution)
                         {
-                            function_[i] = new Tuple<double, double>(((GeneralContinuousDistribution)from).Function[i].Item1, ((GeneralContinuousDistribution)from).Function[i].Item2);
+                            for (int i = 0; i < generalContinuousDistribution.Function.Length; i++)
+                            {
+                                function_[i] = new Tuple<double, double>(generalContinuousDistribution.Function[i].Item1, generalContinuousDistribution.Function[i].Item2);
+                            }
                         }
-                    }
-                    data_.Clear();
-                    for (int i = 0; i < ((GeneralContinuousDistribution)from).Data.Count; i++)
-                    {
-                        data_.Add(((GeneralContinuousDistribution)from).Data[i]);
+                        if (data_ != null && generalContinuousDistribution.Data != null)
+                        {
+                            data_.Clear();
+                            for (int i = 0; i < generalContinuousDistribution.Data.Count; i++)
+                            {
+                                data_.Add(generalContinuousDistribution.Data[i]);
+                            }
+                        }
                     }
                 }
                 CopyExtraData(from);

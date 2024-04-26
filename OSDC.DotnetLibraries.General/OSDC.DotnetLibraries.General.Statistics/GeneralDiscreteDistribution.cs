@@ -8,7 +8,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
     /// </summary>
     public class GeneralDiscreteDistribution : DiscreteDistribution
     {
-        private List<double> probabilities_ = new List<double>();
+        private List<double>? probabilities_ = new List<double>();
 
         /// <summary>
         /// 
@@ -16,7 +16,6 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public GeneralDiscreteDistribution()
             : base()
         {
-            Range = 0;
         }
 
         /// <summary>
@@ -35,22 +34,65 @@ namespace OSDC.DotnetLibraries.General.Statistics
             {
                 probabilities_.Add(probas[i]);
             }
-            Range = (uint)probabilities_.Count;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public List<double> Probabilities
+        public List<double>? Probabilities
         {
             get { return probabilities_; }
             set
             {
                 probabilities_ = value;
-                Range = (uint)probabilities_.Count;
             }
         }
-
+        public bool Equals(GeneralDiscreteDistribution? cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                if (Probabilities != null && cmp.Probabilities != null)
+                {
+                    eq &= Probabilities.Count == cmp.Probabilities.Count;
+                    if (eq)
+                    {
+                        for (int i = 0;i < Probabilities.Count;i++)
+                        {
+                            eq &= Numeric.EQ(Probabilities[i], cmp.Probabilities[i]);  
+                        }
+                    }
+                }
+                else
+                {
+                    eq &= Probabilities == null && cmp.Probabilities == null;
+                }
+            }
+            return eq;
+        }
+        public void CopyTo(GeneralDiscreteDistribution? dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                if (Probabilities != null)
+                {
+                    if (dest.Probabilities == null)
+                    {
+                        dest.Probabilities = new List<double>();
+                    }
+                    dest.Probabilities.Clear();
+                    for (int i = 0; i  < Probabilities.Count;i++)
+                    {
+                        dest.Probabilities.Add(Probabilities[i]);
+                    }
+                }
+                else
+                {
+                    dest.Probabilities = null;
+                }
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -58,11 +100,14 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public override bool IsValid()
         {
             double total = 0;
-            for (int i = 0; i < probabilities_.Count; i++)
+            if (probabilities_ != null)
             {
-                if (probabilities_[i] < 0 || probabilities_[i] > 1)
-                { return false; }
-                total += probabilities_[i];
+                for (int i = 0; i < probabilities_.Count; i++)
+                {
+                    if (probabilities_[i] < 0 || probabilities_[i] > 1)
+                    { return false; }
+                    total += probabilities_[i];
+                }
             }
             return (total == 1);
         }
@@ -74,13 +119,16 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public override double? GetMean()
         {
             double mean = 0;
-            for (int i = 0; i < probabilities_.Count; i++)
+            if (probabilities_ != null)
             {
-                if (probabilities_[i] < 0 || probabilities_[i] > 1)
+                for (int i = 0; i < probabilities_.Count; i++)
                 {
-                    return null;
+                    if (probabilities_[i] < 0 || probabilities_[i] > 1)
+                    {
+                        return null;
+                    }
+                    mean += i * probabilities_[i];
                 }
-                mean += i * probabilities_[i];
             }
             return mean;
         }
@@ -93,22 +141,18 @@ namespace OSDC.DotnetLibraries.General.Statistics
         {
             double random = RandomGenerator.Instance.NextDouble();
             double total = 0;
-            for (int i = 0; i < probabilities_.Count; i++)
+            if (probabilities_ != null)
             {
-                if (random > total && random < total + probabilities_[i])
+                for (int i = 0; i < probabilities_.Count; i++)
                 {
-                    return i;
+                    if (random > total && random < total + probabilities_[i])
+                    {
+                        return i;
+                    }
+                    total += probabilities_[i];
                 }
-                total += probabilities_[i];
             }
-            if (Range != null)
-            {
-                return (int)Range - 1;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
         /// <summary>
         /// 

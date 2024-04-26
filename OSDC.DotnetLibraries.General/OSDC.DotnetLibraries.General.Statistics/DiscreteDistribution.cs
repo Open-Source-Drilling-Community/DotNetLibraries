@@ -3,13 +3,26 @@ namespace OSDC.DotnetLibraries.General.Statistics
 {
     public class DiscreteDistribution : IDistribution
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public uint? Range { get; set; }
 
         protected DiscreteDistribution()
         {
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(DiscreteDistribution? cmp)
+        {
+            return cmp != null;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dest"></param>
+        public void CopyTo(DiscreteDistribution? dest)
+        {
+
         }
 
         /// <summary>

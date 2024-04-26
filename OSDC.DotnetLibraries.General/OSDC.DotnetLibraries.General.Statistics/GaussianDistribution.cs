@@ -53,7 +53,30 @@ namespace OSDC.DotnetLibraries.General.Statistics
             Mean = mean;
             StandardDeviation = stdDev;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(GaussianDistribution? cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                eq &= Numeric.Equals(Mean, cmp.Mean);
+                eq &= Numeric.Equals(StandardDeviation, cmp.StandardDeviation);
+            }
+            return eq;
+        }
+        public void CopyTo(GaussianDistribution? dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                dest.Mean = Mean;
+                dest.StandardDeviation = StandardDeviation;
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -88,16 +111,6 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public override double? GetStandardDeviation()
         {
             return StandardDeviation;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cmp"></param>
-        /// <returns></returns>
-        public bool Equals(GaussianDistribution? cmp)
-        {
-            return (cmp != null) && Numeric.EQ(Mean, cmp.Mean) && Numeric.EQ(StandardDeviation, cmp.StandardDeviation);
         }
 
         /// <summary>
@@ -321,7 +334,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
                             currentCP = GetCumulativeProbability(middleValue);
                             if (currentCP == null)
                             {
-
+                                return null;
                             }
                             else
                             {

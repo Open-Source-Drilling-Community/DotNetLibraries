@@ -25,7 +25,36 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public ContinuousDistribution()
         {
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(ContinuousDistribution? cmp)
+        {
+            if (cmp == null)
+            {
+                return false;
+            }
+            else
+            {
+                bool eq = minValue_ == cmp.minValue_;
+                eq &= maxValue_ == cmp.maxValue_;
+                return eq;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dest"></param>
+        public void CopyTo(ContinuousDistribution? dest)
+        {
+            if (dest != null)
+            {
+                dest.minValue_ = minValue_;
+                dest.maxValue_ = maxValue_;
+            }
+        }
         /// <summary>
         /// Gets or sets the lower limit allowed for the distribution. Does not influence mean or realizations etc.
         /// </summary>

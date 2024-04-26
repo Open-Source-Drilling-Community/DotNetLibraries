@@ -1,6 +1,7 @@
 ﻿using OSDC.DotnetLibraries.General.Math;
 using OSDC.DotnetLibraries.General.Common;
 using System.ComponentModel.Design;
+using MathNet.Numerics.Distributions;
 
 namespace OSDC.DotnetLibraries.General.Statistics
 {
@@ -25,7 +26,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public MultinomialDistribution(uint? n, uint? k, double[]? p) : base()
         {
             numberTrials_ = n;
-            numberOfStates_ = k;
+            NumberOfStates = k;
             if (k != null)
             {
                 probabilities_ = new double[k.Value];
@@ -46,7 +47,6 @@ namespace OSDC.DotnetLibraries.General.Statistics
                     }
                 }
             }
-            Range = numberTrials_ + 1;
         }
         /// <summary>
         /// 
@@ -57,7 +57,6 @@ namespace OSDC.DotnetLibraries.General.Statistics
             set
             {
                 numberTrials_ = value;
-                Range = numberTrials_ + 1;
             }
         }
         /// <summary>
@@ -91,6 +90,57 @@ namespace OSDC.DotnetLibraries.General.Statistics
             private set {  probabilities_ = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(MultinomialDistribution? cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                eq &= numberTrials_ == cmp.numberTrials_;
+                eq &= numberOfStates_ == cmp.numberOfStates_;
+                if (probabilities_ != null && cmp.probabilities_ != null)
+                {
+                    eq &= probabilities_.Length == cmp.probabilities_.Length;
+                    if (eq)
+                    {
+                        for (int i = 0; i < probabilities_.Length; i++)
+                        {
+                            eq &= probabilities_[i] == cmp.probabilities_[i];
+                        }
+                    }
+                }
+                else
+                {
+                    eq &= probabilities_ == null && cmp.probabilities_ == null;
+                }
+            }
+            return eq;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dest"></param>
+        public void CopyTo(MultinomialDistribution? dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                dest.numberOfStates_ = numberOfStates_;
+                dest.numberTrials_ = numberTrials_;
+                if (probabilities_!= null)
+                {
+                    if (dest.probabilities_ == null || dest.probabilities_.Length != probabilities_.Length)
+                    {
+                        dest.probabilities_ = new double[probabilities_.Length];
+                    }
+                    Array.Copy(probabilities_, dest.probabilities_, probabilities_.Length);
+                }
+            }
+        }
         /// <summary>
         /// Return the probability of m success of event 0 within numberOfTrials.
         /// </summary>
@@ -224,7 +274,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
             {
                 MultinomialDistribution other = (MultinomialDistribution)from;
                 numberTrials_ = other.numberTrials_;
-                if (Probabilities != null && other.Probabilities != null && Probabilities.Length == other.Probabilities.Length != null)
+                if (Probabilities != null && other.Probabilities != null && Probabilities.Length == other.Probabilities.Length)
                 {
                     for (int i = 0; i < Probabilities.Length; i++)
                     {

@@ -31,7 +31,28 @@ namespace OSDC.DotnetLibraries.General.Statistics
         {
             Value = value;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(DiracDistribution cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                eq &= Numeric.EQ(Value, cmp.Value);
+            }
+            return eq;
+        }
+        public void CopyTo(DiracDistribution dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                dest.Value = Value;
+            }
+        }
         /// <summary>
         /// 
         /// </summary>

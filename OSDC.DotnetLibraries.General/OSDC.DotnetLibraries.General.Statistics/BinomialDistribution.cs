@@ -26,7 +26,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 probabilities_[0] = p.Value;
                 probabilities_[1] = 1 - p.Value;
             }
-            Range = numberTrials_ + 1;
+            NumberOfStates = numberTrials_ + 1;
         }
 
         /// <summary>
@@ -52,7 +52,6 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 }
             }
         }
-
         /// <summary>
         /// 
         /// </summary>

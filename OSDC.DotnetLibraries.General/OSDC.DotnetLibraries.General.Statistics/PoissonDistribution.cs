@@ -19,7 +19,32 @@ namespace OSDC.DotnetLibraries.General.Statistics
         {
             Rate = rate;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmp"></param>
+        /// <returns></returns>
+        public bool Equals(PoissonDistribution? cmp)
+        {
+            bool eq = base.Equals(cmp);
+            if (cmp != null)
+            {
+                eq &= Numeric.EQ(Rate, cmp.Rate);
+            }
+            return eq;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dest"></param>
+        public void CopyTo(PoissonDistribution? dest)
+        {
+            base.CopyTo(dest);
+            if (dest != null)
+            {
+                dest.Rate = Rate;
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
