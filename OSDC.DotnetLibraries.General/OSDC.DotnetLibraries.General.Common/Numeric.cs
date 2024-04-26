@@ -1685,6 +1685,15 @@ namespace OSDC.DotnetLibraries.General.Common
             }
         }
         /// <summary>
+        /// The cumulative distribution function
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static double CumulativeDistributionFunction(double x)
+        {
+            return 0.5 * (1.0 + Erf(x / Math.Sqrt(2.0)));
+        }
+        /// <summary>
         /// Computes the gamma function, defined by 
         /// 
         /// \Gamma(z)  := \int_0^\infty t^{z-1} \exp^{-t} dt
