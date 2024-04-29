@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using OSDC.DotnetLibraries.General.Statistics;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
@@ -10,6 +11,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// the probability distribution for the property
         /// </summary>
         public virtual DiscreteDistribution? Value { get; set; } = null;
+        [JsonIgnore]
+        public abstract uint? NumberOfStates { get; }
+        [JsonIgnore]
+        public abstract double[]? Probabilities { get; set; }
 
         /// <summary>
         /// Default Constructor

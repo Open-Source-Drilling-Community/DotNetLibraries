@@ -28,10 +28,21 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// </summary>
         public MultinomialDistribution? MultinomialValue { get; set; } = new MultinomialDistribution();
         /// <summary>
+        /// 
+        /// </summary>
+        [JsonIgnore]
+        public override uint? NumberOfStates
+        {
+            get
+            {
+                return MultinomialValue?.NumberOfStates;
+            }
+        }
+        /// <summary>
         /// convenience property to access directly the probability value of the BernoulliValue
         /// </summary>
         [JsonIgnore]
-        public double[]? Probabilities
+        public override double[]? Probabilities
         {
             get
             {

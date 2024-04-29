@@ -1,4 +1,5 @@
-﻿using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.DotnetLibraries.General.Common;
+using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
@@ -46,6 +47,57 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 if (DeterministicCategoricalValue != null)
                 {
                     DeterministicCategoricalValue.State = value;
+                }
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonIgnore]
+        public override uint? NumberOfStates {
+            get
+            {
+                return DeterministicCategoricalValue?.NumberOfStates;
+            }
+        }
+        [JsonIgnore]
+        public override double[]? Probabilities
+        {
+            get
+            {
+                if (DeterministicCategoricalValue != null)
+                {
+                    if (DeterministicCategoricalValue.State != null && DeterministicCategoricalValue.NumberOfStates != null && DeterministicCategoricalValue.State < DeterministicCategoricalValue.NumberOfStates)
+                    {
+                        double[] probabilities = new double[DeterministicCategoricalValue.NumberOfStates.Value];
+                        for (int i = 0; i < probabilities.Length; i++)
+                        {
+                            probabilities[i] = 0;
+                        }
+                        probabilities[DeterministicCategoricalValue.State.Value] = 1.0;
+                        return probabilities;
+                    }
+                }
+                return null;
+            }
+            set
+            {
+                if (value != null && DeterministicCategoricalValue != null)
+                {
+                    double max = 0.0;
+                    int imax = -1;
+                    for (int i = 0; i <  value.Length; i++)
+                    {
+                        if (value[i]> max)
+                        {
+                            max = value[i];
+                            imax = i;
+                        }
+                    }
+                    if (imax>= 0)
+                    {
+                        DeterministicCategoricalValue.State = (uint)imax;
+                    }
                 }
             }
         }
