@@ -471,7 +471,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                              !string.IsNullOrEmpty(semanticDeterministicBernoulliVariableAttribute.Variable) &&
                                              IsUsed(facts, semanticDeterministicBernoulliVariableAttribute.Variable))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "short", VariableID = ProcessManifestVariable(semanticDeterministicBernoulliVariableAttribute.Variable, prefix) };
+                                        ProvidedVariable providedVariable = new() { 
+                                            DataType = "double", 
+                                            Rank = 1,
+                                            Dimensions = [2],
+                                            VariableID = ProcessManifestVariable(semanticDeterministicBernoulliVariableAttribute.Variable, prefix) 
+                                        };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticDeterministicBernoulliVariableAttribute.Variable);
                                     }
@@ -479,7 +484,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                              !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.Variable) &&
                                              IsUsed(facts, semanticBernoulliVariableAttribute.Variable))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.Variable, prefix) };
+                                        ProvidedVariable providedVariable = new() { 
+                                            DataType = "double", 
+                                            Rank = 1,
+                                            Dimensions = [2],
+                                            VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.Variable, prefix) 
+                                        };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticBernoulliVariableAttribute.Variable);
                                     }
