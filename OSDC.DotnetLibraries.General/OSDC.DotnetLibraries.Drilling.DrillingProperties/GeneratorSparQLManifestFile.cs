@@ -1,12 +1,7 @@
 ﻿using DWIS.API.DTO;
 using DWIS.Vocabulary.Schemas;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
@@ -757,6 +752,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         if (combination != null) 
                                         {
+                                            List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
+                                            string soptions = string.Empty;
                                             string sparql = string.Empty;
                                             int argCount = 0;
                                             sparql += "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
@@ -767,8 +764,27 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 IsUsed(combination, semanticTypeVariableAttribute.ValueVariable))
                                             {
                                                 string var1 = ProcessQueryVariable(semanticTypeVariableAttribute.ValueVariable);
-                                                sparql += "SELECT " + var1 + "\n";
+                                                sparql += "SELECT " + var1;
                                                 argCount = 1;
+                                                if (options.Count > 0)
+                                                {
+                                                    bool first = true;
+                                                    foreach (var option in options)
+                                                    {
+                                                        if (!first)
+                                                        {
+                                                            soptions += ",";
+                                                        }
+                                                        first = false;
+                                                        soptions += option;
+                                                    }
+                                                    if (!string.IsNullOrEmpty(soptions))
+                                                    {
+                                                        sparql += ", " + "?factOptionSet";
+                                                        argCount++;
+                                                    }
+                                                }
+                                                sparql += "\n";
                                             }
                                             sparql += "WHERE {\n";
                                             List<string> alreadyTyped = new List<string>();
@@ -799,10 +815,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     }
                                                     sparql += GenerateWhereStatement(excluded, alreadyTyped);
                                                 }
-                                                sparql += "  }";
+                                                sparql += "  }\n";
+                                            }
+                                            if (!string.IsNullOrEmpty(soptions))
+                                            {
+                                                sparql += "  BIND (\"" + soptions + "\" as ?factOptionSet)\n";
                                             }
                                             sparql += "}\n";
-                                            List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
                                             queries.Add("Query-" + typeName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
                                             count++;
                                         }
@@ -934,16 +953,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             foreach (var combination in combinations)
                                             {
                                                 string sparql = string.Empty;
+                                                string soptions = string.Empty;
                                                 int argCount = 0;
                                                 sparql += "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
                                                 sparql += "PREFIX ddhub: <http://ddhub.no/>\n";
                                                 sparql += "PREFIX quantity: <http://ddhub.no/UnitAndQuantity>\n\n";
+                                                List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
                                                 if (semanticDiracVariableAttribute != null &&
                                                     !string.IsNullOrEmpty(semanticDiracVariableAttribute.ValueVariable) &&
                                                     IsUsed(combination, semanticDiracVariableAttribute.ValueVariable))
                                                 {
                                                     string var1 = ProcessQueryVariable(semanticDiracVariableAttribute.ValueVariable);
-                                                    sparql += "SELECT " + var1 + "\n";
+                                                    sparql += "SELECT " + var1;
                                                     argCount = 1;
                                                 }
                                                 else if (semanticUniformVariableAttribute != null &&
@@ -954,79 +975,43 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string min = ProcessQueryVariable(semanticUniformVariableAttribute.MinValueVariable);
                                                     string max = ProcessQueryVariable(semanticUniformVariableAttribute.MaxValueVariable);
-                                                    sparql += "SELECT " + min + ", " + max + "\n";
+                                                    sparql += "SELECT " + min + ", " + max;
                                                     argCount = 2;
                                                 }
                                                 else if (semanticSensorVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticSensorVariableAttribute.MeanVariable) &&
                                                          IsUsed(combination, semanticSensorVariableAttribute.MeanVariable) &&
-                                                         (!string.IsNullOrEmpty(semanticSensorVariableAttribute.AccuracyVariable) ||
-                                                          semanticSensorVariableAttribute.DefaultAccuracy != null) &&
-                                                         (!string.IsNullOrEmpty(semanticSensorVariableAttribute.PrecisionVariable) ||
-                                                          semanticSensorVariableAttribute.DefaultPrecision != null) &&
-                                                         (string.IsNullOrEmpty(semanticSensorVariableAttribute.AccuracyVariable) ||
-                                                          IsUsed(combination, semanticSensorVariableAttribute.AccuracyVariable)) &&
-                                                         (semanticSensorVariableAttribute.DefaultAccuracy == null ||
-                                                          !IsUsed(combination, semanticSensorVariableAttribute.AccuracyVariable)) &&
-                                                         (string.IsNullOrEmpty(semanticSensorVariableAttribute.PrecisionVariable) ||
-                                                          IsUsed(combination, semanticSensorVariableAttribute.PrecisionVariable)) &&
-                                                         (semanticSensorVariableAttribute.DefaultPrecision == null ||
-                                                          !IsUsed(combination, semanticSensorVariableAttribute.PrecisionVariable)))
+                                                         !string.IsNullOrEmpty(semanticSensorVariableAttribute.AccuracyVariable) &&
+                                                         IsUsed(combination, semanticSensorVariableAttribute.AccuracyVariable) &&
+                                                         !string.IsNullOrEmpty(semanticSensorVariableAttribute.PrecisionVariable) &&
+                                                         IsUsed(combination, semanticSensorVariableAttribute.PrecisionVariable))
                                                 {
                                                     string mean = ProcessQueryVariable(semanticSensorVariableAttribute.MeanVariable);
                                                     sparql += "SELECT " + mean;
                                                     argCount = 1;
-                                                    if (!string.IsNullOrEmpty(semanticSensorVariableAttribute.PrecisionVariable) &&
-                                                        IsUsed(combination, semanticSensorVariableAttribute.PrecisionVariable))
-                                                    {
-                                                        string precision = ProcessQueryVariable(semanticSensorVariableAttribute.PrecisionVariable);
-                                                        sparql += ", " + precision;
-                                                        argCount++;
-                                                    }
-                                                    if (!string.IsNullOrEmpty(semanticSensorVariableAttribute.AccuracyVariable) &&
-                                                        IsUsed(combination, semanticSensorVariableAttribute.AccuracyVariable))
-                                                    {
-                                                        string accuracy = ProcessQueryVariable(semanticSensorVariableAttribute.AccuracyVariable);
-                                                        sparql += ", " + accuracy;
-                                                        argCount++;
-                                                    }
-                                                    sparql += "\n";
-
+                                                    string precision = ProcessQueryVariable(semanticSensorVariableAttribute.PrecisionVariable);
+                                                    sparql += ", " + precision;
+                                                    argCount++;
+                                                    string accuracy = ProcessQueryVariable(semanticSensorVariableAttribute.AccuracyVariable);
+                                                    sparql += ", " + accuracy;
+                                                    argCount++;
                                                 }
                                                 else if (semanticFullScaleVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticFullScaleVariableAttribute.MeanVariable) &&
-                                                         (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.FullScaleVariable) ||
-                                                          semanticFullScaleVariableAttribute.DefaultFullScale != null) &&
-                                                         (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.ProportionErrorVariable) ||
-                                                          semanticFullScaleVariableAttribute.DefaultProportionError != null) &&
-                                                          IsUsed(combination, semanticFullScaleVariableAttribute.MeanVariable) &&
-                                                         (string.IsNullOrEmpty(semanticFullScaleVariableAttribute.FullScaleVariable) ||
-                                                          IsUsed(combination, semanticFullScaleVariableAttribute.FullScaleVariable)) &&
-                                                         (semanticFullScaleVariableAttribute.DefaultFullScale == null ||
-                                                          !IsUsed(combination, semanticFullScaleVariableAttribute.FullScaleVariable)) &&
-                                                         (string.IsNullOrEmpty(semanticFullScaleVariableAttribute.ProportionErrorVariable) ||
-                                                          IsUsed(combination, semanticFullScaleVariableAttribute.ProportionErrorVariable)) &&
-                                                         (semanticFullScaleVariableAttribute.DefaultProportionError == null ||
-                                                          !IsUsed(combination, semanticFullScaleVariableAttribute.ProportionErrorVariable)))
+                                                         !string.IsNullOrEmpty(semanticFullScaleVariableAttribute.FullScaleVariable) &&
+                                                         IsUsed(combination, semanticFullScaleVariableAttribute.FullScaleVariable) &&
+                                                         !string.IsNullOrEmpty(semanticFullScaleVariableAttribute.ProportionErrorVariable) &&
+                                                         IsUsed(combination, semanticFullScaleVariableAttribute.ProportionErrorVariable))
                                                 {
                                                     string mean = ProcessQueryVariable(semanticFullScaleVariableAttribute.MeanVariable);
                                                     sparql += "SELECT " + mean;
                                                     argCount = 1;
-                                                    if (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.FullScaleVariable) &&
-                                                        IsUsed(combination, semanticFullScaleVariableAttribute.FullScaleVariable))
-                                                    {
-                                                        string fullScale = ProcessQueryVariable(semanticFullScaleVariableAttribute.FullScaleVariable);
-                                                        sparql += ", " + fullScale;
-                                                        argCount++;
-                                                    }
-                                                    if (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.ProportionErrorVariable) &&
-                                                        IsUsed(combination, semanticFullScaleVariableAttribute.ProportionErrorVariable))
-                                                    {
-                                                        string proportionError = ProcessQueryVariable(semanticFullScaleVariableAttribute.ProportionErrorVariable);
-                                                        sparql += ", " + proportionError;
-                                                        argCount++;
-                                                    }
-                                                    sparql += "\n";
+                                                    string fullScale = ProcessQueryVariable(semanticFullScaleVariableAttribute.FullScaleVariable);
+                                                    sparql += ", " + fullScale;
+                                                    argCount++;
+                                                    string proportionError = ProcessQueryVariable(semanticFullScaleVariableAttribute.ProportionErrorVariable);
+                                                    sparql += ", " + proportionError;
+                                                    argCount++;
                                                 }
                                                 else if (semanticGaussianVariableAttribute != null &&
                                                         !string.IsNullOrEmpty(semanticGaussianVariableAttribute.MeanVariable) &&
@@ -1046,14 +1031,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                         sparql += ", " + stdDev;
                                                         argCount++;
                                                     }
-                                                    sparql += "\n";
                                                 }
                                                 else if (semanticGeneralDistributionVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticGeneralDistributionVariableAttribute.HistogramVariable) &&
                                                          IsUsed(combination, semanticGeneralDistributionVariableAttribute.HistogramVariable))
                                                 {
                                                     string histoVar = ProcessQueryVariable(semanticGeneralDistributionVariableAttribute.HistogramVariable);
-                                                    sparql += "SELECT " + histoVar + "\n";
+                                                    sparql += "SELECT " + histoVar;
                                                     argCount = 1;
                                                 }
                                                 else if (semanticDeterministicCategoricalVariableAttribute != null &&
@@ -1061,7 +1045,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                          IsUsed(combination, semanticDeterministicCategoricalVariableAttribute.Variable))
                                                 {
                                                     string variable = ProcessQueryVariable(semanticDeterministicCategoricalVariableAttribute.Variable);
-                                                    sparql += "SELECT " + variable + "\n";
+                                                    sparql += "SELECT " + variable;
                                                     argCount = 1;
                                                 }
                                                 else if (semanticDeterministicBernoulliVariableAttribute != null &&
@@ -1069,23 +1053,42 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                          IsUsed(combination, semanticDeterministicBernoulliVariableAttribute.Variable))
                                                 {
                                                     string variable = ProcessQueryVariable(semanticDeterministicBernoulliVariableAttribute.Variable);
-                                                    sparql += "SELECT " + variable + "\n";
+                                                    sparql += "SELECT " + variable;
                                                     argCount = 1;
                                                 }
                                                 else if (semanticBernoulliVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.Variable) &&
                                                          IsUsed(combination, semanticBernoulliVariableAttribute.Variable))
                                                 {
-                                                    string probabilistic = ProcessQueryVariable(semanticBernoulliVariableAttribute.Variable);
-                                                    sparql += "SELECT " + probabilistic + "\n";
+                                                    string variable = ProcessQueryVariable(semanticBernoulliVariableAttribute.Variable);
+                                                    sparql += "SELECT " + variable;
                                                     argCount = 1;
                                                 }
                                                 else if (semanticCategoricalVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.Variable) &&
                                                          IsUsed(combination, semanticCategoricalVariableAttribute.Variable))
                                                 {
-                                                    sparql += "SELECT " + ProcessQueryVariable(semanticCategoricalVariableAttribute.Variable) + "\n";
+                                                    sparql += "SELECT " + ProcessQueryVariable(semanticCategoricalVariableAttribute.Variable);
                                                 }
+                                                if (options.Count > 0)
+                                                {
+                                                    bool first = true;
+                                                    foreach (var option in options)
+                                                    {
+                                                        if (!first)
+                                                        {
+                                                            soptions += ",";
+                                                        }
+                                                        first = false;
+                                                        soptions += option;
+                                                    }
+                                                    if (!string.IsNullOrEmpty(soptions))
+                                                    {
+                                                        sparql += ", " + "?factOptionSet";
+                                                        argCount++;
+                                                    }
+                                                }
+                                                sparql += "\n";
                                                 sparql += "WHERE {\n";
                                                 List<string> alreadyTyped = new List<string>();
                                                 foreach (var fact in combination)
@@ -1115,10 +1118,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                         }
                                                         sparql += GenerateWhereStatement(excluded, alreadyTyped);
                                                     }
-                                                    sparql += "  }";
+                                                    sparql += "  }\n";
+                                                }
+                                                if (!string.IsNullOrEmpty(soptions))
+                                                {
+                                                    sparql += "  BIND (\"" + soptions + "\" as ?factOptionSet)\n";
                                                 }
                                                 sparql += "}\n";
-                                                List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
                                                 queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
                                                 count++;
                                             }

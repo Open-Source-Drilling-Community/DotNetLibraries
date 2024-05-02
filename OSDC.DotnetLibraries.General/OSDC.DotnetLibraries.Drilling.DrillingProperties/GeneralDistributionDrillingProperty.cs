@@ -1,13 +1,6 @@
-﻿using OSDC.DotnetLibraries.General.Statistics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Text.Json;
+﻿using DWIS.Client.ReferenceImplementation;
+using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
@@ -71,7 +64,21 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public GeneralDistributionDrillingProperty(UniformDrillingProperty src) : base(src)
         {
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signals"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public override bool FuseData(List<AcquiredSignals>? signals)
+        {
+            bool ok = false;
+            if (signals != null && signals.Count > 0)
+            {
 
+            }
+            return ok;
+        }
         public override bool Equals(DrillingProperty? cmp)
         {
             if (cmp is not null and GeneralDistributionDrillingProperty drillProp)

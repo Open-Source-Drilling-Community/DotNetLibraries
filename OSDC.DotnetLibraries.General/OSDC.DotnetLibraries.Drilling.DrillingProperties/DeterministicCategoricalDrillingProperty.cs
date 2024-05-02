@@ -1,4 +1,5 @@
-﻿using OSDC.DotnetLibraries.General.Common;
+﻿using DWIS.Client.ReferenceImplementation;
+using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 
@@ -121,7 +122,67 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 DeterministicCategoricalValue = new DeterministicCategoricalDistribution(src.DeterministicCategoricalValue.NumberOfStates);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signals"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public override bool FuseData(List<AcquiredSignals>? signals)
+        {
+            bool ok = false;
+            if (signals != null && signals.Count > 0 && NumberOfStates > 0)
+            {
+                double[] sums = new double[NumberOfStates.Value];
+                double[] products = new double[NumberOfStates.Value];
+                for (int i = 0; i < NumberOfStates.Value; i++)
+                {
+                    sums[i] = 0;
+                    products[i] = 1;
+                }
+                foreach (var signalList in signals)
+                {
+                    if (signalList != null)
+                    {
+                        foreach (var signal in signalList)
+                        {
+                            if (signal.Value != null && signal.Value.Count >= 1)
+                            {
+                                double[]? probabilities = signal.Value[0].GetValue<double[]>();
+                                if (probabilities != null && probabilities.Length == NumberOfStates.Value)
+                                {
+                                    for (int i = 0; i < NumberOfStates.Value; i++)
+                                    {
+                                        sums[i] += probabilities[i];
+                                        products[i] *= probabilities[i];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                double[] probs = new double[NumberOfStates.Value];
+                double max = 0;
+                int imax = 0;
+                for (int i = 0; i < NumberOfStates.Value; i++)
+                {
+                    probs[i] = sums[i] - products[i];
+                    if (probs[i] > max)
+                    {
+                        max = probs[i];
+                        imax = i;
+                    }
+                }
+                for (int i = 0; i < NumberOfStates; i++)
+                {
+                    probs[i] = 0;
+                }
+                probs[imax] = 1;
+                Probabilities = probs;
+                ok = true;
+            }
+            return ok;
+        }
         public override bool Equals(DrillingProperty? cmp)
         {
             if (cmp is not null and DeterministicCategoricalDrillingProperty drillProp)

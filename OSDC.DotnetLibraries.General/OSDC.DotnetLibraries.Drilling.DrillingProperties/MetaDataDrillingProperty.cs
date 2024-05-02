@@ -29,18 +29,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticSensorPrecisionVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public double? SemanticSensorDefaultPrecision { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticSensorAccuracyVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public double? SemanticSensorDefaultAccuracy { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticFullScaleVariable { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public double? SemanticDefaultFullScale { get; set; } = null;
         public string? SemanticProportionErrorVariable { get; set; } = null;
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public double? SemanticDefaultProportionError { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SemanticUniformMinVariable { get; set; } = null;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -129,16 +121,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 if (semanticSensorVariableAttribute != null)
                                 {
                                     metaData.SemanticSensorPrecisionVariable = semanticSensorVariableAttribute.PrecisionVariable;
-                                    metaData.SemanticSensorDefaultPrecision = semanticSensorVariableAttribute.DefaultPrecision;
                                     metaData.SemanticSensorAccuracyVariable = semanticSensorVariableAttribute.AccuracyVariable;
-                                    metaData.SemanticSensorDefaultAccuracy = semanticSensorVariableAttribute.DefaultAccuracy;
                                 }
                                 if (semanticFullScaleVariableAttribute != null)
                                 {
                                     metaData.SemanticFullScaleVariable = semanticFullScaleVariableAttribute.FullScaleVariable;
-                                    metaData.SemanticDefaultFullScale = semanticFullScaleVariableAttribute.DefaultFullScale;
                                     metaData.SemanticProportionErrorVariable = semanticFullScaleVariableAttribute.ProportionErrorVariable;
-                                    metaData.SemanticDefaultProportionError = semanticFullScaleVariableAttribute.DefaultProportionError;
                                 }
                                 if (semanticUniformVariableAttribute != null)
                                 {

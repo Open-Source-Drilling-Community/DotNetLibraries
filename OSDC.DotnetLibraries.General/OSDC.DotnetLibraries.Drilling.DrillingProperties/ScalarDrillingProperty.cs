@@ -9,6 +9,7 @@ using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Reflection;
+using DWIS.Client.ReferenceImplementation;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
@@ -76,6 +77,47 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 
         }
 
+        public override bool FuseData(List<AcquiredSignals>? signals)
+        {
+            if (signals != null && signals.Count > 0)
+            {
+                double sum = 0;
+                int count = 0;
+                foreach (var signalList in signals)
+                {
+                    if (signalList != null)
+                    {
+                        foreach (var signal in signalList)
+                        {
+                            if (signal.Value != null)
+                            {
+                                foreach (var sig in signal.Value)
+                                {
+                                    if (sig != null)
+                                    {
+                                        sum += sig.GetValue<double>();
+                                        count++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (count > 0)
+                {
+                    ScalarValue = sum / count;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
         public override bool Equals(DrillingProperty? cmp)
         {
             if (cmp is not null and ScalarDrillingProperty drillProp)

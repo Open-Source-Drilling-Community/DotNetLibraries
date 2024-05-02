@@ -194,7 +194,6 @@ a zero probability.
 - `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. It is subclass of `CategoricalDrillingProperty` for which
 - te number of states is 2. The `Probability` property is used to define the uncertainty. The `BooleanValue` property
 is true if the `Probability` is greater than 0.5 and false otherwise. 
-- `GeneralDiscreteDrillingProperty`: used to represent a general discrete probability for a boolean value.
 
 ```mermaid
 classDiagram
@@ -204,7 +203,6 @@ classDiagram
     MultinomialDrillingProperty <|-- CategoricalDrillingProperty
     MultinomialDrillingProperty <|-- BinomialDrillingProperty
     BinomialDrillingProperty <|-- BernoulliDrillingProperty
-    DiscreteDrillingProperty <|-- GeneralDiscreteDrillingProperty
     DiscreteDrillingProperty : +DiscreteDrillingDistribution Value
     DiscreteDrillingProperty : +bool? Realize()
     class DeterministicCategoricalDrillingProperty {
@@ -233,8 +231,6 @@ classDiagram
     }
     class BernoulliDrillingProperty {
         +BernoulliDistribution BernoulliValue
-    }
-    class GeneralDiscreteDrillingProperty {
     }
 end
 ```
@@ -276,12 +272,10 @@ property.
  that is used as the `Mean` value of this property. The second argument is the name of a `DrillingSignal` used in the semantic facts
  and that is used as the `StandardDeviation` value of this property. The third one is a default 
  value for the `StandardDeviation`.
-- `SemanticSensorVariableAttribute`: It takes from 3 to 5 arguments. The three string arguments are
-respectively the variable names for the `Mean`, `Precision` and `Accuracy`. The two double arguments are
-respectively the default values for the `Precision` and `Accuracy`.
-- `SemanticFullScaleAttribute`: It takes from 3 to 5 arguments. The three string arguments are
-respectively the variable names for the `Mean`, `FullScale` and `ProportionError`. The two double  arguments are
-respectively the default values for the `FullScale` and `ProportionError`.
+- `SemanticSensorVariableAttribute`: It takes 3 arguments. The three string arguments are
+respectively the variable names for the `Mean`, `Precision` and `Accuracy`.
+- `SemanticFullScaleAttribute`: It takes 3 arguments. The three string arguments are
+respectively the variable names for the `Mean`, `FullScale` and `ProportionError`. 
 - `SemanticUniformVariableAttribute`: It takes two arguments that are the names of a `DrillingSignal` used in the semantic facts
 that are used as the `Min` and the `Max` value of this property.
 - `SemanticGeneralDistributionVariableAttribute`: It takes one argument that is the name of a `DrillingSignal` used in the semantic facts
@@ -844,6 +838,7 @@ namespace DrillingProperties
 
 The result from generating this program is:
 # Semantic Queries for `FluidDensitySetPoint`
+# Semantic Queries for `FluidDensitySetPoint`
 ## Query-DrillingProperties.TestClass-FluidDensitySetPoint-000
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -911,7 +906,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev
+SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev, ?factOptionSet
 WHERE {
 	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
@@ -924,6 +919,7 @@ WHERE {
 	?FluidDensityEstimatedStdDev#01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
 	?FDEUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev#01 .
 	?FDEUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityEstimated#01 .
+  BIND ("1" as ?factOptionSet)
 }
 
 ```
@@ -953,7 +949,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured
+SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured, ?factOptionSet
 WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -969,6 +965,7 @@ WHERE {
 	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
 	?FluidDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
 	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured#01 .
+  BIND ("1" as ?factOptionSet)
 }
 
 ```
@@ -978,7 +975,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured
+SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured, ?factOptionSet
 WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -995,6 +992,7 @@ WHERE {
 	?FluidDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
 	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured#01 .
 	?GaussianUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
+  BIND ("1,11" as ?factOptionSet)
 }
 
 ```
@@ -1004,7 +1002,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc, ?factOptionSet
 WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1024,6 +1022,7 @@ WHERE {
 	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?FluidDensityMeasured_prec#01 .
 	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc#01 .
 	?FluidDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
+  BIND ("2" as ?factOptionSet)
 }
 
 ```
@@ -1033,7 +1032,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc, ?factOptionSet
 WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1054,6 +1053,7 @@ WHERE {
 	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc#01 .
 	?FluidDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
 	?SensorUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
+  BIND ("2,21" as ?factOptionSet)
 }
 
 ```
@@ -1063,7 +1063,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop, ?factOptionSet
 WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1083,6 +1083,7 @@ WHERE {
 	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
 	?FluidDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
+  BIND ("3" as ?factOptionSet)
 }
 
 ```
@@ -1092,7 +1093,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop
+SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop, ?factOptionSet
 WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1113,6 +1114,7 @@ WHERE {
 	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
 	?FluidDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
 	?FullScaleUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
+  BIND ("3,31" as ?factOptionSet)
 }
 
 ```
@@ -1142,7 +1144,8 @@ WHERE {
   FILTER NOT EXISTS {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-  }}
+  }
+}
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-001
@@ -1151,7 +1154,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured
+SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured, ?factOptionSet
 WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1176,7 +1179,9 @@ WHERE {
   FILTER NOT EXISTS {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-  }}
+  }
+  BIND ("1" as ?factOptionSet)
+}
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-002
@@ -1185,7 +1190,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured
+SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured, ?factOptionSet
 WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1211,7 +1216,9 @@ WHERE {
   FILTER NOT EXISTS {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-  }}
+  }
+  BIND ("1,11" as ?factOptionSet)
+}
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-003
@@ -1220,7 +1227,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc, ?factOptionSet
 WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1249,7 +1256,9 @@ WHERE {
   FILTER NOT EXISTS {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-  }}
+  }
+  BIND ("2" as ?factOptionSet)
+}
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-004
@@ -1258,7 +1267,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc, ?factOptionSet
 WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1288,7 +1297,9 @@ WHERE {
   FILTER NOT EXISTS {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-  }}
+  }
+  BIND ("2,21" as ?factOptionSet)
+}
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-005
@@ -1297,7 +1308,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop, ?factOptionSet
 WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1326,7 +1337,9 @@ WHERE {
   FILTER NOT EXISTS {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-  }}
+  }
+  BIND ("3" as ?factOptionSet)
+}
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-006
@@ -1335,7 +1348,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ddhub: <http://ddhub.no/>
 PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop
+SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop, ?factOptionSet
 WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
@@ -1365,7 +1378,9 @@ WHERE {
   FILTER NOT EXISTS {
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
 	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-  }}
+  }
+  BIND ("3,31" as ?factOptionSet)
+}
 
 ```
 

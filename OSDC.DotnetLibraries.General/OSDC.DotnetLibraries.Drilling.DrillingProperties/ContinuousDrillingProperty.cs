@@ -1,4 +1,5 @@
-﻿using OSDC.DotnetLibraries.General.Statistics;
+﻿using DWIS.Client.ReferenceImplementation;
+using OSDC.DotnetLibraries.General.Statistics;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
@@ -27,7 +28,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
             }
         }
-
+   
         /// <summary>
         /// Draw a value according to the probability distribution defined in Value
         /// </summary>
