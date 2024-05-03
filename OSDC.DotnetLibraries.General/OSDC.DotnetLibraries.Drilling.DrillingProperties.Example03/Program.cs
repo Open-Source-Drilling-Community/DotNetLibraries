@@ -44,7 +44,7 @@ namespace DrillingProperties
         [SemanticFact("VerticalDepthFrame", Verbs.Enum.HasReferenceFrameOrigin, "DrillFloorDatum")]
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.HasReferenceFrame, "VerticalDepthFrame")]
         [SemanticFact("BlockPositionSP#01", Verbs.Enum.IsMechanicallyLocatedAt, "Elevator#01")]
-        [SemanticFact("Elevator#01",  Nouns.Enum.Elevator)]
+        [SemanticFact("Elevator#01",  Nouns.Enum.DrillPipeElevator)]
         public ScalarDrillingProperty BlockPositionSetPoint { get; set; } = new ScalarDrillingProperty();
 
         [AccessToVariable(CommonProperty.VariableAccessType.Assignable)]
