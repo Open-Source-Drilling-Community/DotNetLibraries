@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>10.1.1</Version>
+    <Version>10.1.2</Version>
     <Title>A library to define drilling properties with their physical quantity, uncertainty and possible references</Title>
     <Authors>Eric Cayeux</Authors>
     <Company>NORCE Norwegian Research Centre</Company>
@@ -17,7 +17,7 @@
     <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.0.0" />
     <PackageReference Include="DWIS.Vocabulary.Schemas" Version="1.0.123" />
     <PackageReference Include="OSDC.DotnetLibraries.General.Statistics" Version="3.1.0" />
-    <PackageReference Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="1.0.29" />
+    <PackageReference Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="1.0.30" />
   </ItemGroup>
 
   <ItemGroup>
