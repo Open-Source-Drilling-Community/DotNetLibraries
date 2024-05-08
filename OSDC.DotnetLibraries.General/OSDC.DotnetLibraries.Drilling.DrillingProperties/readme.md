@@ -191,9 +191,7 @@ that allows to access with the correct type the underlying statistical probabili
 state the drilling property can take. It should be at least 2. The `Probabilities` property defines the probability of each of the states.
 The `StateValue` tells which state has the largest probability. If assigned, then that state gets a probability of 1 and all the others 
 a zero probability.
-- `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. It is subclass of `CategoricalDrillingProperty` for which
-- te number of states is 2. The `Probability` property is used to define the uncertainty. The `BooleanValue` property
-is true if the `Probability` is greater than 0.5 and false otherwise. 
+- `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. It is subclass of `CategoricalDrillingProperty` for which the number of states is 2. The `Probability` property is used to define the uncertainty. The `BooleanValue` property is true if the `Probability` is greater than 0.5 and false otherwise. 
 
 ```mermaid
 classDiagram
