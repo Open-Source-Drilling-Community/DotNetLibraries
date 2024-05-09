@@ -19,7 +19,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 ManifestFile? manifestFile = null;
                 foreach (Type type in types)
                 {
-                    if (type.FullName == typeName && type.IsClass)
+                    if (type.FullName == typeName)
                     {
                         var workingSemanticFactAttributes = type.GetCustomAttributes<SemanticFactAttribute>();
                         var optionalFactAttributes = type.GetCustomAttributes<OptionalFactAttribute>();
