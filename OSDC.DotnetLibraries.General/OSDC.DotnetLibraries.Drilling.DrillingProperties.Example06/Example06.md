@@ -45,3 +45,20 @@ flowchart TD
 	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) -- http://ddhub.no/HasUncertaintyMean --> Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]):::classClass
 ```
 
+# Semantic Graph for `AxialVelocityTopOfString`
+```mermaid
+flowchart TD
+	 classDef typeClass fill:#f96;
+	 classDef classClass fill:#9dd0ff;
+	 classDef opcClass fill:#ff9dd0;
+	 classDef quantityClass fill:#d0ff9d;
+	Test:AxialVelocityTopOfString([Test:AxialVelocityTopOfString]) --> opc:array_of_3_double([opc:array_of_3_double]):::opcClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) --> ComputedData([ComputedData]):::typeClass
+	Test:tos_01([Test:tos_01]) --> TopOfStringReferenceLocation([TopOfStringReferenceLocation]):::typeClass
+	Test:MovingAverage([Test:MovingAverage]) --> MovingAverage([MovingAverage]):::typeClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/BelongsToClass --> http://ddhub.no/EnumerationDataType([http://ddhub.no/EnumerationDataType]):::classClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/HasDynamicValue --> Test:AxialVelocityTopOfString([Test:AxialVelocityTopOfString]):::classClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/IsPhysicallyLocatedAt --> Test:tos_01([Test:tos_01]):::classClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
+```
+
