@@ -1,4 +1,4 @@
-![image](https://github.com/Open-Source-Drilling-Community/DotNetLibraries/assets/91899139/83e38db2-1557-4f17-a06a-65b1afae34b3)﻿# Background
+# Background
 This package is developed as part of the Society of Petroleum (SPE) Open Source Drilling Community, a sub-committee of the Drilling System Automation Technical Section.
 This package contains classes to perform survey calculations.
 
