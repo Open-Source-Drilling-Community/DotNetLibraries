@@ -1,4 +1,4 @@
-﻿# Background
+# Background
 This package is developed as part of the Society of Petroleum (SPE) Open Source Drilling Community, a sub-committee of the Drilling System Automation Technical Section.
 This package contains classes to perform survey calculations.
 
@@ -30,7 +30,7 @@ The hypothesis behind the minimum curvature method to calculate the position of 
 This circular arc is contained in a plane defined by two vectors: the tangent of the starting `Survey` and the rotated vertical upward vector with the angle $\omega$
 corresponding to the initial toolface of the circular arc using the tangent as the axis of the rotation. The projection of this circular arc on the horizontal plane
 is an arc of an ellipse. This ellipse is defined by a center, a semi-long and a semi-short axes. The length of this arc of ellipse is the difference of curvilinear abscissas
-in the longitudinal profile direction. To calculate the length of the arc of ellipse, it is necessary to recourse to an elliptical intergral of the second kind.
+in the longitudinal profile direction. To calculate the length of the arc of ellipse, it is necessary to recourse to an elliptical integral of the second kind.
 
 ![Projection of a circular arc between two Survey into the horizontal plane](LongitudinalProfileArcConversion.JPG)
 
@@ -67,11 +67,11 @@ It is desirable to keep the meaning of `Z` to be a depth in the vertical directi
 but with a physical quantity of dimension Length. The solution adopted is that `X` is the length of the arc following the meridian at that 
 `Longitude` and originating from the equator and counted positively in the North direction. Similarly, `Y` is the length of the arc following the parallel 
 at that `Latitude` and originating from the Greenwich meridian and counted positively in the East direction. In other words, `X` and `Y` are coordinates
-in a Riemannian manifold defined the Earth spheroid. Therefore two synonym properties are introduced: `RiemannianNorth`which corresponds to `X`
+in a Riemannian manifold defined on the Earth spheroid. Therefore two synonym properties are introduced: `RiemannianNorth`which corresponds to `X`
 and `RiemannianEast` which corresponds to `Y`.
 
 As a reminder, a manifold is a topological space that locally resembles an Euclidian space near each point. A smooth
-manifold is a differentiable manifold that is locally similar to a vector space to allow the application of calculus. A Riemannian manifold is a smooth manifold
+manifold is a differentiable manifold that is locally similar to a vector space to allow the application of differential calculus. A Riemannian manifold is a smooth manifold
 equipped with a positive-definite inner product on the tangent space at each point of the manifold, and therefore that allows to work with metrics.
 
 The next section explains how `Latitude` and `Longitude` are converted to `X` and `Y`.
@@ -100,9 +100,9 @@ Conversely, to retrieve the latitude and longitude from the $x$ and $y$ coordina
 $\phi = E^{-1}(\frac{x}{a}, e^2)$ and $\lambda = \frac{y}{R(\phi)}$.
 
 The elliptic integral of the second kind is calculated using the special function defined in `OSDC.DotnetLibraries.General.Math`, 
-namely `SpecialFunctions.EllipticE(phi, m)` and its inverse is `Elliptic.InverseEllipticE(x, m)`.
+namely `SpecialFunctions.EllipseE(phi, m)` and its inverse is `Elliptic.InverseEllipseE(x, m)`.
 
-For short lateral displacements, considering that `X` and `Y` are cartesian coordinates does not introduce much error. This is actually what is assumed
+For short lateral displacements, considering that `X` and `Y` are cartesian coordinates does not introduce much error (typically 0.15m error between the bottom of two 1km-depth wells, distant by 1km in `X` or `Y`; error being roughly proportional to either `X`, `Y`, or `Z`). This is actually what is assumed
 by most Earth Model software used in E&P applications. So `X` and `Y` can be considered as respectively a sort of Northing and Easting coordinate.
 
 
@@ -187,7 +187,7 @@ Sawaryn and Thorogood (2005) ([https://doi.org/10.2118/84246-PA](https://doi.org
 the build-up rate and the turn rate are usually not constant along a circular arc. Therefore they are estimated between the interpolated point and the final point 
 of the circular arc.
 
-There is also a method to interpolate either a `CurvilinearPoint3D` or a `Survey` in between a `Survey` and `ICurvilinear3D` using the minimum curvature method. This is method
+There is also a method to interpolate either a `CurvilinearPoint3D` or a `Survey` in between a `Survey` and a `ICurvilinear3D` using the minimum curvature method. This method
 is called `InterpolateAtAbscissa`. If the requested result is a `Survey`, then the `Curvature`, `Toolface`, `BUR` and `TUR are also calculated locally.
 
 Here is an example illustrating how these methods can be used.
@@ -425,9 +425,9 @@ A `SurveyStationList` is a list of `SurveyStation`. It provides the following me
 
 ## Realization of a SurveyStationList
 A `SurveyStationList` has covariance matrices for each of its `SurveyStation`, meaning that a true trajectory can be anywhere in the surrounding of the
-`SurveyStationList`. Yet, the covariance matrices correspond mostly to systematic errors that are probagated all along the series of measurements. So a realized
+`SurveyStationList`. Yet, the covariance matrices correspond mostly to systematic errors that are propagated all along the series of measurements. So a realized
 trajectory must respect a consistency compared to those covariance matrices. The method `Realize` produces a `SurveyList`, i.e., a list of `Survey`. There is
-indeed no needs anymore to have information about the covariances in the realized trajectory. The generation algorithm is the following:
+indeed no need to have information about the covariances in the realized trajectory anymore. The generation algorithm is the following:
 
 1. The last `SurveyStation` of the `SurveyStationList`, indexed $n$, is used to draw randomly a point according to the probability distribution associated with this `SurveyStation`.
 For that purpose, the covariance matrix is diagonalized and the principal components are calculated. The eigenvalues are the variances in the three principal
@@ -435,8 +435,8 @@ directions, ${\sigma_{x_n}}^2, {\sigma_{y_n}}^2, {\sigma_{z_n}}^2$, with $x_n, y
 Three Gaussian probability distributions are created with zero mean and a variance equal to the eigen values, 
 $\mathcal{N}(0,{\sigma_{x_n}}^2),  \mathcal{N}(0,{\sigma_{y_n}}^2), \mathcal{N}(0,{\sigma_{z_n}}^2)$. Three values are drawn using these probability distributions, 
 $x_n, y_n, z_n$ . The $\chi^2_{3_n}$ corresponding to this position is calculated using the following relation: 
-$${\frac{x_n^2}{{\sigma_{x_n}}^2}+\frac{y_n^2}{{\sigma_{y_n}}^2}+\frac{z_n^2}{{\sigma_{z_n}}^2}}={\chi^2_{3_n}}$$. The calculated $\chi^2_{3_n}$
-is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $\chi^2_{3_n}$. The latitude and longitude
+$${\frac{x_n^2}{{\sigma_{x_n}}^2}+\frac{y_n^2}{{\sigma_{y_n}}^2}+\frac{z_n^2}{{\sigma_{z_n}}^2}}={\chi^2_{3_n}}$$
+The calculated $\chi^2_{3_n}$ is related to the confidence factor that the true `Survey` is within the ellipsoid delineated by $\chi^2_{3_n}$. The latitude and longitude
 of that point are calculated using an instance of `SphericalPoint3D`. They are denoted respectively $\phi_n$ and $\lambda_n$. The 
 randomly drawn point around the `SurveyStation` is then converted to a `Survey` in the Riemaniann manifold representing the Earth, using
 the inverse transformation based on the eigenvectors.
@@ -456,7 +456,7 @@ matrix. This operation generates a list of `Survey` for which the `RiemaniannNor
 ![Schematic representation of the second step of the procedure to generate a realization of a SurveyStationList](RealizationSecondStep.JPG)
 
 3. The last operation consists in calculating the `Inclination`, `Azimuth` and `Abscissa` at each `Survey`. From top to bottom, the list
-is transversed and a circular arcj is calculated that links the previous `Survey`, which is fully defined, with the current `Survey`, 
+is traversed and a circular arc is calculated that links the previous `Survey`, which is fully defined, with the current `Survey`, 
 which is only known by its `RiemaniannNorth`, `RiemaniannEast` and `TVD`. Knowing the circular arc, it is the possible to calculate the
 length of the arc, i.e., derive the `Abscissa`, the `Inclination` and the `Azimuth`.
 
@@ -484,7 +484,7 @@ Two methods are available to generate series of horizontal and vertical projecti
 ## Extremum Survey lists in Depth
 Two `SurveyList` can be calculated corresponding to the shallowest and the deepest trajectories at a given confidence factor. The last survey point
 is used to calculate the shallowest and deepest TVD on the ellipsoid of uncertainty. The corresponding latitude and longitude of those points in 
-the local reference frame of the ellipsoide are then used to generate the `SurveyList` in an identical way as the realization of `SurveyList` using 
+the local reference frame of the ellipsoid are then used to generate the `SurveyList` in an identical way as the realization of `SurveyList` using 
 the `Covariance` matrices.
 
 ![Extremum survey lists in depth](ExtremumSurveyListInDepth.JPG)
