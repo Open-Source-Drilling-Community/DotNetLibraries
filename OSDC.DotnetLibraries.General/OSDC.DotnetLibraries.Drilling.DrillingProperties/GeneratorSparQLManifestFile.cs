@@ -242,7 +242,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         foreach (PropertyInfo property in properties)
                         {
                             if (property.Name == propertyName &&
-                                (property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty))))
+                                (true || property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty))))
                             {
                                 var workingSemanticFactAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
                                 var optionalFactAttributes = property.GetCustomAttributes<OptionalFactAttribute>();
