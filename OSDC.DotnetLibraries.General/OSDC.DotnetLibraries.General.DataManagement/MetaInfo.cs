@@ -50,7 +50,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaInfo(Guid id) :
-            this(id, string.Empty, string.Empty, string.Empty, string.Empty)
+            this(id, string.Empty, string.Empty, string.Empty)
         {
         }
 
