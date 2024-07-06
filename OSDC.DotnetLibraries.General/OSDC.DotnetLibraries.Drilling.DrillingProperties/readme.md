@@ -191,9 +191,7 @@ that allows to access with the correct type the underlying statistical probabili
 state the drilling property can take. It should be at least 2. The `Probabilities` property defines the probability of each of the states.
 The `StateValue` tells which state has the largest probability. If assigned, then that state gets a probability of 1 and all the others 
 a zero probability.
-- `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. It is subclass of `CategoricalDrillingProperty` for which
-- te number of states is 2. The `Probability` property is used to define the uncertainty. The `BooleanValue` property
-is true if the `Probability` is greater than 0.5 and false otherwise. 
+- `BernoulliDrillingProperty`: used to represent a boolean value with an uncertainty. It is subclass of `CategoricalDrillingProperty` for which the number of states is 2. The `Probability` property is used to define the uncertainty. The `BooleanValue` property is true if the `Probability` is greater than 0.5 and false otherwise. 
 
 ```mermaid
 classDiagram
@@ -1463,6 +1461,20 @@ namespace DrillingProperties
         [OptionalFact(3, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "FullScaleUncertainty#01")]
         [OptionalFact(3, 31, "FullScaleUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
         public SensorDrillingProperty FluidDensityMeasured { get; set; } = new SensorDrillingProperty();
+
+        [AccessToVariable(CommonProperty.VariableAccessType.Readable)]
+        [Mandatory(CommonProperty.MandatoryType.General)]
+        [SemanticCategoricalVariable("AxialVelocityTopOfString", 3)]
+        [SemanticFact("AxialVelocityTopOfString", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("AxialVelocityTopOfString#01", Nouns.Enum.ComputedData)]
+        [SemanticFact("AxialVelocityTopOfString#01", Nouns.Enum.EnumerationDataType)]
+        [SemanticFact("AxialVelocityTopOfString#01", Verbs.Enum.HasDynamicValue, "AxialVelocityTopOfString")]
+        [SemanticFact("tos#01", Nouns.Enum.TopOfStringReferenceLocation)]
+        [SemanticFact("AxialVelocityTopOfString#01", Verbs.Enum.IsPhysicallyLocatedAt, "tos#01")]
+        [SemanticFact("MovingAverage", Nouns.Enum.MovingAverage)]
+        [SemanticFact("AxialVelocityTopOfString#01", Verbs.Enum.IsTransformationOutput, "MovingAverage")]
+        public CategoricalDrillingProperty AxialVelocityTopOfString { get; set; } = new CategoricalDrillingProperty(3);
+
     }
     class Example
     {
@@ -1498,6 +1510,11 @@ namespace DrillingProperties
                         if (manifestFile2 != null)
                         {
                             GenerateMermaidForMD(writer, "FluidDensityMeasured", GeneratorSparQLManifestFile.GetMermaid(manifestFile2));
+                        }
+                        var manifestFile3 = GeneratorSparQLManifestFile.GetManifestFile(assembly, typeof(TestClass).FullName, "AxialVelocityTopOfString", "SampleManifest", "ExampleCompany", "Test:");
+                        if (manifestFile3 != null)
+                        {
+                            GenerateMermaidForMD(writer, "AxialVelocityTopOfString", GeneratorSparQLManifestFile.GetMermaid(manifestFile3));
                         }
                     }
                 }
@@ -1552,6 +1569,23 @@ flowchart TD
 	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) -- http://ddhub.no/HasUncertaintyAccuracy --> Test:FluidDensityMeasured_acc_01([Test:FluidDensityMeasured_acc_01]):::classClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasUncertainty --> Test:SensorUncertainty_01([Test:SensorUncertainty_01]):::classClass
 	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) -- http://ddhub.no/HasUncertaintyMean --> Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]):::classClass
+```
+
+## Semantic Graph for `AxialVelocityTopOfString`
+```mermaid
+flowchart TD
+	 classDef typeClass fill:#f96;
+	 classDef classClass fill:#9dd0ff;
+	 classDef opcClass fill:#ff9dd0;
+	 classDef quantityClass fill:#d0ff9d;
+	Test:AxialVelocityTopOfString([Test:AxialVelocityTopOfString]) --> opc:array_of_3_double([opc:array_of_3_double]):::opcClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) --> ComputedData([ComputedData]):::typeClass
+	Test:tos_01([Test:tos_01]) --> TopOfStringReferenceLocation([TopOfStringReferenceLocation]):::typeClass
+	Test:MovingAverage([Test:MovingAverage]) --> MovingAverage([MovingAverage]):::typeClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/BelongsToClass --> http://ddhub.no/EnumerationDataType([http://ddhub.no/EnumerationDataType]):::classClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/HasDynamicValue --> Test:AxialVelocityTopOfString([Test:AxialVelocityTopOfString]):::classClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/IsPhysicallyLocatedAt --> Test:tos_01([Test:tos_01]):::classClass
+	Test:AxialVelocityTopOfString_01([Test:AxialVelocityTopOfString_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
 ```
 It can be noted that even though there both `SemanticGaussianVariable`, `SemanticSensorVariable` and `SemanticFullScaleVariable`
 are defined as attributes to the property `FluidDensityMeasured`, only the variables defined by `SemanticSensorVariable` are used

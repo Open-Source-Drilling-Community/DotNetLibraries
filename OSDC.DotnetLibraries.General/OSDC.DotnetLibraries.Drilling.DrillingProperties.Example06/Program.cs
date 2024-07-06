@@ -67,6 +67,20 @@ namespace DrillingProperties
         [OptionalFact(3, "FluidDensityMeasured#01", Verbs.Enum.HasUncertainty, "FullScaleUncertainty#01")]
         [OptionalFact(3, 31, "FullScaleUncertainty#01", Verbs.Enum.HasUncertaintyMean, "FluidDensityMeasured#01")]
         public SensorDrillingProperty FluidDensityMeasured { get; set; } = new SensorDrillingProperty();
+
+        [AccessToVariable(CommonProperty.VariableAccessType.Readable)]
+        [Mandatory(CommonProperty.MandatoryType.General)]
+        [SemanticCategoricalVariable("AxialVelocityTopOfString", 3)]
+        [SemanticFact("AxialVelocityTopOfString", Nouns.Enum.DynamicDrillingSignal)]
+        [SemanticFact("AxialVelocityTopOfString#01", Nouns.Enum.ComputedData)]
+        [SemanticFact("AxialVelocityTopOfString#01", Nouns.Enum.EnumerationDataType)]
+        [SemanticFact("AxialVelocityTopOfString#01", Verbs.Enum.HasDynamicValue, "AxialVelocityTopOfString")]
+        [SemanticFact("tos#01", Nouns.Enum.TopOfStringReferenceLocation)]
+        [SemanticFact("AxialVelocityTopOfString#01", Verbs.Enum.IsPhysicallyLocatedAt, "tos#01")]
+        [SemanticFact("MovingAverage", Nouns.Enum.MovingAverage)]
+        [SemanticFact("AxialVelocityTopOfString#01", Verbs.Enum.IsTransformationOutput, "MovingAverage")]
+        public CategoricalDrillingProperty AxialVelocityTopOfString { get; set; } = new CategoricalDrillingProperty(3);
+
     }
     class Example
     {
@@ -102,6 +116,11 @@ namespace DrillingProperties
                         if (manifestFile2 != null)
                         {
                             GenerateMermaidForMD(writer, "FluidDensityMeasured", GeneratorSparQLManifestFile.GetMermaid(manifestFile2));
+                        }
+                        var manifestFile3 = GeneratorSparQLManifestFile.GetManifestFile(assembly, typeof(TestClass).FullName, "AxialVelocityTopOfString", "SampleManifest", "ExampleCompany", "Test:");
+                        if (manifestFile3 != null)
+                        {
+                            GenerateMermaidForMD(writer, "AxialVelocityTopOfString", GeneratorSparQLManifestFile.GetMermaid(manifestFile3));
                         }
                     }
                 }

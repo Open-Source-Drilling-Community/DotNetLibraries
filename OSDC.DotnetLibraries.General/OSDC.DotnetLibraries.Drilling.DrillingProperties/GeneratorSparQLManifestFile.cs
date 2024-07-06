@@ -19,7 +19,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 ManifestFile? manifestFile = null;
                 foreach (Type type in types)
                 {
-                    if (type.FullName == typeName && type.IsClass)
+                    if (type.FullName == typeName)
                     {
                         var workingSemanticFactAttributes = type.GetCustomAttributes<SemanticFactAttribute>();
                         var optionalFactAttributes = type.GetCustomAttributes<OptionalFactAttribute>();
@@ -217,8 +217,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                             }
                         }
                     }
-                    return manifestFile;
                 }
+                return manifestFile;
             }
             return null;
         }
@@ -235,14 +235,14 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 ManifestFile? manifestFile = null;
                 foreach (Type type in types)
                 {
-                    if (type.FullName == typeName && type.IsClass)
+                    if (type.FullName == typeName)
                     {
                         PropertyInfo[] properties = type.GetProperties();
                         // Print property information
                         foreach (PropertyInfo property in properties)
                         {
                             if (property.Name == propertyName &&
-                                (property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty))))
+                                (true || property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty))))
                             {
                                 var workingSemanticFactAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
                                 var optionalFactAttributes = property.GetCustomAttributes<OptionalFactAttribute>();
@@ -593,8 +593,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                             }
                         }
                     }
-                    return manifestFile;
                 }
+                return manifestFile;
             }
             return null;
         }
@@ -621,18 +621,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         string opcClass = "opc:";
                         if (v.Dimensions != null)
                         {
-                            opcClass += "[";
+                            opcClass += "array_of_";
                             bool first = true;
                             foreach (var k in v.Dimensions)
                             {
                                 if (!first)
                                 {
-                                    opcClass += ", ";
+                                    opcClass += "_";
                                     first = false;
                                 }
                                 opcClass += k.ToString();
                             }
-                            opcClass += "]";
+                            opcClass += "_" + v.DataType;
                         }
                         else
                         {
