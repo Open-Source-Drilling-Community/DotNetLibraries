@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Linq;
 
 namespace OSDC.DotnetLibraries.General.DataManagement
 {
@@ -16,17 +15,17 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// the http host name to access the data in a service oriented architecture (ex: "http://my-server:80/"), suffixed with "/"
         /// </summary>
-        public string HttpHostName { get; set; } = string.Empty;
+        public string? HttpHostName { get; set; }
 
         /// <summary>
         /// the http host base path of the microservice (ex: "DrillingUnitConversion/api/"), suffixed with "/"
         /// </summary>
-        public string HttpHostBasePath { get; set; } = string.Empty;
+        public string? HttpHostBasePath { get; set; }
 
         /// <summary>
         /// the http end point to append to the HttpHostBasePath to locate the data (ex: "DrillingUnitChoiceSets/"), suffixed with "/"
         /// </summary>
-        public string HttpEndPoint { get; set; } = string.Empty;
+        public string? HttpEndPoint { get; set; }
 
         /// <summary>
         /// default constructor
@@ -38,7 +37,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// <summary>
         /// constructor
         /// </summary>
-        public MetaInfo(Guid id, string httpHostName, string httpHostBasePath, string httpEndPoint)
+        public MetaInfo(Guid id, string? httpHostName, string? httpHostBasePath, string? httpEndPoint)
         {
             ID = id;
             HttpHostName = httpHostName;
@@ -50,7 +49,7 @@ namespace OSDC.DotnetLibraries.General.DataManagement
         /// constructor
         /// </summary>
         public MetaInfo(Guid id) :
-            this(id, string.Empty, string.Empty, string.Empty)
+            this(id, null, null, null)
         {
         }
 
