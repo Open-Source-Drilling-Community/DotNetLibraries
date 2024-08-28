@@ -13,6 +13,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
     {
         private double? latitude_ = null;
         private double? longitude_ = null;
+        public static readonly double InterpolationDeltaAbscissa = 0.01;
+        public static double CompleteCTCSDT1Step = 0.1;
+        public static int CompleteCTCSDT2Count = 1000;
 
         /// <summary>
         /// synonym of Abscsissa
@@ -377,7 +380,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             next.Z = z1 + 0.5 * dm * rf * (ci1 + ci2);
             next.Curvature = dl / dm;
             CurvilinearPoint3D prev = new CurvilinearPoint3D();
-            double ds = 0.1;
+            double ds = InterpolationDeltaAbscissa;
             if (InterpolateAtAbscissa(next, next.Abscissa.Value - ds, prev))
             {
                 if (prev.Inclination != null && prev.Azimuth != null)
@@ -389,7 +392,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     sa12 = System.Math.Sin(next.Azimuth.Value - prev.Azimuth.Value);
                     double ca12 = System.Math.Cos(next.Azimuth.Value - prev.Azimuth.Value);
                     double denom = si2 * ci1 * ca12 - si1 * ci2;
-                    next.Toolface = System.Math.Atan2(denom, si2 * sa12);
+                    next.Toolface = System.Math.Atan2(si2 * sa12, denom);
 
                     next.BUR = (next.Inclination - prev.Inclination) / ds;
                     if (next.Azimuth != null &&
@@ -620,7 +623,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             }
                             next.Curvature = dls;
                             CurvilinearPoint3D prev = new CurvilinearPoint3D();
-                            double ds = 0.1;
+                            double ds = InterpolationDeltaAbscissa;
                             if (InterpolateAtAbscissa(next, next.Abscissa.Value - ds, prev))
                             {
                                 if (prev.Inclination != null && prev.Azimuth != null)
@@ -632,7 +635,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                     double sa12 = System.Math.Sin(next.Azimuth.Value - prev.Azimuth.Value);
                                     double ca12 = System.Math.Cos(next.Azimuth.Value - prev.Azimuth.Value);
                                     double denom = si2 * ci1 * ca12 - si1 * ci2;
-                                    next.Toolface = System.Math.Atan2(denom, si2 * sa12);
+                                    next.Toolface = System.Math.Atan2(si2 * sa12, denom);
 
                                     next.BUR = (next.Inclination - prev.Inclination) / ds;
                                     if (next.Azimuth != null &&
@@ -673,6 +676,243 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
         }
 
+        public bool CompleteCASDT(CurvilinearPoint3D? next, double dls, double TF)
+        {
+            if ((next == null) ||
+                IsUndefined() ||
+                Inclination == null ||
+                Azimuth == null ||
+                Abscissa == null ||
+                next.Abscissa == null ||
+                Numeric.IsUndefined(next.Abscissa))
+            {
+                return false;
+            }
+            else if (Numeric.EQ(dls, 0.0))
+            {
+                CurvilinearPoint3D f = next;
+                double dm = f.Abscissa.Value - Abscissa.Value;
+                double si = Math.Sin(Inclination.Value);
+                f.Inclination = Inclination;
+                f.Azimuth = Azimuth;
+                f.X = X + dm * si * Math.Cos(Azimuth.Value);
+                f.Y = Y + dm * si * Math.Sin(Azimuth.Value);
+                f.Z = Z + dm * Math.Cos(Inclination.Value);
+                return true;
+            }
+            else if (Numeric.EQ(Inclination, 0.0))
+            {
+                CurvilinearPoint3D f = next;
+                double dm = f.Abscissa.Value - Abscissa.Value;
+                f.Inclination = dm * dls;
+                f.Azimuth = TF;
+                f.X = X + Math.Cos(f.Azimuth.Value) * (1 - Math.Cos(f.Inclination.Value)) / dls;
+                f.Y = Y + Math.Sin(f.Azimuth.Value) * (1 - Math.Cos(f.Inclination.Value)) / dls;
+                f.Z = Z + Math.Sin(f.Inclination.Value) / dls;
+                return true;
+            }
+            else
+            {
+                CurvilinearPoint3D p1 = new();
+                CurvilinearPoint3D p2 = new();
+                p1.X = 0;
+                p1.Y = 0;
+                p1.Z = 0;
+                p2.X = 0;
+                p2.Y = 0;
+                p2.Z = 0;
+                CurvilinearPoint3D f = next;
+                double dm = f.Abscissa.Value - Abscissa.Value;
+                double teta = dm * dls;
+                double st = Math.Sin(teta);
+                double ct = Math.Cos(teta);
+                p1.X = (1 - ct) / dls;
+                p1.Y = 0.0;
+                p1.Z = st / dls;
+                Point3D r = TransCoord3RotsReversed(TF, p1);
+                f.X = X + r.X;
+                f.Y = Y + r.Y;
+                f.Z = Z + r.Z;
+                p1.X = st;
+                p1.Y = 0.0;
+                p1.Z = ct;
+                r = TransCoord3RotsReversed(TF, p1);
+                f.Inclination = Numeric.AcosEqual(r.Z);
+                if (Numeric.EQ(r.Z, 1.0))
+                {
+                    f.Azimuth = Azimuth;
+                }
+                else
+                {
+                    if (r.X == null || r.Y == null || (Numeric.EQ(r.X, 0.0) && Numeric.EQ(r.Y, 0.0)))
+                    {
+                        f.Azimuth = null;
+                    }
+                    else
+                    {
+                        double teta2 = Numeric.AcosEqual(r.X.Value / Math.Sqrt(r.X.Value * r.X.Value + r.Y.Value * r.Y.Value));
+                        if (r.Y >= 0.0)
+                        {
+                            f.Azimuth = teta2;
+                        }
+                        else
+                        {
+                            f.Azimuth = 2.0 * Math.PI - teta2;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+        public bool CompleteCDTSDT1(Survey? next, double DLS, double TF, List<Survey>? inters = null)
+        {
+            if ((next == null) ||
+                IsUndefined() ||
+                Inclination == null ||
+                Azimuth == null ||
+                Abscissa == null ||
+                next.Abscissa == null ||
+                Numeric.IsUndefined(next.Abscissa))
+            {
+                return false;
+            }
+            if (Numeric.EQ(DLS, 0))
+            {
+                return CompleteCASDT(next, DLS, TF);
+            }
+            if (Numeric.EQ(Inclination, 0))
+            {
+                return CompleteCASDT(next, DLS, TF);
+            }
+            if (Numeric.EQ(Inclination, Math.PI / 2.0))
+            {
+                return CompleteCASDT(next, DLS, TF);
+            }
+
+            Survey sv2 = new Survey(this);
+            Survey sv1 = new Survey();
+            do
+            {
+                Survey tmp = sv1;
+                sv1 = sv2;
+                sv2 = tmp;
+                sv2.Abscissa = Math.Min(next.Abscissa.Value, sv1.Abscissa.Value + CompleteCTCSDT1Step);
+                bool ok = sv1.CompleteCASDT(sv2, DLS, TF);
+                if (inters != null)
+                {
+                    object inter = sv2.MemberwiseClone();
+                    if (inter is Survey)
+                    {
+                        inters.Add((Survey)inter);
+                    }
+                }
+            } while (!Numeric.EQ(sv2.Abscissa, next.Abscissa));
+            next.Inclination = sv2.Inclination;
+            next.Azimuth = sv2.Azimuth;
+            next.X = sv2.X;
+            next.Y = sv2.Y;
+            next.Z = sv2.Z;
+            Survey prev = null;
+            if (inters == null)
+            {
+                prev = sv1;
+            }
+            else
+            {
+                for (int i = inters.Count - 1; i >= 0; i--)
+                {
+                    if ((next.Abscissa.Value - inters[i].Abscissa.Value) >= InterpolationDeltaAbscissa)
+                    {
+                        prev = inters[i];
+                    }
+                }
+            }
+            double ds = sv2.Abscissa.Value - prev.Abscissa.Value;
+            if (prev.Inclination != null && prev.Azimuth != null && sv2.Inclination != null && sv2.Azimuth != null && !Numeric.EQ(ds, 0))
+            {
+                double si1 = System.Math.Sin(prev.Inclination.Value);
+                double ci1 = System.Math.Cos(prev.Inclination.Value);
+                double si2 = System.Math.Sin(sv2.Inclination.Value);
+                double ci2 = System.Math.Cos(sv2.Inclination.Value);
+                double sa12 = System.Math.Sin(sv2.Azimuth.Value - prev.Azimuth.Value);
+                double ca12 = System.Math.Cos(sv2.Azimuth.Value - prev.Azimuth.Value);
+                double denom = si2 * ci1 * ca12 - si1 * ci2;
+                next.Toolface = System.Math.Atan2(si2 * sa12, denom);
+
+                next.BUR = (sv2.Inclination - prev.Inclination) / ds;
+                if (sv2.Azimuth != null &&
+                    prev.Azimuth != null &&
+                    Numeric.LE(System.Math.Abs(sv2.Azimuth.Value - prev.Azimuth.Value), Numeric.PI))
+                {
+                    next.TUR = (sv2.Azimuth - prev.Azimuth) / ds;
+                }
+                else
+                {
+                    if (Numeric.GE(sv2.Azimuth - prev.Azimuth, 0))
+                    {
+                        next.TUR = (sv2.Azimuth - prev.Azimuth - 2.0 * Numeric.PI) / ds;
+                    }
+                    else
+                    {
+                        next.TUR = (sv2.Azimuth - prev.Azimuth + 2.0 * Numeric.PI) / ds;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public bool CompleteCDTSDT2(Survey? next, double DLS, double TF)
+        {
+            if ((next == null) ||
+                IsUndefined() ||
+                Z == null ||
+                Inclination == null ||
+                Azimuth == null ||
+                Abscissa == null ||
+                next.Abscissa == null ||
+                Numeric.IsUndefined(next.Abscissa))
+            {
+                return false;
+            }
+            if (Numeric.EQ(DLS, 0))
+            {
+                return CompleteCASDT(next, DLS, TF);
+            }
+            if (Numeric.EQ(Inclination, 0))
+            {
+                return CompleteCASDT(next, DLS, TF);
+            }
+            if (Numeric.EQ(Inclination, Math.PI / 2.0))
+            {
+                return CompleteCASDT(next, DLS, TF);
+            }
+            // case where the BUR is 0
+            if (Numeric.EQ(TF, Math.PI/2.0) || Numeric.EQ(TF, 3.0*Math.PI/2.0))
+            {
+                return CompleteCASDT(next, DLS, TF);
+            }
+            double beta = DLS * Math.Cos(TF);
+            double l = next.Abscissa.Value - Abscissa.Value;
+            double z = Z.Value + (1.0/beta)*(Math.Sin(beta*l+Inclination.Value)-Math.Sin(Inclination.Value));
+            next.Z = z;
+            double A = Math.Sqrt(DLS * DLS - beta * beta) / beta;
+            double C = Azimuth.Value-A*Math.Log(Math.Abs(Math.Tan(0.5*Inclination.Value)));
+            Func<double, double> fx = s => Math.Sin(beta*s+Inclination.Value)*Math.Cos(A* Math.Log(Math.Abs(Math.Tan(0.5*(beta*s+Inclination.Value)))) + C);
+            Func<double, double> fy = s => Math.Sin(beta * s + Inclination.Value) * Math.Sin(A * Math.Log(Math.Abs(Math.Tan(0.5 * (beta * s + Inclination.Value)))) + C);
+            next.X = SimpsonRule.IntegrateComposite(fx, 0, next.Abscissa.Value-Abscissa.Value, CompleteCTCSDT2Count);
+            next.Y = SimpsonRule.IntegrateComposite(fy, 0, next.Abscissa.Value - Abscissa.Value, CompleteCTCSDT2Count);
+            next.Inclination = Inclination.Value + beta * l;
+            next.Curvature = DLS;
+            next.Toolface = TF;
+            next.BUR = beta;
+            next.TUR = Math.Sqrt(DLS * DLS - beta * beta) / Math.Sin(next.Inclination.Value);
+            double r = Math.Sqrt(DLS * DLS - beta * beta) / beta;
+            double alpha1 = Azimuth.Value + r * Math.Log(Math.Abs(Math.Tan(0.5 * next.Inclination.Value))) - r * Math.Log(Math.Tan(0.5 * Inclination.Value));
+            double alpha2 = Azimuth.Value - r * Math.Log(Math.Abs(Math.Tan(0.5 * next.Inclination.Value))) + r * Math.Log(Math.Tan(0.5 * Inclination.Value));
+            next.Azimuth = alpha1;
+
+            return true;
+        }
         /// <summary>
         /// Interpolate the result in between this survey and the next at a given curvilinear abscissa
         /// </summary>
@@ -687,16 +927,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 next.X == null || next.Y == null || next.Z == null || next.Inclination == null || next.Azimuth == null || next.Abscissa == null)
             {
                 return false;
-            }
-            if (Numeric.EQ(s, Abscissa))
-            {
-                result.X = X;
-                result.Y = Y;
-                result.Z = Z;
-                result.Abscissa = Abscissa;
-                result.Inclination = Inclination;
-                result.Azimuth = Azimuth;
-                return true;
             }
             if (!Numeric.IsBetween(s, (double)Abscissa, (double)next.Abscissa))
             {
@@ -830,43 +1060,30 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             {
                 return false;
             }
-            if (Numeric.EQ(s, Abscissa))
-            {
-                result.X = X;
-                result.Y = Y;
-                result.Z = Z;
-                result.Abscissa = Abscissa;
-                result.Inclination = Inclination;
-                result.Azimuth = Azimuth;
-                result.Curvature = Curvature;
-                result.Toolface = Toolface;
-                result.BUR = BUR;
-                result.TUR = TUR;
-                return true;
-            }
+            double x1, y1, z1, i1, a1, s1, x2, y2, z2, i2, a2, s2, si1, si2, ci12, ca12, DL, DM;
             if (!Numeric.IsBetween(s, (double)Abscissa, (double)next.Abscissa))
             {
                 return false;
             }
             result.Abscissa = s;
-            double x1 = (double)X;
-            double y1 = (double)Y;
-            double z1 = (double)Z;
-            double i1 = (double)Inclination;
-            double a1 = (double)Azimuth;
-            double s1 = (double)Abscissa;
-            double x2 = (double)next.X;
-            double y2 = (double)next.Y;
-            double z2 = (double)next.Z;
-            double i2 = (double)next.Inclination;
-            double a2 = (double)next.Azimuth;
-            double s2 = (double)next.Abscissa;
-            double si1 = System.Math.Sin(i1);
-            double si2 = System.Math.Sin(i2);
-            double ci12 = System.Math.Cos(i2 - i1);
-            double ca12 = System.Math.Cos(a2 - a1);
-            double DL = System.Math.Acos(ci12 - (1 - ca12) * si2 * si1);
-            double DM = s2 - s1;
+            x1 = (double)X;
+            y1 = (double)Y;
+            z1 = (double)Z;
+            i1 = (double)Inclination;
+            a1 = (double)Azimuth;
+            s1 = (double)Abscissa;
+            x2 = (double)next.X;
+            y2 = (double)next.Y;
+            z2 = (double)next.Z;
+            i2 = (double)next.Inclination;
+            a2 = (double)next.Azimuth;
+            s2 = (double)next.Abscissa;
+            si1 = System.Math.Sin(i1);
+            si2 = System.Math.Sin(i2);
+            ci12 = System.Math.Cos(i2 - i1);
+            ca12 = System.Math.Cos(a2 - a1);
+            DL = System.Math.Acos(ci12 - (1 - ca12) * si2 * si1);
+            DM = s2 - s1;
             if (Numeric.EQ(DM, 0))
             {
                 if (Numeric.EQ(s1, s))
@@ -909,7 +1126,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     result.X = x1 + dm * ca1 * si1;
                     result.Y = y1 + dm * sa1 * si1;
                     result.Z = z1 + dm * ci1;
-                    result.Toolface = Toolface;
+                    result.Toolface = tf;
                     result.BUR = 0;
                     result.TUR = 0;
                     return true;
@@ -968,36 +1185,48 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             }
                         }
                         CurvilinearPoint3D prev = new CurvilinearPoint3D();
-                        double ds = 0.1;
+                        double ds = Math.Min(DM/2.0, InterpolationDeltaAbscissa);
+                        if (s - ds < 0)
+                        {
+                            ds = -ds;
+                        }
                         if (InterpolateAtAbscissa(next, s - ds, prev))
                         {
                             if (prev.Inclination != null && prev.Azimuth != null)
                             {
-                                si1 = System.Math.Sin(prev.Inclination.Value);
-                                ci1 = System.Math.Cos(prev.Inclination.Value);
-                                si2 = System.Math.Sin(result.Inclination.Value);
-                                ci2 = System.Math.Cos(result.Inclination.Value);
-                                double sa12 = System.Math.Sin(result.Azimuth.Value - prev.Azimuth.Value);
-                                ca12 = System.Math.Cos(result.Azimuth.Value - prev.Azimuth.Value);
-                                double denom = si2 * ci1 * ca12 - si1 * ci2;
-                                result.Toolface = System.Math.Atan2(denom, si2 * sa12);
-
-                                result.BUR = (result.Inclination - prev.Inclination) / ds;
-                                if (result.Azimuth != null &&
-                                    prev.Azimuth != null &&
-                                    Numeric.LE(System.Math.Abs(result.Azimuth.Value - prev.Azimuth.Value), Numeric.PI))
+                                CurvilinearPoint3D sv2 = result;
+                                CurvilinearPoint3D sv1 = prev;
+                                if (ds < 0)
                                 {
-                                    result.TUR = (result.Azimuth - prev.Azimuth) / ds;
+                                    sv2 = prev;
+                                    sv1 = result;
+                                    ds = -ds;
+                                }
+                                si1 = System.Math.Sin(sv1.Inclination.Value);
+                                ci1 = System.Math.Cos(sv1.Inclination.Value);
+                                si2 = System.Math.Sin(sv2.Inclination.Value);
+                                ci2 = System.Math.Cos(sv2.Inclination.Value);
+                                double sa12 = System.Math.Sin(sv2.Azimuth.Value - sv1.Azimuth.Value);
+                                ca12 = System.Math.Cos(sv2.Azimuth.Value - sv1.Azimuth.Value);
+                                double denom = si2 * ci1 * ca12 - si1 * ci2;
+                                result.Toolface = System.Math.Atan2(si2 * sa12, denom);
+
+                                result.BUR = (sv2.Inclination - sv1.Inclination) / ds;
+                                if (sv2.Azimuth != null &&
+                                    sv1.Azimuth != null &&
+                                    Numeric.LE(System.Math.Abs(sv2.Azimuth.Value - sv1.Azimuth.Value), Numeric.PI))
+                                {
+                                    result.TUR = (sv2.Azimuth - sv1.Azimuth) / ds;
                                 }
                                 else
                                 {
-                                    if (Numeric.GE(result.Azimuth - prev.Azimuth, 0))
+                                    if (Numeric.GE(sv2.Azimuth - sv1.Azimuth, 0))
                                     {
-                                        result.TUR = (result.Azimuth - prev.Azimuth - 2.0 * Numeric.PI) / ds;
+                                        result.TUR = (sv2.Azimuth - sv1.Azimuth - 2.0 * Numeric.PI) / ds;
                                     }
                                     else
                                     {
-                                        result.TUR = (result.Azimuth - prev.Azimuth + 2.0 * Numeric.PI) / ds;
+                                        result.TUR = (sv2.Azimuth - sv1.Azimuth + 2.0 * Numeric.PI) / ds;
                                     }
                                 }
                             }
