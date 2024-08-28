@@ -17,7 +17,7 @@ flowchart TD
 	 classDef classClass fill:#9dd0ff;
 	 classDef opcClass fill:#ff9dd0;
 	 classDef quantityClass fill:#d0ff9d;
-	Test:TimeStamp([Test:TimeStamp]) --> DynamicDrillingSignal([DynamicDrillingSignal]):::typeClass
+	Test:TimeStamp([Test:TimeStamp]) --> opc:double([opc:double]):::opcClass
 	Test:AbsoluteTimeRef([Test:AbsoluteTimeRef]) --> AbsoluteTimeReference([AbsoluteTimeReference]):::typeClass
 	Test:AcquisitionClock([Test:AcquisitionClock]) --> Clock([Clock]):::typeClass
 	Test:TimeStamp_01([Test:TimeStamp_01]) -- http://ddhub.no/HasDynamicValue --> Test:TimeStamp([Test:TimeStamp]):::classClass
@@ -41,6 +41,8 @@ flowchart TD
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasDynamicValue --> Test:FluidDensityMeasured([Test:FluidDensityMeasured]):::classClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingDensity([Test:DrillingDensity]):::quantityClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasPressureReference --> Test:pressure_01([Test:pressure_01]):::classClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasTemperatureReference --> Test:temperature_01([Test:temperature_01]):::classClass
 	Test:sigma_FluidDensityMeasured_01([Test:sigma_FluidDensityMeasured_01]) -- http://ddhub.no/HasValue --> Test:sigma_FluidDensityMeasured([Test:sigma_FluidDensityMeasured]):::classClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasUncertainty --> Test:GaussianUncertainty_01([Test:GaussianUncertainty_01]):::classClass
 	Test:GaussianUncertainty_01([Test:GaussianUncertainty_01]) -- http://ddhub.no/HasUncertaintyStandardDeviation --> Test:sigma_FluidDensityMeasured_01([Test:sigma_FluidDensityMeasured_01]):::classClass

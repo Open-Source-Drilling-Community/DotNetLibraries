@@ -15,7 +15,7 @@ namespace DrillingProperties
     public class MeasuredFluidDensity
     {
         [AccessToVariable(CommonProperty.VariableAccessType.Readable)]
-        [SemanticGaussianVariable("FluidDensityMeasured", "sigma_FluidDensityMeasured")]
+        [SemanticDiracVariable("TimeStamp")]
         [SemanticFact("TimeStamp", Nouns.Enum.DynamicDrillingSignal)]
         [SemanticFact("TimeStamp#01", Verbs.Enum.HasDynamicValue, "TimeStamp")]
         [SemanticFact("AbsoluteTimeRef", Nouns.Enum.AbsoluteTimeReference)]
@@ -32,6 +32,9 @@ namespace DrillingProperties
         [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DrillingDensity)]
         [SemanticFact("MovingAverage", Nouns.Enum.MovingAverage)]
         [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.IsTransformationOutput, "MovingAverage")]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.HasSourceTime, "TimeStamp#01")]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.HasPressureReference, "pressure#01")]
+        [SemanticFact("FluidDensityMeasured#01", Verbs.Enum.HasTemperatureReference, "temperature#01")]
         [SemanticFact("sigma_FluidDensityMeasured", Nouns.Enum.DrillingSignal)]
         [SemanticFact("sigma_FluidDensityMeasured#01", Nouns.Enum.DrillingDataPoint)]
         [SemanticFact("sigma_FluidDensityMeasured#01", Verbs.Enum.HasValue, "sigma_FluidDensityMeasured")]
