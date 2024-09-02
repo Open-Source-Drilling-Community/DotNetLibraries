@@ -46,16 +46,16 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         {
         }
 
+        public ExcludeFact(string subject, Verbs.Enum verb, BasePhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
+        {
+        }
+        public ExcludeFact(Nouns.Enum subject, Verbs.Enum verb, BasePhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
+        {
+        }
         public ExcludeFact(string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
         {
         }
         public ExcludeFact(Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
-        {
-        }
-        public ExcludeFact(string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
-        {
-        }
-        public ExcludeFact(Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
         {
         }
 

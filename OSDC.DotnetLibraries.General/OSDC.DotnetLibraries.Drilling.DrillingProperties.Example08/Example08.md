@@ -39,8 +39,9 @@ flowchart TD
 	Test:sigma_FluidDensityMeasured_01([Test:sigma_FluidDensityMeasured_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
 	Test:GaussianUncertainty_01([Test:GaussianUncertainty_01]) --> GaussianUncertainty([GaussianUncertainty]):::typeClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasDynamicValue --> Test:FluidDensityMeasured([Test:FluidDensityMeasured]):::classClass
-	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingDensity([Test:DrillingDensity]):::quantityClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:MassDensityDrilling([Test:MassDensityDrilling]):::quantityClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasSourceTime --> Test:TimeStamp_01([Test:TimeStamp_01]):::classClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasPressureReference --> Test:pressure_01([Test:pressure_01]):::classClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasTemperatureReference --> Test:temperature_01([Test:temperature_01]):::classClass
 	Test:sigma_FluidDensityMeasured_01([Test:sigma_FluidDensityMeasured_01]) -- http://ddhub.no/HasValue --> Test:sigma_FluidDensityMeasured([Test:sigma_FluidDensityMeasured]):::classClass
@@ -63,7 +64,7 @@ flowchart TD
 	Test:sigma_temperature_01([Test:sigma_temperature_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
 	Test:GaussianUncertainty_01([Test:GaussianUncertainty_01]) --> GaussianUncertainty([GaussianUncertainty]):::typeClass
 	Test:temperature_01([Test:temperature_01]) -- http://ddhub.no/HasDynamicValue --> Test:temperature([Test:temperature]):::classClass
-	Test:temperature_01([Test:temperature_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingTemperature([Test:DrillingTemperature]):::quantityClass
+	Test:temperature_01([Test:temperature_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:TemperatureDrilling([Test:TemperatureDrilling]):::quantityClass
 	Test:temperature_01([Test:temperature_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
 	Test:sigma_temperature_01([Test:sigma_temperature_01]) -- http://ddhub.no/HasValue --> Test:sigma_temperature([Test:sigma_temperature]):::classClass
 	Test:temperature_01([Test:temperature_01]) -- http://ddhub.no/HasUncertainty --> Test:GaussianUncertainty_01([Test:GaussianUncertainty_01]):::classClass
@@ -86,7 +87,7 @@ flowchart TD
 	Test:sigma_pressure_01([Test:sigma_pressure_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
 	Test:GaussianUncertainty_01([Test:GaussianUncertainty_01]) --> GaussianUncertainty([GaussianUncertainty]):::typeClass
 	Test:pressure_01([Test:pressure_01]) -- http://ddhub.no/HasDynamicValue --> Test:pressure([Test:pressure]):::classClass
-	Test:pressure_01([Test:pressure_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingPressure([Test:DrillingPressure]):::quantityClass
+	Test:pressure_01([Test:pressure_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:PressureDrilling([Test:PressureDrilling]):::quantityClass
 	Test:pressure_01([Test:pressure_01]) -- http://ddhub.no/HasPressureReferenceType --> Test:AbsolutePressure([Test:AbsolutePressure]):::classClass
 	Test:pressure_01([Test:pressure_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
 	Test:sigma_pressure_01([Test:sigma_pressure_01]) -- http://ddhub.no/HasValue --> Test:sigma_pressure([Test:sigma_pressure]):::classClass

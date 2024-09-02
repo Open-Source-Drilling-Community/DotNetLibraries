@@ -10,7 +10,7 @@ WHERE {
 	?FluidDensitySetPoint rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensitySetPoint#01 rdf:type ddhub:SetPoint .
 	?FluidDensitySetPoint#01 ddhub:HasDynamicValue ?FluidDensitySetPoint .
-	?FluidDensitySetPoint#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensitySetPoint#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 }
 
 ```
@@ -26,7 +26,7 @@ WHERE {
 	?FluidDensityMin rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMax rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityUniform#01 rdf:type ddhub:ComputedData .
-	?FluidDensityUniform#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityUniform#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?FDEUncertainty#01 rdf:type ddhub:MinMaxUncertainty .
 	?FluidDensityUniform#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
 	?FluidDensityMin#01 rdf:type ddhub:DrillingDataPoint .
@@ -50,7 +50,7 @@ WHERE {
 	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
 	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
-	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
 	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
 	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
@@ -71,7 +71,7 @@ WHERE {
 	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
 	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
-	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
 	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
 	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
@@ -95,7 +95,7 @@ WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -114,7 +114,7 @@ WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -140,7 +140,7 @@ WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -167,7 +167,7 @@ WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -197,7 +197,7 @@ WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -228,7 +228,7 @@ WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -258,7 +258,7 @@ WHERE {
 	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -290,7 +290,7 @@ WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -319,7 +319,7 @@ WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -355,7 +355,7 @@ WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -392,7 +392,7 @@ WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -432,7 +432,7 @@ WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -473,7 +473,7 @@ WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
@@ -513,7 +513,7 @@ WHERE {
 	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
 	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
 	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:DrillingDensity .
+	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
 	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .

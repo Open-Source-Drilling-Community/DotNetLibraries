@@ -11,7 +11,7 @@ flowchart TD
 	Test:FDEUncertainty_01([Test:FDEUncertainty_01]) --> GaussianUncertainty([GaussianUncertainty]):::typeClass
 	Test:FluidDensityEstimatedStdDev_01([Test:FluidDensityEstimatedStdDev_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
 	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) -- http://ddhub.no/HasDynamicValue --> Test:FluidDensityEstimated([Test:FluidDensityEstimated]):::classClass
-	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingDensity([Test:DrillingDensity]):::quantityClass
+	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:MassDensityDrilling([Test:MassDensityDrilling]):::quantityClass
 	Test:FluidDensityEstimated_01([Test:FluidDensityEstimated_01]) -- http://ddhub.no/HasUncertainty --> Test:FDEUncertainty_01([Test:FDEUncertainty_01]):::classClass
 	Test:FluidDensityEstimatedStdDev_01([Test:FluidDensityEstimatedStdDev_01]) -- http://ddhub.no/HasStaticValue --> Test:FluidDensityEstimatedStdDev([Test:FluidDensityEstimatedStdDev]):::classClass
 	Test:FDEUncertainty_01([Test:FDEUncertainty_01]) -- http://ddhub.no/HasUncertaintyStandardDeviation --> Test:FluidDensityEstimatedStdDev_01([Test:FluidDensityEstimatedStdDev_01]):::classClass
@@ -34,7 +34,7 @@ flowchart TD
 	Test:FluidDensityMeasured_acc_01([Test:FluidDensityMeasured_acc_01]) --> DrillingDataPoint([DrillingDataPoint]):::typeClass
 	Test:SensorUncertainty_01([Test:SensorUncertainty_01]) --> SensorUncertainty([SensorUncertainty]):::typeClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/HasDynamicValue --> Test:FluidDensityMeasured([Test:FluidDensityMeasured]):::classClass
-	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:DrillingDensity([Test:DrillingDensity]):::quantityClass
+	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsOfMeasurableQuantity --> Test:MassDensityDrilling([Test:MassDensityDrilling]):::quantityClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsPhysicallyLocatedAt --> Test:tos_01([Test:tos_01]):::classClass
 	Test:FluidDensityMeasured_01([Test:FluidDensityMeasured_01]) -- http://ddhub.no/IsTransformationOutput --> Test:MovingAverage([Test:MovingAverage]):::classClass
 	Test:FluidDensityMeasured_prec_01([Test:FluidDensityMeasured_prec_01]) -- http://ddhub.no/HasValue --> Test:FluidDensityMeasured_prec([Test:FluidDensityMeasured_prec]):::classClass
