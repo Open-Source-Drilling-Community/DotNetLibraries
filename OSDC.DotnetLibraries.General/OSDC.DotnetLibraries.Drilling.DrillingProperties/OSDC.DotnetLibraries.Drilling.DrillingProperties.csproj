@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.1.0" />
+    <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.1.1" />
     <PackageReference Include="DWIS.Vocabulary.Schemas" Version="1.0.128" />
     <PackageReference Include="OSDC.DotnetLibraries.General.Statistics" Version="3.1.0" />
     <PackageReference Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="3.3.12" />

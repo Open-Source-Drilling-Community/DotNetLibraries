@@ -1,0 +1,2023 @@
+{
+  "ManifestName": null,
+  "Provider": {
+    "Name": "openLAB",
+    "Company": "NORCE"
+  },
+  "InjectionInformation": {
+    "ServerName": "openLABOPC",
+    "EndPointURL": "opc.tcp://localhost:48031",
+    "PublishingIntervalInMS": 100.0,
+    "InjectedVariablesNamespaceAlias": "variables",
+    "InjectedNodesNamespaceAlias": "nodes",
+    "ProvidedVariablesNamespaceAlias": "ProvidedVariables",
+    "InjectedVocabularyNamespaceAlias": "Vocabulary"
+  },
+  "InjectedVariables": [],
+  "InjectedNodes": [
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "BOPOpeningSetPoint",
+      "UniqueName": "BOPOpeningSetPoint",
+      "DisplayName": "BOPOpeningSetPoint",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "ChokeOpeningSetPoint",
+      "UniqueName": "ChokeOpeningSetPoint",
+      "DisplayName": "ChokeOpeningSetPoint",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "FlowRateInSetPoint",
+      "UniqueName": "FlowRateInSetPoint",
+      "DisplayName": "FlowRateInSetPoint",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "TopOfStringVelocitySetPoint",
+      "UniqueName": "TopOfStringVelocitySetPoint",
+      "DisplayName": "TopOfStringVelocitySetPoint",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "SurfaceRPMSetPoint",
+      "UniqueName": "SurfaceRPMSetPoint",
+      "DisplayName": "SurfaceRPMSetPoint",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "WellboreCenterLineFrame",
+      "BrowseName": "BitReferenceFrame",
+      "UniqueName": "BitReferenceFrame",
+      "DisplayName": "BitReferenceFrame",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "HookLoad",
+      "UniqueName": "HookLoad",
+      "DisplayName": "HookLoad",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "SPP",
+      "UniqueName": "SPP",
+      "DisplayName": "SPP",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "SurfaceTorque",
+      "UniqueName": "SurfaceTorque",
+      "DisplayName": "SurfaceTorque",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "FlowRateIn",
+      "UniqueName": "FlowRateIn",
+      "DisplayName": "FlowRateIn",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "ActivePitVolume",
+      "UniqueName": "ActivePitVolume",
+      "DisplayName": "ActivePitVolume",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "BitDepth",
+      "UniqueName": "BitDepth",
+      "DisplayName": "BitDepth",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "DownholeECD",
+      "UniqueName": "DownholeECD",
+      "DisplayName": "DownholeECD",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "DownholePressure_WP",
+      "UniqueName": "DownholePressure_WP",
+      "DisplayName": "DownholePressure_WP",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "Resampling",
+      "BrowseName": "DownholePressure_WP_resampling",
+      "UniqueName": "DownholePressure_WP_resampling",
+      "DisplayName": "DownholePressure_WP_resampling",
+      "Fields": [
+        {
+          "FieldName": "ResamplingDelay",
+          "FieldValue": "1"
+        },
+        {
+          "FieldName": "ResamplingRate",
+          "FieldValue": "1"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TransmissionLine",
+      "BrowseName": "DownholePressure_WP_telemetry",
+      "UniqueName": "DownholePressure_WP_telemetry",
+      "DisplayName": "DownholePressure_WP_telemetry",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "WiredPipeTelemetry",
+      "BrowseName": "WiredPipeTelemetry",
+      "UniqueName": "WiredPipeTelemetry",
+      "DisplayName": "WiredPipeTelemetry",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "DownholePressure_WP_telemetry_delay",
+      "UniqueName": "DownholePressure_WP_telemetry_delay",
+      "DisplayName": "DownholePressure_WP_telemetry_delay",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingSignal",
+      "BrowseName": "DownholePressure_WP_telemetry_delay_signal",
+      "UniqueName": "DownholePressure_WP_telemetry_delay_signal",
+      "DisplayName": "DownholePressure_WP_telemetry_delay_signal",
+      "Fields": [
+        {
+          "FieldName": "Value",
+          "FieldValue": "2"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TimeWindowMovingAverage",
+      "BrowseName": "DownholePressure_WP_averaging",
+      "UniqueName": "DownholePressure_WP_averaging",
+      "DisplayName": "DownholePressure_WP_averaging",
+      "Fields": [
+        {
+          "FieldName": "TimeWindow",
+          "FieldValue": "5"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "DownholePressure",
+      "UniqueName": "DownholePressure",
+      "DisplayName": "DownholePressure",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "Resampling",
+      "BrowseName": "DownholePressure_resampling",
+      "UniqueName": "DownholePressure_resampling",
+      "DisplayName": "DownholePressure_resampling",
+      "Fields": [
+        {
+          "FieldName": "ResamplingDelay",
+          "FieldValue": "1"
+        },
+        {
+          "FieldName": "ResamplingRate",
+          "FieldValue": "10"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TransmissionLine",
+      "BrowseName": "DownholePressure_telemetry",
+      "UniqueName": "DownholePressure_telemetry",
+      "DisplayName": "DownholePressure_telemetry",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "MudPulseTelemetry",
+      "BrowseName": "MudPulseTelemetry",
+      "UniqueName": "MudPulseTelemetry",
+      "DisplayName": "MudPulseTelemetry",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "DownholePressure_telemetry_delay",
+      "UniqueName": "DownholePressure_telemetry_delay",
+      "DisplayName": "DownholePressure_telemetry_delay",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingSignal",
+      "BrowseName": "DownholePressure_telemetry_delay_signal",
+      "UniqueName": "DownholePressure_telemetry_delay_signal",
+      "DisplayName": "DownholePressure_telemetry_delay_signal",
+      "Fields": [
+        {
+          "FieldName": "Value",
+          "FieldValue": "10"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TimeWindowMovingAverage",
+      "BrowseName": "DownholePressure_averaging",
+      "UniqueName": "DownholePressure_averaging",
+      "DisplayName": "DownholePressure_averaging",
+      "Fields": [
+        {
+          "FieldName": "TimeWindow",
+          "FieldValue": "10"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "AnnulusPressure",
+      "UniqueName": "AnnulusPressure",
+      "DisplayName": "AnnulusPressure",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingSignal",
+      "BrowseName": "AnnulusPressurelocation_var",
+      "UniqueName": "AnnulusPressurelocation_var",
+      "DisplayName": "AnnulusPressurelocation_var",
+      "Fields": [
+        {
+          "FieldName": "Value",
+          "FieldValue": "[100,300,600,1000]"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "AnnulusPressurelocation",
+      "UniqueName": "AnnulusPressurelocation",
+      "DisplayName": "AnnulusPressurelocation",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "Location",
+      "BrowseName": "AnnulusPressureASMLocation",
+      "UniqueName": "AnnulusPressureASMLocation",
+      "DisplayName": "AnnulusPressureASMLocation",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "Resampling",
+      "BrowseName": "AnnulusPressure_resampling",
+      "UniqueName": "AnnulusPressure_resampling",
+      "DisplayName": "AnnulusPressure_resampling",
+      "Fields": [
+        {
+          "FieldName": "ResamplingDelay",
+          "FieldValue": "1"
+        },
+        {
+          "FieldName": "ResamplingRate",
+          "FieldValue": "1"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TransmissionLine",
+      "BrowseName": "AnnulusPressure_telemetry",
+      "UniqueName": "AnnulusPressure_telemetry",
+      "DisplayName": "AnnulusPressure_telemetry",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "AnnulusPressure_telemetry_delay",
+      "UniqueName": "AnnulusPressure_telemetry_delay",
+      "DisplayName": "AnnulusPressure_telemetry_delay",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingSignal",
+      "BrowseName": "AnnulusPressure_telemetry_delay_signal",
+      "UniqueName": "AnnulusPressure_telemetry_delay_signal",
+      "DisplayName": "AnnulusPressure_telemetry_delay_signal",
+      "Fields": [
+        {
+          "FieldName": "Value",
+          "FieldValue": "2"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TimeWindowMovingAverage",
+      "BrowseName": "AnnulusPressure_averaging",
+      "UniqueName": "AnnulusPressure_averaging",
+      "DisplayName": "AnnulusPressure_averaging",
+      "Fields": [
+        {
+          "FieldName": "TimeWindow",
+          "FieldValue": "5"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "AnnulusTemperature",
+      "UniqueName": "AnnulusTemperature",
+      "DisplayName": "AnnulusTemperature",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingSignal",
+      "BrowseName": "AnnulusTemperaturelocation_var",
+      "UniqueName": "AnnulusTemperaturelocation_var",
+      "DisplayName": "AnnulusTemperaturelocation_var",
+      "Fields": [
+        {
+          "FieldName": "Value",
+          "FieldValue": "[100,300,600,1000]"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "AnnulusTemperaturelocation",
+      "UniqueName": "AnnulusTemperaturelocation",
+      "DisplayName": "AnnulusTemperaturelocation",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "Location",
+      "BrowseName": "AnnulusTemperatureASMLocation",
+      "UniqueName": "AnnulusTemperatureASMLocation",
+      "DisplayName": "AnnulusTemperatureASMLocation",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "Resampling",
+      "BrowseName": "AnnulusTemperature_resampling",
+      "UniqueName": "AnnulusTemperature_resampling",
+      "DisplayName": "AnnulusTemperature_resampling",
+      "Fields": [
+        {
+          "FieldName": "ResamplingDelay",
+          "FieldValue": "1"
+        },
+        {
+          "FieldName": "ResamplingRate",
+          "FieldValue": "1"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TransmissionLine",
+      "BrowseName": "AnnulusTemperature_telemetry",
+      "UniqueName": "AnnulusTemperature_telemetry",
+      "DisplayName": "AnnulusTemperature_telemetry",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "AnnulusTemperature_telemetry_delay",
+      "UniqueName": "AnnulusTemperature_telemetry_delay",
+      "DisplayName": "AnnulusTemperature_telemetry_delay",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingSignal",
+      "BrowseName": "AnnulusTemperature_telemetry_delay_signal",
+      "UniqueName": "AnnulusTemperature_telemetry_delay_signal",
+      "DisplayName": "AnnulusTemperature_telemetry_delay_signal",
+      "Fields": [
+        {
+          "FieldName": "Value",
+          "FieldValue": "2"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "TimeWindowMovingAverage",
+      "BrowseName": "AnnulusTemperature_averaging",
+      "UniqueName": "AnnulusTemperature_averaging",
+      "DisplayName": "AnnulusTemperature_averaging",
+      "Fields": [
+        {
+          "FieldName": "TimeWindow",
+          "FieldValue": "5"
+        }
+      ]
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "FlowRateOut",
+      "UniqueName": "FlowRateOut",
+      "DisplayName": "FlowRateOut",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "SurfaceRPM",
+      "UniqueName": "SurfaceRPM",
+      "DisplayName": "SurfaceRPM",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "TD",
+      "UniqueName": "TD",
+      "DisplayName": "TD",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "WOB",
+      "UniqueName": "WOB",
+      "DisplayName": "WOB",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "InstantaneousROP",
+      "UniqueName": "InstantaneousROP",
+      "DisplayName": "InstantaneousROP",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "HookPosition",
+      "UniqueName": "HookPosition",
+      "DisplayName": "HookPosition",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "HookVelocity",
+      "UniqueName": "HookVelocity",
+      "DisplayName": "HookVelocity",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "ActivePitTemperature",
+      "UniqueName": "ActivePitTemperature",
+      "DisplayName": "ActivePitTemperature",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "ActivePitDensity",
+      "UniqueName": "ActivePitDensity",
+      "DisplayName": "ActivePitDensity",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "BopChokeOpening",
+      "UniqueName": "BopChokeOpening",
+      "DisplayName": "BopChokeOpening",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "BopChokePressure",
+      "UniqueName": "BopChokePressure",
+      "DisplayName": "BopChokePressure",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "ChokePressure",
+      "UniqueName": "ChokePressure",
+      "DisplayName": "ChokePressure",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "GasFlowRateOut",
+      "UniqueName": "GasFlowRateOut",
+      "DisplayName": "GasFlowRateOut",
+      "Fields": null
+    },
+    {
+      "TypeDictionaryURI": "DrillingDataPoint",
+      "BrowseName": "ChokeOpening",
+      "UniqueName": "ChokeOpening",
+      "DisplayName": "ChokeOpening",
+      "Fields": null
+    }
+  ],
+  "InjectedReferences": [
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BitReferenceFrame"
+      },
+      "VerbURI": "http://ddhub.no/HasReferenceFrameOrigin",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "BitLocation"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BOPOpeningSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "BOPOpeningSetPoint"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokeOpeningSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "ChokeOpeningSetPoint"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateInSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "FlowRateInSetPoint"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "TopOfStringVelocitySetPoint"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "TopOfStringVelocitySetPoint"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceRPMSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "SurfaceRPMSetPoint"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BOPOpeningSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/IsSetPointRecommendationFor",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/BOPControlSystem"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokeOpeningSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/IsSetPointRecommendationFor",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/RigChokeControlSystem"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateInSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/IsSetPointRecommendationFor",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/MudPumpsControlSystem"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceRPMSetPoint"
+      },
+      "VerbURI": "http://ddhub.no/IsSetPointRecommendationFor",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/TopDriveControlSystem"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "TopOfStringVelocitySetPoint"
+      },
+      "VerbURI": "http://ddhub.no/IsSetPointRecommendationFor",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/DrawWorksControlSystem"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookLoad"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "HookLoad"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookLoad"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/HookLoad"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookLoad"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SPP"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "SPP"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SPP"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/SPP"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SPP"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceTorque"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "SurfaceTorque"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceTorque"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/SurfaceTorque"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceTorque"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateIn"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "FlowRateIn"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateIn"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/FlowRateIn"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateIn"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitVolume"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "ActivePitVolume"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitVolume"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/ActiveVolume"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitVolume"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BitDepth"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "BitDepth"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BitDepth"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/BitDepth"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BitDepth"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholeECD"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "DownholeECD"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholeECD"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/DownholeECD"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholeECD"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "DownholePressure_WP"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/DownholePressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP"
+      },
+      "VerbURI": "http://ddhub.no/IsResampledBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_resampling"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmittedBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "WiredPipeTelemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_resampling"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmissionOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_telemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/HasTransmissionDelay",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_telemetry_delay"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_telemetry_delay"
+      },
+      "VerbURI": "http://ddhub.no/HasStaticValue",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_telemetry_delay_signal"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/IsTransformationOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_WP_averaging"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "DownholePressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/DownholePressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure"
+      },
+      "VerbURI": "http://ddhub.no/IsResampledBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_resampling"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmittedBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "MudPulseTelemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_resampling"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmissionOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_telemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/HasTransmissionDelay",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_telemetry_delay"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_telemetry_delay"
+      },
+      "VerbURI": "http://ddhub.no/HasStaticValue",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_telemetry_delay_signal"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/IsTransformationOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "DownholePressure_averaging"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "AnnulusPressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/DownholePressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressurelocation"
+      },
+      "VerbURI": "http://ddhub.no/HasStaticValue",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressurelocation_var"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure"
+      },
+      "VerbURI": "http://ddhub.no/HasCoordinates",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressurelocation"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressureASMLocation"
+      },
+      "VerbURI": "http://ddhub.no/HasReferenceFrame",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "BitReferenceFrame"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressureASMLocation"
+      },
+      "VerbURI": "http://ddhub.no/HasCoordinates",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressurelocation"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure"
+      },
+      "VerbURI": "http://ddhub.no/IsPhysicallyLocatedAt",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressureASMLocation"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure"
+      },
+      "VerbURI": "http://ddhub.no/IsResampledBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_resampling"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmittedBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "WiredPipeTelemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_resampling"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmissionOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_telemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/HasTransmissionDelay",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_telemetry_delay"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_telemetry_delay"
+      },
+      "VerbURI": "http://ddhub.no/HasStaticValue",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_telemetry_delay_signal"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/IsTransformationOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusPressure_averaging"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "AnnulusTemperature"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/DownholeTemperature"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperaturelocation"
+      },
+      "VerbURI": "http://ddhub.no/HasStaticValue",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperaturelocation_var"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature"
+      },
+      "VerbURI": "http://ddhub.no/HasCoordinates",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperaturelocation"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperatureASMLocation"
+      },
+      "VerbURI": "http://ddhub.no/HasReferenceFrame",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "BitReferenceFrame"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperatureASMLocation"
+      },
+      "VerbURI": "http://ddhub.no/HasCoordinates",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperaturelocation"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature"
+      },
+      "VerbURI": "http://ddhub.no/IsPhysicallyLocatedAt",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperatureASMLocation"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature"
+      },
+      "VerbURI": "http://ddhub.no/IsResampledBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_resampling"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmittedBy",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "WiredPipeTelemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_resampling"
+      },
+      "VerbURI": "http://ddhub.no/IsTransmissionOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_telemetry"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/HasTransmissionDelay",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_telemetry_delay"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_telemetry_delay"
+      },
+      "VerbURI": "http://ddhub.no/HasStaticValue",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_telemetry_delay_signal"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_telemetry"
+      },
+      "VerbURI": "http://ddhub.no/IsTransformationOutput",
+      "Object": {
+        "NameSpace": "nodes",
+        "ID": "AnnulusTemperature_averaging"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateOut"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "FlowRateOut"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateOut"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/FlowRateOut"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "FlowRateOut"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceRPM"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "SurfaceRPM"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceRPM"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/SurfaceRPM"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "SurfaceRPM"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "TD"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "TD"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "TD"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/HoleDepth"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "TD"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "WOB"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "WOB"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "WOB"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/WOB"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "WOB"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "InstantaneousROP"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "InstantaneousROP"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "InstantaneousROP"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/ROP"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "InstantaneousROP"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookPosition"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "HookPosition"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookPosition"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/HookPosition"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookPosition"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookVelocity"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "HookVelocity"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookVelocity"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/HookVelocity"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "HookVelocity"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitTemperature"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "ActivePitTemperature"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitTemperature"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/TemperatureIn"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitTemperature"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitDensity"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "ActivePitDensity"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitDensity"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/DensityIn"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ActivePitDensity"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BopChokeOpening"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "BopChokeOpening"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BopChokeOpening"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/BOPOpening"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BopChokeOpening"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BopChokePressure"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "BopChokePressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BopChokePressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/BOPPressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "BopChokePressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokePressure"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "ChokePressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokePressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/BackPressurePumpPressure"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokePressure"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "GasFlowRateOut"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "GasFlowRateOut"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "GasFlowRateOut"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/GasFlowRate"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "GasFlowRateOut"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokeOpening"
+      },
+      "VerbURI": "http://ddhub.no/HasDynamicValue",
+      "Object": {
+        "NameSpace": "ProvidedVariables",
+        "ID": "ChokeOpening"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokeOpening"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/MPDChokeOpening"
+      }
+    },
+    {
+      "Subject": {
+        "NameSpace": "nodes",
+        "ID": "ChokeOpening"
+      },
+      "VerbURI": "http://ddhub.no/BelongsToClass",
+      "Object": {
+        "NameSpace": "http://ddhub.no/",
+        "ID": "http://ddhub.no/Measurement"
+      }
+    }
+  ],
+  "ProvidedVariables": [
+    {
+      "VariableID": "FlowRateInSetPoint",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "TopOfStringVelocitySetPoint",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "SurfaceRPMSetPoint",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "BOPOpeningSetPoint",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "ChokeOpeningSetPoint",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "HookLoad",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "SPP",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "SurfaceTorque",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "FlowRateIn",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "ActivePitVolume",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "BitDepth",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "DownholeECD",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "DownholePressure_WP",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "DownholePressure",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "AnnulusPressure",
+      "Rank": 1,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "AnnulusTemperature",
+      "Rank": 1,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "FlowRateOut",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "SurfaceRPM",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "TD",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "WOB",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "InstantaneousROP",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "HookPosition",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "HookVelocity",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "ActivePitTemperature",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "ActivePitDensity",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "BopChokeOpening",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "BopChokePressure",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "ChokePressure",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "GasFlowRateOut",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    },
+    {
+      "VariableID": "ChokeOpening",
+      "Rank": 0,
+      "Dimensions": null,
+      "DataType": "double"
+    }
+  ],
+  "InjectedVocabulary": null
+}

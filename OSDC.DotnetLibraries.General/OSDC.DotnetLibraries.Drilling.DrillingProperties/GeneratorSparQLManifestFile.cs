@@ -7,7 +7,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public static class GeneratorSparQLManifestFile
     {
-        public static ManifestFile? GetManifestFile(Assembly? assembly, string? typeName, string manifestName, string companyName, string prefix)
+        public static ManifestFile? GetManifestFile(Assembly? assembly, string? typeName, string manifestName, string companyName, string prefix, List<int>? options = null)
         {
             if (assembly == null || typeName == null)
             {
@@ -28,15 +28,51 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         List<SemanticFactAttribute> semanticFactAttributes = [];
                         foreach (var attr in workingSemanticFactAttributes)
                         {
-                            if (!(attr is ExcludeFactAttribute) && !(attr is OptionalFactAttribute) && !optionalFactAttributes.Contains(attr))
+                            if (!(attr is ExcludeFactAttribute))
                             {
-                                semanticFactAttributes.Add(attr);
+                                if (!(attr is OptionalFactAttribute) ||
+                                    (options == null && !(attr is OptionalFactAttribute) && !optionalFactAttributes.Contains(attr)) ||
+                                    (options != null && (attr is OptionalFactAttribute optFacAttribute) && options.Contains(optFacAttribute.GroupIndex)))
+                                {
+                                    semanticFactAttributes.Add(attr);
+                                }
                             }
+                        }
+                        // search for the declarations
+                        List<SemanticFactAttribute> decls = [];
+                        foreach (var attr in semanticFactAttributes)
+                        {
+                            if (attr.Verb == Verbs.Enum.BelongsToClass)
+                            {
+                                decls.Add(attr);
+                            }
+                        }
+                        // remove the orphan declarations
+                        List<SemanticFactAttribute> toBeRemoved = [];
+                        foreach (var attr in decls)
+                        {
+                            bool isUtilized = false;
+                            foreach (var attr2 in semanticFactAttributes)
+                            {
+                                if (attr2.Verb != Verbs.Enum.BelongsToClass &&
+                                    (attr.SubjectName == attr2.SubjectName || attr.SubjectName == attr2.ObjectName))
+                                {
+                                    isUtilized = true;
+                                    break;
+                                }
+                            }
+                            if (!isUtilized)
+                            {
+                                toBeRemoved.Add(attr);
+                            }
+                        }
+                        foreach (var attr in toBeRemoved)
+                        {
+                            semanticFactAttributes.Remove(attr);
                         }
                         if (semanticManifestOptionsAttribute != null ||
                             (semanticFactAttributes != null && semanticFactAttributes.Any()) ||
                             (optionalFactAttributes != null && optionalFactAttributes.Any()))
-
                         {
                             List<SemanticFact> facts = new List<SemanticFact>();
                             if (semanticFactAttributes != null)
@@ -223,7 +259,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             return null;
         }
 
-        public static ManifestFile? GetManifestFile(Assembly? assembly, string? typeName, string? propertyName, string manifestName, string companyName, string prefix)
+        public static ManifestFile? GetManifestFile(Assembly? assembly, string? typeName, string? propertyName, string manifestName, string companyName, string prefix, List<int>? options = null)
         {
             if (assembly == null || typeName == null || propertyName == null)
             {
@@ -241,8 +277,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         // Print property information
                         foreach (PropertyInfo property in properties)
                         {
-                            if (property.Name == propertyName &&
-                                (true || property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty))))
+                            if (property.Name == propertyName)
                             {
                                 var workingSemanticFactAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
                                 var optionalFactAttributes = property.GetCustomAttributes<OptionalFactAttribute>();
@@ -251,9 +286,49 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 List<SemanticFactAttribute> semanticFactAttributes = [];
                                 foreach (var attr in workingSemanticFactAttributes)
                                 {
-                                    if (!(attr is ExcludeFactAttribute) && !(attr is OptionalFactAttribute) && !optionalFactAttributes.Contains(attr))
+                                    if (!(attr is ExcludeFactAttribute))
                                     {
-                                        semanticFactAttributes.Add(attr);
+                                        if (!(attr is OptionalFactAttribute) ||
+                                            (options == null && !(attr is OptionalFactAttribute) && !optionalFactAttributes.Contains(attr)) ||
+                                            (options != null && (attr is OptionalFactAttribute optFacAttribute) && options.Contains(optFacAttribute.GroupIndex)))
+                                        {
+                                            semanticFactAttributes.Add(attr);
+                                        }
+                                    }
+                                }
+                                // search for the declarations
+                                List<SemanticFactAttribute> decls = [];
+                                foreach (var attr in semanticFactAttributes)
+                                {
+                                    if (attr.Verb == Verbs.Enum.BelongsToClass)
+                                    {
+                                        decls.Add(attr);
+                                    }
+                                }
+                                // remove the orphan declarations
+                                List<SemanticFactAttribute> toBeRemoved = [];
+                                foreach (var attr in decls)
+                                {
+                                    bool isUtilized = false;
+                                    foreach (var attr2 in semanticFactAttributes)
+                                    {
+                                        if (attr2.Verb != Verbs.Enum.BelongsToClass &&
+                                            (attr.SubjectName == attr2.SubjectName || attr.SubjectName == attr2.ObjectName))
+                                        {
+                                            isUtilized = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!isUtilized)
+                                    {
+                                        toBeRemoved.Add(attr);
+                                    }
+                                }
+                                if (toBeRemoved.Any())
+                                {
+                                    foreach (var attr in toBeRemoved)
+                                    {
+                                        semanticFactAttributes.Remove(attr);
                                     }
                                 }
                                 if (semanticManifestOptionsAttribute != null ||
@@ -572,7 +647,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
                                                     VerbURI = ddhubURL + fact.Verb.ToString(),
-                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectPhysicalQuantity.Value.ToString(), prefix) }
+                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = fact.ObjectPhysicalQuantity.Value.ToString() }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
                                             }
@@ -582,7 +657,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
                                                     VerbURI = ddhubURL + fact.Verb.ToString(),
-                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectDrillingQuantity.Value.ToString(), prefix) }
+                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = fact.ObjectDrillingQuantity.Value.ToString() }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
                                             }
@@ -598,7 +673,115 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             }
             return null;
         }
-
+        public static string? GetDWIS(ManifestFile manifestFile, bool useNameSpaceAliases = false)
+        {
+            if (manifestFile == null || manifestFile.InjectedNodes == null || manifestFile.ProvidedVariables == null || manifestFile.InjectedReferences == null)
+            {
+                return null;
+            }
+            else
+            {
+                string dwisDescription = string.Empty;
+                dwisDescription += "```DWIS\n";
+                foreach (var v in manifestFile.ProvidedVariables)
+                {
+                    if (v != null && !string.IsNullOrEmpty(v.VariableID) && !string.IsNullOrEmpty(v.DataType))
+                    {
+                        string opcClass = "opc:";
+                        if (v.Dimensions != null)
+                        {
+                            opcClass += "array_of_";
+                            bool first = true;
+                            foreach (var k in v.Dimensions)
+                            {
+                                if (!first)
+                                {
+                                    opcClass += "_";
+                                    first = false;
+                                }
+                                opcClass += k.ToString();
+                            }
+                            opcClass += "_" + v.DataType;
+                        }
+                        else
+                        {
+                            opcClass += v.DataType;
+                        }
+                        dwisDescription += GetProvidedVariableNamespace(manifestFile, useNameSpaceAliases) + ":" + v.VariableID + " BelongsToClass " + opcClass + " .\n";
+                    }
+                }
+                foreach (var v in manifestFile.InjectedNodes)
+                {
+                    if (v != null && !string.IsNullOrEmpty(v.DisplayName) && !string.IsNullOrEmpty(v.TypeDictionaryURI))
+                    {
+                        dwisDescription += GetInjectedNodesNamespace(manifestFile, useNameSpaceAliases) + ":" + v.DisplayName + " BelongsToClass " + ProcessNameSpace("http://ddhub.no/", v.TypeDictionaryURI.Replace("http://ddhub.no/", "")) + " .\n";
+                    }
+                }
+                foreach (var r in manifestFile.InjectedReferences)
+                {
+                    if (r != null && r.Subject != null && !string.IsNullOrEmpty(r.Subject.ID) && !string.IsNullOrEmpty(r.VerbURI) && r.Object != null && !string.IsNullOrEmpty(r.Object.ID))
+                    {
+                        dwisDescription += ProcessNameSpace(r.Subject.NameSpace, r.Subject.ID) + " " + r.VerbURI.Replace("http://ddhub.no/", "") + " " + ProcessNameSpace(r.Object.NameSpace, r.Object.ID.Replace(r.Object.NameSpace, "")) + " .\n";
+                    }
+                }
+                dwisDescription += "```\n";
+                return dwisDescription;
+            }
+        }
+        private static string ProcessNameSpace(string ns, string v)
+        {
+            if (!string.IsNullOrEmpty(ns))
+            {
+                if (ns.Contains("http://") && !ns.StartsWith("<") && !ns.EndsWith(">"))
+                {
+                    if (!ns.EndsWith("/"))
+                    {
+                        ns += "/";
+                    }
+                    return "<" + ns + v + ">";
+                }
+            }
+            return ns + ":" + v;
+        }
+        private static string GetProvidedVariableNamespace(ManifestFile manifestFile, bool useNameSpaceAliases)
+        {
+            if (useNameSpaceAliases &&
+                manifestFile.InjectionInformation != null &&
+                manifestFile.InjectionInformation.ProvidedVariablesNamespaceAlias != null)
+            {
+                return manifestFile.InjectionInformation.ProvidedVariablesNamespaceAlias;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+        private static string GetInjectedVariableNamespace(ManifestFile manifestFile, bool useNameSpaceAliases)
+        {
+            if (useNameSpaceAliases &&
+                manifestFile.InjectionInformation != null &&
+                manifestFile.InjectionInformation.InjectedVariablesNamespaceAlias != null)
+            {
+                return manifestFile.InjectionInformation.InjectedVariablesNamespaceAlias;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+        private static string GetInjectedNodesNamespace(ManifestFile manifestFile, bool useNameSpaceAliases)
+        {
+            if (useNameSpaceAliases &&
+                manifestFile.InjectionInformation != null &&
+                manifestFile.InjectionInformation.InjectedNodesNamespaceAlias != null)
+            {
+                return manifestFile.InjectionInformation.InjectedNodesNamespaceAlias;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
         public static string? GetMermaid(ManifestFile manifestFile)
         {
             if (manifestFile == null || manifestFile.InjectedNodes == null || manifestFile.ProvidedVariables == null || manifestFile.InjectedReferences == null)
@@ -756,9 +939,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             string soptions = string.Empty;
                                             string sparql = string.Empty;
                                             int argCount = 0;
-                                            sparql += "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
-                                            sparql += "PREFIX ddhub: <http://ddhub.no/>\n";
-                                            sparql += "PREFIX quantity: <http://ddhub.no/UnitAndQuantity>\n\n";
+                                            sparql += "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
+                                            sparql += "PREFIX ddhub:<http://ddhub.no/>\n";
+                                            sparql += "PREFIX quantity:<http://ddhub.no/UnitAndQuantity>\n\n";
                                             if (semanticTypeVariableAttribute != null &&
                                                 !string.IsNullOrEmpty(semanticTypeVariableAttribute.ValueVariable) &&
                                                 IsUsed(combination, semanticTypeVariableAttribute.ValueVariable))
@@ -768,19 +951,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 argCount = 1;
                                                 if (options.Count > 0)
                                                 {
-                                                    bool first = true;
                                                     foreach (var option in options)
                                                     {
-                                                        if (!first)
-                                                        {
-                                                            soptions += ",";
-                                                        }
-                                                        first = false;
-                                                        soptions += option;
+                                                        soptions += " " + option;
                                                     }
                                                     if (!string.IsNullOrEmpty(soptions))
                                                     {
-                                                        sparql += ", " + "?factOptionSet";
+                                                        sparql += " ?factOptionSet";
                                                         argCount++;
                                                     }
                                                 }
@@ -798,7 +975,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     fact.ObjectName = ProcessQueryVariable(fact.ObjectName);
                                                 }
-                                                sparql += GenerateWhereStatement(fact, alreadyTyped);
+                                                sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
                                             }
                                             if (excludeFactAttributes != null && excludeFactAttributes.Any())
                                             {
@@ -813,13 +990,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     {
                                                         excluded.ObjectName = ProcessQueryVariable(excluded.ObjectName);
                                                     }
-                                                    sparql += GenerateWhereStatement(excluded, alreadyTyped);
+                                                    sparql += GenerateWhereStatement(excluded, alreadyTyped, null);
                                                 }
                                                 sparql += "  }\n";
                                             }
                                             if (!string.IsNullOrEmpty(soptions))
                                             {
-                                                sparql += "  BIND (\"" + soptions + "\" as ?factOptionSet)\n";
+                                                sparql += "  BIND ('" + soptions + "' AS ?factOptionSet)\n";
                                             }
                                             sparql += "}\n";
                                             queries.Add("Query-" + typeName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
@@ -955,9 +1132,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 string sparql = string.Empty;
                                                 string soptions = string.Empty;
                                                 int argCount = 0;
-                                                sparql += "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
-                                                sparql += "PREFIX ddhub: <http://ddhub.no/>\n";
-                                                sparql += "PREFIX quantity: <http://ddhub.no/UnitAndQuantity>\n\n";
+                                                sparql += "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
+                                                sparql += "PREFIX ddhub:<http://ddhub.no/>\n";
+                                                sparql += "PREFIX quantity:<http://ddhub.no/UnitAndQuantity>\n\n";
                                                 List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
                                                 if (semanticDiracVariableAttribute != null &&
                                                     !string.IsNullOrEmpty(semanticDiracVariableAttribute.ValueVariable) &&
@@ -975,7 +1152,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string min = ProcessQueryVariable(semanticUniformVariableAttribute.MinValueVariable);
                                                     string max = ProcessQueryVariable(semanticUniformVariableAttribute.MaxValueVariable);
-                                                    sparql += "SELECT " + min + ", " + max;
+                                                    sparql += "SELECT " + min + " " + max;
                                                     argCount = 2;
                                                 }
                                                 else if (semanticSensorVariableAttribute != null &&
@@ -990,10 +1167,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     sparql += "SELECT " + mean;
                                                     argCount = 1;
                                                     string precision = ProcessQueryVariable(semanticSensorVariableAttribute.PrecisionVariable);
-                                                    sparql += ", " + precision;
+                                                    sparql += " " + precision;
                                                     argCount++;
                                                     string accuracy = ProcessQueryVariable(semanticSensorVariableAttribute.AccuracyVariable);
-                                                    sparql += ", " + accuracy;
+                                                    sparql += " " + accuracy;
                                                     argCount++;
                                                 }
                                                 else if (semanticFullScaleVariableAttribute != null &&
@@ -1007,10 +1184,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     sparql += "SELECT " + mean;
                                                     argCount = 1;
                                                     string fullScale = ProcessQueryVariable(semanticFullScaleVariableAttribute.FullScaleVariable);
-                                                    sparql += ", " + fullScale;
+                                                    sparql += " " + fullScale;
                                                     argCount++;
                                                     string proportionError = ProcessQueryVariable(semanticFullScaleVariableAttribute.ProportionErrorVariable);
-                                                    sparql += ", " + proportionError;
+                                                    sparql += " " + proportionError;
                                                     argCount++;
                                                 }
                                                 else if (semanticGaussianVariableAttribute != null &&
@@ -1028,7 +1205,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                         IsUsed(combination, semanticGaussianVariableAttribute.StandardDeviationVariable))
                                                     {
                                                         string stdDev = ProcessQueryVariable(semanticGaussianVariableAttribute.StandardDeviationVariable);
-                                                        sparql += ", " + stdDev;
+                                                        sparql += " " + stdDev;
                                                         argCount++;
                                                     }
                                                 }
@@ -1072,19 +1249,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 }
                                                 if (options.Count > 0)
                                                 {
-                                                    bool first = true;
                                                     foreach (var option in options)
                                                     {
-                                                        if (!first)
-                                                        {
-                                                            soptions += ",";
-                                                        }
-                                                        first = false;
-                                                        soptions += option;
+                                                        soptions += " " + option;
                                                     }
                                                     if (!string.IsNullOrEmpty(soptions))
                                                     {
-                                                        sparql += ", " + "?factOptionSet";
+                                                        sparql += " ?factOptionSet";
                                                         argCount++;
                                                     }
                                                 }
@@ -1101,7 +1272,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     {
                                                         fact.ObjectName = ProcessQueryVariable(fact.ObjectName);
                                                     }
-                                                    sparql += GenerateWhereStatement(fact, alreadyTyped);
+                                                    sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
                                                 }
                                                 if (excludeFactAttributes != null && excludeFactAttributes.Any())
                                                 {
@@ -1116,13 +1287,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                         {
                                                             excluded.ObjectName = ProcessQueryVariable(excluded.ObjectName);
                                                         }
-                                                        sparql += GenerateWhereStatement(excluded, alreadyTyped);
+                                                        sparql += GenerateWhereStatement(excluded, alreadyTyped, null);
                                                     }
                                                     sparql += "  }\n";
                                                 }
                                                 if (!string.IsNullOrEmpty(soptions))
                                                 {
-                                                    sparql += "  BIND (\"" + soptions + "\" as ?factOptionSet)\n";
+                                                    sparql += "  BIND ('" + soptions + "' as ?factOptionSet)\n";
                                                 }
                                                 sparql += "}\n";
                                                 queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
@@ -1283,7 +1454,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         }
         private static string ProcessQueryVariable(string variable)
         {
-            variable = variable.Trim();
+            variable = variable.Trim().Replace('#', '_');
             if (!variable.StartsWith('?'))
             {
                 variable = '?' + variable;
@@ -1303,7 +1474,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             return variable;
         }
 
-        private static string GenerateWhereStatement(SemanticFact fact, List<string> alreadyTyped)
+        private static string GenerateWhereStatement(SemanticFact fact, List<string> alreadyTyped, List<ExcludeFact>? excludedFacts)
         {
             string result = string.Empty;
             if (fact != null &&
@@ -1335,6 +1506,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 else
                 {
                     obj = "ddhub:" + fact.Object.ToString();
+                    if (fact.Object == Nouns.Enum.DynamicDrillingSignal || 
+                        fact.Object == Nouns.Enum.DrillingSignal)
+                    {
+                        return string.Empty;
+                    }
                 }
                 string verb = string.Empty;
                 if (fact.Verb == Verbs.Enum.BelongsToClass)
@@ -1346,7 +1522,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                     }
                     else
                     {
-                        verb = "ddhub:" + fact.Verb.ToString();
+                        verb = "rdf:type"; //"ddhub:" + fact.Verb.ToString();
                     }
                 }
                 else
