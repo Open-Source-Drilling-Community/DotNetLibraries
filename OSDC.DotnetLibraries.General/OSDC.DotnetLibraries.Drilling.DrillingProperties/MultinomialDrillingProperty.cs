@@ -27,6 +27,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// <summary>
         /// synonym property to Value but with the correct type
         /// </summary>
+        [JsonIgnore]
         public MultinomialDistribution? MultinomialValue { get; set; } = new MultinomialDistribution();
         /// <summary>
         /// 
