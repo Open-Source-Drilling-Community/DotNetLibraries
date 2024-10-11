@@ -23,7 +23,7 @@ jobs:
           dotnet-version: '8.0'  # specify your dotnet version
 
       - name: Restore dependencies for all projects
-        run: dotnet restore
+        run: dotnet restore ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.sln
 
       # Step 1: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01 project
       - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01
