@@ -1,5 +1,4 @@
-﻿using DWIS.Client.ReferenceImplementation;
-using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
@@ -60,40 +59,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// <param name="src"></param>
         public DeterministicBernoulliDrillingProperty(DeterministicBernoulliDrillingProperty src) : base(src)
         {
-        }
-        /// </summary>
-        /// <param name="signals"></param>
-        /// <returns></returns>
-        public override bool FuseData(List<AcquiredSignals>? signals)
-        {
-            bool ok = false;
-            if (signals != null && signals.Count > 0)
-            {
-                double sumProbability = 0;
-                double productProbability = 1;
-                foreach (var signalList in signals)
-                {
-                    if (signalList != null)
-                    {
-                        foreach (var signal in signalList)
-                        {
-                            if (signal.Value != null && signal.Value.Count >= 1)
-                            {
-                                double[]? probabilities = signal.Value[0].GetValue<double[]>();
-                                if (probabilities != null)
-                                {
-                                    sumProbability += probabilities[0];
-                                    productProbability *= probabilities[0];
-                                }
-                            }
-                        }
-                    }
-                }
-                double fusedProbability = sumProbability - productProbability;
-                BooleanValue = fusedProbability >= 0.5;
-                ok = true;
-            }
-            return ok;
         }
         public override bool Equals(DrillingProperty? cmp)
         {

@@ -1,12 +1,6 @@
 ﻿using DWIS.Vocabulary.Schemas;
 using OSDC.UnitConversion.Conversion.DrillingEngineering;
 using OSDC.UnitConversion.Conversion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {

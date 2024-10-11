@@ -1,5 +1,4 @@
-﻿using DWIS.Client.ReferenceImplementation;
-using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
@@ -63,21 +62,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// <param name="src"></param>
         public GeneralDistributionDrillingProperty(UniformDrillingProperty src) : base(src)
         {
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="signals"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public override bool FuseData(List<AcquiredSignals>? signals)
-        {
-            bool ok = false;
-            if (signals != null && signals.Count > 0)
-            {
-
-            }
-            return ok;
         }
         public override bool Equals(DrillingProperty? cmp)
         {

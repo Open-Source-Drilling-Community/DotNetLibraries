@@ -2,7 +2,6 @@
 using DWIS.Vocabulary.Schemas;
 using System.Reflection;
 
-
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     public static class GeneratorSparQLManifestFile

@@ -1,5 +1,4 @@
-﻿using DWIS.Client.ReferenceImplementation;
-using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
@@ -153,60 +152,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 TernaryValue.Probability2 = src.TernaryValue.Probability2;
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="signals"></param>
-        /// <returns></returns>
-        public override bool FuseData(List<AcquiredSignals>? signals)
-        {
-            bool ok = false;
-            if (signals != null && signals.Count > 0 && NumberOfStates != null)
-            {
-                double[] sums = new double[NumberOfStates.Value];
-                double[] products = new double[NumberOfStates.Value];
-                for (int i = 0; i < NumberOfStates.Value; i++)
-                {
-                    sums[i] = 0;
-                    products[i] = 1;
-                }
-                foreach (var signalList in signals)
-                {
-                    if (signalList != null)
-                    {
-                        foreach (var signal in signalList)
-                        {
-                            if (signal.Value != null && signal.Value.Count >= 1)
-                            {
-                                double[]? probabilities = signal.Value[0].GetValue<double[]>();
-                                if (probabilities != null && probabilities.Length == NumberOfStates.Value)
-                                {
-                                    for (int i = 0; i < NumberOfStates.Value; i++)
-                                    {
-                                        sums[i] += probabilities[i];
-                                        products[i] *= probabilities[i];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                double[] probs = new double[NumberOfStates.Value];
-                double sum = 0;
-                for (int i = 0; i < NumberOfStates.Value; i++)
-                {
-                    probs[i] = sums[i] - products[i];
-                    sum += probs[i];
-                }
-                for (int i = 0; i < NumberOfStates.Value; i++)
-                {
-                    probs[i] /= sum;
-                }
-                Probabilities = probs;
-                ok = true;
-            }
-            return ok;
-        }
+
         public override bool Equals(DrillingProperty? cmp)
         {
             if (cmp is not null and TernaryDrillingProperty drillProp)

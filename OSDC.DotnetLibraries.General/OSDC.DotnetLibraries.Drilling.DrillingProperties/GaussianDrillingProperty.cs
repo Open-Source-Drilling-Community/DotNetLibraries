@@ -1,7 +1,6 @@
 ﻿using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 using MathNet.Numerics.Distributions;
-using DWIS.Client.ReferenceImplementation;
 using OSDC.DotnetLibraries.General.Common;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
@@ -91,125 +90,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public GaussianDrillingProperty(GaussianDrillingProperty src) : base(src)
         {
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="signals"></param>
-        /// <returns></returns>
-        public override bool FuseData(List<AcquiredSignals>? signals)
-        {
-            return FuseData(signals, 1e-6, null, null);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="signals"></param>
-        /// <param name="defaultStandardDeviation"></param>
-        /// <returns></returns>
-        public bool FuseData(List<AcquiredSignals>? signals, double defaultStandardDeviation, List<byte>? optionsForSensor, List<byte>? optionsForFullScale)
-        {
-            bool ok = false;
-            if (signals != null && signals.Count > 0)
-            {
-                double meanSum = 0;
-                double invVarSum = 0;
-                foreach (var signalList in signals)
-                {
-                    if (signalList != null)
-                    {
-                        foreach (var signal in signalList)
-                        {
-                            if (signal.Value != null && signal.Value.Count >= 1)
-                            {
-                                double? mean = signal.Value[0].GetValue<double>();
-                                if (mean != null)
-                                {
-                                    double? stdDev = null;
-                                    if (signal.Value.Count == 2)
-                                    {
-                                        stdDev = signal.Value[1].GetValue<double>();
-                                    }
-                                    else if (signal.Value.Count == 4 && optionsForSensor != null && optionsForFullScale != null)
-                                    {
-                                        string? soptions = signal.Value[3].GetValue<string>();
-                                        if (!string.IsNullOrEmpty(soptions))
-                                        {
-                                            List<byte> options = [];
-                                            string[] tokens = soptions.Split(',');
-                                            if (tokens != null)
-                                            {
-                                                foreach(var token in tokens)
-                                                {
-                                                    if (byte.TryParse(token, out byte b))
-                                                    {
-                                                        options.Add(b);
-                                                    }
-                                                }
-                                            }
-                                            if (options.Count > 0)
-                                            {
-                                                bool foundInSensorList = false;
-                                                foreach (var option in options)
-                                                {
-                                                    if (optionsForSensor.Contains(option))
-                                                    {
-                                                        foundInSensorList = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (foundInSensorList)
-                                                {
-                                                    double? precision = signal.Value[1].GetValue<double>();
-                                                    double? accuracy = signal.Value[2].GetValue<double>();
-                                                    if (precision != null && accuracy != null)
-                                                    {
-                                                        stdDev = Math.Sqrt(precision.Value *precision.Value + accuracy.Value *accuracy.Value);
-                                                    }
-                                                }
-                                                if (stdDev != null)
-                                                {
-                                                    bool foundInFullScale = false;
-                                                    foreach (var option in options)
-                                                    {
-                                                        if (optionsForFullScale.Contains(option))
-                                                        {
-                                                            foundInFullScale = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (foundInFullScale)
-                                                    {
-                                                        double? fullScale = signal.Value[1].GetValue<double>();
-                                                        double? proportionError = signal.Value[2].GetValue<double>();
-                                                        if (fullScale != null && proportionError != null)
-                                                        {
-                                                            stdDev = fullScale.Value * proportionError.Value;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (stdDev == null)
-                                    {
-                                        stdDev = defaultStandardDeviation;
-                                    }
-                                    invVarSum += 1.0 / (stdDev.Value * stdDev.Value);
-                                    meanSum += mean.Value / (stdDev.Value * stdDev.Value);
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!Numeric.EQ(invVarSum, 0))
-                {
-                    Mean = meanSum / invVarSum;
-                    StandardDeviation = 1.0 / Numeric.SqrtEqual(invVarSum);
-                    ok = true;
-                }
-            }
-            return ok;
-        }
+
 
         /// <summary>
         /// 

@@ -1,5 +1,4 @@
-﻿using DWIS.Client.ReferenceImplementation;
-using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
@@ -127,15 +126,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             {
                 MultinomialValue = new MultinomialDistribution(src.MultinomialValue.NumberTrials, src.MultinomialValue.NumberOfStates, src.MultinomialValue.Probabilities);
             }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="signals"></param>
-        /// <returns></returns>
-        public override bool FuseData(List<AcquiredSignals>? signals)
-        {
-            throw new NotImplementedException();
         }
 
         public override bool Equals(DrillingProperty? cmp)

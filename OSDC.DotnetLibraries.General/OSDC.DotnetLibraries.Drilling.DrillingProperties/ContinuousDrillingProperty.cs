@@ -1,5 +1,4 @@
-﻿using DWIS.Client.ReferenceImplementation;
-using OSDC.DotnetLibraries.General.Statistics;
+﻿using OSDC.DotnetLibraries.General.Statistics;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {

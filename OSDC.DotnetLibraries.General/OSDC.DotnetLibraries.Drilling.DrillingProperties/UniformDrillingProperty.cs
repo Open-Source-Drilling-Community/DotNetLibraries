@@ -1,13 +1,5 @@
-﻿using DWIS.Client.ReferenceImplementation;
-using OSDC.DotnetLibraries.General.Statistics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
+﻿using OSDC.DotnetLibraries.General.Statistics;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
@@ -96,51 +88,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         /// <param name="src"></param>
         public UniformDrillingProperty(UniformDrillingProperty src) : base(src)
         {
-        }
-
-        public override bool FuseData(List<AcquiredSignals>? signals)
-        {
-            if (signals != null && signals.Count > 0)
-            {
-                double amin = double.MaxValue;
-                double amax = double.MinValue;
-                foreach (var signalList in signals)
-                {
-                    if (signalList != null)
-                    {
-                        foreach (var signal in signalList)
-                        {
-                            if (signal.Value != null && signal.Value.Count >= 2)
-                            {
-                                double min = signal.Value[0].GetValue<double>();
-                                if (min < amin)
-                                {
-                                    amin = min;
-                                }
-                                double max = signal.Value[1].GetValue<double>();
-                                if (max > amax)
-                                {
-                                    amax = max;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (amin <= amax)
-                {
-                    Min = amin;
-                    Max = amax;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
         }
 
         public override bool Equals(DrillingProperty? cmp)
