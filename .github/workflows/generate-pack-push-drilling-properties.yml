@@ -1,0 +1,133 @@
+name: Generate - Pack - Push DrillingProperies
+
+on:
+  push:
+    paths:
+      - './OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+          fetch-depth: 0 # use the whole commit history
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'  # specify your dotnet version
+
+      - name: Restore dependencies for all projects
+        run: dotnet restore
+
+      # Step 1: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01
+
+      # Step 2: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example02 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example02
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example02
+
+      # Step 3: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example03 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example03
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example03
+
+      # Step 4: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example04 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example04
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example04
+
+      # Step 5: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05
+
+      # Step 6: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example06 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example06
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example06
+
+      # Step 7: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example07 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example07
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example07
+
+      # Step 8: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example08 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example08
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example08
+
+      # Step 9: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09 project
+      - name: Run OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09
+        run: dotnet run --project ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09
+
+      # Step 10: Commit and push changes OSDC.DotnetLibraries.Drilling.DrillingProperties.ExampleXX folders
+      - name: Commit changes to OSDC.DotnetLibraries.Drilling.DrillingProperties.ExampleXX
+        run: |
+          git config --global user.name "EricCayeux"
+          git config --global user.email "eric.cayeux@norceresearch.no"
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example01/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example02/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example03/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example04/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example05/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example06/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example07/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example08/*
+          git add ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09/*
+          git commit -m "Update generated md files"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true  # This allows the job to continue even if there are no changes
+     
+      # Step 11: change the nuget versions
+      - name: Install GitVersion
+        run: dotnet tool install --global GitVersion.Tool
+
+      - name: Run GitVersion
+        id: gitversion
+        run: echo "FullSemVer=$(dotnet-gitversion /output json /showvariable FullSemVer)" >> "$GITHUB_OUTPUT"
+      
+      - name: add build in version
+        id: addBuildInVersion
+        run: echo "BuildFullSemVer=$(echo ${{ steps.gitversion.outputs.FullSemVer }} | sed 's/-/-build./' )" >> "$GITHUB_OUTPUT"
+
+      - name: echo version variable
+        id: echoVersionVariable
+        run: |
+          echo "The value of FullSemVer is ${{ steps.gitversion.outputs.FullSemVer }}"
+          echo "The value of BuildFullSemVer is ${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}"
+
+      - name: set version drilling properties
+        id: setVersionModel
+        run: |        
+          sed -i "s|<Version>.*</Version>|<Version>${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}</Version>|" OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties/OSDC.DotnetLibraries.Drilling.DrillingProperties.csproj
+
+      - name: commit and push
+        id: commitPushWithNewVersion
+        run: |
+          git add OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties/*.csproj
+          git commit -m "Bump version to ${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      # Step 12: Build and package OSDC.DotnetLibraries.Drilling.DrillingProperties
+      - name: Build projects
+        run: |
+          dotnet build ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties --configuration Release
+
+      # Step 13: Pack the project for NuGet
+      - name: Pack NuGet package
+        run: |
+          dotnet pack ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties --configuration Release
+
+      # Step 14: Push packages to NuGet.org
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push **/*${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
