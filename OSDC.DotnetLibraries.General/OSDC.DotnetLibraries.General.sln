@@ -63,7 +63,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Surveying.Example04", "OSDC.DotnetLibraries.Drilling.Surveying.Example04\OSDC.DotnetLibraries.Drilling.Surveying.Example04.csproj", "{0A31C175-9D67-47D8-9438-6F16D1083FAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09.csproj", "{EC52A579-80DB-4DA4-8BB6-8DEC3AA86E70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09", "OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09\OSDC.DotnetLibraries.Drilling.DrillingProperties.Example09.csproj", "{EC52A579-80DB-4DA4-8BB6-8DEC3AA86E70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F6E6525-870A-4093-A818-B84534207E39}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\generate-pack-push-drilling-properties.yml = ..\.github\workflows\generate-pack-push-drilling-properties.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

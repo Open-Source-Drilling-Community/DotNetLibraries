@@ -287,6 +287,8 @@ is used to define a default deterministic uncertainty.
 in the semantic facts to describe the value a `DeterministicBernoulliDrillingProperty`.
 - `SemanticExclusiveOrAttribute`: It takes at least 2 arguments. This attribute is used to defined
 a list of the optional semantic facts that are exclusive from each other's. 
+- `DefaultStandardDeviationAttribute`: used to define a default standard deviation for a `GaussianDrillingProperty`.
+- `DefaultProbabilityAttribute`: used to define a default probability for a `BernoulliDrillingProperty`.
 
 ```mermaid
 classDiagram
@@ -295,6 +297,12 @@ classDiagram
     }
     class MandatoryAttribute {
         +CommonProperty.MandatoryType Mandatory
+    }
+    class DefaultStandardDeviationAttribute {
+        +double StandardDeviation
+    }
+    class DefaultProbability {
+        +double Probability
     }
 ```
 
