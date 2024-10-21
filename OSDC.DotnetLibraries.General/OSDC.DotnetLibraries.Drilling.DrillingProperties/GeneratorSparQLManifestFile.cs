@@ -932,11 +932,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     }
                                     foreach (var combination in combinations)
                                     {
-                                        if (combination != null) 
+                                        if (combination != null)
                                         {
                                             List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
                                             string soptions = string.Empty;
                                             string sparql = string.Empty;
+                                            List<string> variables = new List<string>();
                                             int argCount = 0;
                                             sparql += "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
                                             sparql += "PREFIX ddhub:<http://ddhub.no/>\n";
@@ -946,6 +947,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 IsUsed(combination, semanticTypeVariableAttribute.ValueVariable))
                                             {
                                                 string var1 = ProcessQueryVariable(semanticTypeVariableAttribute.ValueVariable);
+                                                variables.Add(var1);
                                                 sparql += "SELECT " + var1;
                                                 argCount = 1;
                                                 if (options.Count > 0)
@@ -998,7 +1000,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 sparql += "  BIND ('" + soptions + "' AS ?factOptionSet)\n";
                                             }
                                             sparql += "}\n";
-                                            queries.Add("Query-" + typeName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
+                                            queries.Add("Query-" + typeName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Variables = variables, Options = options, SparQL = sparql });
                                             count++;
                                         }
                                     }
@@ -1135,11 +1137,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 sparql += "PREFIX ddhub:<http://ddhub.no/>\n";
                                                 sparql += "PREFIX quantity:<http://ddhub.no/UnitAndQuantity>\n\n";
                                                 List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
+                                                List<string> variables = new List<string>();
                                                 if (semanticDiracVariableAttribute != null &&
                                                     !string.IsNullOrEmpty(semanticDiracVariableAttribute.ValueVariable) &&
                                                     IsUsed(combination, semanticDiracVariableAttribute.ValueVariable))
                                                 {
                                                     string var1 = ProcessQueryVariable(semanticDiracVariableAttribute.ValueVariable);
+                                                    variables.Add(var1);
                                                     sparql += "SELECT " + var1;
                                                     argCount = 1;
                                                 }
@@ -1151,6 +1155,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string min = ProcessQueryVariable(semanticUniformVariableAttribute.MinValueVariable);
                                                     string max = ProcessQueryVariable(semanticUniformVariableAttribute.MaxValueVariable);
+                                                    variables.Add(min);
+                                                    variables.Add(max);
                                                     sparql += "SELECT " + min + " " + max;
                                                     argCount = 2;
                                                 }
@@ -1170,6 +1176,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     argCount++;
                                                     string accuracy = ProcessQueryVariable(semanticSensorVariableAttribute.AccuracyVariable);
                                                     sparql += " " + accuracy;
+                                                    variables.Add(mean);
+                                                    variables.Add(precision);
+                                                    variables.Add(precision);
                                                     argCount++;
                                                 }
                                                 else if (semanticFullScaleVariableAttribute != null &&
@@ -1187,6 +1196,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     argCount++;
                                                     string proportionError = ProcessQueryVariable(semanticFullScaleVariableAttribute.ProportionErrorVariable);
                                                     sparql += " " + proportionError;
+                                                    variables.Add(mean);
+                                                    variables.Add(fullScale);
+                                                    variables.Add(proportionError);
                                                     argCount++;
                                                 }
                                                 else if (semanticGaussianVariableAttribute != null &&
@@ -1199,12 +1211,14 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string mean = ProcessQueryVariable(semanticGaussianVariableAttribute.MeanVariable);
                                                     sparql += "SELECT " + mean;
+                                                    variables.Add(mean);
                                                     argCount = 1;
                                                     if (!string.IsNullOrEmpty(semanticGaussianVariableAttribute.StandardDeviationVariable) &&
                                                         IsUsed(combination, semanticGaussianVariableAttribute.StandardDeviationVariable))
                                                     {
                                                         string stdDev = ProcessQueryVariable(semanticGaussianVariableAttribute.StandardDeviationVariable);
                                                         sparql += " " + stdDev;
+                                                        variables.Add(stdDev);
                                                         argCount++;
                                                     }
                                                 }
@@ -1214,6 +1228,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string histoVar = ProcessQueryVariable(semanticGeneralDistributionVariableAttribute.HistogramVariable);
                                                     sparql += "SELECT " + histoVar;
+                                                    variables.Add(histoVar);
                                                     argCount = 1;
                                                 }
                                                 else if (semanticDeterministicCategoricalVariableAttribute != null &&
@@ -1222,6 +1237,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string variable = ProcessQueryVariable(semanticDeterministicCategoricalVariableAttribute.Variable);
                                                     sparql += "SELECT " + variable;
+                                                    variables.Add(variable);
                                                     argCount = 1;
                                                 }
                                                 else if (semanticDeterministicBernoulliVariableAttribute != null &&
@@ -1230,6 +1246,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string variable = ProcessQueryVariable(semanticDeterministicBernoulliVariableAttribute.Variable);
                                                     sparql += "SELECT " + variable;
+                                                    variables.Add(variable);
                                                     argCount = 1;
                                                 }
                                                 else if (semanticBernoulliVariableAttribute != null &&
@@ -1238,13 +1255,17 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     string variable = ProcessQueryVariable(semanticBernoulliVariableAttribute.Variable);
                                                     sparql += "SELECT " + variable;
+                                                    variables.Add(variable);
                                                     argCount = 1;
                                                 }
                                                 else if (semanticCategoricalVariableAttribute != null &&
                                                          !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.Variable) &&
                                                          IsUsed(combination, semanticCategoricalVariableAttribute.Variable))
                                                 {
-                                                    sparql += "SELECT " + ProcessQueryVariable(semanticCategoricalVariableAttribute.Variable);
+                                                    string variable = ProcessQueryVariable(semanticCategoricalVariableAttribute.Variable);
+                                                    sparql += "SELECT " + variable;
+                                                    variables.Add(variable);
+                                                    argCount = 1;
                                                 }
                                                 if (options.Count > 0)
                                                 {
