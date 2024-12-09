@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class SemanticDeterministicBernoulliVariableAttribute : Attribute
     {
         public string? Variable { get; } = null;

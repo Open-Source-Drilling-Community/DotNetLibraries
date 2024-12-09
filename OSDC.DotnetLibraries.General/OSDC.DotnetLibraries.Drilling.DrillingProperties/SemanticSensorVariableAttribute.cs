@@ -1,7 +1,7 @@
 ﻿
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class SemanticSensorVariableAttribute : Attribute
     {
         public string? MeanVariable { get; set; } = null;

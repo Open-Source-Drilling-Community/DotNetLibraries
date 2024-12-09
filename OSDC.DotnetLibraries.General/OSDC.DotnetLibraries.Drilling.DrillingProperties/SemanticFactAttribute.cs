@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
-    [AttributeUsage(AttributeTargets.Property|AttributeTargets.Struct|AttributeTargets.Class, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Property|AttributeTargets.Struct|AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
     public class SemanticFactAttribute : Attribute, ISemanticFactAttribute
     {
         public Nouns.Enum? Subject { get; protected set; } = null;
