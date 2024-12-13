@@ -1,545 +1,504 @@
 # Semantic Queries for `FluidDensitySetPoint`
 ## Query-DrillingProperties.TestClass-FluidDensitySetPoint-000
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
 SELECT ?FluidDensitySetPoint
 WHERE {
-	?FluidDensitySetPoint rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensitySetPoint#01 rdf:type ddhub:SetPoint .
-	?FluidDensitySetPoint#01 ddhub:HasDynamicValue ?FluidDensitySetPoint .
-	?FluidDensitySetPoint#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?FluidDensitySetPoint_01 rdf:type ddhub:SetPoint .
+	?FluidDensitySetPoint_01 ddhub:HasDynamicValue ?FluidDensitySetPoint .
+	?FluidDensitySetPoint_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
 }
 
 ```
 # Semantic Queries for `FluidDensityMargin`
 ## Query-DrillingProperties.TestClass-FluidDensityMargin-000
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMin, ?FluidDensityMax
+SELECT ?FluidDensityMin ?FluidDensityMax
 WHERE {
-	?FluidDensityMin rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMax rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityUniform#01 rdf:type ddhub:ComputedData .
-	?FluidDensityUniform#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?FDEUncertainty#01 rdf:type ddhub:MinMaxUncertainty .
-	?FluidDensityUniform#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
-	?FluidDensityMin#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMax#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMin#01 ddhub:HasDynamicValue ?FluidDensityMin .
-	?FluidDensityMax#01 ddhub:HasDynamicValue ?FluidDensityMax .
-	?FDEUncertainty#01 ddhub:HasUncertaintyMin ?FluidDensityMin#01 .
-	?FDEUncertainty#01 ddhub:HasUncertaintyMax ?FluidDensityMax#01 .
+	?FluidDensityUniform_01 rdf:type ddhub:ComputedData .
+	?FluidDensityUniform_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?FDEUncertainty_01 rdf:type ddhub:MinMaxUncertainty .
+	?FluidDensityUniform_01 ddhub:HasUncertainty ?FDEUncertainty_01 .
+	?FluidDensityMin_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMax_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMin_01 ddhub:HasDynamicValue ?FluidDensityMin .
+	?FluidDensityMax_01 ddhub:HasDynamicValue ?FluidDensityMax .
+	?FDEUncertainty_01 ddhub:HasUncertaintyMin ?FluidDensityMin_01 .
+	?FDEUncertainty_01 ddhub:HasUncertaintyMax ?FluidDensityMax_01 .
 }
 
 ```
 # Semantic Queries for `FluidDensityEstimated`
 ## Query-DrillingProperties.TestClass-FluidDensityEstimated-000
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev
+SELECT ?FluidDensityEstimated ?FluidDensityEstimatedStdDev
 WHERE {
-	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
-	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
-	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
-	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
-	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityEstimatedStdDev#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityEstimatedStdDev#01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
-	?FDEUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev#01 .
+	?FluidDensityEstimated_01 rdf:type ddhub:ComputedData .
+	?FluidDensityEstimated_01 ddhub:HasDynamicValue ?FluidDensityEstimated .
+	?FluidDensityEstimated_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?FDEUncertainty_01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityEstimated_01 ddhub:HasUncertainty ?FDEUncertainty_01 .
+	?FluidDensityEstimatedStdDev_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityEstimatedStdDev_01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
+	?FDEUncertainty_01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev_01 .
 }
 
 ```
 ## Query-DrillingProperties.TestClass-FluidDensityEstimated-001
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityEstimated, ?FluidDensityEstimatedStdDev, ?factOptionSet
+SELECT ?FluidDensityEstimated ?FluidDensityEstimatedStdDev ?factOptionSet
 WHERE {
-	?FluidDensityEstimated rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityEstimated#01 rdf:type ddhub:ComputedData .
-	?FluidDensityEstimated#01 ddhub:HasDynamicValue ?FluidDensityEstimated .
-	?FluidDensityEstimated#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?FDEUncertainty#01 rdf:type ddhub:GaussianUncertainty .
-	?FluidDensityEstimated#01 ddhub:HasUncertainty ?FDEUncertainty#01 .
-	?FluidDensityEstimatedStdDev rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityEstimatedStdDev#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityEstimatedStdDev#01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
-	?FDEUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev#01 .
-	?FDEUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityEstimated#01 .
-  BIND ("1" as ?factOptionSet)
+	?FluidDensityEstimated_01 rdf:type ddhub:ComputedData .
+	?FluidDensityEstimated_01 ddhub:HasDynamicValue ?FluidDensityEstimated .
+	?FluidDensityEstimated_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?FDEUncertainty_01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityEstimated_01 ddhub:HasUncertainty ?FDEUncertainty_01 .
+	?FluidDensityEstimatedStdDev_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityEstimatedStdDev_01 ddhub:HasStaticValue ?FluidDensityEstimatedStdDev .
+	?FDEUncertainty_01 ddhub:HasUncertaintyStandardDeviation ?FluidDensityEstimatedStdDev_01 .
+	?FDEUncertainty_01 ddhub:HasUncertaintyMean ?FluidDensityEstimated_01 .
+  BIND (' 1' as ?factOptionSet)
 }
 
 ```
 # Semantic Queries for `FluidDensityMeasured`
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-000
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
 SELECT ?FluidDensityMeasured
 WHERE {
-	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?FluidDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured_01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
 }
 
 ```
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-001
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured, ?factOptionSet
+SELECT ?FluidDensityMeasured ?sigma_FluidDensityMeasured ?factOptionSet
 WHERE {
-	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?FluidDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured_01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?sigma_FluidDensityMeasured rdf:type ddhub:DrillingSignal .
-	?sigma_FluidDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
-	?sigma_FluidDensityMeasured#01 ddhub:HasValue ?sigma_FluidDensityMeasured .
-	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
-	?FluidDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
-	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured#01 .
-  BIND ("1" as ?factOptionSet)
+	?FluidDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?sigma_FluidDensityMeasured_01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_FluidDensityMeasured_01 ddhub:HasValue ?sigma_FluidDensityMeasured .
+	?GaussianUncertainty_01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityMeasured_01 ddhub:HasUncertainty ?GaussianUncertainty_01 .
+	?GaussianUncertainty_01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured_01 .
+  BIND (' 1' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-002
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?sigma_FluidDensityMeasured, ?factOptionSet
+SELECT ?FluidDensityMeasured ?sigma_FluidDensityMeasured ?factOptionSet
 WHERE {
-	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?FluidDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured_01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?sigma_FluidDensityMeasured rdf:type ddhub:DrillingSignal .
-	?sigma_FluidDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
-	?sigma_FluidDensityMeasured#01 ddhub:HasValue ?sigma_FluidDensityMeasured .
-	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
-	?FluidDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
-	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured#01 .
-	?GaussianUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
-  BIND ("1,11" as ?factOptionSet)
+	?FluidDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?sigma_FluidDensityMeasured_01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_FluidDensityMeasured_01 ddhub:HasValue ?sigma_FluidDensityMeasured .
+	?GaussianUncertainty_01 rdf:type ddhub:GaussianUncertainty .
+	?FluidDensityMeasured_01 ddhub:HasUncertainty ?GaussianUncertainty_01 .
+	?GaussianUncertainty_01 ddhub:HasUncertaintyStandardDeviation ?sigma_FluidDensityMeasured_01 .
+	?GaussianUncertainty_01 ddhub:HasUncertaintyMean ?FluidDensityMeasured_01 .
+  BIND (' 1 11' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-003
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc, ?factOptionSet
+SELECT ?FluidDensityMeasured ?FluidDensityMeasured_prec ?FluidDensityMeasured_acc ?factOptionSet
 WHERE {
-	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?FluidDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured_01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?FluidDensityMeasured_prec rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prec#01 ddhub:HasValue ?FluidDensityMeasured_prec .
-	?FluidDensityMeasured_acc rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_acc#01 ddhub:HasValue ?FluidDensityMeasured_acc .
-	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
-	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?FluidDensityMeasured_prec#01 .
-	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc#01 .
-	?FluidDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
-  BIND ("2" as ?factOptionSet)
+	?FluidDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_prec_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prec_01 ddhub:HasValue ?FluidDensityMeasured_prec .
+	?FluidDensityMeasured_acc_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_acc_01 ddhub:HasValue ?FluidDensityMeasured_acc .
+	?SensorUncertainty_01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty_01 ddhub:HasUncertaintyPrecision ?FluidDensityMeasured_prec_01 .
+	?SensorUncertainty_01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc_01 .
+	?FluidDensityMeasured_01 ddhub:HasUncertainty ?SensorUncertainty_01 .
+  BIND (' 2' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-004
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_prec, ?FluidDensityMeasured_acc, ?factOptionSet
+SELECT ?FluidDensityMeasured ?FluidDensityMeasured_prec ?FluidDensityMeasured_acc ?factOptionSet
 WHERE {
-	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?FluidDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured_01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?FluidDensityMeasured_prec rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prec#01 ddhub:HasValue ?FluidDensityMeasured_prec .
-	?FluidDensityMeasured_acc rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_acc#01 ddhub:HasValue ?FluidDensityMeasured_acc .
-	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
-	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?FluidDensityMeasured_prec#01 .
-	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc#01 .
-	?FluidDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
-	?SensorUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
-  BIND ("2,21" as ?factOptionSet)
+	?FluidDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_prec_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prec_01 ddhub:HasValue ?FluidDensityMeasured_prec .
+	?FluidDensityMeasured_acc_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_acc_01 ddhub:HasValue ?FluidDensityMeasured_acc .
+	?SensorUncertainty_01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty_01 ddhub:HasUncertaintyPrecision ?FluidDensityMeasured_prec_01 .
+	?SensorUncertainty_01 ddhub:HasUncertaintyAccuracy ?FluidDensityMeasured_acc_01 .
+	?FluidDensityMeasured_01 ddhub:HasUncertainty ?SensorUncertainty_01 .
+	?SensorUncertainty_01 ddhub:HasUncertaintyMean ?FluidDensityMeasured_01 .
+  BIND (' 2 21' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-005
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop, ?factOptionSet
+SELECT ?FluidDensityMeasured ?FluidDensityMeasured_fs ?FluidDensityMeasured_prop ?factOptionSet
 WHERE {
-	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?FluidDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured_01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs .
-	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop .
-	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
-	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
-	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
-	?FluidDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
-  BIND ("3" as ?factOptionSet)
+	?FluidDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_fs_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_fs_01 ddhub:HasValue ?FluidDensityMeasured_fs .
+	?FluidDensityMeasured_prop_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prop_01 ddhub:HasValue ?FluidDensityMeasured_prop .
+	?FullScaleUncertainty_01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty_01 ddhub:HasFullScale ?FluidDensityMeasured_fs_01 .
+	?FullScaleUncertainty_01 ddhub:HasProportionError ?FluidDensityMeasured_prop_01 .
+	?FluidDensityMeasured_01 ddhub:HasUncertainty ?FullScaleUncertainty_01 .
+  BIND (' 3' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-FluidDensityMeasured-006
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?FluidDensityMeasured, ?FluidDensityMeasured_fs, ?FluidDensityMeasured_prop, ?factOptionSet
+SELECT ?FluidDensityMeasured ?FluidDensityMeasured_fs ?FluidDensityMeasured_prop ?factOptionSet
 WHERE {
-	?FluidDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?FluidDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?FluidDensityMeasured#01 ddhub:HasDynamicValue ?FluidDensityMeasured .
-	?FluidDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?FluidDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?FluidDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?FluidDensityMeasured_01 ddhub:HasDynamicValue ?FluidDensityMeasured .
+	?FluidDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?FluidDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?FluidDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?FluidDensityMeasured_fs rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_fs#01 ddhub:HasValue ?FluidDensityMeasured_fs .
-	?FluidDensityMeasured_prop rdf:type ddhub:DrillingSignal .
-	?FluidDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?FluidDensityMeasured_prop#01 ddhub:HasValue ?FluidDensityMeasured_prop .
-	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
-	?FullScaleUncertainty#01 ddhub:HasFullScale ?FluidDensityMeasured_fs#01 .
-	?FullScaleUncertainty#01 ddhub:HasProportionError ?FluidDensityMeasured_prop#01 .
-	?FluidDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
-	?FullScaleUncertainty#01 ddhub:HasUncertaintyMean ?FluidDensityMeasured#01 .
-  BIND ("3,31" as ?factOptionSet)
+	?FluidDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?FluidDensityMeasured_fs_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_fs_01 ddhub:HasValue ?FluidDensityMeasured_fs .
+	?FluidDensityMeasured_prop_01 rdf:type ddhub:DrillingDataPoint .
+	?FluidDensityMeasured_prop_01 ddhub:HasValue ?FluidDensityMeasured_prop .
+	?FullScaleUncertainty_01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty_01 ddhub:HasFullScale ?FluidDensityMeasured_fs_01 .
+	?FullScaleUncertainty_01 ddhub:HasProportionError ?FluidDensityMeasured_prop_01 .
+	?FluidDensityMeasured_01 ddhub:HasUncertainty ?FullScaleUncertainty_01 .
+	?FullScaleUncertainty_01 ddhub:HasUncertaintyMean ?FluidDensityMeasured_01 .
+  BIND (' 3 31' as ?factOptionSet)
 }
 
 ```
 # Semantic Queries for `CuttingsDensityMeasured`
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-000
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
 SELECT ?CuttingsDensityMeasured
 WHERE {
-	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?CuttingsDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured_01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
-	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
-	?GasComponent#01 rdf:type ddhub:GasComponent .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent_01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent_01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent_01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?CuttingsComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   FILTER NOT EXISTS {
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   }
 }
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-001
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured, ?factOptionSet
+SELECT ?CuttingsDensityMeasured ?sigma_CuttingsDensityMeasured ?factOptionSet
 WHERE {
-	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?CuttingsDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured_01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
-	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
-	?GasComponent#01 rdf:type ddhub:GasComponent .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-	?sigma_CuttingsDensityMeasured rdf:type ddhub:DrillingSignal .
-	?sigma_CuttingsDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
-	?sigma_CuttingsDensityMeasured#01 ddhub:HasValue ?sigma_CuttingsDensityMeasured .
-	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
-	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
-	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_CuttingsDensityMeasured#01 .
+	?CuttingsDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent_01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent_01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent_01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?CuttingsComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
+	?sigma_CuttingsDensityMeasured_01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_CuttingsDensityMeasured_01 ddhub:HasValue ?sigma_CuttingsDensityMeasured .
+	?GaussianUncertainty_01 rdf:type ddhub:GaussianUncertainty .
+	?CuttingsDensityMeasured_01 ddhub:HasUncertainty ?GaussianUncertainty_01 .
+	?GaussianUncertainty_01 ddhub:HasUncertaintyStandardDeviation ?sigma_CuttingsDensityMeasured_01 .
   FILTER NOT EXISTS {
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   }
-  BIND ("1" as ?factOptionSet)
+  BIND (' 1' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-002
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?sigma_CuttingsDensityMeasured, ?factOptionSet
+SELECT ?CuttingsDensityMeasured ?sigma_CuttingsDensityMeasured ?factOptionSet
 WHERE {
-	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?CuttingsDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured_01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
-	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
-	?GasComponent#01 rdf:type ddhub:GasComponent .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-	?sigma_CuttingsDensityMeasured rdf:type ddhub:DrillingSignal .
-	?sigma_CuttingsDensityMeasured#01 rdf:type ddhub:DrillingDataPoint .
-	?sigma_CuttingsDensityMeasured#01 ddhub:HasValue ?sigma_CuttingsDensityMeasured .
-	?GaussianUncertainty#01 rdf:type ddhub:GaussianUncertainty .
-	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?GaussianUncertainty#01 .
-	?GaussianUncertainty#01 ddhub:HasUncertaintyStandardDeviation ?sigma_CuttingsDensityMeasured#01 .
-	?GaussianUncertainty#01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured#01 .
+	?CuttingsDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent_01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent_01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent_01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?CuttingsComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
+	?sigma_CuttingsDensityMeasured_01 rdf:type ddhub:DrillingDataPoint .
+	?sigma_CuttingsDensityMeasured_01 ddhub:HasValue ?sigma_CuttingsDensityMeasured .
+	?GaussianUncertainty_01 rdf:type ddhub:GaussianUncertainty .
+	?CuttingsDensityMeasured_01 ddhub:HasUncertainty ?GaussianUncertainty_01 .
+	?GaussianUncertainty_01 ddhub:HasUncertaintyStandardDeviation ?sigma_CuttingsDensityMeasured_01 .
+	?GaussianUncertainty_01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured_01 .
   FILTER NOT EXISTS {
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   }
-  BIND ("1,11" as ?factOptionSet)
+  BIND (' 1 11' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-003
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc, ?factOptionSet
+SELECT ?CuttingsDensityMeasured ?CuttingsDensityMeasured_prec ?CuttingsDensityMeasured_acc ?factOptionSet
 WHERE {
-	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?CuttingsDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured_01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
-	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
-	?GasComponent#01 rdf:type ddhub:GasComponent .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-	?CuttingsDensityMeasured_prec rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prec#01 ddhub:HasValue ?CuttingsDensityMeasured_prec .
-	?CuttingsDensityMeasured_acc rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_acc#01 ddhub:HasValue ?CuttingsDensityMeasured_acc .
-	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
-	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?CuttingsDensityMeasured_prec#01 .
-	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?CuttingsDensityMeasured_acc#01 .
-	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
+	?CuttingsDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent_01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent_01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent_01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?CuttingsComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
+	?CuttingsDensityMeasured_prec_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prec_01 ddhub:HasValue ?CuttingsDensityMeasured_prec .
+	?CuttingsDensityMeasured_acc_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_acc_01 ddhub:HasValue ?CuttingsDensityMeasured_acc .
+	?SensorUncertainty_01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty_01 ddhub:HasUncertaintyPrecision ?CuttingsDensityMeasured_prec_01 .
+	?SensorUncertainty_01 ddhub:HasUncertaintyAccuracy ?CuttingsDensityMeasured_acc_01 .
+	?CuttingsDensityMeasured_01 ddhub:HasUncertainty ?SensorUncertainty_01 .
   FILTER NOT EXISTS {
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   }
-  BIND ("2" as ?factOptionSet)
+  BIND (' 2' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-004
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_prec, ?CuttingsDensityMeasured_acc, ?factOptionSet
+SELECT ?CuttingsDensityMeasured ?CuttingsDensityMeasured_prec ?CuttingsDensityMeasured_acc ?factOptionSet
 WHERE {
-	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?CuttingsDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured_01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
-	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
-	?GasComponent#01 rdf:type ddhub:GasComponent .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-	?CuttingsDensityMeasured_prec rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_prec#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prec#01 ddhub:HasValue ?CuttingsDensityMeasured_prec .
-	?CuttingsDensityMeasured_acc rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_acc#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_acc#01 ddhub:HasValue ?CuttingsDensityMeasured_acc .
-	?SensorUncertainty#01 rdf:type ddhub:SensorUncertainty .
-	?SensorUncertainty#01 ddhub:HasUncertaintyPrecision ?CuttingsDensityMeasured_prec#01 .
-	?SensorUncertainty#01 ddhub:HasUncertaintyAccuracy ?CuttingsDensityMeasured_acc#01 .
-	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?SensorUncertainty#01 .
-	?SensorUncertainty#01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured#01 .
+	?CuttingsDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent_01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent_01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent_01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?CuttingsComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
+	?CuttingsDensityMeasured_prec_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prec_01 ddhub:HasValue ?CuttingsDensityMeasured_prec .
+	?CuttingsDensityMeasured_acc_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_acc_01 ddhub:HasValue ?CuttingsDensityMeasured_acc .
+	?SensorUncertainty_01 rdf:type ddhub:SensorUncertainty .
+	?SensorUncertainty_01 ddhub:HasUncertaintyPrecision ?CuttingsDensityMeasured_prec_01 .
+	?SensorUncertainty_01 ddhub:HasUncertaintyAccuracy ?CuttingsDensityMeasured_acc_01 .
+	?CuttingsDensityMeasured_01 ddhub:HasUncertainty ?SensorUncertainty_01 .
+	?SensorUncertainty_01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured_01 .
   FILTER NOT EXISTS {
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   }
-  BIND ("2,21" as ?factOptionSet)
+  BIND (' 2 21' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-005
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop, ?factOptionSet
+SELECT ?CuttingsDensityMeasured ?CuttingsDensityMeasured_fs ?CuttingsDensityMeasured_prop ?factOptionSet
 WHERE {
-	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?CuttingsDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured_01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
-	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
-	?GasComponent#01 rdf:type ddhub:GasComponent .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
-	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
-	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
-	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
-	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .
-	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
+	?CuttingsDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent_01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent_01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent_01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?CuttingsComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
+	?CuttingsDensityMeasured_fs_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_fs_01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
+	?CuttingsDensityMeasured_prop_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prop_01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
+	?FullScaleUncertainty_01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty_01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs_01 .
+	?FullScaleUncertainty_01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop_01 .
+	?CuttingsDensityMeasured_01 ddhub:HasUncertainty ?FullScaleUncertainty_01 .
   FILTER NOT EXISTS {
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   }
-  BIND ("3" as ?factOptionSet)
+  BIND (' 3' as ?factOptionSet)
 }
 
 ```
 ## Query-DrillingProperties.TestClass-CuttingsDensityMeasured-006
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX ddhub: <http://ddhub.no/>
-PREFIX quantity: <http://ddhub.no/UnitAndQuantity>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ddhub:<http://ddhub.no/>
+PREFIX quantity:<http://ddhub.no/UnitAndQuantity>
 
-SELECT ?CuttingsDensityMeasured, ?CuttingsDensityMeasured_fs, ?CuttingsDensityMeasured_prop, ?factOptionSet
+SELECT ?CuttingsDensityMeasured ?CuttingsDensityMeasured_fs ?CuttingsDensityMeasured_prop ?factOptionSet
 WHERE {
-	?CuttingsDensityMeasured rdf:type ddhub:DynamicDrillingSignal .
-	?CuttingsDensityMeasured#01 rdf:type ddhub:PhysicalData .
-	?CuttingsDensityMeasured#01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
-	?CuttingsDensityMeasured#01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
-	?tos#01 rdf:type ddhub:TopOfStringReferenceLocation .
-	?CuttingsDensityMeasured#01 ddhub:IsPhysicallyLocatedAt ?tos#01 .
+	?CuttingsDensityMeasured_01 rdf:type ddhub:PhysicalData .
+	?CuttingsDensityMeasured_01 ddhub:HasDynamicValue ?CuttingsDensityMeasured .
+	?CuttingsDensityMeasured_01 ddhub:IsOfMeasurableQuantity quantity:MassDensityDrilling .
+	?tos_01 rdf:type ddhub:TopOfStringReferenceLocation .
+	?CuttingsDensityMeasured_01 ddhub:IsPhysicallyLocatedAt ?tos_01 .
 	?MovingAverage rdf:type ddhub:MovingAverage .
-	?CuttingsDensityMeasured#01 ddhub:IsTransformationOutput ?MovingAverage .
-	?LiquidComponent#01 rdf:type ddhub:LiquidComponent .
-	?CuttingsComponent#01 rdf:type ddhub:CuttingsComponent .
-	?GasComponent#01 rdf:type ddhub:GasComponent .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?CuttingsComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
-	?CuttingsDensityMeasured_fs rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_fs#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_fs#01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
-	?CuttingsDensityMeasured_prop rdf:type ddhub:DrillingSignal .
-	?CuttingsDensityMeasured_prop#01 rdf:type ddhub:DrillingDataPoint .
-	?CuttingsDensityMeasured_prop#01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
-	?FullScaleUncertainty#01 rdf:type ddhub:FullScaleUncertainty .
-	?FullScaleUncertainty#01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs#01 .
-	?FullScaleUncertainty#01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop#01 .
-	?CuttingsDensityMeasured#01 ddhub:HasUncertainty ?FullScaleUncertainty#01 .
-	?FullScaleUncertainty#01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured#01 .
+	?CuttingsDensityMeasured_01 ddhub:IsTransformationOutput ?MovingAverage .
+	?LiquidComponent_01 rdf:type ddhub:LiquidComponent .
+	?CuttingsComponent_01 rdf:type ddhub:CuttingsComponent .
+	?GasComponent_01 rdf:type ddhub:GasComponent .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?CuttingsComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
+	?CuttingsDensityMeasured_fs_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_fs_01 ddhub:HasValue ?CuttingsDensityMeasured_fs .
+	?CuttingsDensityMeasured_prop_01 rdf:type ddhub:DrillingDataPoint .
+	?CuttingsDensityMeasured_prop_01 ddhub:HasValue ?CuttingsDensityMeasured_prop .
+	?FullScaleUncertainty_01 rdf:type ddhub:FullScaleUncertainty .
+	?FullScaleUncertainty_01 ddhub:HasFullScale ?CuttingsDensityMeasured_fs_01 .
+	?FullScaleUncertainty_01 ddhub:HasProportionError ?CuttingsDensityMeasured_prop_01 .
+	?CuttingsDensityMeasured_01 ddhub:HasUncertainty ?FullScaleUncertainty_01 .
+	?FullScaleUncertainty_01 ddhub:HasUncertaintyMean ?CuttingsDensityMeasured_01 .
   FILTER NOT EXISTS {
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?LiquidComponent#01 .
-	?CuttingsDensityMeasured#01 ddhub:ConcernsAFluidComponent ?GasComponent#01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?LiquidComponent_01 .
+	?CuttingsDensityMeasured_01 ddhub:ConcernsAFluidComponent ?GasComponent_01 .
   }
-  BIND ("3,31" as ?factOptionSet)
+  BIND (' 3 31' as ?factOptionSet)
 }
 
 ```
