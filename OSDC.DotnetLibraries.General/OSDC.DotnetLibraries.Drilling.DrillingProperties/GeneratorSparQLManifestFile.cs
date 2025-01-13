@@ -1033,8 +1033,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         // Print property information
                         foreach (PropertyInfo property in properties)
                         {
-                            if (property.Name == propertyName &&
-                                (property.PropertyType.IsSubclassOf(typeof(DrillingProperty)) || property.PropertyType.IsAssignableFrom(typeof(DrillingProperty))))
+                            if (property.Name == propertyName)
                             {
                                 var workingSemanticFactAttributes = property.GetCustomAttributes<SemanticFactAttribute>();
                                 var excludeFactAttributes = property.GetCustomAttributes<ExcludeFactAttribute>();
