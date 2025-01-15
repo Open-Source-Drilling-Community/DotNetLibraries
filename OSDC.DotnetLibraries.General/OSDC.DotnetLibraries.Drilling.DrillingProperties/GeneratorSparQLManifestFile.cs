@@ -839,16 +839,41 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         {
                             klass = "quantityClass";
                         }
-                        mermaid += "\t" + ProcessMermaid(r.Subject.ID) + "([" + ProcessMermaid(r.Subject.ID) + "]) -- " + ProcessMermaid(r.VerbURI) + " --> " + ProcessMermaid(r.Object.ID) + "([" + ProcessMermaid(r.Object.ID) + "]):::" + klass + "\n";
+                        mermaid += "\t" + ProcessMermaid(r.Subject.ID) + "([" + ProcessMermaid(r.Subject.ID) + "]) -- " + ProcessMermaid(r.VerbURI) + " --> " + ProcessMermaid(r.Object.ID) + "([" + ProcessMermaid(r.Object.NameSpace, r.Object.ID) + "]):::" + klass + "\n";
                     }
                 }
                 mermaid += "```\n";
                 return mermaid;
             }
         }
-        private static string ProcessMermaid(string str)
+        private static string ProcessMermaid(string? str)
         {
-            return str.Replace('#', '_');
+            if (!string.IsNullOrEmpty(str))
+            {
+                return str.Replace('#', '_');
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+        private static string ProcessMermaid(string? ns, string? str)
+        {
+            if (string.IsNullOrEmpty(ns))
+            {
+                return ProcessMermaid(str);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(str))
+                {
+                    return ProcessMermaid(str.Replace(ns, ""));
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
         }
         public static Dictionary<string, QuerySpecification>? GetSparQLQueries(Assembly? assembly, string? typeName)
         {
