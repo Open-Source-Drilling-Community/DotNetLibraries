@@ -1340,7 +1340,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     sparql += "  BIND ('" + soptions + "' as ?factOptionSet)\n";
                                                 }
                                                 sparql += "}\n";
-                                                queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Options = options, SparQL = sparql });
+                                                queries.Add("Query-" + typeName + "-" + propertyName + "-" + count.ToString("000"), new QuerySpecification() { NumberOfArguments = argCount, Variables = variables, Options = options, SparQL = sparql });
                                                 count++;
                                             }
                                         }
