@@ -2,13 +2,10 @@
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public class SemanticDiracVariableAttribute : Attribute
+    public class SemanticDiracVariableAttribute : SemanticOneVariableAttribute
     {
-        public string? ValueVariable { get; } = null;
-
-        public SemanticDiracVariableAttribute(string? value)
+        public SemanticDiracVariableAttribute(string? value) : base(value)
         {
-            ValueVariable = value;
         }
     }
 }

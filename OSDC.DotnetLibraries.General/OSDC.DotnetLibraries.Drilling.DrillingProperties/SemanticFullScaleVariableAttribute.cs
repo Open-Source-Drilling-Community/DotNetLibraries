@@ -2,17 +2,32 @@
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public class SemanticFullScaleVariableAttribute : Attribute
+    public class SemanticFullScaleVariableAttribute : SemanticThreeVariablesAttribute
     {
-        public string? MeanVariable { get; } = null;
-        public string? FullScaleVariable { get; } = null;
-        public string? ProportionErrorVariable { get; } = null;
-
-        public SemanticFullScaleVariableAttribute(string meanVariable, string fullScaleVariable, string proportionErrorVariable)
+        public string? MeanVariable
         {
-            MeanVariable = meanVariable;
-            FullScaleVariable = fullScaleVariable;
-            ProportionErrorVariable = proportionErrorVariable;
+            get
+            {
+                return ValueVariable;
+            }
+        }
+        public string? FullScaleVariable
+        {
+            get
+            {
+                return SecondValueVariable;
+            }
+        }
+        public string? ProportionErrorVariable
+        {
+            get
+            {
+                return ThirdValueVariable;
+            }
+        }
+
+        public SemanticFullScaleVariableAttribute(string meanVariable, string fullScaleVariable, string proportionErrorVariable) : base(meanVariable, fullScaleVariable, proportionErrorVariable)
+        {
         }
     }
 }

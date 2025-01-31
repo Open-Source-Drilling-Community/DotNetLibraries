@@ -160,7 +160,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                             var semanticTypeVariableAttribute = type.GetCustomAttribute<SemanticTypeVariableAttribute>();
                             if (semanticTypeVariableAttribute != null && !string.IsNullOrEmpty(semanticTypeVariableAttribute.ValueVariable))
                             {
-                                ProvidedVariable providedVariable = new() { DataType = "string", VariableID = ProcessManifestVariable(semanticTypeVariableAttribute.ValueVariable, prefix) };
+                                ProvidedVariable providedVariable = new() { DataType = "string", VariableID = ProcessManifestVariable(semanticTypeVariableAttribute.ValueVariable) };
                                 manifestFile.ProvidedVariables.Add(providedVariable);
                                 providedVariables.Add(semanticTypeVariableAttribute.ValueVariable);
                             }
@@ -174,9 +174,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         InjectedNode injectedNode = new()
                                         {
-                                            BrowseName = ProcessManifestVariable(kpv.Key, prefix),
-                                            DisplayName = ProcessManifestVariable(kpv.Key, prefix),
-                                            UniqueName = ProcessManifestVariable(kpv.Key, prefix),
+                                            BrowseName = ProcessManifestVariable(kpv.Key),
+                                            DisplayName = ProcessManifestVariable(kpv.Key),
+                                            UniqueName = ProcessManifestVariable(kpv.Key),
                                             TypeDictionaryURI = kpv.Value[0].ToString()
                                         };
                                         manifestFile.InjectedNodes.Add(injectedNode);
@@ -195,9 +195,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             }
                                             InjectedReference injectedReference = new()
                                             {
-                                                Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(kpv.Key, prefix) },
+                                                Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(kpv.Key) },
                                                 VerbURI = ddhubURL + Verbs.Enum.BelongsToClass.ToString(),
-                                                Object = new NodeIdentifier() { NameSpace = ddhubURL, ID = ProcessManifestVariable(kpv.Value[i].ToString(), ddhubURL) }
+                                                Object = new NodeIdentifier() { NameSpace = ddhubURL, ID = ProcessManifestVariable(kpv.Value[i].ToString()) }
                                             };
                                             manifestFile.InjectedReferences.Add(injectedReference);
                                         }
@@ -222,9 +222,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         }
                                         InjectedReference injectedReference = new()
                                         {
-                                            Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
+                                            Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                             VerbURI = ddhubURL + fact.Verb.ToString(),
-                                            Object = new NodeIdentifier() { NameSpace = objectNameSpace, ID = ProcessManifestVariable(fact.ObjectName, prefix) }
+                                            Object = new NodeIdentifier() { NameSpace = objectNameSpace, ID = ProcessManifestVariable(fact.ObjectName) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
                                     }
@@ -232,9 +232,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         InjectedReference injectedReference = new()
                                         {
-                                            Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
+                                            Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                             VerbURI = ddhubURL + fact.Verb.ToString(),
-                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectPhysicalQuantity.Value.ToString(), prefix) }
+                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectPhysicalQuantity.Value.ToString()) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
                                     }
@@ -242,9 +242,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         InjectedReference injectedReference = new()
                                         {
-                                            Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
+                                            Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                             VerbURI = ddhubURL + fact.Verb.ToString(),
-                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectDrillingQuantity.Value.ToString(), prefix) }
+                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectDrillingQuantity.Value.ToString()) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
                                     }
@@ -412,7 +412,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         Provider = new InjectionProvider()
                                         {
                                             Company = companyName,
-                                            Name = manifestName
+                                            Name = manifestName + prefix
                                         }
                                     };
                                     string ddhubURL = "http://ddhub.no/";
@@ -433,7 +433,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         !string.IsNullOrEmpty(semanticDiracVariableAttribute.ValueVariable) &&
                                         IsUsed(facts, semanticDiracVariableAttribute.ValueVariable))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticDiracVariableAttribute.ValueVariable, prefix) };
+                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticDiracVariableAttribute.ValueVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticDiracVariableAttribute.ValueVariable);
                                     }
@@ -443,12 +443,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                              (string.IsNullOrEmpty(semanticGaussianVariableAttribute.StandardDeviationVariable) ||
                                              IsUsed(facts, semanticGaussianVariableAttribute.StandardDeviationVariable)))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticGaussianVariableAttribute.MeanVariable, prefix) };
+                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticGaussianVariableAttribute.MeanVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticGaussianVariableAttribute.MeanVariable);
                                         if (!string.IsNullOrEmpty(semanticGaussianVariableAttribute.StandardDeviationVariable))
                                         {
-                                            ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticGaussianVariableAttribute.StandardDeviationVariable, prefix) };
+                                            ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticGaussianVariableAttribute.StandardDeviationVariable) };
                                             manifestFile.ProvidedVariables.Add(providedVariable2);
                                             providedVariables.Add(semanticGaussianVariableAttribute.StandardDeviationVariable);
                                         }
@@ -461,18 +461,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             (string.IsNullOrEmpty(semanticSensorVariableAttribute.PrecisionVariable) ||
                                              IsUsed(facts, semanticSensorVariableAttribute.PrecisionVariable)))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticSensorVariableAttribute.MeanVariable, prefix) };
+                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticSensorVariableAttribute.MeanVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticSensorVariableAttribute.MeanVariable);
                                         if (!string.IsNullOrEmpty(semanticSensorVariableAttribute.AccuracyVariable))
                                         {
-                                            ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticSensorVariableAttribute.AccuracyVariable, prefix) };
+                                            ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticSensorVariableAttribute.AccuracyVariable) };
                                             manifestFile.ProvidedVariables.Add(providedVariable2);
                                             providedVariables.Add(semanticSensorVariableAttribute.AccuracyVariable);
                                         }
                                         if (!string.IsNullOrEmpty(semanticSensorVariableAttribute.PrecisionVariable))
                                         {
-                                            ProvidedVariable providedVariable3 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticSensorVariableAttribute.PrecisionVariable, prefix) };
+                                            ProvidedVariable providedVariable3 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticSensorVariableAttribute.PrecisionVariable) };
                                             manifestFile.ProvidedVariables.Add(providedVariable3);
                                             providedVariables.Add(semanticSensorVariableAttribute.PrecisionVariable);
                                         }
@@ -485,18 +485,18 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                              (string.IsNullOrEmpty(semanticFullScaleVariableAttribute.ProportionErrorVariable) ||
                                               IsUsed(facts, semanticFullScaleVariableAttribute.ProportionErrorVariable)))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticFullScaleVariableAttribute.MeanVariable, prefix) };
+                                        ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticFullScaleVariableAttribute.MeanVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticFullScaleVariableAttribute.MeanVariable);
                                         if (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.FullScaleVariable))
                                         {
-                                            ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticFullScaleVariableAttribute.FullScaleVariable, prefix) };
+                                            ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticFullScaleVariableAttribute.FullScaleVariable) };
                                             manifestFile.ProvidedVariables.Add(providedVariable2);
                                             providedVariables.Add(semanticFullScaleVariableAttribute.FullScaleVariable);
                                         }
                                         if (!string.IsNullOrEmpty(semanticFullScaleVariableAttribute.ProportionErrorVariable))
                                         {
-                                            ProvidedVariable providedVariable3 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticFullScaleVariableAttribute.ProportionErrorVariable, prefix) };
+                                            ProvidedVariable providedVariable3 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticFullScaleVariableAttribute.ProportionErrorVariable) };
                                             manifestFile.ProvidedVariables.Add(providedVariable3);
                                             providedVariables.Add(semanticFullScaleVariableAttribute.ProportionErrorVariable);
                                         }
@@ -507,10 +507,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                              !string.IsNullOrEmpty(semanticUniformVariableAttribute.MaxValueVariable) &&
                                              IsUsed(facts, semanticUniformVariableAttribute.MaxValueVariable))
                                     {
-                                        ProvidedVariable providedVariable1 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticUniformVariableAttribute.MinValueVariable, prefix) };
+                                        ProvidedVariable providedVariable1 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticUniformVariableAttribute.MinValueVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable1);
                                         providedVariables.Add(semanticUniformVariableAttribute.MinValueVariable);
-                                        ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticUniformVariableAttribute.MaxValueVariable, prefix) };
+                                        ProvidedVariable providedVariable2 = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticUniformVariableAttribute.MaxValueVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable2);
                                         providedVariables.Add(semanticUniformVariableAttribute.MaxValueVariable);
                                     }
@@ -518,63 +518,63 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                              !string.IsNullOrEmpty(semanticGeneralDistributionVariableAttribute.HistogramVariable) &&
                                              IsUsed(facts, semanticGeneralDistributionVariableAttribute.HistogramVariable))
                                     {
-                                        ProvidedVariable providedVariable = new() { DataType = "double", Rank = 1, Dimensions = [20], VariableID = ProcessManifestVariable(semanticGeneralDistributionVariableAttribute.HistogramVariable, prefix) };
+                                        ProvidedVariable providedVariable = new() { DataType = "double", Rank = 1, Dimensions = [20], VariableID = ProcessManifestVariable(semanticGeneralDistributionVariableAttribute.HistogramVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticGeneralDistributionVariableAttribute.HistogramVariable);
                                     }
                                     else if (semanticDeterministicCategoricalVariableAttribute != null &&
-                                             !string.IsNullOrEmpty(semanticDeterministicCategoricalVariableAttribute.Variable) &&
-                                             IsUsed(facts, semanticDeterministicCategoricalVariableAttribute.Variable) &&
+                                             !string.IsNullOrEmpty(semanticDeterministicCategoricalVariableAttribute.ValueVariable) &&
+                                             IsUsed(facts, semanticDeterministicCategoricalVariableAttribute.ValueVariable) &&
                                              semanticDeterministicCategoricalVariableAttribute.NumberOfStates != null)
                                     {
                                         ProvidedVariable providedVariable = new() { 
                                             DataType = "short", 
                                             Rank = 1, 
                                             Dimensions = [(int)semanticDeterministicCategoricalVariableAttribute.NumberOfStates.Value], 
-                                            VariableID = ProcessManifestVariable(semanticDeterministicCategoricalVariableAttribute.Variable, prefix) 
+                                            VariableID = ProcessManifestVariable(semanticDeterministicCategoricalVariableAttribute.ValueVariable) 
                                         };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
-                                        providedVariables.Add(semanticDeterministicCategoricalVariableAttribute.Variable);
+                                        providedVariables.Add(semanticDeterministicCategoricalVariableAttribute.ValueVariable);
                                     }
                                     else if (semanticDeterministicBernoulliVariableAttribute != null &&
-                                             !string.IsNullOrEmpty(semanticDeterministicBernoulliVariableAttribute.Variable) &&
-                                             IsUsed(facts, semanticDeterministicBernoulliVariableAttribute.Variable))
+                                             !string.IsNullOrEmpty(semanticDeterministicBernoulliVariableAttribute.ValueVariable) &&
+                                             IsUsed(facts, semanticDeterministicBernoulliVariableAttribute.ValueVariable))
                                     {
                                         ProvidedVariable providedVariable = new() { 
                                             DataType = "double", 
                                             Rank = 1,
                                             Dimensions = [2],
-                                            VariableID = ProcessManifestVariable(semanticDeterministicBernoulliVariableAttribute.Variable, prefix) 
+                                            VariableID = ProcessManifestVariable(semanticDeterministicBernoulliVariableAttribute.ValueVariable) 
                                         };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
-                                        providedVariables.Add(semanticDeterministicBernoulliVariableAttribute.Variable);
+                                        providedVariables.Add(semanticDeterministicBernoulliVariableAttribute.ValueVariable);
                                     }
                                     else if (semanticBernoulliVariableAttribute != null &&
-                                             !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.Variable) &&
-                                             IsUsed(facts, semanticBernoulliVariableAttribute.Variable))
+                                             !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.ValueVariable) &&
+                                             IsUsed(facts, semanticBernoulliVariableAttribute.ValueVariable))
                                     {
                                         ProvidedVariable providedVariable = new() { 
                                             DataType = "double", 
                                             Rank = 1,
                                             Dimensions = [2],
-                                            VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.Variable, prefix) 
+                                            VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.ValueVariable) 
                                         };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
-                                        providedVariables.Add(semanticBernoulliVariableAttribute.Variable);
+                                        providedVariables.Add(semanticBernoulliVariableAttribute.ValueVariable);
                                     }
                                     else if (semanticCategoricalVariableAttribute != null &&
-                                             !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.Variable) &&
-                                             IsUsed(facts, semanticCategoricalVariableAttribute.Variable) &&
+                                             !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.ValueVariable) &&
+                                             IsUsed(facts, semanticCategoricalVariableAttribute.ValueVariable) &&
                                              semanticCategoricalVariableAttribute.NumberOfStates != null)
                                     {
                                         ProvidedVariable providedVariable = new() { 
                                             DataType = "double", 
                                             Rank = 1, 
                                             Dimensions = [(int)semanticCategoricalVariableAttribute.NumberOfStates.Value], 
-                                            VariableID = ProcessManifestVariable(semanticCategoricalVariableAttribute.Variable, prefix) 
+                                            VariableID = ProcessManifestVariable(semanticCategoricalVariableAttribute.ValueVariable) 
                                         };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
-                                        providedVariables.Add(semanticCategoricalVariableAttribute.Variable);
+                                        providedVariables.Add(semanticCategoricalVariableAttribute.ValueVariable);
                                     }
                                     // find the injected nodes and their types
                                     Dictionary<string, List<Nouns.Enum>> injectedNodes = FindInjectedNodes(facts, providedVariables);
@@ -586,9 +586,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             {
                                                 InjectedNode injectedNode = new()
                                                 {
-                                                    BrowseName = ProcessManifestVariable(kpv.Key, prefix),
-                                                    DisplayName = ProcessManifestVariable(kpv.Key, prefix),
-                                                    UniqueName = ProcessManifestVariable(kpv.Key, prefix),
+                                                    BrowseName = ProcessManifestVariable(kpv.Key),
+                                                    DisplayName = ProcessManifestVariable(kpv.Key),
+                                                    UniqueName = ProcessManifestVariable(kpv.Key),
                                                     TypeDictionaryURI = kpv.Value[0].ToString()
                                                 };
                                                 manifestFile.InjectedNodes.Add(injectedNode);
@@ -607,9 +607,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     }
                                                     InjectedReference injectedReference = new()
                                                     {
-                                                        Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(kpv.Key, prefix) },
+                                                        Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(kpv.Key) },
                                                         VerbURI = ddhubURL + Verbs.Enum.BelongsToClass.ToString(),
-                                                        Object = new NodeIdentifier() { NameSpace = ddhubURL, ID = ProcessManifestVariable(kpv.Value[i].ToString(), ddhubURL) }
+                                                        Object = new NodeIdentifier() { NameSpace = ddhubURL, ID = ProcessManifestVariable(kpv.Value[i].ToString()) }
                                                     };
                                                     manifestFile.InjectedReferences.Add(injectedReference);
                                                 }
@@ -634,9 +634,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 }
                                                 InjectedReference injectedReference = new()
                                                 {
-                                                    Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
+                                                    Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                                     VerbURI = ddhubURL + fact.Verb.ToString(),
-                                                    Object = new NodeIdentifier() { NameSpace = objectNameSpace, ID = ProcessManifestVariable(fact.ObjectName, prefix) }
+                                                    Object = new NodeIdentifier() { NameSpace = objectNameSpace, ID = ProcessManifestVariable(fact.ObjectName) }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
                                             }
@@ -644,7 +644,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             {
                                                 InjectedReference injectedReference = new()
                                                 {
-                                                    Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
+                                                    Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                                     VerbURI = ddhubURL + fact.Verb.ToString(),
                                                     Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = fact.ObjectPhysicalQuantity.Value.ToString() }
                                                 };
@@ -654,7 +654,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             {
                                                 InjectedReference injectedReference = new()
                                                 {
-                                                    Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName, prefix) },
+                                                    Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                                     VerbURI = ddhubURL + fact.Verb.ToString(),
                                                     Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = fact.ObjectDrillingQuantity.Value.ToString() }
                                                 };
@@ -755,19 +755,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 return string.Empty;
             }
         }
-        private static string GetInjectedVariableNamespace(ManifestFile manifestFile, bool useNameSpaceAliases)
-        {
-            if (useNameSpaceAliases &&
-                manifestFile.InjectionInformation != null &&
-                manifestFile.InjectionInformation.InjectedVariablesNamespaceAlias != null)
-            {
-                return manifestFile.InjectionInformation.InjectedVariablesNamespaceAlias;
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
+
         private static string GetInjectedNodesNamespace(ManifestFile manifestFile, bool useNameSpaceAliases)
         {
             if (useNameSpaceAliases &&
@@ -1074,6 +1062,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 var semanticDeterministicBernoulliVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBernoulliVariableAttribute>();
                                 var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
                                 var semanticCategoricalVariableAttribute = property.GetCustomAttribute<SemanticCategoricalVariableAttribute>();
+                                var semanticOneVariableAttribute = property.GetCustomAttribute<SemanticOneVariableAttribute>();
+                                var semanticTwoVariablesAttribute = property.GetCustomAttribute<SemanticTwoVariablesAttribute>();
+                                var semanticThreeVariablesAttribute = property.GetCustomAttribute<SemanticThreeVariablesAttribute>();
                                 var semanticExclusiveOrAttributes = property.GetCustomAttributes<SemanticExclusiveOrAttribute>();
                                 // remove the optional facts from the list of facts
                                 List<SemanticFactAttribute> semanticFactAttributes = new List<SemanticFactAttribute>();
@@ -1094,6 +1085,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     semanticDeterministicBernoulliVariableAttribute != null ||
                                     semanticBernoulliVariableAttribute != null ||
                                     semanticCategoricalVariableAttribute != null ||
+                                    semanticOneVariableAttribute != null ||
+                                    semanticTwoVariablesAttribute != null ||
+                                    semanticThreeVariablesAttribute != null ||
                                     (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
                                     (semanticFactAttributes != null && semanticFactAttributes.Any()) ||
                                     (excludeFactAttributes != null && excludeFactAttributes.Any()) ||
@@ -1109,7 +1103,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         semanticDeterministicCategoricalVariableAttribute != null ||
                                         semanticDeterministicBernoulliVariableAttribute != null ||
                                         semanticBernoulliVariableAttribute != null ||
-                                        semanticCategoricalVariableAttribute !=  null)
+                                        semanticCategoricalVariableAttribute !=  null ||
+                                        semanticOneVariableAttribute != null ||
+                                        semanticTwoVariablesAttribute != null ||
+                                        semanticThreeVariablesAttribute != null)
                                     {
                                         List<OptionalFactAttribute> topLevelOptionalFacts = new List<OptionalFactAttribute>();
                                         List<OptionalFactAttribute> subLevelOptionalFacts = new List<OptionalFactAttribute>();
@@ -1202,7 +1199,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     sparql += " " + accuracy;
                                                     variables.Add(mean);
                                                     variables.Add(precision);
-                                                    variables.Add(precision);
+                                                    variables.Add(accuracy);
                                                     argCount++;
                                                 }
                                                 else if (semanticFullScaleVariableAttribute != null &&
@@ -1256,37 +1253,88 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     argCount = 1;
                                                 }
                                                 else if (semanticDeterministicCategoricalVariableAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticDeterministicCategoricalVariableAttribute.Variable) &&
-                                                         IsUsed(combination, semanticDeterministicCategoricalVariableAttribute.Variable))
+                                                         !string.IsNullOrEmpty(semanticDeterministicCategoricalVariableAttribute.ValueVariable) &&
+                                                         IsUsed(combination, semanticDeterministicCategoricalVariableAttribute.ValueVariable))
                                                 {
-                                                    string variable = ProcessQueryVariable(semanticDeterministicCategoricalVariableAttribute.Variable);
+                                                    string variable = ProcessQueryVariable(semanticDeterministicCategoricalVariableAttribute.ValueVariable);
                                                     sparql += "SELECT " + variable;
                                                     variables.Add(variable);
                                                     argCount = 1;
                                                 }
                                                 else if (semanticDeterministicBernoulliVariableAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticDeterministicBernoulliVariableAttribute.Variable) &&
-                                                         IsUsed(combination, semanticDeterministicBernoulliVariableAttribute.Variable))
+                                                         !string.IsNullOrEmpty(semanticDeterministicBernoulliVariableAttribute.ValueVariable) &&
+                                                         IsUsed(combination, semanticDeterministicBernoulliVariableAttribute.ValueVariable))
                                                 {
-                                                    string variable = ProcessQueryVariable(semanticDeterministicBernoulliVariableAttribute.Variable);
+                                                    string variable = ProcessQueryVariable(semanticDeterministicBernoulliVariableAttribute.ValueVariable);
                                                     sparql += "SELECT " + variable;
                                                     variables.Add(variable);
                                                     argCount = 1;
                                                 }
                                                 else if (semanticBernoulliVariableAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.Variable) &&
-                                                         IsUsed(combination, semanticBernoulliVariableAttribute.Variable))
+                                                         !string.IsNullOrEmpty(semanticBernoulliVariableAttribute.ValueVariable) &&
+                                                         IsUsed(combination, semanticBernoulliVariableAttribute.ValueVariable))
                                                 {
-                                                    string variable = ProcessQueryVariable(semanticBernoulliVariableAttribute.Variable);
+                                                    string variable = ProcessQueryVariable(semanticBernoulliVariableAttribute.ValueVariable);
                                                     sparql += "SELECT " + variable;
                                                     variables.Add(variable);
                                                     argCount = 1;
                                                 }
                                                 else if (semanticCategoricalVariableAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.Variable) &&
-                                                         IsUsed(combination, semanticCategoricalVariableAttribute.Variable))
+                                                         !string.IsNullOrEmpty(semanticCategoricalVariableAttribute.ValueVariable) &&
+                                                         IsUsed(combination, semanticCategoricalVariableAttribute.ValueVariable))
                                                 {
-                                                    string variable = ProcessQueryVariable(semanticCategoricalVariableAttribute.Variable);
+                                                    string variable = ProcessQueryVariable(semanticCategoricalVariableAttribute.ValueVariable);
+                                                    sparql += "SELECT " + variable;
+                                                    variables.Add(variable);
+                                                    argCount = 1;
+                                                }
+                                                else if (semanticThreeVariablesAttribute != null &&
+                                                         !string.IsNullOrEmpty(semanticThreeVariablesAttribute.ValueVariable) &&
+                                                         IsUsed(combination, semanticThreeVariablesAttribute.ValueVariable))
+                                                {
+                                                    string variable = ProcessQueryVariable(semanticThreeVariablesAttribute.ValueVariable);
+                                                    sparql += "SELECT " + variable;
+                                                    variables.Add(variable);
+                                                    argCount = 1;
+                                                    if (!string.IsNullOrEmpty(semanticThreeVariablesAttribute.SecondValueVariable) &&
+                                                        IsUsed(combination, semanticThreeVariablesAttribute.SecondValueVariable))
+                                                    {
+                                                        variable = ProcessQueryVariable(semanticThreeVariablesAttribute.SecondValueVariable);
+                                                        sparql += " " + variable;
+                                                        variables.Add(variable);
+                                                        argCount += 1;
+                                                        if (!string.IsNullOrEmpty(semanticThreeVariablesAttribute.ThirdValueVariable) &&
+                                                            IsUsed(combination, semanticThreeVariablesAttribute.ThirdValueVariable))
+                                                        {
+                                                            variable = ProcessQueryVariable(semanticThreeVariablesAttribute.ThirdValueVariable);
+                                                            sparql += " " + variable;
+                                                            variables.Add(variable);
+                                                            argCount += 1;
+                                                        }
+                                                    }
+                                                }
+                                                else if (semanticTwoVariablesAttribute != null &&
+                                                         !string.IsNullOrEmpty(semanticTwoVariablesAttribute.ValueVariable) &&
+                                                         IsUsed(combination, semanticTwoVariablesAttribute.ValueVariable))
+                                                {
+                                                    string variable = ProcessQueryVariable(semanticTwoVariablesAttribute.ValueVariable);
+                                                    sparql += "SELECT " + variable;
+                                                    variables.Add(variable);
+                                                    argCount = 1;
+                                                    if (!string.IsNullOrEmpty(semanticTwoVariablesAttribute.SecondValueVariable) &&
+                                                        IsUsed(combination, semanticTwoVariablesAttribute.SecondValueVariable))
+                                                    {
+                                                        variable = ProcessQueryVariable(semanticTwoVariablesAttribute.SecondValueVariable);
+                                                        sparql += " " + variable;
+                                                        variables.Add(variable);
+                                                        argCount += 1;
+                                                    }
+                                                }
+                                                else if (semanticOneVariableAttribute != null &&
+                                                         !string.IsNullOrEmpty(semanticOneVariableAttribute.ValueVariable) &&
+                                                         IsUsed(combination, semanticOneVariableAttribute.ValueVariable))
+                                                {
+                                                    string variable = ProcessQueryVariable(semanticOneVariableAttribute.ValueVariable);
                                                     sparql += "SELECT " + variable;
                                                     variables.Add(variable);
                                                     argCount = 1;
@@ -1458,10 +1506,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             return results;
         }
 
-        private static string ProcessManifestVariable(string variable, string prefix)
+        private static string ProcessManifestVariable(string variable)
         {
             variable = variable.Trim();
-            return prefix + variable;
+            return variable;
         }
         private static Dictionary<string, List<Nouns.Enum>> FindInjectedNodes(List<SemanticFact> facts, List<string> providedVariables)
         {

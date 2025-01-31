@@ -2,22 +2,30 @@
 namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public class SemanticGaussianVariableAttribute : Attribute
+    public class SemanticGaussianVariableAttribute : SemanticTwoVariablesAttribute
     {
-        public string? MeanVariable { get; } = null;
-        public string? StandardDeviationVariable { get; } = null;
+        public string? MeanVariable
+        {
+            get
+            {
+                return ValueVariable;
+            }
+        }
+        public string? StandardDeviationVariable
+        {
+            get
+            {
+                return SecondValueVariable;
+            }
+        }
         public double? DefaultStandardDeviation { get; } = null;
 
-        public SemanticGaussianVariableAttribute(string? mean, string? standardDeviation)
+        public SemanticGaussianVariableAttribute(string? mean, string? standardDeviation) : base(mean, standardDeviation)
         {
-            MeanVariable = mean;
-            StandardDeviationVariable = standardDeviation;
         }
 
-        public SemanticGaussianVariableAttribute(string? mean, string? standardDeviation, double defaultStandardDeviation)
+        public SemanticGaussianVariableAttribute(string? mean, string? standardDeviation, double defaultStandardDeviation) : base(mean, standardDeviation)
         {
-            MeanVariable = mean;
-            StandardDeviationVariable = standardDeviation;
             DefaultStandardDeviation = defaultStandardDeviation;
         }
     }
