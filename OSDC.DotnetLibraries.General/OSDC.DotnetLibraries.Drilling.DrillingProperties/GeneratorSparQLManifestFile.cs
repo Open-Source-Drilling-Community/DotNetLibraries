@@ -1062,9 +1062,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 var semanticDeterministicBernoulliVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBernoulliVariableAttribute>();
                                 var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
                                 var semanticCategoricalVariableAttribute = property.GetCustomAttribute<SemanticCategoricalVariableAttribute>();
-                                var semanticOneVariableAttribute = property.GetCustomAttribute<SemanticOneVariableAttribute>();
-                                var semanticTwoVariablesAttribute = property.GetCustomAttribute<SemanticTwoVariablesAttribute>();
-                                var semanticThreeVariablesAttribute = property.GetCustomAttribute<SemanticThreeVariablesAttribute>();
+                                //var semanticOneVariableAttribute = property.GetCustomAttribute<SemanticOneVariableAttribute>();
+                                //var semanticTwoVariablesAttribute = property.GetCustomAttribute<SemanticTwoVariablesAttribute>();
+                                //var semanticThreeVariablesAttribute = property.GetCustomAttribute<SemanticThreeVariablesAttribute>();
                                 var semanticExclusiveOrAttributes = property.GetCustomAttributes<SemanticExclusiveOrAttribute>();
                                 // remove the optional facts from the list of facts
                                 List<SemanticFactAttribute> semanticFactAttributes = new List<SemanticFactAttribute>();
@@ -1085,9 +1085,9 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     semanticDeterministicBernoulliVariableAttribute != null ||
                                     semanticBernoulliVariableAttribute != null ||
                                     semanticCategoricalVariableAttribute != null ||
-                                    semanticOneVariableAttribute != null ||
-                                    semanticTwoVariablesAttribute != null ||
-                                    semanticThreeVariablesAttribute != null ||
+                                    //semanticOneVariableAttribute != null ||
+                                    //semanticTwoVariablesAttribute != null ||
+                                    //semanticThreeVariablesAttribute != null ||
                                     (semanticExclusiveOrAttributes != null && semanticExclusiveOrAttributes.Any()) ||
                                     (semanticFactAttributes != null && semanticFactAttributes.Any()) ||
                                     (excludeFactAttributes != null && excludeFactAttributes.Any()) ||
@@ -1103,10 +1103,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         semanticDeterministicCategoricalVariableAttribute != null ||
                                         semanticDeterministicBernoulliVariableAttribute != null ||
                                         semanticBernoulliVariableAttribute != null ||
-                                        semanticCategoricalVariableAttribute !=  null ||
-                                        semanticOneVariableAttribute != null ||
-                                        semanticTwoVariablesAttribute != null ||
-                                        semanticThreeVariablesAttribute != null)
+                                        semanticCategoricalVariableAttribute !=  null //||
+                                        //semanticOneVariableAttribute != null ||
+                                        //semanticTwoVariablesAttribute != null ||
+                                        //semanticThreeVariablesAttribute != null
+                                        )
                                     {
                                         List<OptionalFactAttribute> topLevelOptionalFacts = new List<OptionalFactAttribute>();
                                         List<OptionalFactAttribute> subLevelOptionalFacts = new List<OptionalFactAttribute>();
@@ -1288,57 +1289,57 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     variables.Add(variable);
                                                     argCount = 1;
                                                 }
-                                                else if (semanticThreeVariablesAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticThreeVariablesAttribute.ValueVariable) &&
-                                                         IsUsed(combination, semanticThreeVariablesAttribute.ValueVariable))
-                                                {
-                                                    string variable = ProcessQueryVariable(semanticThreeVariablesAttribute.ValueVariable);
-                                                    sparql += "SELECT " + variable;
-                                                    variables.Add(variable);
-                                                    argCount = 1;
-                                                    if (!string.IsNullOrEmpty(semanticThreeVariablesAttribute.SecondValueVariable) &&
-                                                        IsUsed(combination, semanticThreeVariablesAttribute.SecondValueVariable))
-                                                    {
-                                                        variable = ProcessQueryVariable(semanticThreeVariablesAttribute.SecondValueVariable);
-                                                        sparql += " " + variable;
-                                                        variables.Add(variable);
-                                                        argCount += 1;
-                                                        if (!string.IsNullOrEmpty(semanticThreeVariablesAttribute.ThirdValueVariable) &&
-                                                            IsUsed(combination, semanticThreeVariablesAttribute.ThirdValueVariable))
-                                                        {
-                                                            variable = ProcessQueryVariable(semanticThreeVariablesAttribute.ThirdValueVariable);
-                                                            sparql += " " + variable;
-                                                            variables.Add(variable);
-                                                            argCount += 1;
-                                                        }
-                                                    }
-                                                }
-                                                else if (semanticTwoVariablesAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticTwoVariablesAttribute.ValueVariable) &&
-                                                         IsUsed(combination, semanticTwoVariablesAttribute.ValueVariable))
-                                                {
-                                                    string variable = ProcessQueryVariable(semanticTwoVariablesAttribute.ValueVariable);
-                                                    sparql += "SELECT " + variable;
-                                                    variables.Add(variable);
-                                                    argCount = 1;
-                                                    if (!string.IsNullOrEmpty(semanticTwoVariablesAttribute.SecondValueVariable) &&
-                                                        IsUsed(combination, semanticTwoVariablesAttribute.SecondValueVariable))
-                                                    {
-                                                        variable = ProcessQueryVariable(semanticTwoVariablesAttribute.SecondValueVariable);
-                                                        sparql += " " + variable;
-                                                        variables.Add(variable);
-                                                        argCount += 1;
-                                                    }
-                                                }
-                                                else if (semanticOneVariableAttribute != null &&
-                                                         !string.IsNullOrEmpty(semanticOneVariableAttribute.ValueVariable) &&
-                                                         IsUsed(combination, semanticOneVariableAttribute.ValueVariable))
-                                                {
-                                                    string variable = ProcessQueryVariable(semanticOneVariableAttribute.ValueVariable);
-                                                    sparql += "SELECT " + variable;
-                                                    variables.Add(variable);
-                                                    argCount = 1;
-                                                }
+                                                //else if (semanticThreeVariablesAttribute != null &&
+                                                //         !string.IsNullOrEmpty(semanticThreeVariablesAttribute.ValueVariable) &&
+                                                //         IsUsed(combination, semanticThreeVariablesAttribute.ValueVariable))
+                                                //{
+                                                //    string variable = ProcessQueryVariable(semanticThreeVariablesAttribute.ValueVariable);
+                                                //    sparql += "SELECT " + variable;
+                                                //    variables.Add(variable);
+                                                //    argCount = 1;
+                                                //    if (!string.IsNullOrEmpty(semanticThreeVariablesAttribute.SecondValueVariable) &&
+                                                //        IsUsed(combination, semanticThreeVariablesAttribute.SecondValueVariable))
+                                                //    {
+                                                //        variable = ProcessQueryVariable(semanticThreeVariablesAttribute.SecondValueVariable);
+                                                //        sparql += " " + variable;
+                                                //        variables.Add(variable);
+                                                //        argCount += 1;
+                                                //        if (!string.IsNullOrEmpty(semanticThreeVariablesAttribute.ThirdValueVariable) &&
+                                                //            IsUsed(combination, semanticThreeVariablesAttribute.ThirdValueVariable))
+                                                //        {
+                                                //            variable = ProcessQueryVariable(semanticThreeVariablesAttribute.ThirdValueVariable);
+                                                //            sparql += " " + variable;
+                                                //            variables.Add(variable);
+                                                //            argCount += 1;
+                                                //        }
+                                                //    }
+                                                //}
+                                                //else if (semanticTwoVariablesAttribute != null &&
+                                                //         !string.IsNullOrEmpty(semanticTwoVariablesAttribute.ValueVariable) &&
+                                                //         IsUsed(combination, semanticTwoVariablesAttribute.ValueVariable))
+                                                //{
+                                                //    string variable = ProcessQueryVariable(semanticTwoVariablesAttribute.ValueVariable);
+                                                //    sparql += "SELECT " + variable;
+                                                //    variables.Add(variable);
+                                                //    argCount = 1;
+                                                //    if (!string.IsNullOrEmpty(semanticTwoVariablesAttribute.SecondValueVariable) &&
+                                                //        IsUsed(combination, semanticTwoVariablesAttribute.SecondValueVariable))
+                                                //    {
+                                                //        variable = ProcessQueryVariable(semanticTwoVariablesAttribute.SecondValueVariable);
+                                                //        sparql += " " + variable;
+                                                //        variables.Add(variable);
+                                                //        argCount += 1;
+                                                //    }
+                                                //}
+                                                //else if (semanticOneVariableAttribute != null &&
+                                                //         !string.IsNullOrEmpty(semanticOneVariableAttribute.ValueVariable) &&
+                                                //         IsUsed(combination, semanticOneVariableAttribute.ValueVariable))
+                                                //{
+                                                //    string variable = ProcessQueryVariable(semanticOneVariableAttribute.ValueVariable);
+                                                //    sparql += "SELECT " + variable;
+                                                //    variables.Add(variable);
+                                                //    argCount = 1;
+                                                //}
                                                 if (options.Count > 0)
                                                 {
                                                     foreach (var option in options)
