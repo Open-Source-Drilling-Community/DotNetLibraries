@@ -154,7 +154,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 }
                             };
                             string ddhubURL = "http://ddhub.no/";
-                            string quantityNameSpace = "http://ddhub.no/UnitAndQuantity";
+                            string quantityNameSpace = "http://ddhub.no/UnitAndQuantity/";
                             // find the provided variables
                             List<string> providedVariables = new List<string>();
                             var semanticTypeVariableAttribute = type.GetCustomAttribute<SemanticTypeVariableAttribute>();
@@ -234,7 +234,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         {
                                             Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                             VerbURI = ddhubURL + fact.Verb.ToString(),
-                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectPhysicalQuantity.Value.ToString()) }
+                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(ProcessQuantityName(fact.ObjectPhysicalQuantity.Value.ToString())) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
                                     }
@@ -244,7 +244,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         {
                                             Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                             VerbURI = ddhubURL + fact.Verb.ToString(),
-                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(fact.ObjectDrillingQuantity.Value.ToString()) }
+                                            Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(ProcessQuantityName(fact.ObjectDrillingQuantity.Value.ToString())) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
                                     }
@@ -416,7 +416,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         }
                                     };
                                     string ddhubURL = "http://ddhub.no/";
-                                    string quantityNameSpace = "http://ddhub.no/UnitAndQuantity";
+                                    string quantityNameSpace = "http://ddhub.no/UnitAndQuantity/";
                                     // find the provided variables
                                     List<string> providedVariables = [];
                                     var semanticDiracVariableAttribute = property.GetCustomAttribute<SemanticDiracVariableAttribute>();
@@ -646,7 +646,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                                     VerbURI = ddhubURL + fact.Verb.ToString(),
-                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = fact.ObjectPhysicalQuantity.Value.ToString() }
+                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessQuantityName(fact.ObjectPhysicalQuantity.Value.ToString()) }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
                                             }
@@ -656,7 +656,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
                                                     VerbURI = ddhubURL + fact.Verb.ToString(),
-                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = fact.ObjectDrillingQuantity.Value.ToString() }
+                                                    Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessQuantityName(fact.ObjectDrillingQuantity.Value.ToString()) }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
                                             }
@@ -823,7 +823,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                     if (r != null && r.Subject != null && !string.IsNullOrEmpty(r.Subject.ID) && !string.IsNullOrEmpty(r.VerbURI) && r.Object != null && !string.IsNullOrEmpty(r.Object.ID))
                     {
                         string klass = "classClass";
-                        if (r.Object.NameSpace == "http://ddhub.no/UnitAndQuantity")
+                        if (r.Object.NameSpace == "http://ddhub.no/UnitAndQuantity/")
                         {
                             klass = "quantityClass";
                         }
@@ -954,7 +954,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             int argCount = 0;
                                             sparql += "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
                                             sparql += "PREFIX ddhub:<http://ddhub.no/>\n";
-                                            sparql += "PREFIX quantity:<http://ddhub.no/UnitAndQuantity>\n\n";
+                                            sparql += "PREFIX quantity:<http://ddhub.no/UnitAndQuantity/>\n\n";
                                             if (semanticTypeVariableAttribute != null &&
                                                 !string.IsNullOrEmpty(semanticTypeVariableAttribute.ValueVariable) &&
                                                 IsUsed(combination, semanticTypeVariableAttribute.ValueVariable))
@@ -1157,7 +1157,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 int argCount = 0;
                                                 sparql += "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n";
                                                 sparql += "PREFIX ddhub:<http://ddhub.no/>\n";
-                                                sparql += "PREFIX quantity:<http://ddhub.no/UnitAndQuantity>\n\n";
+                                                sparql += "PREFIX quantity:<http://ddhub.no/UnitAndQuantity/>\n\n";
                                                 List<byte> options = GetOptions(combination, topLevelOptionalFacts, subLevelOptionalFacts);
                                                 List<string> variables = new List<string>();
                                                 if (semanticDiracVariableAttribute != null &&
@@ -1506,7 +1506,17 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             }
             return results;
         }
-
+        private static string ProcessQuantityName(string? name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                return name.Substring(0, 1).ToLower() + name.Substring(1);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
         private static string ProcessManifestVariable(string variable)
         {
             variable = variable.Trim();
@@ -1590,11 +1600,11 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
                 else if (fact.ObjectPhysicalQuantity != null)
                 {
-                    obj = "quantity:" + fact.ObjectPhysicalQuantity.ToString();
+                    obj = "quantity:" + ProcessQuantityName(fact.ObjectPhysicalQuantity.ToString());
                 }
                 else if (fact.ObjectDrillingQuantity != null)
                 {
-                    obj = "quantity:" + fact.ObjectDrillingQuantity.ToString();
+                    obj = "quantity:" + ProcessQuantityName(fact.ObjectDrillingQuantity.ToString());
                 }
                 else
                 {
