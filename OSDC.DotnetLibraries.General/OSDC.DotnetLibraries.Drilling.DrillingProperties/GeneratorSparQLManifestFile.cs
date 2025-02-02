@@ -153,8 +153,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     Name = manifestName
                                 }
                             };
-                            string ddhubURL = "http://ddhub.no/";
-                            string quantityNameSpace = "http://ddhub.no/UnitAndQuantity/";
+                            string ddhubURL = "http://ddhub.no";
+                            string quantityNameSpace = "http://ddhub.no/UnitAndQuantity";
                             // find the provided variables
                             List<string> providedVariables = new List<string>();
                             var semanticTypeVariableAttribute = type.GetCustomAttribute<SemanticTypeVariableAttribute>();
@@ -196,7 +196,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             InjectedReference injectedReference = new()
                                             {
                                                 Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(kpv.Key) },
-                                                VerbURI = ddhubURL + Verbs.Enum.BelongsToClass.ToString(),
+                                                VerbURI = ddhubURL + "/" + Verbs.Enum.BelongsToClass.ToString(),
                                                 Object = new NodeIdentifier() { NameSpace = ddhubURL, ID = ProcessManifestVariable(kpv.Value[i].ToString()) }
                                             };
                                             manifestFile.InjectedReferences.Add(injectedReference);
@@ -223,7 +223,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         InjectedReference injectedReference = new()
                                         {
                                             Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
-                                            VerbURI = ddhubURL + fact.Verb.ToString(),
+                                            VerbURI = ddhubURL + "/" + fact.Verb.ToString(),
                                             Object = new NodeIdentifier() { NameSpace = objectNameSpace, ID = ProcessManifestVariable(fact.ObjectName) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
@@ -233,7 +233,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         InjectedReference injectedReference = new()
                                         {
                                             Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
-                                            VerbURI = ddhubURL + fact.Verb.ToString(),
+                                            VerbURI = ddhubURL + "/" + fact.Verb.ToString(),
                                             Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(ProcessQuantityName(fact.ObjectPhysicalQuantity.Value.ToString())) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
@@ -243,7 +243,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         InjectedReference injectedReference = new()
                                         {
                                             Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
-                                            VerbURI = ddhubURL + fact.Verb.ToString(),
+                                            VerbURI = ddhubURL + "/" + fact.Verb.ToString(),
                                             Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessManifestVariable(ProcessQuantityName(fact.ObjectDrillingQuantity.Value.ToString())) }
                                         };
                                         manifestFile.InjectedReferences.Add(injectedReference);
@@ -415,8 +415,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             Name = manifestName + prefix
                                         }
                                     };
-                                    string ddhubURL = "http://ddhub.no/";
-                                    string quantityNameSpace = "http://ddhub.no/UnitAndQuantity/";
+                                    string ddhubURL = "http://ddhub.no";
+                                    string quantityNameSpace = "http://ddhub.no/UnitAndQuantity";
                                     // find the provided variables
                                     List<string> providedVariables = [];
                                     var semanticDiracVariableAttribute = property.GetCustomAttribute<SemanticDiracVariableAttribute>();
@@ -608,7 +608,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     InjectedReference injectedReference = new()
                                                     {
                                                         Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(kpv.Key) },
-                                                        VerbURI = ddhubURL + Verbs.Enum.BelongsToClass.ToString(),
+                                                        VerbURI = ddhubURL + "/" + Verbs.Enum.BelongsToClass.ToString(),
                                                         Object = new NodeIdentifier() { NameSpace = ddhubURL, ID = ProcessManifestVariable(kpv.Value[i].ToString()) }
                                                     };
                                                     manifestFile.InjectedReferences.Add(injectedReference);
@@ -635,7 +635,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 InjectedReference injectedReference = new()
                                                 {
                                                     Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
-                                                    VerbURI = ddhubURL + fact.Verb.ToString(),
+                                                    VerbURI = ddhubURL + "/" + fact.Verb.ToString(),
                                                     Object = new NodeIdentifier() { NameSpace = objectNameSpace, ID = ProcessManifestVariable(fact.ObjectName) }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
@@ -645,7 +645,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 InjectedReference injectedReference = new()
                                                 {
                                                     Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
-                                                    VerbURI = ddhubURL + fact.Verb.ToString(),
+                                                    VerbURI = ddhubURL + "/" + fact.Verb.ToString(),
                                                     Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessQuantityName(fact.ObjectPhysicalQuantity.Value.ToString()) }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
@@ -655,7 +655,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 InjectedReference injectedReference = new()
                                                 {
                                                     Subject = new NodeIdentifier() { NameSpace = subjectNameSpace, ID = ProcessManifestVariable(fact.SubjectName) },
-                                                    VerbURI = ddhubURL + fact.Verb.ToString(),
+                                                    VerbURI = ddhubURL + "/" + fact.Verb.ToString(),
                                                     Object = new NodeIdentifier() { NameSpace = quantityNameSpace, ID = ProcessQuantityName(fact.ObjectDrillingQuantity.Value.ToString()) }
                                                 };
                                                 manifestFile.InjectedReferences.Add(injectedReference);
@@ -1026,7 +1026,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             }
             return null;
         }
-        public static Dictionary<string, QuerySpecification>? GetSparQLQueries(Assembly? assembly, string? typeName, string? propertyName)
+        public static Dictionary<string, QuerySpecification>? GetSparQLQueries(Assembly? assembly, string? typeName, string? propertyName, List<string>? additionalQueryVariables = null, List<string>? additionalQueryTypeVariables = null)
         {
             if (assembly == null || typeName == null || propertyName == null)
             {
@@ -1340,6 +1340,26 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 //    variables.Add(variable);
                                                 //    argCount = 1;
                                                 //}
+                                                if (additionalQueryVariables != null)
+                                                {
+                                                    foreach (string var in additionalQueryVariables)
+                                                    {
+                                                        string supplementaryVar = ProcessQueryVariable(var);
+                                                        variables.Add(supplementaryVar);
+                                                        sparql += " " + supplementaryVar;
+                                                        argCount++;
+                                                    }
+                                                }
+                                                if (additionalQueryTypeVariables != null)
+                                                {
+                                                    foreach (string var in additionalQueryTypeVariables)
+                                                    {
+                                                        string supplementaryVar = ProcessQueryVariable(var) + "Type";
+                                                        variables.Add(supplementaryVar);
+                                                        sparql += " " + supplementaryVar;
+                                                        argCount++;
+                                                    }
+                                                }
                                                 if (options.Count > 0)
                                                 {
                                                     foreach (var option in options)
@@ -1366,6 +1386,17 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                         fact.ObjectName = ProcessQueryVariable(fact.ObjectName);
                                                     }
                                                     sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
+                                                }
+                                                if (additionalQueryTypeVariables != null)
+                                                {
+                                                    foreach (string var in additionalQueryTypeVariables)
+                                                    {
+                                                        SemanticFact fact = new SemanticFact();
+                                                        fact.SubjectName = ProcessQueryVariable(var);
+                                                        fact.Verb = Verbs.Enum.BelongsToClass;
+                                                        fact.ObjectName = ProcessQueryVariable(var) + "Type";
+                                                        sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
+                                                    }
                                                 }
                                                 if (excludeFactAttributes != null && excludeFactAttributes.Any())
                                                 {
