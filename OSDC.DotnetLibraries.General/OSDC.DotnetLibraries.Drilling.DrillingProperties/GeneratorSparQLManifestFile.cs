@@ -429,6 +429,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     var semanticDeterministicBernoulliVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBernoulliVariableAttribute>();
                                     var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
                                     var semanticCategoricalVariableAttribute = property.GetCustomAttribute<SemanticCategoricalVariableAttribute>();
+                                    var semanticStringVariableAttribute = property.GetCustomAttribute<SemanticStringVariableAttribute>();
+
                                     if (semanticDiracVariableAttribute != null &&
                                         !string.IsNullOrEmpty(semanticDiracVariableAttribute.ValueVariable) &&
                                         IsUsed(facts, semanticDiracVariableAttribute.ValueVariable))
@@ -436,6 +438,14 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         ProvidedVariable providedVariable = new() { DataType = "double", VariableID = ProcessManifestVariable(semanticDiracVariableAttribute.ValueVariable) };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
                                         providedVariables.Add(semanticDiracVariableAttribute.ValueVariable);
+                                    }
+                                    else if (semanticStringVariableAttribute != null &&
+                                        !string.IsNullOrEmpty(semanticStringVariableAttribute.ValueVariable) &&
+                                        IsUsed(facts, semanticStringVariableAttribute.ValueVariable))
+                                    {
+                                        ProvidedVariable providedVariable = new() { DataType = "string", VariableID = ProcessManifestVariable(semanticStringVariableAttribute.ValueVariable) };
+                                        manifestFile.ProvidedVariables.Add(providedVariable);
+                                        providedVariables.Add(semanticStringVariableAttribute.ValueVariable);
                                     }
                                     else if (semanticGaussianVariableAttribute != null &&
                                              !string.IsNullOrEmpty(semanticGaussianVariableAttribute.MeanVariable) &&
@@ -1062,6 +1072,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 var semanticDeterministicBernoulliVariableAttribute = property.GetCustomAttribute<SemanticDeterministicBernoulliVariableAttribute>();
                                 var semanticBernoulliVariableAttribute = property.GetCustomAttribute<SemanticBernoulliVariableAttribute>();
                                 var semanticCategoricalVariableAttribute = property.GetCustomAttribute<SemanticCategoricalVariableAttribute>();
+                                var semanticStringVariableAttribute = property.GetCustomAttribute<SemanticStringVariableAttribute>();
                                 //var semanticOneVariableAttribute = property.GetCustomAttribute<SemanticOneVariableAttribute>();
                                 //var semanticTwoVariablesAttribute = property.GetCustomAttribute<SemanticTwoVariablesAttribute>();
                                 //var semanticThreeVariablesAttribute = property.GetCustomAttribute<SemanticThreeVariablesAttribute>();
@@ -1085,6 +1096,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     semanticDeterministicBernoulliVariableAttribute != null ||
                                     semanticBernoulliVariableAttribute != null ||
                                     semanticCategoricalVariableAttribute != null ||
+                                    semanticStringVariableAttribute != null ||
                                     //semanticOneVariableAttribute != null ||
                                     //semanticTwoVariablesAttribute != null ||
                                     //semanticThreeVariablesAttribute != null ||
@@ -1103,7 +1115,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                         semanticDeterministicCategoricalVariableAttribute != null ||
                                         semanticDeterministicBernoulliVariableAttribute != null ||
                                         semanticBernoulliVariableAttribute != null ||
-                                        semanticCategoricalVariableAttribute !=  null //||
+                                        semanticCategoricalVariableAttribute !=  null ||
+                                        semanticStringVariableAttribute != null
                                         //semanticOneVariableAttribute != null ||
                                         //semanticTwoVariablesAttribute != null ||
                                         //semanticThreeVariablesAttribute != null
@@ -1165,6 +1178,15 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     IsUsed(combination, semanticDiracVariableAttribute.ValueVariable))
                                                 {
                                                     string var1 = ProcessQueryVariable(semanticDiracVariableAttribute.ValueVariable);
+                                                    variables.Add(var1);
+                                                    sparql += "SELECT " + var1;
+                                                    argCount = 1;
+                                                }
+                                                else if (semanticStringVariableAttribute != null &&
+                                                    !string.IsNullOrEmpty(semanticStringVariableAttribute.ValueVariable) &&
+                                                    IsUsed(combination, semanticStringVariableAttribute.ValueVariable))
+                                                {
+                                                    string var1 = ProcessQueryVariable(semanticStringVariableAttribute.ValueVariable);
                                                     variables.Add(var1);
                                                     sparql += "SELECT " + var1;
                                                     argCount = 1;
