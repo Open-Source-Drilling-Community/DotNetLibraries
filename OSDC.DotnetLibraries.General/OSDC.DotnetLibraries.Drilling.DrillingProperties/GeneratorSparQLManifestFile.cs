@@ -539,8 +539,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         ProvidedVariable providedVariable = new() { 
                                             DataType = "short", 
-                                            Rank = 1, 
-                                            Dimensions = [(int)semanticDeterministicCategoricalVariableAttribute.NumberOfStates.Value], 
                                             VariableID = ProcessManifestVariable(semanticDeterministicCategoricalVariableAttribute.ValueVariable) 
                                         };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
@@ -552,8 +550,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         ProvidedVariable providedVariable = new() { 
                                             DataType = "short", 
-                                            Rank = 1,
-                                            Dimensions = [2],
                                             VariableID = ProcessManifestVariable(semanticDeterministicBernoulliVariableAttribute.ValueVariable) 
                                         };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
@@ -565,8 +561,6 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                     {
                                         ProvidedVariable providedVariable = new() { 
                                             DataType = "double", 
-                                            Rank = 1,
-                                            Dimensions = [2],
                                             VariableID = ProcessManifestVariable(semanticBernoulliVariableAttribute.ValueVariable) 
                                         };
                                         manifestFile.ProvidedVariables.Add(providedVariable);
