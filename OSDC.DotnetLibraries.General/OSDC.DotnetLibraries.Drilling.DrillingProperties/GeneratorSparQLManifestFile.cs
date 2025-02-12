@@ -551,7 +551,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                              IsUsed(facts, semanticDeterministicBernoulliVariableAttribute.ValueVariable))
                                     {
                                         ProvidedVariable providedVariable = new() { 
-                                            DataType = "double", 
+                                            DataType = "short", 
                                             Rank = 1,
                                             Dimensions = [2],
                                             VariableID = ProcessManifestVariable(semanticDeterministicBernoulliVariableAttribute.ValueVariable) 
