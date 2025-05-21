@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DWIS.API.DTO" Version="2.2.10" />
+    <PackageReference Include="DWIS.API.DTO" Version="2.2.11" />
     <PackageReference Include="OSDC.DotnetLibraries.General.Statistics" Version="3.1.1" />
     <PackageReference Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="3.3.15" />
   </ItemGroup>
