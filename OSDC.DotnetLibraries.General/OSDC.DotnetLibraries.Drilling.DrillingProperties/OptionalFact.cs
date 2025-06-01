@@ -71,12 +71,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             ParentGroupIndex = 0;
             GroupIndex = groupIdx;
         }
-        public OptionalFact(byte groupIdx, string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
+        public OptionalFact(byte groupIdx, string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
         {
             ParentGroupIndex = 0;
             GroupIndex = groupIdx;
         }
-        public OptionalFact(byte groupIdx, Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
+        public OptionalFact(byte groupIdx, Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
         {
             ParentGroupIndex = 0;
             GroupIndex = groupIdx;
@@ -114,12 +114,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             ParentGroupIndex = parentGroupIdx;
             GroupIndex = groupIdx;
         }
-        public OptionalFact(byte parentGroupIdx, byte groupIdx, string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
+        public OptionalFact(byte parentGroupIdx, byte groupIdx, string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
         {
             ParentGroupIndex = parentGroupIdx;
             GroupIndex = groupIdx;
         }
-        public OptionalFact(byte parentGroupIdx, byte groupIdx, Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
+        public OptionalFact(byte parentGroupIdx, byte groupIdx, Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes) : base(subject, verb, quantity, objectAttributes)
         {
             ParentGroupIndex = parentGroupIdx;
             GroupIndex = groupIdx;

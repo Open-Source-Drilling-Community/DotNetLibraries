@@ -68,10 +68,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public OptionalExcludeFactAttribute(byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, BasePhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
         {
         }
-        public OptionalExcludeFactAttribute(byte bundleIdx, string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
+        public OptionalExcludeFactAttribute(byte bundleIdx, string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
         {
         }
-        public OptionalExcludeFactAttribute(byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
+        public OptionalExcludeFactAttribute(byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
         {
         }
 
@@ -133,10 +133,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public OptionalExcludeFactAttribute(byte parentBundleIdx, byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, BasePhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
         {
         }
-        public OptionalExcludeFactAttribute(byte parentBundleIdx, byte bundleIdx, string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
+        public OptionalExcludeFactAttribute(byte parentBundleIdx, byte bundleIdx, string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
         {
         }
-        public OptionalExcludeFactAttribute(byte parentBundleIdx, byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
+        public OptionalExcludeFactAttribute(byte parentBundleIdx, byte bundleIdx, Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes) : base(bundleIdx, subject, verb, quantity, objectAttributes)
         {
         }
 

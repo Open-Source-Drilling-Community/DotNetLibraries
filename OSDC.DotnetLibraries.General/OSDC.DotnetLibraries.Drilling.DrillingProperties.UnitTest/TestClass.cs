@@ -8,7 +8,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
     {
         [Mandatory(CommonProperty.MandatoryType.General)]
         [SemanticFact("signal", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, PhysicalQuantity.QuantityEnum.DepthDrilling)]
+        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.DepthDrilling)]
         [SemanticFact("SignalVerticalElevationFrame", Verbs.Enum.BelongsToClass, Nouns.Enum.VerticalDepthFrame)]
         [SemanticFact("signal", Verbs.Enum.HasReferenceFrame, "SignalVerticalElevationFrame")]
         [SemanticFact("WGS84DepthDatum", Verbs.Enum.BelongsToClass, Nouns.Enum.WGS84VerticalLocation)]
@@ -26,12 +26,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest
 
         [Mandatory(CommonProperty.MandatoryType.Hydraulic | CommonProperty.MandatoryType.Mechanical | CommonProperty.MandatoryType.MaterialTransport)]
         [SemanticFact("signal", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, PhysicalQuantity.QuantityEnum.MassDensityDrilling)]
+        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.MassDensityDrilling)]
         public GaussianDrillingProperty GaussianValue { get; set; } = new GaussianDrillingProperty();
 
         [Mandatory(CommonProperty.MandatoryType.Directional)]
         [SemanticFact("signal", Verbs.Enum.BelongsToClass, Nouns.Enum.DrillingDataPoint)]
-        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, PhysicalQuantity.QuantityEnum.PlaneAngleDrilling)]
+        [SemanticFact("signal", Verbs.Enum.IsOfMeasurableQuantity, DrillingPhysicalQuantity.QuantityEnum.PlaneAngleDrilling)]
         [SemanticFact("SignalAzimuthFrame", Verbs.Enum.BelongsToClass, Nouns.Enum.AngleReferenceFrame)]
         [SemanticFact("signal", Verbs.Enum.HasReferenceFrame, "SignalAzimuthFrame")]
         [SemanticFact("TrueNorthDatum", Verbs.Enum.BelongsToClass, Nouns.Enum.TrueNorthAzimuthLocation)]

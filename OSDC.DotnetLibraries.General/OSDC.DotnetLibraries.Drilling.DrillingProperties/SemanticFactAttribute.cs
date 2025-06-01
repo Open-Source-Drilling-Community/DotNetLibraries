@@ -19,7 +19,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         public Nouns.Enum? Object { get; protected set; } = null;
         public string? ObjectName { get; protected set; } = null;
         public BasePhysicalQuantity.QuantityEnum? ObjectPhysicalQuantity { get; protected set; } = null;
-        public PhysicalQuantity.QuantityEnum? ObjectDrillingQuantity { get; protected set; } = null;
+        public DrillingPhysicalQuantity.QuantityEnum? ObjectDrillingQuantity { get; protected set; } = null;
         public Tuple<string, string>[]? ObjectAttributes { get; protected set; } = null;
         
         protected SemanticFactAttribute() { }
@@ -68,14 +68,14 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             ObjectPhysicalQuantity = quantity;
             ProcessAttributes(objectAttributes);
         }
-        public SemanticFactAttribute(string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes)
+        public SemanticFactAttribute(string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes)
         {
             SubjectName = subject;
             Verb = verb;
             ObjectDrillingQuantity = quantity;
             ProcessAttributes(objectAttributes);
         }
-        public SemanticFactAttribute(Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes)
+        public SemanticFactAttribute(Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params string[] objectAttributes)
         {
             Subject = subject;
             Verb = verb;

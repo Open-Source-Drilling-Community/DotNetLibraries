@@ -19,7 +19,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public BasePhysicalQuantity.QuantityEnum? ObjectPhysicalQuantity { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public PhysicalQuantity.QuantityEnum? ObjectDrillingQuantity { get; set; }
+        public DrillingPhysicalQuantity.QuantityEnum? ObjectDrillingQuantity { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Tuple<string, string>[]? ObjectAttributes { get; set; } = null;
 
@@ -98,14 +98,14 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             ObjectPhysicalQuantity = quantity;
             ObjectAttributes = objectAttributes;
         }
-        public SemanticFact(string subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes)
+        public SemanticFact(string subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, Tuple<string, string>[] objectAttributes)
         {
             SubjectName = subject;
             Verb = verb;
             ObjectDrillingQuantity = quantity;
             ObjectAttributes = objectAttributes;
         }
-        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, PhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes)
+        public SemanticFact(Nouns.Enum subject, Verbs.Enum verb, DrillingPhysicalQuantity.QuantityEnum quantity, params Tuple<string, string>[] objectAttributes)
         {
             Subject = subject;
             Verb = verb;
