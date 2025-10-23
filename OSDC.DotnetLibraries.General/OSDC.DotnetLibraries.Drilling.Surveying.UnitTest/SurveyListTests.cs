@@ -19,34 +19,34 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         public void Test1()
         {
             SurveyList traj = new SurveyList() {
-               new Survey() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
-               new Survey() { MD = 100, Inclination = 0, Azimuth = 0},
-               new Survey() { MD = 200, Inclination = 0, Azimuth = 0}
+               new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
+               new SurveyPoint() { MD = 100, Inclination = 0, Azimuth = 0},
+               new SurveyPoint() { MD = 200, Inclination = 0, Azimuth = 0}
              };
             bool ok = traj.Calculate();
             Assert.IsTrue(ok);
             Assert.NotNull(traj[0].X);
             Assert.NotNull(traj[0].Y);
             Assert.NotNull(traj[0].Z);
-            Assert.NotNull(traj.Last<Survey>().X);
-            Assert.NotNull(traj.Last<Survey>().Y);
-            Assert.NotNull(traj.Last<Survey>().Z);
-            Assert.AreEqual((double)traj[0].X, (double)traj.Last<Survey>().X, 1e-3);
-            Assert.AreEqual((double)traj[0].Y, (double)traj.Last<Survey>().Y, 1e-3);
-            Assert.AreEqual((double)traj.Last<Survey>().MD, (double)traj.Last<Survey>().Z, 1e-3);
+            Assert.NotNull(traj.Last<SurveyPoint>().X);
+            Assert.NotNull(traj.Last<SurveyPoint>().Y);
+            Assert.NotNull(traj.Last<SurveyPoint>().Z);
+            Assert.AreEqual((double)traj[0].X, (double)traj.Last<SurveyPoint>().X, 1e-3);
+            Assert.AreEqual((double)traj[0].Y, (double)traj.Last<SurveyPoint>().Y, 1e-3);
+            Assert.AreEqual((double)traj.Last<SurveyPoint>().MD, (double)traj.Last<SurveyPoint>().Z, 1e-3);
         }
 
         [Test]
         public void Test2()
         {
             SurveyList traj = new SurveyList() {
-               new Survey() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
-               new Survey() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
-               new Survey() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
+               new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
+               new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
+               new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
             bool ok = traj.Calculate();
             Assert.IsTrue(ok);
-            Survey sv = new Survey();
+            SurveyPoint sv = new SurveyPoint();
             ok = traj.InterpolateAtAbscissa(100.0, sv);
             Assert.IsTrue(ok);
             Assert.AreEqual(traj[1].TVD.Value, sv.TVD.Value, 1e-4);
@@ -61,9 +61,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         public void Test3()
         {
             SurveyList traj = new SurveyList() {
-               new Survey() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
-               new Survey() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
-               new Survey() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
+               new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
+               new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
+               new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
             bool ok = traj.Calculate();
             Assert.IsTrue(ok);
@@ -75,9 +75,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         public void Test4()
         {
             SurveyList traj = new SurveyList() {
-               new Survey() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
-               new Survey() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
-               new Survey() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
+               new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
+               new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
+               new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
             bool ok = traj.Calculate();
             Assert.IsTrue(ok);
@@ -90,9 +90,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         public void Test5()
         {
             SurveyList traj = new SurveyList() {
-               new Survey() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
-               new Survey() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
-               new Survey() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
+               new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
+               new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
+               new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
             bool ok = traj.Calculate();
             Assert.IsTrue(ok);

@@ -1,18 +1,12 @@
 ﻿using OSDC.DotnetLibraries.General.Math;
 using OSDC.DotnetLibraries.General.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics.CodeAnalysis;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     /// <summary>
     /// a list of survey points
     /// </summary>
-    public class SurveyList : List<Survey>
+    public class SurveyList : List<SurveyPoint>
     {
         /// <summary>
         /// calculate the whole survey list from the starting survey.
@@ -21,7 +15,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <returns></returns>
         public bool Calculate()
         {
-            return Survey.Calculate(this);
+            return SurveyPoint.Calculate(this);
         }
 
         /// <summary>
@@ -32,7 +26,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <returns></returns>
         public bool InterpolateAtAbscissa(double MD, ICurvilinear3D interpolatedPoint)
         {
-            if (interpolatedPoint == null || Numeric.IsUndefined(MD) || Count < 2 || Numeric.LT(MD, this.First<Survey>().MD) || Numeric.GT(MD, this.Last<Survey>().MD))
+            if (interpolatedPoint == null || Numeric.IsUndefined(MD) || Count < 2 || Numeric.LT(MD, this.First<SurveyPoint>().MD) || Numeric.GT(MD, this.Last<SurveyPoint>().MD))
             {
                 return false;
             }
@@ -55,9 +49,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <param name="MD"></param>
         /// <param name="interpolatedPoint"></param>
         /// <returns></returns>
-        public bool InterpolateAtAbscissa(double MD, Survey interpolatedPoint)
+        public bool InterpolateAtAbscissa(double MD, SurveyPoint interpolatedPoint)
         {
-            if (interpolatedPoint == null || Numeric.IsUndefined(MD) || Count < 2 || Numeric.LT(MD, this.First<Survey>().MD) || Numeric.GT(MD, this.Last<Survey>().MD))
+            if (interpolatedPoint == null || Numeric.IsUndefined(MD) || Count < 2 || Numeric.LT(MD, this.First<SurveyPoint>().MD) || Numeric.GT(MD, this.Last<SurveyPoint>().MD))
             {
                 return false;
             }
@@ -91,7 +85,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             {
                 foreach (double s in abscissas)
                 {
-                    if (Numeric.GE(s, this[0].MD) && Numeric.LE(s, this.Last<Survey>().MD))
+                    if (Numeric.GE(s, this[0].MD) && Numeric.LE(s, this.Last<SurveyPoint>().MD))
                     {
                         list.Add(s);
                     }
@@ -99,14 +93,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             list.Sort();
             SurveyList result = new SurveyList() { this[0] };
-            for (double s = this[0].MD.Value + step; Numeric.LE(s, this.Last<Survey>().MD); s += step)
+            for (double s = this[0].MD.Value + step; Numeric.LE(s, this.Last<SurveyPoint>().MD); s += step)
             {
                 double lastS = double.MinValue;
                 if (list.Count > 0)
                 {
                     while (list.Count > 0 && Numeric.LE(list.First<double>(), s))
                     {
-                        Survey sv = new Survey();
+                        SurveyPoint sv = new SurveyPoint();
                         if (InterpolateAtAbscissa(list.First<double>(), sv))
                         {
                             result.Add(sv);
@@ -117,7 +111,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 }
                 if (!Numeric.EQ(s, lastS))
                 {
-                    Survey sv = new Survey();
+                    SurveyPoint sv = new SurveyPoint();
                     if (InterpolateAtAbscissa(s, sv))
                     {
                         result.Add(sv);

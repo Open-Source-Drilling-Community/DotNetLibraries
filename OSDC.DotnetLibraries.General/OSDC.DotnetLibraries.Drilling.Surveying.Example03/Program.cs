@@ -10,16 +10,16 @@ namespace DrillingProperties
         {
             // an underground position at Norce, Stavanger, Norway
             double groundLevel = 39.7;
-            Survey survey1 = new Survey() { TVD = -groundLevel, Latitude = 58.93414 * System.Math.PI / 180.0, Longitude = 5.7085 * System.Math.PI / 180.0, MD = -groundLevel, Inclination = 0, Azimuth = 0 };
+            SurveyPoint survey1 = new SurveyPoint() { TVD = -groundLevel, Latitude = 58.93414 * System.Math.PI / 180.0, Longitude = 5.7085 * System.Math.PI / 180.0, MD = -groundLevel, Inclination = 0, Azimuth = 0 };
             SurveyList traj = new SurveyList() { survey1,
-                new Survey() { MD = 50.0 - groundLevel, Inclination = 0.9 * Numeric.PI / 180.0, Azimuth = -29.7 * Numeric.PI / 180.0 },
-                new Survey() { MD = 100.0 - groundLevel, Inclination = 0.4 * Numeric.PI / 180.0, Azimuth = -95.1 * Numeric.PI / 180.0 },
-                new Survey() { MD = 150.0 - groundLevel, Inclination = 0.7 * Numeric.PI / 180.0, Azimuth = 142.5 * Numeric.PI / 180.0 },
-                new Survey() { MD = 200.0 - groundLevel, Inclination = 0.9 * Numeric.PI / 180.0, Azimuth = 58.2 * Numeric.PI / 180.0 },
-                new Survey() { MD = 250.0 - groundLevel, Inclination = 0.6 * Numeric.PI / 180.0, Azimuth = 173.2 * Numeric.PI / 180.0 },
-                new Survey() { MD = 300.0 - groundLevel, Inclination = 1.3 * Numeric.PI / 180.0, Azimuth = 143.6 * Numeric.PI / 180.0 },
-                new Survey() { MD = 350.0 - groundLevel, Inclination = 6.6 * Numeric.PI / 180.0, Azimuth = 155.6 * Numeric.PI / 180.0 },
-                new Survey() { MD = 400.0 - groundLevel, Inclination = 11.2 * Numeric.PI / 180.0, Azimuth = 143.7 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 50.0 - groundLevel, Inclination = 0.9 * Numeric.PI / 180.0, Azimuth = -29.7 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 100.0 - groundLevel, Inclination = 0.4 * Numeric.PI / 180.0, Azimuth = -95.1 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 150.0 - groundLevel, Inclination = 0.7 * Numeric.PI / 180.0, Azimuth = 142.5 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 200.0 - groundLevel, Inclination = 0.9 * Numeric.PI / 180.0, Azimuth = 58.2 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 250.0 - groundLevel, Inclination = 0.6 * Numeric.PI / 180.0, Azimuth = 173.2 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 300.0 - groundLevel, Inclination = 1.3 * Numeric.PI / 180.0, Azimuth = 143.6 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 350.0 - groundLevel, Inclination = 6.6 * Numeric.PI / 180.0, Azimuth = 155.6 * Numeric.PI / 180.0 },
+                new SurveyPoint() { MD = 400.0 - groundLevel, Inclination = 11.2 * Numeric.PI / 180.0, Azimuth = 143.7 * Numeric.PI / 180.0 },
             };
             if (traj.Calculate())
             {

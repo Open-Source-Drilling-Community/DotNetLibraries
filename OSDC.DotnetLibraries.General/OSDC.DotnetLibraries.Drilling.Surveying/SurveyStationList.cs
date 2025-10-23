@@ -1,7 +1,6 @@
 ﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 using OSDC.DotnetLibraries.General.Statistics;
-using System.Drawing;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
@@ -13,12 +12,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
 
         /// <summary>
         /// calculate the whole survey station list from the starting survey.
-        /// The first survey shall be complete
+        /// The first survey must be complete
         /// </summary>
         /// <returns></returns>
         public bool Calculate()
         {
-            return Survey.Calculate(this);
+            return SurveyPoint.Calculate(this);
         }
 
         /// <summary>
@@ -107,7 +106,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             double Y = pi12 * a0.Value + pi22 * a1.Value + pi32 * a2.Value;
                             double Z = pi13 * a0.Value + pi23 * a1.Value + pi33 * a2.Value;
 
-                            Survey point = new Survey();
+                            SurveyPoint point = new SurveyPoint();
                             point.X = station.RiemannianNorth + ((station.Bias == null || station.Bias.X == null) ? 0 : station.Bias.X.Value) + X;
                             point.Y = station.RiemannianEast + ((station.Bias == null || station.Bias.Y == null) ? 0 : station.Bias.Y.Value) + Y;
                             point.Z = station.TVD + ((station.Bias == null || station.Bias.Z == null) ? 0 : station.Bias.Z.Value) + Z;
@@ -153,7 +152,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                         X = pt.X.Value;
                                         Y = pt.Y.Value;
                                         Z = pt.Z.Value;
-                                        point = new Survey();
+                                        point = new SurveyPoint();
                                         point.X = station.RiemannianNorth + ((station.Bias == null || station.Bias.X == null) ? 0 : station.Bias.X.Value) + X;
                                         point.Y = station.RiemannianEast + ((station.Bias == null || station.Bias.Y == null) ? 0 : station.Bias.Y.Value) + Y;
                                         point.Z = station.TVD + ((station.Bias == null || station.Bias.Z == null) ? 0 : station.Bias.Z.Value) + Z;
@@ -164,7 +163,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             // calculate the inclination, azimuth, length, etc.
                             if (realization.Count > 0)
                             {
-                                Survey survey = realization.First<Survey>();
+                                SurveyPoint survey = realization.First<SurveyPoint>();
                                 station = this.First<SurveyStation>();
                                 survey.Inclination = station.Inclination;
                                 survey.Azimuth = station.Azimuth;

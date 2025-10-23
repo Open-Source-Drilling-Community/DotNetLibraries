@@ -1,15 +1,12 @@
 ﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 using OSDC.DotnetLibraries.Drilling.DrillingProperties;
-using OSDC.UnitConversion.Conversion;
 using OSDC.UnitConversion.Conversion.DrillingEngineering;
-using System.Text.Json.Serialization;
-using MathNet.Numerics.LinearAlgebra.Factorization;
 using MathNet.Numerics.Integration;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
-    public class Survey : CurvilinearPoint3D
+    public class SurveyPoint : CurvilinearPoint3D
     {
         private double? latitude_ = null;
         private double? longitude_ = null;
@@ -200,7 +197,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             base.X = a * SpecialFunctions.EllipseE(latitude, e2);
         }
         /// <summary>
-        /// return a SphericalPoint3D referred to a global coordinate system centered at the center of the Eart.
+        /// return a SphericalPoint3D referred to a global coordinate system centered at the center of the Earth.
         /// </summary>
         /// <returns></returns>
         public SphericalPoint3D? GetSphericalPoint()
@@ -226,14 +223,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// Default constructor
         /// </summary>
-        public Survey() : base()
+        public SurveyPoint() : base()
         {
         }
         /// <summary>
         /// copy constructor
         /// </summary>
         /// <param name="src"></param>
-        public Survey(Survey src) : base(src)
+        public SurveyPoint(SurveyPoint src) : base(src)
         {
             if (src != null)
             {
@@ -328,7 +325,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         /// <param name="next"></param>
         /// <returns></returns>
-        public bool CompleteSIA(Survey next)
+        public bool CompleteSIA(SurveyPoint next)
         {
             if (next == null || X == null || Y == null || Z == null || Inclination == null || Azimuth == null || Abscissa == null || next.Abscissa == null || next.Inclination == null || next.Azimuth == null)
             {
@@ -529,7 +526,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         /// <param name="next"></param>
         /// <returns></returns>
-        public bool CompleteXYZ(Survey next)
+        public bool CompleteXYZ(SurveyPoint next)
         {
             if (X != null &&
                 Y != null &&
@@ -764,7 +761,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return true;
             }
         }
-        public bool CompleteCDTSDT1(Survey? next, double DLS, double TF, List<Survey>? inters = null)
+        public bool CompleteCDTSDT1(SurveyPoint? next, double DLS, double TF, List<SurveyPoint>? inters = null)
         {
             if ((next == null) ||
                 IsUndefined() ||
@@ -789,11 +786,11 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return CompleteCASDT(next, DLS, TF);
             }
 
-            Survey sv2 = new Survey(this);
-            Survey sv1 = new Survey();
+            SurveyPoint sv2 = new SurveyPoint(this);
+            SurveyPoint sv1 = new SurveyPoint();
             do
             {
-                Survey tmp = sv1;
+                SurveyPoint tmp = sv1;
                 sv1 = sv2;
                 sv2 = tmp;
                 sv2.Abscissa = Math.Min(next.Abscissa.Value, sv1.Abscissa.Value + CompleteCTCSDT1Step);
@@ -801,9 +798,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 if (inters != null)
                 {
                     object inter = sv2.MemberwiseClone();
-                    if (inter is Survey)
+                    if (inter is SurveyPoint)
                     {
-                        inters.Add((Survey)inter);
+                        inters.Add((SurveyPoint)inter);
                     }
                 }
             } while (!Numeric.EQ(sv2.Abscissa, next.Abscissa));
@@ -812,7 +809,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             next.X = sv2.X;
             next.Y = sv2.Y;
             next.Z = sv2.Z;
-            Survey prev = null;
+            SurveyPoint prev = null;
             if (inters == null)
             {
                 prev = sv1;
@@ -861,7 +858,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             return true;
         }
 
-        public bool CompleteCDTSDT2(Survey? next, double DLS, double TF)
+        public bool CompleteCDTSDT2(SurveyPoint? next, double DLS, double TF)
         {
             if ((next == null) ||
                 IsUndefined() ||
@@ -1052,7 +1049,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <param name="s"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public bool InterpolateAtAbscissa(ICurvilinear3D next, double s, Survey result)
+        public bool InterpolateAtAbscissa(ICurvilinear3D next, double s, SurveyPoint result)
         {
             if (next == null || result == null ||
                 X == null || Y == null || Z == null || Inclination == null || Azimuth == null || Abscissa == null ||
@@ -1242,7 +1239,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        internal static bool Calculate<A>(List<A> list) where A : Survey
+        internal static bool Calculate<A>(List<A> list) where A : SurveyPoint
         {
             if (list != null &&
                 list.Count > 0 &&

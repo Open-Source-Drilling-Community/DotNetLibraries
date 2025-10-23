@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NORCE.Drilling.SurveyInstrument.ModelShared;
 using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
-    public class WolffDeWardtCalculator
+    public static class WolffDeWardtCalculator
     {
 
-        public bool CalculateCovariances(SurveyStationList? traj, List<Tuple<double, WolffDeWardtSurveyInstrument>> instrumentList)
+        public static bool CalculateCovariances(SurveyStationList? traj, List<Tuple<double, SurveyInstrument>> instrumentList)
         {
             if (traj == null || instrumentList == null || instrumentList.Count == 0) return false;
-            List<Tuple<double, WolffDeWardtSurveyInstrument>> sorted = new List<Tuple<double, WolffDeWardtSurveyInstrument>>();
+            List<Tuple<double, SurveyInstrument>> sorted = new List<Tuple<double, SurveyInstrument>>();
             foreach (var item in instrumentList)
             {
                 sorted.Add(item);
             }
             sorted.Sort();
-            double[,]? A = new double[3, 3];
+            double[,]? A = new double[6, 3];
             for (int i = 0; i < A.GetLength(0); i++)
             {
                 for (int j = 0; j < A.GetLength(1); j++)
@@ -30,7 +26,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             for (int i = 1; i < traj.Count; i++)
             {
-                WolffDeWardtSurveyInstrument instrument;
+                SurveyInstrument instrument;
                 while (sorted.Count > 1 && Numeric.GE(traj[i].MD, sorted[1].Item1))
                 {
                     sorted.RemoveAt(0);
@@ -40,7 +36,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             return false;
         }
-        public double[,]? CalculateCovariances(WolffDeWardtSurveyInstrument instrument, SurveyStation? previousStation, SurveyStation? surveyStation, double[,]? A)
+        public static double[,]? CalculateCovariances(SurveyInstrument instrument, SurveyStation? previousStation, SurveyStation? surveyStation, double[,]? A)
         {
             if (A != null &&
                 instrument != null &&

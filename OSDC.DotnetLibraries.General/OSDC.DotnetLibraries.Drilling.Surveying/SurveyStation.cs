@@ -1,11 +1,9 @@
-﻿using MathNet.Numerics.Distributions;
-using MathNet.Numerics.Optimization;
-using OSDC.DotnetLibraries.General.Common;
+﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
-    public class SurveyStation : Survey
+    public class SurveyStation : SurveyPoint
     {
         protected static double[,] chiSquare3D_ = new double[,] { { 0.05, 0.10, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999 }, { 0.35, 0.58, 1.01, 1.42, 2.37, 3.66, 4.64, 6.25, 7.82, 11.34, 16.27 } };
         /// <summary>
