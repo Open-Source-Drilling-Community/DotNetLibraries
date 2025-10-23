@@ -6,10 +6,12 @@ namespace DrillingProperties
 {
     class Example
     {
+        private static readonly double DEG2RAD = Math.PI / 180.0;
+
         static void Main()
         {
             // a underground position at Norce, Stavanger, Norway
-            Survey survey = new Survey() { TVD = 500, Latitude = 58.93438 * System.Math.PI / 180.0, Longitude = 5.70725 * System.Math.PI / 180.0 };
+            SurveyPoint survey = new SurveyPoint() { TVD = 500, Latitude = 58.93438 * System.Math.PI / 180.0, Longitude = 5.70725 * System.Math.PI / 180.0 };
             Console.WriteLine("RiemannianNorth: " + survey.RiemannianNorth?.ToString("F3", CultureInfo.InvariantCulture) + " m, RiemannianEast: " + survey.RiemannianEast?.ToString("F3", CultureInfo.InvariantCulture) + " m");
 
             SphericalPoint3D? sphericalPoint3D = survey.GetSphericalPoint();
