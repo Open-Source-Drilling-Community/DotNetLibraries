@@ -24,7 +24,7 @@ An important property of developable surfaces is that they can be unfolded while
 of this developable surface is called the longitudinal profile. There is therefore an additional property to a `Survey` called `LongitudinalProfile` which contains
 the curvilinear abscissa of the `Survey` in the horizonal projection of the trajectory.
 
-![Longitudinal Profile](LongitudinalProfile.JPG)
+![Longitudinal Profile](img/LongitudinalProfile.JPG)
 
 The hypothesis behind the minimum curvature method to calculate the position of a `Survey` is that the curved followed by the well is a circular arc.
 This circular arc is contained in a plane defined by two vectors: the tangent of the starting `Survey` and the rotated vertical upward vector with the angle $\omega$
@@ -32,7 +32,7 @@ corresponding to the initial toolface of the circular arc using the tangent as t
 is an arc of an ellipse. This ellipse is defined by a center, a semi-long and a semi-short axes. The length of this arc of ellipse is the difference of curvilinear abscissas
 in the longitudinal profile direction. To calculate the length of the arc of ellipse, it is necessary to recourse to an elliptical integral of the second kind.
 
-![Projection of a circular arc between two Survey into the horizontal plane](LongitudinalProfileArcConversion.JPG)
+![Projection of a circular arc between two Survey into the horizontal plane](img/LongitudinalProfileArcConversion.JPG)
 
 The class `Survey` defines two additional properties: `Latitude` (denoted here $\phi$) and `Longitude` (denoted here $\lambda$). This is 
 because the drilling data model makes only use of globally defined values, meaning that a well position, i.e., a `Survey` must be defined uniquely
@@ -60,7 +60,7 @@ The prime vertical radius of curvature, denoted here $N$, at the geodetic latitu
 
 $$N=\frac{a^2}{\sqrt{a^2\cos^2{\phi}+b^2\sin^2{\phi}}}$$
 
-![Geodetic and geocentric latitude and radii on an oblate](GeodeticAndGeocentricLatitude.JPG)
+![Geodetic and geocentric latitude and radii on an oblate](img/GeodeticAndGeocentricLatitude.JPG)
 
 Then remains the problem of what `X`, `Y` and `Z` mean when considering that they shall be defined globally for any position on the Earth.
 It is desirable to keep the meaning of `Z` to be a depth in the vertical direction. Then `X` and `Y` should be somewhat related to `Latitude` and `Longitude`
@@ -87,7 +87,7 @@ $$R(\phi) = \frac{a\cos{(\tan^{-1}{((1-f)\tan{(\phi)})})}}{\sqrt{1-e^2\sin^2{(\t
 or equivalently:
 $$R(\phi) = \frac{a^2\cos{\phi}}{\sqrt{a^2\cos^2{\phi}+b^2\sin^2{\phi}}}$$
 
-![Schematic view of the conversion from latitude-longitude to Riemann coordinates](LatitudeLongitudeToRiemannCoordinates.JPG)
+![Schematic view of the conversion from latitude-longitude to Riemann coordinates](img/LatitudeLongitudeToRiemannCoordinates.JPG)
 
 At that geodetic latitude, the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $\lambda$:
 $y = R(\phi) \cdot \lambda$
@@ -117,7 +117,7 @@ system centered at the Earth center and with X, Y and Z directions that are fixe
 in this cartesian reference system. The X-direction passes by the equator and the Greenwich meridian. The Y-direction passes by the equator and is 90deg east
 for the Greenwich meridian. The Z-direction passed by the North pole.
 
-![Schematic representation of the conversion from latitude-longitude to spherical coordinates](SphericalCoordinates.JPG)
+![Schematic representation of the conversion from latitude-longitude to spherical coordinates](img/SphericalCoordinates.JPG)
 
 ## Example of Riemannian and Cartesian coordinate transformation from Latitude and Longitude
 
@@ -397,7 +397,7 @@ The class `SurveyStation` defines the following methods:
 is defined by a `Vector3D` that contains the radii in the three principle components and a `Matrix3x3` that contains the eigen
 vectors. The ellipsoid can be expanded by the borehole radius and it can be increased by a scaling factor. The scaling factor 
 is typically used when searching for the safety factor between two `SurveyStationList`.
-![Ellipsoid at a given confidence factor with its principles directions and radii](EllipsoidPrincipleDirections.JPG)
+![Ellipsoid at a given confidence factor with its principles directions and radii](img/EllipsoidPrincipleDirections.JPG)
 - `CalculateHorizontalEllipse`: this method calculates the horizontal projection of the ellipsoid. The result is provided with
 2 radii stored in a `Vector2D` and an angle compared to the true north. A scaling factor and the borehole radius can be
 used in the calculation of the ellipse.
@@ -407,12 +407,12 @@ to the ellipse calculation.
 - `CalculatePerpendicularEllipse`: this method calculates the projection of the ellipsoid in a perpendicular plane to the tangent
 at that `SurveyStation`. The calculated ellipse is store as 2 radii in a `Vector2D` and an angle compared to the upward vertical.
 A scaling factor and the borehole radius can be integrated to the ellipse calculation.
-![Projection of the ellipsoid on the horizontal, vertical and perpendicular planes](EllipsoidProjections.JPG)
+![Projection of the ellipsoid on the horizontal, vertical and perpendicular planes](img/EllipsoidProjections.JPG)
 - `CalculateExtremumsInDepth`: this method calculates two `Point3D`: one is the shallowest of the ellipsoid, and the other one
 is the deepest point on the ellipsoid. The algorithm is based on the description found in Cayeux et al. (2014) 
 [https://doi.org/10.2118/170330-MS](https://doi.org/10.2118/170330-MS)
 
-![Extremum points on the ellipsoid in the vertical direction](EllipsoidExtremumPointsVertical.JPG)
+![Extremum points on the ellipsoid in the vertical direction](img/EllipsoidExtremumPointsVertical.JPG)
 
 # SurveyStationList
 A `SurveyStationList` is a list of `SurveyStation`. It provides the following methods:
@@ -441,7 +441,7 @@ of that point are calculated using an instance of `SphericalPoint3D`. They are d
 randomly drawn point around the `SurveyStation` is then converted to a `Survey` in the Riemaniann manifold representing the Earth, using
 the inverse transformation based on the eigenvectors.
 
-![Schematic representation of the first step of the procedure to generate a realization of a SurveyStationList](RealizationFirstStep.JPG)
+![Schematic representation of the first step of the procedure to generate a realization of a SurveyStationList](img/RealizationFirstStep.JPG)
 
 2. Iteratively and in the upward direction, other `Station` are calculated using $\phi_n$ and $\lambda_n$ and a radial distance 
 calculated using the ellipsoid of uncertainty defined by $\chi^2_{3_n}$, i.e., 
@@ -453,14 +453,14 @@ matrix of the `SurveyStation`. Having retrieved the $x_i$, $y_i$ and $z_i$ compo
 it is transformed to the Riemannian manifold coordinates using the inverse transformation based on the eigen vectors of the covariance
 matrix. This operation generates a list of `Survey` for which the `RiemaniannNorth`, `RiemaniannEast` and `TVD` are filled in.
 
-![Schematic representation of the second step of the procedure to generate a realization of a SurveyStationList](RealizationSecondStep.JPG)
+![Schematic representation of the second step of the procedure to generate a realization of a SurveyStationList](img/RealizationSecondStep.JPG)
 
 3. The last operation consists in calculating the `Inclination`, `Azimuth` and `Abscissa` at each `Survey`. From top to bottom, the list
 is traversed and a circular arc is calculated that links the previous `Survey`, which is fully defined, with the current `Survey`, 
 which is only known by its `RiemaniannNorth`, `RiemaniannEast` and `TVD`. Knowing the circular arc, it is the possible to calculate the
 length of the arc, i.e., derive the `Abscissa`, the `Inclination` and the `Azimuth`.
 
-![Schematic representation of the third step of the procedure to generate a realization of a SurveyStationList](RealizationThirdStep.JPG)
+![Schematic representation of the third step of the procedure to generate a realization of a SurveyStationList](img/RealizationThirdStep.JPG)
 
 ## Calculation of the envelope of uncertainty of a SurveyStationList
 It is possible to define a scaling factor and a list of wellbore radii per depth range. The scaling factor is used when searching for the
@@ -468,18 +468,18 @@ safety factor between two `SurveyStationList`. The envelope of uncertainty is co
 of the ellipsoids of uncertainty at the given confidence factor. Each ellipse is discretized as a polygon. The number of
 vertices of the polygons is passed as argument to the function call. 
 
-![Construction of the envelope of uncertainty when the numbering for two adjacent ellipses coincides](EnvelopeOfUncertaintyDirectNumbering.JPG)
+![Construction of the envelope of uncertainty when the numbering for two adjacent ellipses coincides](img/EnvelopeOfUncertaintyDirectNumbering.JPG)
 
 It can happen that there is a half rotation of the indices of the polygons from one `SurveyStation` to the next one. 
 To avoid this problem, the distance between the first vertex of the previous ellipse is calculated to all the vertices of the next ellipse.
 The shortest distance indicates which vertex of the next ellipse shall be considered as the first one.
 
-![Construction of the envelope of uncertainty when renumbering is necessary](EnvelopeOfUncertaintyRenumbering.JPG)
+![Construction of the envelope of uncertainty when renumbering is necessary](img/EnvelopeOfUncertaintyRenumbering.JPG)
 
 ## Horizontal and Vertical Projections of the Ellipsoids
 Two methods are available to generate series of horizontal and vertical projections of the ellipsoids at a given confidence factor. 
 
-![Horizontal and Vertical ellipses along a SurveyStationList](HorizontalAndVerticalUncertainties.JPG)
+![Horizontal and Vertical ellipses along a SurveyStationList](img/HorizontalAndVerticalUncertainties.JPG)
 
 ## Extremum Survey lists in Depth
 Two `SurveyList` can be calculated corresponding to the shallowest and the deepest trajectories at a given confidence factor. The last survey point
@@ -487,7 +487,7 @@ is used to calculate the shallowest and deepest TVD on the ellipsoid of uncertai
 the local reference frame of the ellipsoid are then used to generate the `SurveyList` in an identical way as the realization of `SurveyList` using 
 the `Covariance` matrices.
 
-![Extremum survey lists in depth](ExtremumSurveyListInDepth.JPG)
+![Extremum survey lists in depth](img/ExtremumSurveyListInDepth.JPG)
 
 # Octree Discretization
 
