@@ -2,10 +2,10 @@
 {
     public class BoundingBox2D
     {
-        public double MinX { get; }
-        public double MinY { get; }
-        public double MaxX { get; }
-        public double MaxY { get; }
+        public double MinX { get; set; }
+        public double MinY { get; set; }
+        public double MaxX { get; set; }
+        public double MaxY { get; set; }
 
         public BoundingBox2D(double minX, double minY, double maxX, double maxY)
         {
