@@ -1,7 +1,6 @@
 ﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 using OSDC.DotnetLibraries.Drilling.DrillingProperties;
-using OSDC.UnitConversion.Conversion.DrillingEngineering;
 using MathNet.Numerics.Integration;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
@@ -17,36 +16,22 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// synonym of Abscsissa
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
-        [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
         public double? MD { get => base.Abscissa; set => base.Abscissa = value; }
-
-        /// <summary>
-        /// synonym of Z
-        /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Depth)]
-        [DepthReference(CommonProperty.DepthReferenceType.WGS84)]
-        public double? TVD { get => base.Z; set => base.Z = value; }
 
         /// <summary>
         /// redefinition to add drilling properties
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
-        [AzimuthReference(CommonProperty.AzimuthReferenceType.TrueNorth)]
         public override double? Azimuth { get => base.Azimuth; set => base.Azimuth = value; }
 
         /// <summary>
         /// redefinition to add drilling properties
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
         public override double? Inclination { get => base.Inclination; set => base.Inclination = value; }
 
         /// <summary>
         /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the equator to the latitude of this point. 
         /// Positive in the north direction.
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Position)]
-        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
         public override double? X
         {
             get => base.X;
@@ -60,8 +45,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the Greenwich meridian to the longitude of this point.
         /// Positive in the east direction.
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Position)]
-        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
         public override double? Y
         {
             get => base.Y;
@@ -71,17 +54,22 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 UpdateY(value);
             }
         }
+
+        /// <summary>
+        /// synonym of Z
+        /// </summary>
+        public double? TVD { get => base.Z; set => base.Z = value; }
+
         /// <summary>
         /// Synonym of X. However, it is called Riemannian because the x-coordinate is defined in a Riemannian space
         /// of curvature corresponding to the Earth spheroid. The RiemannianNorth is the arc length from the equator
         /// to the latitude of the point.
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.Position)]
-        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
         public double? RiemannianNorth
         {
             get => X; set => X = value;
         }
+
         /// <summary>
         /// Synonym of Y. However, it is called Riemannian because the y-coordinate is defined in a Riemannian space
         /// of curvature corresponding to the Earth spheroid. The RiemannianEast is the arc length from the Greenwich meridian
@@ -91,11 +79,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             get => Y; set => Y = value;
         }
+
         /// <summary>
         /// Latitude of the point on the WGS84 spheroid
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
-        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
         public double? Latitude
         {
             get { return latitude_; }
@@ -108,8 +95,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// Longitude of the point on the WGS84 spheroid
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
-        [PositionReference(CommonProperty.PositionReferenceType.WGS84)]
         public double? Longitude
         {
             get { return longitude_; }
@@ -123,23 +108,19 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// The local curvature at this Survey calculated using the minimum curvature method
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingCurvature)]
         public double? Curvature { get; set; } = null;
         /// <summary>
         /// The local toolface at this Survey calculated using the equation from Sawaryn and Thorogood (2005) 
         /// https://doi.org/10.2118/84246-PA
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingPlaneAngle)]
         public double? Toolface { get; set; } = null;
         /// <summary>
         /// The local build up rate at this Survey calculated using a finite difference method.
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingCurvature)]
         public double? BUR { get; set; } = null;
         /// <summary>
         /// The local turn rate at this Survey calculated using a finite difference method.
         /// </summary>
-        [DrillingPhysicalQuantity(DrillingPhysicalQuantity.QuantityEnum.DrillingCurvature)]
         public double? TUR { get; set; } = null;
 
         /// <summary>
@@ -1234,12 +1215,13 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
         }
         /// <summary>
-        /// Apply the minimum curvature method to a list of surveys.
-        /// The first survey must be complete.
+        /// Apply the minimum curvature method to a list of survey points.
+        /// The first survey point must be complete.
+        /// The method, using generics, applies to SurveyList and SurveyStationList as well
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        internal static bool Calculate<A>(List<A> list) where A : SurveyPoint
+        public static bool Calculate<A>(List<A> list) where A : SurveyPoint
         {
             if (list != null &&
                 list.Count > 0 &&
@@ -1269,6 +1251,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return false;
             }
         }
+
         private void UpdateX(double? value)
         {
             if (value != null && Y != null)
@@ -1375,6 +1358,47 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double B = (u2 / 1024) * (256.0 + u2 * (-128.0 + u2 * (74.0 - 47 * u2)));
             double deltaSigma = B * sinSigma * (cos2sigmam + (1.0 / 4.0) * B * (cosSigma * (-1 + 2.0 * cos2sigmam * cos2sigmam) - (B / 6.0) * cos2sigmam * (-3.0 + 4.0 * sinSigma * sinSigma) * (-3.0 + 4.0 * cos2sigmam * cos2sigmam)));
             return b * A * (sigma - deltaSigma);
+        }
+        /// <summary>
+        /// Find the minimum MD-delta between two survey points
+        /// The method, using generics, applies to SurveyList and SurveyStationList as well
+        /// </summary>
+        public static double? MinimumMDBetweenSurveyPoints<A>(List<A> list) where A : SurveyPoint
+        {
+            double? minDeltaMD = null;
+            if (list != null && list.Count > 1)
+            {
+                for (int i = 0; i < list.Count - 1; i++)
+                {
+                    var deltaMD = list[i + 1].MD - list[i].MD;
+                    if (Numeric.IsDefined(deltaMD) && (minDeltaMD == null || Numeric.LT(deltaMD, minDeltaMD)))
+                    {
+                        minDeltaMD = deltaMD;
+                    }
+                }
+            }
+            return minDeltaMD;
+        }
+
+        /// <summary>
+        /// Find the maximum MD-delta between two survey's
+        /// The method, using generics, applies to SurveyList and SurveyStationList as well
+        /// </summary>
+        public static double? MaximumMDBetweenSurveyPoints<A>(List<A> list) where A : SurveyPoint
+        {
+            double? maxDeltaMD = null;
+            if (list != null && list.Count > 1)
+            {
+                for (int i = 0; i < list.Count - 1; i++)
+                {
+                    var deltaMD = list[i + 1].MD - list[i].MD;
+                    if (Numeric.IsDefined(deltaMD) && (maxDeltaMD == null || Numeric.GT(deltaMD, maxDeltaMD)))
+                    {
+                        maxDeltaMD = deltaMD;
+                    }
+                }
+            }
+            return maxDeltaMD;
         }
     }
 }

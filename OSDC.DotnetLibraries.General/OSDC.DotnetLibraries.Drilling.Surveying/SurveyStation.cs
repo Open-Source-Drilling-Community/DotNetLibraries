@@ -1,306 +1,80 @@
-﻿using OSDC.DotnetLibraries.General.Common;
+﻿using NORCE.Drilling.SurveyInstrument.Model;
+using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     public class SurveyStation : SurveyPoint
     {
-        protected static double[,] chiSquare3D_ = new double[,] { { 0.05, 0.10, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999 }, { 0.35, 0.58, 1.01, 1.42, 2.37, 3.66, 4.64, 6.25, 7.82, 11.34, 16.27 } };
         /// <summary>
-        /// wellbore position uncertainty Covariance matrix
+        /// The covariance matrix describing the wellbore position uncertainty at this survey point, relative to the Riemannian manifold
         /// </summary>
-        public SymmetricMatrix3x3? Covariance { get; set; } = null;
+        public SymmetricMatrix3x3? Covariance { get; set; }
+        /// <summary>
+        /// The eigen vectors of the covariance matrix
+        /// </summary>
+        public Matrix3x3? EigenVectors { get; set; }
+        /// <summary>
+        /// The eigen values of the covariance matrix
+        /// </summary>
+        public Vector3D? EigenValues { get; set; }
         /// <summary>
         /// A bias as used in the Wolff and de Wardt Wellbore position uncertainty model
         /// </summary>
-        public Vector3D? Bias { get; set; } = null;
+        public Vector3D? Bias { get; set; }
+        /// <summary>
+        ///  accessor to the survey station uncertainty
+        /// </summary>
+        public SurveyInstrument? SurveyTool { get; set; }
 
         /// <summary>
-        /// 
+        /// Calculates the eigen vectors and eigen values of the covariance matrix
         /// </summary>
-        /// <param name="confidenceFactor"></param>
-        /// <param name="radii"></param>
-        /// <param name="transformation"></param>
-        /// <param name="scalingFactor"></param>
-        /// <param name="boreholeRadius"></param>
-        /// <returns></returns>
-        public bool CalculateEllipsoid(double confidenceFactor, Vector3D radii, Matrix3x3 transformation, double scalingFactor = 1.0, double boreholeRadius = 0.0)
+        /// <returns>true if calculation went ok, false otherwise</returns>
+        public bool CalculateEigenProperties()
         {
-            Vector3D eigenValues = new Vector3D();
-            if (DiagonalizeCovariance(transformation, eigenValues) &&
-                eigenValues.X != null &&
-                eigenValues.Y != null &&
-                eigenValues.Z != null)
+            if (Covariance is { } cov && cov[0, 0] is double cov00 &&
+                                         cov[0, 1] is double cov01 &&
+                                         cov[0, 2] is double cov02 &&
+                                         cov[1, 0] is double cov10 &&
+                                         cov[1, 1] is double cov11 &&
+                                         cov[1, 2] is double cov12 &&
+                                         cov[2, 0] is double cov20 &&
+                                         cov[2, 1] is double cov21 &&
+                                         cov[2, 2] is double cov22)
             {
-                double chiSquare = GetChiSquare3D(confidenceFactor);
-                double kScale = System.Math.Sqrt(chiSquare);
-                radii.X = (kScale * System.Math.Sqrt(eigenValues.X.Value) + boreholeRadius) * scalingFactor;
-                radii.Y = (kScale * System.Math.Sqrt(eigenValues.Y.Value) + boreholeRadius) * scalingFactor;
-                radii.Z = (kScale * System.Math.Sqrt(eigenValues.Z.Value) + boreholeRadius) * scalingFactor;
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="confidenceFactor"></param>
-        /// <param name="radii"></param>
-        /// <param name="angle"></param>
-        /// <param name="scalingFactor"></param>
-        /// <param name="boreholeRadius"></param>
-        /// <returns></returns>
-        public bool CalculateHorizontalEllipse(double confidenceFactor, Vector2D radii, out double angle, double scalingFactor = 1.0, double boreholeRadius = 0.0)
-        {
-            if (Covariance != null &&
-                Covariance[0, 0] != null &&
-                Covariance[0, 1] != null &&
-                Covariance[1, 1] != null)
-            {
-                double chiSquare = GetChiSquare3D(confidenceFactor);
-                double sinP, cosP;
-                double cov00 = Covariance[0, 0].Value;
-                double cov01 = Covariance[0, 1].Value;
-                double cov11 = Covariance[1, 1].Value;
-                if (Numeric.EQ(cov00, cov11))
-                {
-                    angle = (Numeric.PI / 4.0) * ((cov01 >= 0.0) ? 1.0 : -1.0);
-                }
-                else
-                {
-                    angle = 0.5 * System.Math.Atan2(2.0 * cov01, cov00 - cov11);
-                }
-                sinP = System.Math.Sin(angle);
-                cosP = System.Math.Cos(angle);
-                double? tmp = 2.0 * sinP * cosP * cov01;
-                radii.X = scalingFactor * Numeric.SqrtEqual(chiSquare * (cov00 * cosP * cosP + cov11 * sinP * sinP + tmp)) + boreholeRadius;
-                radii.Y = scalingFactor * Numeric.SqrtEqual(chiSquare * (cov00 * sinP * sinP + cov11 * cosP * cosP - tmp)) + boreholeRadius;
-                if (radii.X < radii.Y)
-                {
-                    tmp = radii.X;
-                    radii.X = radii.Y;
-                    radii.Y = tmp;
-                    angle += 0.5 * Numeric.PI;
-                }
-                if (angle < 0.0)
-                {
-                    angle += Numeric.PI;
-                }
-                return true;
-            }
-            angle = 0;
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="confidenceFactor"></param>
-        /// <param name="radii"></param>
-        /// <param name="angle"></param>
-        /// <param name="scalingFactor"></param>
-        /// <param name="boreholeRadius"></param>
-        /// <returns></returns>
-        public bool CalculateVerticalEllipse(double confidenceFactor, Vector2D radii, out double angle, double scalingFactor = 1.0, double boreholeRadius = 0.0)
-        {
-            if (Azimuth != null &&
-                Covariance != null &&
-                Covariance[0, 0] != null &&
-                Covariance[0, 1] != null &&
-                Covariance[1,1] != null &&
-                Covariance[0,2] != null &&
-                Covariance[1, 2] != null &&
-                Covariance[2,2] != null)
-            {
-                double chiSquare = GetChiSquare3D(confidenceFactor);
-                double cosA = System.Math.Cos(Azimuth.Value);
-                double sinA = System.Math.Sin(Azimuth.Value);
-                double cov00 = Covariance[0, 0].Value;
-                double cov01 = Covariance[0, 1].Value;
-                double cov11 = Covariance[1, 1].Value;
-                double cov02 = Covariance[0, 2].Value;
-                double cov12 = Covariance[1, 2].Value;
-                double cov22 = Covariance[2, 2].Value;
-                double K11 = cov00 * cosA * cosA + 2 * cov01 * cosA * sinA + cov11 * sinA * sinA;
-                double K13 = cov02 * cosA + cov12 * sinA;
-                double K33 = cov22;
-                if (Numeric.EQ(K11, K33))
-                {
-                    angle = 0.25 * Numeric.PI * ((K13 < 0.0) ? 1.0 : -1.0);
-                }
-                else
-                {
-                    angle = 0.5 * System.Math.Atan((2.0 * K13) / (K11 - K33));
-                }
-                angle += Numeric.PI / 2.0;
-                double sinP = System.Math.Sin(angle);
-                double cosP = System.Math.Cos(angle);
-                double? tmp = 2.0 * sinP * cosP * K13;
-                radii.Y = scalingFactor * Numeric.SqrtEqual(chiSquare * (K11 * cosP * cosP + K33 * sinP * sinP + tmp)) + boreholeRadius;
-                radii.X = scalingFactor * Numeric.SqrtEqual(chiSquare * (K11 * sinP * sinP + K33 * cosP * cosP - tmp)) + boreholeRadius;
-                if (radii.X < radii.Y)
-                {
-                    tmp = radii.X;
-                    radii.X = radii.Y;
-                    radii.Y = tmp;
-                    angle += 0.5 * Numeric.PI;
-                }
-                if (angle > 2.0 * Numeric.PI)
-                {
-                    angle -= 2.0 * Numeric.PI;
-                }
-                if (angle < 0.0)
-                {
-                    angle += Numeric.PI;
-                }
-                return true;
-            }
-            angle = 0;
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="confidenceFactor"></param>
-        /// <param name="radii"></param>
-        /// <param name="angle"></param>
-        /// <param name="scalingFactor"></param>
-        /// <param name="boreholeRadius"></param>
-        /// <returns></returns>
-        public bool CalculatePerpendicularEllipse(double confidenceFactor, Vector2D radii, out double angle, double scalingFactor = 1.0, double boreholeRadius = 0.0)
-        {
-            if (Inclination != null &&
-                Azimuth != null &&
-                Covariance != null &&
-                Covariance[0, 0] != null &&
-                Covariance[0, 1] != null &&
-                Covariance[1, 1] != null &&
-                Covariance[0, 2] != null &&
-                Covariance[1, 2] != null &&
-                Covariance[2, 2] != null)
-            {
-                double chiSquare = GetChiSquare3D(confidenceFactor);
-                double cosI = System.Math.Cos(Inclination.Value);
-                double sinI = System.Math.Sin(Inclination.Value);
-                double cosA = System.Math.Cos(Azimuth.Value);
-                double sinA = System.Math.Sin(Azimuth.Value);
-                double cov00 = Covariance[0, 0].Value;
-                double cov01 = Covariance[0, 1].Value;
-                double cov11 = Covariance[1, 1].Value;
-                double cov02 = Covariance[0, 2].Value;
-                double cov12 = Covariance[1, 2].Value;
-                double cov22 = Covariance[2, 2].Value;
-                double K22 = cosA * cosI * (cov00 * cosA * cosI + cov01 * cosI * sinA - cov02 * sinI) + cosI * sinA * (cov01 * cosA * cosI + cov11 * cosI * sinA - cov12 * sinI) - sinI * (cov02 * cosA * cosI + cov12 * cosI * sinA - cov22 * sinI);
-                double K23 = cosA * (cov01 * cosA * cosI + cov11 * cosI * sinA - cov12 * sinI) - sinA * (cov00 * cosA * cosI + cov01 * cosI * sinA - cov02 * sinI);
-                double K33 = cosA * (cov11 * cosA - cov01 * sinA) - sinA * (cov01 * cosA - cov00 * sinA);
-                if (Numeric.EQ(K22, K33))
-                {
-                    angle = 0.25 * Numeric.PI * ((K23 >= 0.0) ? 1.0 : -1.0);
-                }
-                else
-                {
-                    angle = 0.5 * System.Math.Atan((2.0 * K23) / (K22 - K33));
-                }
-                // to transform compare to vertical instead of horizontal
-                double sinP = System.Math.Sin(angle);
-                double cosP = System.Math.Cos(angle);
-                double? tmp = 2.0 * sinP * cosP * K23;
-                radii.Y = scalingFactor * Numeric.SqrtEqual(chiSquare * (K22 * cosP * cosP + K33 * sinP * sinP + tmp)) + boreholeRadius;
-                radii.X = scalingFactor * Numeric.SqrtEqual(chiSquare * (K22 * sinP * sinP + K33 * cosP * cosP - tmp)) + boreholeRadius;
-                if (radii.X < radii.Y)
-                {
-                    tmp = radii.X;
-                    radii.X = radii.Y;
-                    radii.Y = tmp;
-                }
-                else
-                {
-                    angle += 0.5 * Numeric.PI;
-                }
-                if (angle > 2.0 * Numeric.PI)
-                {
-                    angle -= 2.0 * Numeric.PI;
-                }
-                if (angle < 0.0)
-                {
-                    angle += Numeric.PI;
-                }
-                return true;
-            }
-            angle = 0;
-            return false;
-        }
-        /// <summary>
-        /// Calculation the highest and the lowest position in the Z-direction, using the method
-        /// described in https://doi.org/10.2118/170330-MS
-        /// </summary>
-        /// <param name="confidenceFactor"></param>
-        /// <param name="high"></param>
-        /// <param name="low"></param>
-        /// <returns></returns>
-        public bool CalculateExtremumsInDepth(double confidenceFactor, Point3D high, Point3D low)
-        {
-            if (Covariance != null &&
-                Covariance[0, 0] != null &&
-                Covariance[0, 1] != null &&
-                Covariance[0, 2] != null &&
-                Covariance[1, 1] != null &&
-                Covariance[1, 2] != null &&
-                Covariance[2, 2] != null)
-            {
-                // calculate the parameters of the ellipsoid
-                double chiSquare = GetChiSquare3D(confidenceFactor);
-                // inverse the matrix
-                double h11 = Covariance[0, 0].Value;
-                double h12 = Covariance[0, 1].Value;
-                double h13 = Covariance[0, 2].Value;
-                double h22 = Covariance[1, 1].Value;
-                double h23 = Covariance[1, 2].Value;
-                double h33 = Covariance[2, 2].Value;
-                double determinant = (h11 * h22 - h12 * h12) * h33 - h11 * h23 * h23 + 2 * h12 * h13 * h23 - h13 * h13 * h22;
-                double H11 = (h22 * h33 - h23 * h23) / determinant;
-                double H21 = -(h12 * h33 - h13 * h23) / determinant;
-                double H31 = (h12 * h23 - h13 * h22) / determinant;
-                double H12 = H21;
-                double H22 = (h11 * h33 - h13 * h13) / determinant;
-                double H32 = -(h11 * h23 - h12 * h13) / determinant;
-                double H13 = H31;
-                double H23 = H32;
-                double H33 = (h11 * h22 - h12 * h12) / determinant;
-
-                // calculate extremum in Z
-                double denominator = H11 * H22 - H12 * H12;
-                double dl = Numeric.SqrtEqual(chiSquare * ((H11 * H22 * H33) / denominator - (H12 * H12 * H33) / denominator - (H11 * H23 * H23) / denominator + (2.0 * H12 * H13 * H23) / denominator - (H13 * H13 * H22) / denominator));
-                determinant = (H11 * H22 - H12 * H12) * H33 - H11 * H23 * H23 + 2 * H12 * H13 * H23 - H13 * H13 * H22;
-                high.X = dl * (H13 * H22 - H12 * H23) / determinant;
-                high.Y = dl * (-H12 * H13 + H11 * H23) / determinant;
-                high.Z = dl * (H12 * H12 - H11 * H22) / determinant;
-                low.X = -high.X;
-                low.Y = -high.Y;
-                low.Z = -high.Z;
-
-                if (high.Z < low.Z)
-                {
-                    //swap
-                    double? tt = high.X;
-                    high.X = low.X;
-                    low.X = tt;
-                    tt = high.Y;
-                    high.Y = low.Y;
-                    low.Y = tt;
-                    tt = high.Z;
-                    high.Z = low.Z;
-                    low.Z = tt;
-                }
-                //add bias and survey position
-                high.X += ((Bias == null || Bias.X == null) ? 0 : Bias.X) + X;
-                high.Y += ((Bias == null || Bias.Y == null) ? 0 : Bias.Y) + Y;
-                high.Z += ((Bias == null || Bias.Z == null) ? 0 : Bias.Z) + Z;
-                low.X += ((Bias == null || Bias.X == null) ? 0 : Bias.X) + X;
-                low.Y += ((Bias == null || Bias.Y == null) ? 0 : Bias.Y) + Y;
-                low.Z += ((Bias == null || Bias.Z == null) ? 0 : Bias.Z) + Z;
+                EigenVectors = new();
+                EigenValues = new();
+                double[,] z = new double[3, 3];
+                z[0, 0] = cov00;
+                z[0, 1] = cov01;
+                z[0, 2] = cov02;
+                z[1, 0] = cov10;
+                z[1, 1] = cov11;
+                z[1, 2] = cov12;
+                z[2, 0] = cov20;
+                z[2, 1] = cov21;
+                z[2, 2] = cov22;
+                double[] d = new double[4];
+                double[] e = new double[3];
+                // tranform a symmetric matrix into a tridiagonal matrix
+                Tred2(3, z, d, e);
+                // QL decomposition
+                Tql2(3, z, d, e);
+                //transfer eigenvectors
+                EigenVectors[0, 0] = z[0, 0];
+                EigenVectors[0, 1] = z[0, 1];
+                EigenVectors[0, 2] = z[0, 2];
+                EigenVectors[1, 0] = z[1, 0];
+                EigenVectors[1, 1] = z[1, 1];
+                EigenVectors[1, 2] = z[1, 2];
+                EigenVectors[2, 0] = z[2, 0];
+                EigenVectors[2, 1] = z[2, 1];
+                EigenVectors[2, 2] = z[2, 2];
+                // transfer eigen values
+                EigenValues[0] = d[0];
+                EigenValues[1] = d[1];
+                EigenValues[2] = d[2];
                 return true;
             }
             return false;
@@ -308,45 +82,40 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
 
         public bool CalculateSphericalCoordinatesAtPosition(SphericalPoint3D point)
         {
-            Matrix3x3 eigenVectors = new Matrix3x3();
-            Vector3D eigenValues = new Vector3D();
-            if (RiemannianNorth != null &&
-                RiemannianEast != null &&
-                TVD != null &&
-                point.X != null &&
-                point.Y != null &&
-                point.Z != null &&
-                DiagonalizeCovariance(eigenVectors, eigenValues) &&
-                eigenVectors[0, 0] != null &&
-                eigenVectors[0, 1] != null &&
-                eigenVectors[0, 2] != null &&
-                eigenVectors[1, 0] != null &&
-                eigenVectors[1, 1] != null &&
-                eigenVectors[1, 2] != null &&
-                eigenVectors[2, 0] != null &&
-                eigenVectors[2, 1] != null &&
-                eigenVectors[2, 2] != null &&
-                eigenValues[0] != null &&
-                eigenValues[1] != null &&
-                eigenValues[2] != null)
+            if (RiemannianNorth is double rNorth && RiemannianEast is double rEast && TVD is double tvd &&
+                point.X is double px && point.Y is double py && point.Z is double pz &&
+                EigenVectors is { } &&
+                EigenVectors[0, 0] is double e00 &&
+                EigenVectors[0, 1] is double e01 &&
+                EigenVectors[0, 2] is double e02 &&
+                EigenVectors[1, 0] is double e10 &&
+                EigenVectors[1, 1] is double e11 &&
+                EigenVectors[1, 2] is double e12 &&
+                EigenVectors[2, 0] is double e20 &&
+                EigenVectors[2, 1] is double e21 &&
+                EigenVectors[2, 2] is double e22 &&
+                EigenValues is { } &&
+                EigenValues[0] is double ev0 &&
+                EigenValues[1] is double ev1 &&
+                EigenValues[2] is double ev2)
             {
-                double p11 = eigenVectors[0, 0].Value;
-                double p12 = eigenVectors[0, 1].Value;
-                double p13 = eigenVectors[0, 2].Value;
-                double p21 = eigenVectors[1, 0].Value;
-                double p22 = eigenVectors[1, 1].Value;
-                double p23 = eigenVectors[1, 2].Value;
-                double p31 = eigenVectors[2, 0].Value;
-                double p32 = eigenVectors[2, 1].Value;
-                double p33 = eigenVectors[2, 2].Value;
+                double p11 = e00;
+                double p12 = e01;
+                double p13 = e02;
+                double p21 = e10;
+                double p22 = e11;
+                double p23 = e12;
+                double p31 = e20;
+                double p32 = e21;
+                double p33 = e22;
 
-                double a = eigenValues[0].Value;
-                double b = eigenValues[1].Value;
-                double c = eigenValues[2].Value;
+                double a = ev0;
+                double b = ev1;
+                double c = ev2;
 
-                double x = point.X.Value - RiemannianNorth.Value - ((Bias == null || Bias.X == null) ? 0 : Bias.X.Value);
-                double y = point.Y.Value - RiemannianEast.Value - ((Bias == null || Bias.X == null) ? 0 : Bias.Y.Value);
-                double z = point.Z.Value - TVD.Value - ((Bias == null || Bias.X == null) ? 0 : Bias.Z.Value);
+                double x = px - rNorth - ((Bias == null || Bias.X == null) ? 0 : Bias.X.Value);
+                double y = py - rEast - ((Bias == null || Bias.Y == null) ? 0 : Bias.Y.Value);
+                double z = pz - tvd - ((Bias == null || Bias.Z == null) ? 0 : Bias.Z.Value);
 
                 double X = p11 * x + p21 * y + p31 * z;
                 double Y = p12 * x + p22 * y + p32 * z;
@@ -365,6 +134,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             return false;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -372,37 +142,30 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <returns></returns>
         public bool CalculateRiemannianCoordinatesAtSphericalPosition(SphericalPoint3D point)
         {
-            Matrix3x3 eigenVectors = new Matrix3x3();
-            Vector3D eigenValues = new Vector3D();
-            if (RiemannianNorth != null &&
-                RiemannianEast != null &&
-                TVD != null &&
-                point.R != null &&
-                point.Latitude != null &&
-                point.Longitude != null &&
-                DiagonalizeCovariance(eigenVectors, eigenValues) &&
-                eigenVectors[0, 0] != null &&
-                eigenVectors[0, 1] != null &&
-                eigenVectors[0, 2] != null &&
-                eigenVectors[1, 0] != null &&
-                eigenVectors[1, 1] != null &&
-                eigenVectors[1, 2] != null &&
-                eigenVectors[2, 0] != null &&
-                eigenVectors[2, 1] != null &&
-                eigenVectors[2, 2] != null &&
-                eigenValues[0] != null &&
-                eigenValues[1] != null &&
-                eigenValues[2] != null)
+            if (RiemannianNorth is double rNorth && RiemannianEast is double rEast && TVD is double tvd &&
+                point.R is double pr &&
+                point.Latitude is double pLat &&
+                point.Longitude is double pLon &&
+                EigenVectors is { } &&
+                EigenVectors[0, 0] is double e00 &&
+                EigenVectors[0, 1] is double e01 &&
+                EigenVectors[0, 2] is double e02 &&
+                EigenVectors[1, 0] is double e10 &&
+                EigenVectors[1, 1] is double e11 &&
+                EigenVectors[1, 2] is double e12 &&
+                EigenVectors[2, 0] is double e20 &&
+                EigenVectors[2, 1] is double e21 &&
+                EigenVectors[2, 2] is double e22)
             {
-                double p11 = eigenVectors[0, 0].Value;
-                double p12 = eigenVectors[0, 1].Value;
-                double p13 = eigenVectors[0, 2].Value;
-                double p21 = eigenVectors[1, 0].Value;
-                double p22 = eigenVectors[1, 1].Value;
-                double p23 = eigenVectors[1, 2].Value;
-                double p31 = eigenVectors[2, 0].Value;
-                double p32 = eigenVectors[2, 1].Value;
-                double p33 = eigenVectors[2, 2].Value;
+                double p11 = e00;
+                double p12 = e01;
+                double p13 = e02;
+                double p21 = e10;
+                double p22 = e11;
+                double p23 = e12;
+                double p31 = e20;
+                double p32 = e21;
+                double p33 = e22;
 
                 // calculate the inverse of the eigenvectors
                 double determinant = (p11 * p22 - p12 * p21) * p33 + (p13 * p21 - p11 * p23) * p32 + (p12 * p23 - p13 * p22) * p31;
@@ -417,155 +180,31 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 double pi33 = (p11 * p22 - p12 * p21) / determinant;
 
 
-                double ci = System.Math.Cos(point.Latitude.Value);
-                double si = System.Math.Sin(point.Latitude.Value);
-                double ca = System.Math.Cos(point.Longitude.Value);
-                double sa = System.Math.Sin(point.Longitude.Value);
-                double x = point.R.Value * ci * ca;
-                double y = point.R.Value * ci* sa;
-                double z = point.R.Value * si;
+                double ci = System.Math.Cos(pLat);
+                double si = System.Math.Sin(pLat);
+                double ca = System.Math.Cos(pLon);
+                double sa = System.Math.Sin(pLon);
+                double x = pr * ci * ca;
+                double y = pr * ci * sa;
+                double z = pr * si;
 
                 double X = pi11 * x + pi21 * y + pi31 * z;
                 double Y = pi12 * x + pi22 * y + pi32 * z;
                 double Z = pi13 * x + pi23 * y + pi33 * z;
 
-                point.X = RiemannianNorth + ((Bias == null || Bias.X == null) ? 0 : Bias.X.Value) + X;
-                point.Y = RiemannianEast + ((Bias == null || Bias.Y == null) ? 0 : Bias.Y.Value) + Y;
-                point.Z = TVD + ((Bias == null || Bias.Z == null) ? 0 : Bias.Z.Value) + Z;
+                point.X = rNorth + ((Bias == null || Bias.X == null) ? 0 : Bias.X.Value) + X;
+                point.Y = rEast + ((Bias == null || Bias.Y == null) ? 0 : Bias.Y.Value) + Y;
+                point.Z = tvd + ((Bias == null || Bias.Z == null) ? 0 : Bias.Z.Value) + Z;
 
                 return true;
             }
             return false;
-        }
-
-        /// <summary>
-        /// find the eigenvalues and eigenvectors of the covariance matrix
-        /// </summary>
-        /// <param name="eigenVectors"></param>
-        /// <param name="eigenValues"></param>
-        public bool DiagonalizeCovariance(Matrix3x3 eigenVectors, Vector3D eigenValues)
-        {
-            if (Covariance != null &&
-                Covariance[0, 0] != null &&
-                Covariance[0, 1] != null &&
-                Covariance[0, 2] != null &&
-                Covariance[1, 1] != null &&
-                Covariance[1, 2] != null &&
-                Covariance[2, 2] != null &&
-                eigenVectors != null &&
-                eigenValues != null &&
-                eigenVectors.ColumnCount == 3 &&
-                eigenVectors.RowCount == 3)
-            {
-                double[,] z = new double[3, 3];
-                z[0, 0] = Covariance[0, 0].Value;
-                z[0, 1] = Covariance[0, 1].Value;
-                z[0, 2] = Covariance[0, 2].Value;
-                z[1, 0] = Covariance[1, 0].Value;
-                z[1, 1] = Covariance[1, 1].Value;
-                z[1, 2] = Covariance[1, 2].Value;
-                z[2, 0] = Covariance[2, 0].Value;
-                z[2, 1] = Covariance[2, 1].Value;
-                z[2, 2] = Covariance[2, 2].Value;
-                double[] d = new double[4];
-                double[] e = new double[3];
-                // tranform a symmetric matrix into a tridiagonal matrix
-                tred2(3, z, d, e);
-                // QL decomposition
-                tql2(3, z, d, e);
-                //transfer eigenvectors
-                eigenVectors[0, 0] = z[0, 0];
-                eigenVectors[0, 1] = z[0, 1];
-                eigenVectors[0, 2] = z[0, 2];
-                eigenVectors[1, 0] = z[1, 0];
-                eigenVectors[1, 1] = z[1, 1];
-                eigenVectors[1, 2] = z[1, 2];
-                eigenVectors[2, 0] = z[2, 0];
-                eigenVectors[2, 1] = z[2, 1];
-                eigenVectors[2, 2] = z[2, 2];
-                // transfer eigen values
-                eigenValues[0] = d[0];
-                eigenValues[1] = d[1];
-                eigenValues[2] = d[2];
-                return true;
-            }
-            return false;
-        }
-        internal static double GetConfidenceFactor(double chiSquare3D)
-        {
-            if (Numeric.IsUndefined(chiSquare3D))
-            {
-                return Numeric.UNDEF_DOUBLE;
-            }
-            else
-            {
-                int last = chiSquare3D_.GetLength(1) - 1;
-                if (chiSquare3D < chiSquare3D_[1, 0])
-                {
-                    double factor = (chiSquare3D - chiSquare3D_[1, 0]) / (chiSquare3D_[1, 1] - chiSquare3D_[1, 0]);
-                    return chiSquare3D_[0, 0] + factor * (chiSquare3D_[0, 1] - chiSquare3D_[0, 0]);
-                }
-                else if (chiSquare3D >= chiSquare3D_[1, last])
-                {
-                    double factor = (chiSquare3D - chiSquare3D_[1, last - 1]) / (chiSquare3D_[1, last] - chiSquare3D_[1, last - 1]);
-                    return chiSquare3D_[0, last - 1] + factor * (chiSquare3D_[0, last] - chiSquare3D_[0, last - 1]);
-                }
-                else
-                {
-                    for (int i = 0; i < last; i++)
-                    {
-                        if (chiSquare3D >= chiSquare3D_[1, i] && chiSquare3D < chiSquare3D_[1, i + 1])
-                        {
-                            double factor = (chiSquare3D - chiSquare3D_[1, i]) / (chiSquare3D_[1, i + 1] - chiSquare3D_[1, i]);
-                            return chiSquare3D_[0, i] + factor * (chiSquare3D_[0, i + 1] - chiSquare3D_[0, i]);
-                        }
-                    }
-                    return Numeric.UNDEF_DOUBLE;
-                }
-            }
-        }
-        private static double GetChiSquare3D(double p)
-        {
-            if (Numeric.IsUndefined(p))
-            {
-                return Numeric.UNDEF_DOUBLE;
-            }
-            else
-            {
-                int last = chiSquare3D_.GetLength(1) - 1;
-                if (p < chiSquare3D_[0, 0])
-                {
-                    double factor = (p - chiSquare3D_[0, 0]) / (chiSquare3D_[0, 1] - chiSquare3D_[0, 0]);
-                    return chiSquare3D_[1, 0] + factor * (chiSquare3D_[1, 1] - chiSquare3D_[1, 0]);
-                }
-                else if (p >= chiSquare3D_[0, last])
-                {
-                    double factor = (p - chiSquare3D_[0, last - 1]) / (chiSquare3D_[0, last] - chiSquare3D_[0, last - 1]);
-                    return chiSquare3D_[1, last - 1] + factor * (chiSquare3D_[1, last] - chiSquare3D_[1, last - 1]);
-                }
-                else
-                {
-                    for (int i = 0; i < last; i++)
-                    {
-                        if (p >= chiSquare3D_[0, i] && p < chiSquare3D_[0, i + 1])
-                        {
-                            double factor = (p - chiSquare3D_[0, i]) / (chiSquare3D_[0, i + 1] - chiSquare3D_[0, i]);
-                            return chiSquare3D_[1, i] + factor * (chiSquare3D_[1, i + 1] - chiSquare3D_[1, i]);
-                        }
-                    }
-                    return Numeric.UNDEF_DOUBLE;
-                }
-            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="n"></param>
-        /// <param name="V"></param>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
-        private void tred2(int n, double[,] V, double[] d, double[] e)
+        private static void Tred2(int n, double[,] V, double[] d, double[] e)
         {
 
             //  This is derived from the Algol procedures tred2 by
@@ -705,10 +344,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             e[0] = 0.0;
         }
 
-
-        // Symmetric tridiagonal QL algorithm.
-
-        private void tql2(int n, double[,] V, double[] d, double[] e)
+        /// <summary>
+        /// Symmetric tridiagonal QL algorithm
+        /// </summary>
+        private static void Tql2(int n, double[,] V, double[] d, double[] e)
         {
 
             //  This is derived from the Algol procedures tql2, by
@@ -842,13 +481,11 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
         }
 
-        // <summary>
-        /// 
+        /// <summary>
+        /// Pythagoras theorem
         /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
         /// <returns></returns>
-        private double Pythag(double a, double b)
+        private static double Pythag(double a, double b)
         {
             double absa = System.Math.Abs(a);
             double absb = System.Math.Abs(b);

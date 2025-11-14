@@ -9,7 +9,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
     public class SurveyList : List<SurveyPoint>
     {
         /// <summary>
-        /// calculate the whole survey list from the starting survey.
+        /// calculate the whole survey list from the starting survey, using the minimum curvature method (CompleteSIA)
         /// The first survey shall be complete
         /// </summary>
         /// <returns></returns>
