@@ -9,8 +9,19 @@ namespace DrillingProperties
         static void Main()
         {
             // an underground position at Norce, Stavanger, Norway
-            SurveyPoint survey1 = new SurveyPoint() { TVD = 100, Latitude = 58.93438 * System.Math.PI / 180.0, Longitude = 5.70725 * System.Math.PI / 180.0, MD = 100.0, Inclination = 0, Azimuth = 0 };
-            SurveyPoint survey2 = new SurveyPoint() { MD = 130.0, Inclination = 2.0 * Numeric.PI / 180.0, Azimuth = 30.0 * Numeric.PI / 180.0 };
+            SurveyPoint survey1 = new SurveyPoint() {
+                TVD = 100, 
+                Latitude = 58.93438 * System.Math.PI / 180.0, 
+                Longitude = 5.70725 * System.Math.PI / 180.0, 
+                MD = 100.0, 
+                Inclination = 0,
+                Azimuth = 0 
+            };
+            SurveyPoint survey2 = new SurveyPoint() { 
+                MD = 130.0, 
+                Inclination = 2.0 * Numeric.PI / 180.0, 
+                Azimuth = 30.0 * Numeric.PI / 180.0 
+            };
             if (survey1.CompleteSIA(survey2))
             {
                 Console.WriteLine("Calculated displacements: dZ= " + (survey2.TVD - survey1.TVD)?.ToString("F3", CultureInfo.InvariantCulture) +

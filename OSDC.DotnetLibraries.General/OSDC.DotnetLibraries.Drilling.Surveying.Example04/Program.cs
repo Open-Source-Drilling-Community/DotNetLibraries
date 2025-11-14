@@ -1,5 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
-using OSDC.DotnetLibraries.Drilling.Surveying;
+﻿using OSDC.DotnetLibraries.Drilling.Surveying;
+
 double length = 100.0;
 SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
 SurveyPoint sv2 = new SurveyPoint() { Abscissa = sv1.Abscissa + length, Inclination = 10.0 * System.Math.PI / 180.0, Azimuth = 20.0 * System.Math.PI / 180.0 };

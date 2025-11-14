@@ -1,4 +1,4 @@
-﻿using NORCE.Drilling.SurveyInstrument.ModelShared;
+﻿using NORCE.Drilling.SurveyInstrument.Model;
 using OSDC.DotnetLibraries.Drilling.Surveying;
 
 namespace DrillingProperties
@@ -17,19 +17,26 @@ namespace DrillingProperties
                 ReferenceError = 1.5 * DEG2RAD,
                 DrillStringMag = 0.25 * DEG2RAD,
             };
-
-            List<Tuple<double, SurveyInstrument>> silist = new()
-            {
-                new Tuple<double, SurveyInstrument>(0.0, instrument)
-            };
             // an underground position at Norce, Stavanger, Norway
-            SurveyPoint survey1 = new() { TVD = 100, Latitude = 58.93438 * System.Math.PI / 180.0, Longitude = 5.70725 * System.Math.PI / 180.0, MD = 100.0, Inclination = 0, Azimuth = 0 };
-            SurveyPoint survey2 = new SurveyPoint() { MD = 130.0, Inclination = 2.0 * System.Math.PI / 180.0, Azimuth = 30.0 * System.Math.PI / 180.0 };
-            if (survey1.CompleteSIA(survey2))
+            SurveyPoint survey1 = new()
             {
-                SurveyStationList ssList = new()
-                {
-                    new SurveyStation() {
+                TVD = 100,
+                Latitude = 58.93438 * System.Math.PI / 180.0,
+                Longitude = 5.70725 * System.Math.PI / 180.0,
+                MD = 100.0,
+                Inclination = 0,
+                Azimuth = 0
+            };
+            SurveyPoint survey2 = new()
+            {
+                MD = 130.0,
+                Inclination = 2.0 * System.Math.PI / 180.0,
+                Azimuth = 30.0 * System.Math.PI / 180.0
+            };
+            SurveyStationList surveyStationList =
+            [
+                new SurveyStation() {
+                        SurveyTool = instrument,
                         Abscissa = survey1.MD,
                         Inclination = survey1.Inclination,
                         Longitude = survey1.Longitude,
@@ -40,6 +47,7 @@ namespace DrillingProperties
                         TVD = survey1.TVD
                     },
                     new SurveyStation() {
+                        SurveyTool = instrument,
                         Abscissa = survey2.MD,
                         Inclination = survey2.Inclination,
                         Longitude = survey2.Longitude,
@@ -49,27 +57,46 @@ namespace DrillingProperties
                         Azimuth = survey2.Azimuth,
                         TVD = survey2.TVD
                     }
-                };
-                bool success = WolffDeWardtCalculator.CalculateCovariances(ssList, silist);
-                for (int i = 1; i < ssList.Count; ++i)
+            ];
+            if (surveyStationList.Calculate())
+            {
+                bool ok = CovarianceCalculatorWolffDeWardt.Calculate(surveyStationList);
+                if (ok)
                 {
-                    if (ssList[i] != null && ssList[i].Covariance != null)
+                    for (int i = 1; i < surveyStationList.Count; ++i)
                     {
-                        Console.WriteLine(
-                        $"C00 = {ssList[i].Covariance[0, 0].Value}\n" +
-                        $"C01 = {ssList[i].Covariance[0, 1].Value}\n" +
-                        $"C02 = {ssList[i].Covariance[0, 2].Value}\n" +
-                        $"C10 = {ssList[i].Covariance[1, 0].Value}\n" +
-                        $"C11 = {ssList[i].Covariance[1, 1].Value}\n" +
-                        $"C12 = {ssList[i].Covariance[1, 2].Value}\n" +
-                        $"C20 = {ssList[i].Covariance[2, 0].Value}\n" +
-                        $"C21 = {ssList[i].Covariance[2, 1].Value}\n" +
-                        $"C22 = {ssList[i].Covariance[2, 2].Value}");
+                        if (surveyStationList[i] is { } &&
+                            surveyStationList[i].Covariance is { } cov &&
+                            cov[0, 0] is double &&
+                            cov[0, 1] is double &&
+                            cov[0, 2] is double &&
+                            cov[1, 0] is double &&
+                            cov[1, 1] is double &&
+                            cov[1, 2] is double &&
+                            cov[2, 0] is double &&
+                            cov[2, 1] is double &&
+                            cov[2, 2] is double)
+                        {
+                            Console.WriteLine(
+                            $"C00 = {cov[0, 0]}\n" +
+                            $"C01 = {cov[0, 1]}\n" +
+                            $"C02 = {cov[0, 2]}\n" +
+                            $"C10 = {cov[1, 0]}\n" +
+                            $"C11 = {cov[1, 1]}\n" +
+                            $"C12 = {cov[1, 2]}\n" +
+                            $"C20 = {cov[2, 0]}\n" +
+                            $"C21 = {cov[2, 1]}\n" +
+                            $"C22 = {cov[2, 2]}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Problem while computing the covariance for survey station {i}");
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine("Problem while computing the covariance for survey station");
-                    }
+                }
+                else
+                {
+                    Console.WriteLine("Problem while calculating covariances");
                 }
             }
             else
