@@ -1,11 +1,7 @@
-﻿using DWIS.API.DTO;
-using OSDC.DotnetLibraries.General.Common;
-using OSDC.DotnetLibraries.General.DataManagement;
-using System;
-using System.Linq;
-using static NORCE.Drilling.SurveyInstrument.Model.ErrorSource;
+﻿using OSDC.DotnetLibraries.General.DataManagement;
+using static OSDC.DotnetLibraries.Drilling.Surveying.ErrorSource;
 
-namespace NORCE.Drilling.SurveyInstrument.Model
+namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     public static class ErrorSourceFactory
     {

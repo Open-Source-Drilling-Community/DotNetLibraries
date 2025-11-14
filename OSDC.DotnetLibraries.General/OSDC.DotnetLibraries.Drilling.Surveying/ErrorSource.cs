@@ -1,9 +1,7 @@
 ﻿using OSDC.DotnetLibraries.General.DataManagement;
-using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace NORCE.Drilling.SurveyInstrument.Model
+namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     /// <summary>
     /// a base class other classes may derive from

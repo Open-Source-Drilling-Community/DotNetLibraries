@@ -1,6 +1,5 @@
 ﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
-using OSDC.DotnetLibraries.Drilling.DrillingProperties;
 using MathNet.Numerics.Integration;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying

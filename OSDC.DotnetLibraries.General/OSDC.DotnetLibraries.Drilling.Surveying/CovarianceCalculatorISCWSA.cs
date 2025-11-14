@@ -1,7 +1,5 @@
-﻿using NORCE.Drilling.SurveyInstrument.Model;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using static NORCE.Drilling.SurveyInstrument.Model.ErrorSource;
+﻿using System.Text.Json;
+using static OSDC.DotnetLibraries.Drilling.Surveying.ErrorSource;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {

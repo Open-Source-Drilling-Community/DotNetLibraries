@@ -1,9 +1,7 @@
 ﻿using OSDC.DotnetLibraries.General.DataManagement;
 using OSDC.DotnetLibraries.General.Common;
-using System;
-using System.Collections.Generic;
 
-namespace NORCE.Drilling.SurveyInstrument.Model
+namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     public class SurveyInstrument
     {
