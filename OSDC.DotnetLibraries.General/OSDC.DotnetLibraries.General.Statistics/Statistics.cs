@@ -4,6 +4,12 @@ namespace OSDC.DotnetLibraries.General.Statistics
 {
     public static class Statistics
     {
+        public static readonly (double Probability, double ChiSquare)[] ChiSquare3D =
+        {
+            (0.05, 0.35), (0.10, 0.58), (0.20, 1.01), (0.30, 1.42), (0.50, 2.37),
+            (0.70, 3.66), (0.80, 4.64), (0.90, 6.25), (0.95, 7.82), (0.99, 11.34), (0.999, 16.27)
+        };
+
         /// <summary>
         /// The arithmetic mean of a list of double
         /// </summary>
@@ -275,6 +281,84 @@ namespace OSDC.DotnetLibraries.General.Statistics
                     }
                 }
                 return chi2;
+            }
+        }
+
+        /// <summary>
+        /// Calculate the confidence factor corresponding to the given ChiSquare3D (linear interpolation)
+        /// </summary>
+        /// <param name="chiSquare3D"></param>
+        /// <returns>the linearly interpolated confidence factor corresponding to the given ChiSquare3D value</returns>
+        public static double GetConfidenceFactor(double chiSquare3D)
+        {
+            if (Numeric.IsUndefined(chiSquare3D))
+            {
+                return Numeric.UNDEF_DOUBLE;
+            }
+            else
+            {
+                int last = ChiSquare3D.GetLength(1) - 1;
+                if (chiSquare3D < ChiSquare3D[0].ChiSquare)
+                {
+                    double factor = (chiSquare3D - ChiSquare3D[0].ChiSquare) / (ChiSquare3D[1].ChiSquare - ChiSquare3D[0].ChiSquare);
+                    return ChiSquare3D[0].Probability + factor * (ChiSquare3D[1].Probability - ChiSquare3D[0].Probability);
+                }
+                else if (chiSquare3D >= ChiSquare3D[last].ChiSquare)
+                {
+                    double factor = (chiSquare3D - ChiSquare3D[last - 1].ChiSquare) / (ChiSquare3D[last].ChiSquare - ChiSquare3D[last - 1].ChiSquare);
+                    return ChiSquare3D[last - 1].Probability + factor * (ChiSquare3D[last].Probability - ChiSquare3D[last - 1].Probability);
+                }
+                else
+                {
+                    for (int i = 0; i < last; i++)
+                    {
+                        if (chiSquare3D >= ChiSquare3D[i].ChiSquare && chiSquare3D < ChiSquare3D[i + 1].ChiSquare)
+                        {
+                            double factor = (chiSquare3D - ChiSquare3D[i].ChiSquare) / (ChiSquare3D[i + 1].ChiSquare - ChiSquare3D[i].ChiSquare);
+                            return ChiSquare3D[i].Probability + factor * (ChiSquare3D[i + 1].Probability - ChiSquare3D[i].Probability);
+                        }
+                    }
+                    return Numeric.UNDEF_DOUBLE;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculate the ChiSquare3D corresponding to the given confidence factor (probability)
+        /// </summary>
+        /// <param name="probability"></param>
+        /// <returns>the linearly interpolated ChiSquare3D corresponding to the given confidence factor (probability)</returns>
+        public static double GetChiSquare3D(double probability)
+        {
+            if (Numeric.IsUndefined(probability))
+            {
+                return Numeric.UNDEF_DOUBLE;
+            }
+            else
+            {
+                int last = ChiSquare3D.GetLength(1) - 1;
+                if (probability < ChiSquare3D[0].Probability)
+                {
+                    double factor = (probability - ChiSquare3D[0].Probability) / (ChiSquare3D[1].Probability - ChiSquare3D[0].Probability);
+                    return ChiSquare3D[0].ChiSquare + factor * (ChiSquare3D[1].ChiSquare - ChiSquare3D[0].ChiSquare);
+                }
+                else if (probability >= ChiSquare3D[last].Probability)
+                {
+                    double factor = (probability - ChiSquare3D[last - 1].Probability) / (ChiSquare3D[last].Probability - ChiSquare3D[last - 1].Probability);
+                    return ChiSquare3D[last - 1].ChiSquare + factor * (ChiSquare3D[last].ChiSquare - ChiSquare3D[last - 1].ChiSquare);
+                }
+                else
+                {
+                    for (int i = 0; i < last; i++)
+                    {
+                        if (probability >= ChiSquare3D[i].Probability && probability < ChiSquare3D[i + 1].Probability)
+                        {
+                            double factor = (probability - ChiSquare3D[i].Probability) / (ChiSquare3D[i + 1].Probability - ChiSquare3D[i].Probability);
+                            return ChiSquare3D[i].ChiSquare + factor * (ChiSquare3D[i + 1].ChiSquare - ChiSquare3D[i].ChiSquare);
+                        }
+                    }
+                    return Numeric.UNDEF_DOUBLE;
+                }
             }
         }
     }
