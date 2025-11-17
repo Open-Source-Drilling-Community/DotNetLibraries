@@ -10,7 +10,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             bool ok = false;
             if (surveyStationList != null && surveyStationList.Count > 0)
             {
-                ok = SurveyStation.CompleteSIA(surveyStationList); // make sure that all survey stations member variables are complete
+                ok = SurveyStation.CompleteSurvey(surveyStationList); // make sure that all survey stations member variables are complete
                 if (ok)
                 {
                     double[,]? A = new double[6, 3];

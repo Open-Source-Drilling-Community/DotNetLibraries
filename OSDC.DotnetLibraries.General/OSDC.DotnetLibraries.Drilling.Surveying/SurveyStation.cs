@@ -345,7 +345,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                 int c = realization.Count;
                                 for (int i = 1; i < c; i++)
                                 {
-                                    realization[i - 1].CompleteXYZ(realization[i]);
+                                    realization[i - 1].CompleteFromXYZ(realization[i]);
                                 }
                                 return realization;
                             }

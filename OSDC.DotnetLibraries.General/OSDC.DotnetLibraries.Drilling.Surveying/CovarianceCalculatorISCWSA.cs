@@ -21,7 +21,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             bool ok;
             if (surveyStationList is { } && surveyStationList.Count > 0)
             { 
-                ok = SurveyStation.CompleteSIA(surveyStationList); // make sure that all survey stations member variables are complete
+                ok = SurveyStation.CompleteSurvey(surveyStationList); // make sure that all survey stations member variables are complete
                 if (ok) {
                     List<ISCWSAErrorAccumulator> errorSourcesAccumulator = [];
                     // Start from i = 0 to include the first surveystation. This will typically have radius 0
