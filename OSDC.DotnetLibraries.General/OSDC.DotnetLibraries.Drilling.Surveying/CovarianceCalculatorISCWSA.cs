@@ -16,12 +16,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <param name="surveyStationsIndices"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static bool Calculate(SurveyStationList surveyStationList, List<int>? surveyStationsIndices = null)
+        public static bool Calculate(List<SurveyStation> surveyStationList, List<int>? surveyStationsIndices = null)
         {
             bool ok;
             if (surveyStationList is { } && surveyStationList.Count > 0)
             { 
-                ok = surveyStationList.Calculate(); // make sure that all survey stations member variables are complete
+                ok = SurveyStation.CompleteSIA(surveyStationList); // make sure that all survey stations member variables are complete
                 if (ok) {
                     List<ISCWSAErrorAccumulator> errorSourcesAccumulator = [];
                     // Start from i = 0 to include the first surveystation. This will typically have radius 0

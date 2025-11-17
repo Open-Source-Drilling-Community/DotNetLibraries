@@ -1,6 +1,7 @@
 ﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 using MathNet.Numerics.Integration;
+using System.Diagnostics.Metrics;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
@@ -16,17 +17,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// synonym of Abscsissa
         /// </summary>
         public double? MD { get => base.Abscissa; set => base.Abscissa = value; }
-
         /// <summary>
         /// redefinition to add drilling properties
         /// </summary>
         public override double? Azimuth { get => base.Azimuth; set => base.Azimuth = value; }
-
         /// <summary>
         /// redefinition to add drilling properties
         /// </summary>
         public override double? Inclination { get => base.Inclination; set => base.Inclination = value; }
-
         /// <summary>
         /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the equator to the latitude of this point. 
         /// Positive in the north direction.
@@ -53,12 +51,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 UpdateY(value);
             }
         }
-
         /// <summary>
         /// synonym of Z
         /// </summary>
         public double? TVD { get => base.Z; set => base.Z = value; }
-
         /// <summary>
         /// Synonym of X. However, it is called Riemannian because the x-coordinate is defined in a Riemannian space
         /// of curvature corresponding to the Earth spheroid. The RiemannianNorth is the arc length from the equator
@@ -68,7 +64,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             get => X; set => X = value;
         }
-
         /// <summary>
         /// Synonym of Y. However, it is called Riemannian because the y-coordinate is defined in a Riemannian space
         /// of curvature corresponding to the Earth spheroid. The RiemannianEast is the arc length from the Greenwich meridian
@@ -78,7 +73,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             get => Y; set => Y = value;
         }
-
         /// <summary>
         /// Latitude of the point on the WGS84 spheroid
         /// </summary>
@@ -103,7 +97,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 UpdateLongitude(value);
             }
         }
-
         /// <summary>
         /// The local curvature at this Survey calculated using the minimum curvature method
         /// </summary>
@@ -199,7 +192,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return null;
             }
         }
-
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -224,7 +216,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         /// <param name="next"></param>
         /// <returns></returns>
-        public bool Calculate(CurvilinearPoint3D next)
+        public bool Complete(CurvilinearPoint3D next)
         {
             if (next == null || X == null || Y == null || Z == null || Inclination == null || Azimuth == null || Abscissa == null)
             {
@@ -393,7 +385,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             return true;
         }
-
         public bool CompleteXYZ(CurvilinearPoint3D next)
         {
             if (X != null &&
@@ -500,7 +491,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return false;
             }
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -652,7 +642,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return false;
             }
         }
-
         public bool CompleteCASDT(CurvilinearPoint3D? next, double dls, double TF)
         {
             if ((next == null) ||
@@ -837,7 +826,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             return true;
         }
-
         public bool CompleteCDTSDT2(SurveyPoint? next, double DLS, double TF)
         {
             if ((next == null) ||
@@ -891,13 +879,13 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             return true;
         }
         /// <summary>
-        /// Interpolate the result in between this survey and the next at a given curvilinear abscissa
+        /// Calculate the coordinates of the result survey station by interpolation between this survey station and the next survey station, for a given curvilinear abscissa
         /// </summary>
         /// <param name="next"></param>
-        /// <param name="s"></param>
+        /// <param name="abscissa"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public bool InterpolateAtAbscissa(ICurvilinear3D next, double s, ICurvilinear3D result)
+        public bool InterpolateAtAbscissa(ICurvilinear3D next, double abscissa, ICurvilinear3D result)
         {
             if (next == null || result == null ||
                 X == null || Y == null || Z == null || Inclination == null || Azimuth == null || Abscissa == null ||
@@ -905,11 +893,11 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             {
                 return false;
             }
-            if (!Numeric.IsBetween(s, (double)Abscissa, (double)next.Abscissa))
+            if (!Numeric.IsBetween(abscissa, (double)Abscissa, (double)next.Abscissa))
             {
                 return false;
             }
-            result.Abscissa = s;
+            result.Abscissa = abscissa;
             double x1 = (double)X;
             double y1 = (double)Y;
             double z1 = (double)Z;
@@ -930,7 +918,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double DM = s2 - s1;
             if (Numeric.EQ(DM, 0))
             {
-                if (Numeric.EQ(s1, s))
+                if (Numeric.EQ(s1, abscissa))
                 {
                     result.X = X;
                     result.Y = Y;
@@ -957,7 +945,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 double denominator = si2 * ci1 * System.Math.Cos(a2 - a1) - si1 * ci2;
                 double tf = System.Math.Atan2(numerator, denominator);
                 double dls = DL / DM;
-                double dm = s - s1;
+                double dm = abscissa - s1;
                 if (Numeric.EQ(dls, 0))
                 {
                     result.Inclination = i1;
@@ -1213,44 +1201,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 }
             }
         }
-        /// <summary>
-        /// Apply the minimum curvature method to a list of survey points.
-        /// The first survey point must be complete.
-        /// The method, using generics, applies to SurveyList and SurveyStationList as well
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public static bool Calculate<A>(List<A> list) where A : SurveyPoint
-        {
-            if (list != null &&
-                list.Count > 0 &&
-                list[0].X != null &&
-                list[0].Y != null &&
-                list[0].Z != null &&
-                list[0].Abscissa != null &&
-                list[0].Inclination != null &&
-                list[0].Azimuth != null)
-            {
-                A sv1 = list[0];
-                bool ok = true;
-                for (int i = 1; i < list.Count; i++)
-                {
-                    var sv2 = list[i];
-                    if (sv2 != null && sv2.Abscissa != null && sv2.Inclination != null && sv2.Azimuth != null)
-                    {
-                        ok = sv1.CompleteSIA(sv2);
-                        sv1 = sv2;
-                        if (!ok) break;
-                    }
-                }
-                return ok;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         private void UpdateX(double? value)
         {
             if (value != null && Y != null)
@@ -1258,7 +1208,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 SetLatitudeLongitude((double)value, (double)Y);
             }
         }
-
         private void UpdateY(double? value)
         {
             if (value != null && X != null)
@@ -1267,7 +1216,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
 
             }
         }
-
         private void UpdateLatitude(double? value)
         {
             if (value != null && longitude_ != null)
@@ -1282,7 +1230,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 SetRiemannianNorthEast((double)latitude_, (double)value);
             }
         }
-
         public double? Riemannian2DDistance(double? latitude2, double? longitude2)
         {
             if (TVD == null || Latitude == null || Longitude == null || latitude2 == null || longitude2 == null)
@@ -1378,7 +1325,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             return minDeltaMD;
         }
-
         /// <summary>
         /// Find the maximum MD-delta between two survey's
         /// The method, using generics, applies to SurveyList and SurveyStationList as well
@@ -1399,5 +1345,131 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             return maxDeltaMD;
         }
+        /// <summary>
+        /// Apply the minimum curvature method to a list of survey points.
+        /// The first survey point must be complete.
+        /// The method, using generics, applies to SurveyList and SurveyStationList as well
+        /// </summary>
+        /// <param name="surveyList"></param>
+        /// <returns></returns>
+        public static bool CompleteSIA<A>(List<A> surveyList) where A : SurveyPoint
+        {
+            if (surveyList != null &&
+                surveyList.Count > 0 &&
+                surveyList[0].X != null &&
+                surveyList[0].Y != null &&
+                surveyList[0].Z != null &&
+                surveyList[0].Abscissa != null &&
+                surveyList[0].Inclination != null &&
+                surveyList[0].Azimuth != null)
+            {
+                A sp1 = surveyList[0];
+                bool ok = true;
+                for (int i = 1; i < surveyList.Count; i++)
+                {
+                    var sp2 = surveyList[i];
+                    if (sp2 != null && sp2.Abscissa != null && sp2.Inclination != null && sp2.Azimuth != null)
+                    {
+                        ok = sp1.CompleteSIA(sp2);
+                        sp1 = sp2;
+                        if (!ok) break;
+                    }
+                }
+                return ok;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// interpolate a Survey at a given abscissa. The abscissa must be between the first and last Survey of the SurveyList.
+        /// </summary>
+        /// <param name="MD"></param>
+        /// <param name="interpolatedPoint"></param>
+        /// <returns></returns>
+        public static bool InterpolateAtAbscissa<A>(List<A> surveyList, double MD, ICurvilinear3D interpolatedPoint) where A : SurveyPoint
+        {
+            if (interpolatedPoint == null || 
+                Numeric.IsUndefined(MD) ||
+                surveyList.Count < 2 || 
+                Numeric.LT(MD, surveyList.First<SurveyPoint>().MD) || 
+                Numeric.GT(MD, surveyList.Last<SurveyPoint>().MD))
+            {
+                return false;
+            }
+            else
+            {
+                for (int i = 1; i < surveyList.Count; i++)
+                {
+                    if (Numeric.GE(MD, surveyList[i - 1]?.MD) && Numeric.LE(MD, surveyList[i]?.MD))
+                    {
+                        return surveyList[i - 1].InterpolateAtAbscissa(surveyList[i], MD, interpolatedPoint);
+                    }
+                }
+                return false;
+            }
+        }
+        /// <summary>
+        /// Return an interpolated SurveyList. The interpolation step is passed in argument. In addition
+        /// interpolations are made at the abscissas given in a list. The interpolation uses the minimum curvature method.
+        /// </summary>
+        /// <param name="mdStep"></param>
+        /// <param name="abscissaList"></param>
+        /// <returns></returns>
+        public static List<SurveyPoint>? Interpolate<A>(List<A> surveyList, double mdStep, List<double>? abscissaList = null) where A : SurveyPoint
+        {
+            
+            if (surveyList is { Count: > 1 } &&
+                Numeric.IsDefined(mdStep) &&
+                Numeric.GT(mdStep, 0) &&
+                surveyList[0].MD is { } md0 &&
+                surveyList.Last<SurveyPoint>().MD is { } mdf)
+            {
+                List<double> abscissaFilteredList = [];
+                if (abscissaList != null)
+                {
+                    foreach (double s in abscissaList)
+                    {
+                        if (Numeric.GE(s, md0) && Numeric.LE(s, mdf))
+                        {
+                            abscissaFilteredList.Add(s);
+                        }
+                    }
+                }
+                abscissaFilteredList.Sort();
+                List<SurveyPoint> resultList = [surveyList[0]];
+                for (double s = md0 + mdStep; Numeric.LE(s, mdf); s += mdStep)
+                {
+                    double lastS = double.MinValue;
+                    if (abscissaFilteredList.Count > 0)
+                    {
+                        // interpolate at all filtered abscissa within one mdStep
+                        while (abscissaFilteredList.Count > 0 && Numeric.LE(abscissaFilteredList.First<double>(), s))
+                        {
+                            SurveyPoint interpolatedSurveyPoint = new();
+                            if (InterpolateAtAbscissa(surveyList, abscissaFilteredList.First<double>(), interpolatedSurveyPoint))
+                            {
+                                resultList.Add(interpolatedSurveyPoint);
+                                lastS = abscissaFilteredList.First<double>();
+                            }
+                            abscissaFilteredList.RemoveAt(0);
+                        }
+                    }
+                    // and finalize by interpolating at the current abscissa s
+                    if (!Numeric.EQ(s, lastS))
+                    {
+                        SurveyPoint sp = new();
+                        if (InterpolateAtAbscissa(surveyList, s, sp))
+                        {
+                            resultList.Add(sp);
+                        }
+                    }
+                }
+                return resultList;
+            }
+            return null;
+        }
+
     }
 }

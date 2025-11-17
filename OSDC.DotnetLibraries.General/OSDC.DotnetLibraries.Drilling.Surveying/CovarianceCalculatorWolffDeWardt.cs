@@ -5,12 +5,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     public static class CovarianceCalculatorWolffDeWardt
     {
-        public static bool Calculate(SurveyStationList? surveyStationList, List<int>? surveyStationsIndices = null)
+        public static bool Calculate(List<SurveyStation>? surveyStationList, List<int>? surveyStationsIndices = null)
         {
             bool ok = false;
             if (surveyStationList != null && surveyStationList.Count > 0)
             {
-                ok = surveyStationList.Calculate(); // make sure that all survey stations member variables are complete
+                ok = SurveyStation.CompleteSIA(surveyStationList); // make sure that all survey stations member variables are complete
                 if (ok)
                 {
                     double[,]? A = new double[6, 3];
