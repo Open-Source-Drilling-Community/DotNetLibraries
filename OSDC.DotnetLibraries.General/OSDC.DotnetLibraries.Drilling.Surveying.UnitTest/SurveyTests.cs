@@ -17,7 +17,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc = 1e-6;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 0, Azimuth = 0, X=0, Y=0, Z=0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0 };
-            sv1.CompleteSIA(sv2);
+            sv1.CompleteFromSIA(sv2);
             SurveyPoint result = new SurveyPoint();
             sv1.InterpolateAtAbscissa(sv2, 0, result);
             Assert.AreEqual(sv1.Abscissa.Value, result.Abscissa.Value, acc);
@@ -33,7 +33,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc = 1e-6;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0 };
-            sv1.CompleteSIA(sv2);
+            sv1.CompleteFromSIA(sv2);
             SurveyPoint result = new SurveyPoint();
             sv1.InterpolateAtAbscissa(sv2, sv2.Abscissa.Value, result);
             Assert.AreEqual(sv2.Abscissa.Value, result.Abscissa.Value, acc);
@@ -49,7 +49,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc = 1e-6;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 0, Azimuth = 0 };
-            sv1.CompleteSIA(sv2);
+            sv1.CompleteFromSIA(sv2);
             SurveyPoint result = new SurveyPoint();
             sv1.InterpolateAtAbscissa(sv2, sv2.Abscissa.Value/2.0, result);
             Assert.AreEqual(sv2.Abscissa.Value/2.0, result.Abscissa.Value, acc);

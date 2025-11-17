@@ -11,7 +11,7 @@ namespace DrillingProperties
             // an underground position at Norce, Stavanger, Norway
             double groundLevel = 39.7;
             SurveyPoint survey1 = new SurveyPoint() { TVD = -groundLevel, Latitude = 58.93414 * System.Math.PI / 180.0, Longitude = 5.7085 * System.Math.PI / 180.0, MD = -groundLevel, Inclination = 0, Azimuth = 0 };
-            SurveyList traj = new SurveyList() { survey1,
+            List<SurveyPoint> traj = new() { survey1,
                 new SurveyPoint() { MD = 50.0 - groundLevel, Inclination = 0.9 * Numeric.PI / 180.0, Azimuth = -29.7 * Numeric.PI / 180.0 },
                 new SurveyPoint() { MD = 100.0 - groundLevel, Inclination = 0.4 * Numeric.PI / 180.0, Azimuth = -95.1 * Numeric.PI / 180.0 },
                 new SurveyPoint() { MD = 150.0 - groundLevel, Inclination = 0.7 * Numeric.PI / 180.0, Azimuth = 142.5 * Numeric.PI / 180.0 },
@@ -21,11 +21,11 @@ namespace DrillingProperties
                 new SurveyPoint() { MD = 350.0 - groundLevel, Inclination = 6.6 * Numeric.PI / 180.0, Azimuth = 155.6 * Numeric.PI / 180.0 },
                 new SurveyPoint() { MD = 400.0 - groundLevel, Inclination = 11.2 * Numeric.PI / 180.0, Azimuth = 143.7 * Numeric.PI / 180.0 },
             };
-            if (traj.Calculate())
+            if (SurveyPoint.CompleteSurvey(traj))
             {
                 Console.WriteLine("Calculated Trajectory");
                 PrintTrajectory(traj);
-                SurveyList interpolatedTraj = traj.Interpolate(10.0, new List<double>() { 229.0- groundLevel });
+                List<SurveyPoint> interpolatedTraj = SurveyPoint.Interpolate(traj, 10.0, new List<double>() { 229.0- groundLevel });
                 if (interpolatedTraj != null)
                 {
                     Console.WriteLine("Interpolated Trajectory");
@@ -33,7 +33,7 @@ namespace DrillingProperties
                 }
             }
         }
-        static void PrintTrajectory(SurveyList? traj)
+        static void PrintTrajectory(List<SurveyPoint>? traj)
         {
             if (traj != null)
             {
