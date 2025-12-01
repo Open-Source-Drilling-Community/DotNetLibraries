@@ -149,7 +149,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 surveyList[0].X != null &&
                 surveyList[0].Y != null &&
                 surveyList[0].Z != null &&
-                surveyList[0].Abscissa != null &&
+                (surveyList[0].Abscissa != null || surveyList[0].MD != null) &&
                 surveyList[0].Inclination != null &&
                 surveyList[0].Azimuth != null)
             {
@@ -158,13 +158,13 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 for (int i = 1; i < surveyList.Count; i++)
                 {
                     var sp2 = surveyList[i];
-                    if (sp2 != null && sp2.Abscissa != null && sp2.Inclination != null && sp2.Azimuth != null)
+                    if (sp2 != null && (sp2.Abscissa != null || sp2.MD != null) && sp2.Inclination != null && sp2.Azimuth != null)
                     {
                         ok = sp1.CompleteFromSIA(sp2);
                         sp1 = sp2;
                         if (!ok) break;
                     }
-                    else if (sp2 != null && sp2.Abscissa != null && sp2.Inclination != null && sp2.Azimuth != null)
+                    else if (sp2 != null && (sp2.Abscissa != null || sp2.MD != null) && sp2.Inclination != null && sp2.Azimuth != null)
                     {
                         ok = sp1.CompleteFromXYZ(sp2);
                         sp1 = sp2;
@@ -354,7 +354,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <returns></returns>
         public bool CompleteFromSIA(SurveyPoint next)
         {
-            if (next == null || X == null || Y == null || Z == null || Inclination == null || Azimuth == null || Abscissa == null || next.Abscissa == null || next.Inclination == null || next.Azimuth == null)
+            if (next == null || X == null || Y == null || Z == null || Inclination == null || Azimuth == null || (Abscissa == null && MD == null) || (next.Abscissa == null && next.MD == null) || next.Inclination == null || next.Azimuth == null)
             {
                 return false;
             }
@@ -363,8 +363,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double z1 = Z.Value;
             double i1 = Inclination.Value;
             double a1 = Azimuth.Value;
-            double s1 = Abscissa.Value;
-            double s2 = next.Abscissa.Value;
+            double s1 = Abscissa != null ? Abscissa.Value : MD!.Value;
+            double s2 = next.Abscissa != null ? next.Abscissa.Value: next.MD!.Value;
             double i2 = next.Inclination.Value;
             double a2 = next.Azimuth.Value;
             double dm = s2 - s1;
