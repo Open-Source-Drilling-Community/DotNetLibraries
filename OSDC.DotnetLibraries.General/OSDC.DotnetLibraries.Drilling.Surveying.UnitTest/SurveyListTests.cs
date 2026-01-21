@@ -18,12 +18,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         [Test]
         public void Test1()
         {
-            SurveyList traj = new SurveyList() {
+            List<SurveyPoint> traj = new List<SurveyPoint>() {
                new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
                new SurveyPoint() { MD = 100, Inclination = 0, Azimuth = 0},
                new SurveyPoint() { MD = 200, Inclination = 0, Azimuth = 0}
              };
-            bool ok = traj.Calculate();
+            bool ok = SurveyPoint.CompleteSurvey(traj);
             Assert.IsTrue(ok);
             Assert.NotNull(traj[0].X);
             Assert.NotNull(traj[0].Y);
@@ -39,15 +39,15 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         [Test]
         public void Test2()
         {
-            SurveyList traj = new SurveyList() {
+            List<SurveyPoint> traj = new List<SurveyPoint>() {
                new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
                new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
                new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
-            bool ok = traj.Calculate();
+            bool ok = SurveyPoint.CompleteSurvey(traj);
             Assert.IsTrue(ok);
             SurveyPoint sv = new SurveyPoint();
-            ok = traj.InterpolateAtAbscissa(100.0, sv);
+            ok = SurveyPoint.InterpolateAtAbscissa(traj, 100.0, sv);
             Assert.IsTrue(ok);
             Assert.AreEqual(traj[1].TVD.Value, sv.TVD.Value, 1e-4);
             Assert.AreEqual(traj[1].RiemannianNorth.Value, sv.RiemannianNorth.Value, 1e-4);
@@ -60,28 +60,28 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         [Test]
         public void Test3()
         {
-            SurveyList traj = new SurveyList() {
+            List<SurveyPoint> traj = new List<SurveyPoint>() {
                new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
                new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
                new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
-            bool ok = traj.Calculate();
+            bool ok = SurveyPoint.CompleteSurvey(traj);
             Assert.IsTrue(ok);
-            SurveyList? interpolatedTraj = traj.Interpolate(10.0);
+            List<SurveyPoint>? interpolatedTraj = SurveyPoint.Interpolate(traj, 10.0);
             Assert.NotNull(interpolatedTraj);
             Assert.AreEqual(21, interpolatedTraj.Count);
         }
         [Test]
         public void Test4()
         {
-            SurveyList traj = new SurveyList() {
+            List<SurveyPoint> traj = new List<SurveyPoint>() {
                new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
                new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
                new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
-            bool ok = traj.Calculate();
+            bool ok = SurveyPoint.CompleteSurvey(traj);
             Assert.IsTrue(ok);
-            SurveyList? interpolatedTraj = traj.Interpolate(10.0, new List<double>() { 4.5, 5.5, 125.0});
+            List<SurveyPoint>? interpolatedTraj = SurveyPoint.Interpolate(traj, 10.0, new List<double>() { 4.5, 5.5, 125.0});
             Assert.NotNull(interpolatedTraj);
             Assert.AreEqual(24, interpolatedTraj.Count);
         }
@@ -89,14 +89,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
         [Test]
         public void Test5()
         {
-            SurveyList traj = new SurveyList() {
+            List<SurveyPoint> traj = new List<SurveyPoint>() {
                new SurveyPoint() { X = 6560503.255, Y = 635328.164, Z = 0, MD = 0, Inclination = 0, Azimuth = 0 },
                new SurveyPoint() { MD = 100, Inclination = 1.0 * Numeric.PI/180.0, Azimuth = 30.0 * Numeric.PI/180.0},
                new SurveyPoint() { MD = 200, Inclination = 3.0 * Numeric.PI/180.0, Azimuth = 31.0 * Numeric.PI/180.0}
              };
-            bool ok = traj.Calculate();
+            bool ok = SurveyPoint.CompleteSurvey(traj);
             Assert.IsTrue(ok);
-            SurveyList? interpolatedTraj = traj.Interpolate(10.0, new List<double>() {-1.0,  4.5, 5.5, 125.0, 205.0});
+            List<SurveyPoint>? interpolatedTraj = SurveyPoint.Interpolate(traj, 10.0, new List<double>() {-1.0,  4.5, 5.5, 125.0, 205.0});
             Assert.NotNull(interpolatedTraj);
             Assert.AreEqual(24, interpolatedTraj.Count);
         }

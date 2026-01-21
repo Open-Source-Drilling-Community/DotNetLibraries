@@ -1,7 +1,5 @@
-﻿using NORCE.Drilling.SurveyInstrument.Model;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using static NORCE.Drilling.SurveyInstrument.Model.ErrorSource;
+﻿using System.Text.Json;
+using static OSDC.DotnetLibraries.Drilling.Surveying.ErrorSource;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
@@ -18,12 +16,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <param name="surveyStationsIndices"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static bool Calculate(SurveyStationList surveyStationList, List<int>? surveyStationsIndices = null)
+        public static bool Calculate(List<SurveyStation> surveyStationList, List<int>? surveyStationsIndices = null)
         {
             bool ok;
             if (surveyStationList is { } && surveyStationList.Count > 0)
             { 
-                ok = surveyStationList.Calculate(); // make sure that all survey stations member variables are complete
+                ok = SurveyStation.CompleteSurvey(surveyStationList); // make sure that all survey stations member variables are complete
                 if (ok) {
                     List<ISCWSAErrorAccumulator> errorSourcesAccumulator = [];
                     // Start from i = 0 to include the first surveystation. This will typically have radius 0

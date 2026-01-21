@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <Version>3.1.2</Version>
+    <Version>3.2.0</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Standard Statistical Classes</Title>
     <Company>NORCE Norwegian Research Center</Company>
@@ -25,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.1.0" />
+    <ProjectReference Include="..\OSDC.DotnetLibraries.General.Math\OSDC.DotnetLibraries.General.Math.csproj" />
   </ItemGroup>
 
 </Project>

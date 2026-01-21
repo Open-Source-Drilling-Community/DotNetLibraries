@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Standard Math Classes</Title>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <Authors>NORCE Drilling &amp; Well Modeling Group</Authors>
     <Company>NORCE Norwegian Research Center</Company>
     <Description>This package contains classes to perform mathematical calculations.</Description>
@@ -16,7 +16,10 @@
 
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OSDC.DotnetLibraries.General.Common\OSDC.DotnetLibraries.General.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

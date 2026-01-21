@@ -1,4 +1,4 @@
-﻿namespace NORCE.Drilling.SurveyInstrument.Model
+﻿namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     public enum SurveyInstrumentModelType
     {

@@ -17,7 +17,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc = 1e-6;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0 };
-            bool ok = sv1.CompleteSIA(sv2);
+            bool ok = sv1.CompleteFromSIA(sv2);
             Assert.IsTrue(ok);
             Assert.NotNull(sv2.Curvature);
             SurveyPoint sv4 = new SurveyPoint();
@@ -50,7 +50,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc = 1e-6;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0 };
-            bool ok = sv1.CompleteSIA(sv2);
+            bool ok = sv1.CompleteFromSIA(sv2);
             Assert.IsTrue(ok);
             Assert.NotNull(sv2.Curvature);
             SurveyPoint sv4 = new SurveyPoint();
@@ -83,7 +83,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc = 1e-6;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 2.0 * System.Math.PI / 180.0, Azimuth = 0 };
-            bool ok = sv1.CompleteSIA(sv2);
+            bool ok = sv1.CompleteFromSIA(sv2);
             Assert.IsTrue(ok);
             Assert.NotNull(sv2.Curvature);
             SurveyPoint sv4 = new SurveyPoint();
@@ -116,7 +116,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc2 = 1e-4;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 1.0 * System.Math.PI / 180.0 };
-            bool ok = sv1.CompleteSIA(sv2);
+            bool ok = sv1.CompleteFromSIA(sv2);
             Assert.IsTrue(ok);
             Assert.NotNull(sv2.Curvature);
             SurveyPoint sv4 = new SurveyPoint();
@@ -149,7 +149,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc2 = 1e-4;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 2.0 * System.Math.PI / 180.0, Azimuth = 1.0 * System.Math.PI / 180.0 };
-            bool ok = sv1.CompleteSIA(sv2);
+            bool ok = sv1.CompleteFromSIA(sv2);
             Assert.IsTrue(ok);
             Assert.NotNull(sv2.Curvature);
             SurveyPoint sv4 = new SurveyPoint();
@@ -183,7 +183,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc2 = 1e-4;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 10, Inclination = 2.0 * System.Math.PI / 180.0, Azimuth = 1.0 * System.Math.PI / 180.0 };
-            bool ok = sv1.CompleteSIA(sv2);
+            bool ok = sv1.CompleteFromSIA(sv2);
             Assert.IsTrue(ok);
             Assert.NotNull(sv2.Curvature);
             SurveyPoint sv4 = new SurveyPoint();
@@ -205,7 +205,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             double acc2 = 1e-4;
             SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
             SurveyPoint sv2 = new SurveyPoint() { Abscissa = 100, Inclination = 20.0 * System.Math.PI / 180.0, Azimuth = 10.0 * System.Math.PI / 180.0 };
-            bool ok = sv1.CompleteSIA(sv2);
+            bool ok = sv1.CompleteFromSIA(sv2);
             Assert.IsTrue(ok);
             Assert.NotNull(sv2.Curvature);
             SurveyPoint sv4 = new SurveyPoint();

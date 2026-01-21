@@ -22,7 +22,7 @@ namespace DrillingProperties
                 Inclination = 2.0 * Numeric.PI / 180.0, 
                 Azimuth = 30.0 * Numeric.PI / 180.0 
             };
-            if (survey1.CompleteSIA(survey2))
+            if (survey1.CompleteFromSIA(survey2))
             {
                 Console.WriteLine("Calculated displacements: dZ= " + (survey2.TVD - survey1.TVD)?.ToString("F3", CultureInfo.InvariantCulture) +
                     " m, dNorth= " + (survey2.RiemannianNorth - survey1.RiemannianNorth)?.ToString("F3", CultureInfo.InvariantCulture) +

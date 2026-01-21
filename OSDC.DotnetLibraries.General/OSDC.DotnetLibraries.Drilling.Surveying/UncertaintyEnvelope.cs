@@ -1,6 +1,4 @@
-﻿using OSDC.DotnetLibraries.General.Common;
-using OSDC.DotnetLibraries.General.Math;
-using System.Collections.Generic;
+﻿using OSDC.DotnetLibraries.General.Math;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
@@ -15,7 +13,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// The list of survey stations to compute the envelope of uncertainty from
         /// </summary>
-        public SurveyStationList? SurveyStationList { get; set; }
+        public List<SurveyStation>? SurveyStationList { get; set; }
         /// <summary>
         /// The confidence factor used to compute the ellipsoid of uncertainty
         /// </summary>
@@ -24,10 +22,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// The scaling factor used to compute the ellipsoid of uncertainty
         /// </summary>
         public double? ScalingFactor { get; set; } = 1.0;
-        /// <summary>
-        /// The borehole radius at the survey station
-        /// </summary>
-        public double? BoreholeRadius { get; set; } = 0.0;
         /// <summary>
         /// The delegate function used to select the type of depth range (in TVD or MD) on which the envelope of uncertainty is computed
         /// </summary>
@@ -71,14 +65,13 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
         }
 
-        private bool Calculate()
+        public bool Calculate()
         {
             bool ok = false;
             if (SurveyStationList is { Count: >= 3 } && // 3 survey stations needed for an envelope
                 ErrorModel is { } errorModel &&
                 ConfidenceFactor is double confidenceFactor &&
                 ScalingFactor is double scalingFactor &&
-                BoreholeRadius is double boreholeRadius &&
                 MeshLongitudinalLength is double
                 ) 
             {
@@ -122,7 +115,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             EllipsoidSurveyStation = SurveyStationList[i],
                             ConfidenceFactor = confidenceFactor,
                             ScalingFactor = scalingFactor,
-                            BoreholeRadius = boreholeRadius
                         };
                         ok = uncertaintyEnvelopeEllipsoid.Calculate();
                         if (!ok) break;

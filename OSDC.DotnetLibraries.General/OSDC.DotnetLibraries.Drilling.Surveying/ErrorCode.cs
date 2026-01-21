@@ -1,4 +1,4 @@
-﻿namespace NORCE.Drilling.SurveyInstrument.Model
+﻿namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     /// <summary>
     /// an enum to describe the types deriving from ErrorSource

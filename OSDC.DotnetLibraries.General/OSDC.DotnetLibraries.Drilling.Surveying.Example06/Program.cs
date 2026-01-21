@@ -1,5 +1,4 @@
-﻿using NORCE.Drilling.SurveyInstrument.Model;
-using OSDC.DotnetLibraries.Drilling.Surveying;
+﻿using OSDC.DotnetLibraries.Drilling.Surveying;
 using OSDC.DotnetLibraries.General.DataManagement;
 
 namespace DrillingProperties
@@ -83,7 +82,7 @@ namespace DrillingProperties
                     Azimuth = 30.0 * System.Math.PI / 180.0
                 }
             ];
-            SurveyStationList surveyStationList = new();
+            List<SurveyStation> surveyStationList = new();
             foreach (var sp in surveyPointList)
             {
                 surveyStationList.Add(new()

@@ -3,7 +3,7 @@
 double length = 100.0;
 SurveyPoint sv1 = new SurveyPoint() { Abscissa = 0, Inclination = 1.0 * System.Math.PI / 180.0, Azimuth = 0, X = 0, Y = 0, Z = 0 };
 SurveyPoint sv2 = new SurveyPoint() { Abscissa = sv1.Abscissa + length, Inclination = 10.0 * System.Math.PI / 180.0, Azimuth = 20.0 * System.Math.PI / 180.0 };
-bool ok = sv1.CompleteSIA(sv2);
+bool ok = sv1.CompleteFromSIA(sv2);
 SurveyPoint sv4 = new SurveyPoint();
 ok = sv1.InterpolateAtAbscissa(sv2, sv1.Abscissa.Value + 2.0 * SurveyPoint.InterpolationDeltaAbscissa, sv4);
 SurveyPoint sv3 = new SurveyPoint() { Abscissa = sv1.Abscissa + length };
@@ -27,7 +27,7 @@ if (sv2.Curvature != null && sv4.Toolface != null)
             }
             for (int i = 0; i < inters2.Count-1; i++)
             {
-                inters2[i].CompleteSIA(inters1[i + 1]);
+                inters2[i].CompleteFromSIA(inters1[i + 1]);
             }
             SurveyPoint inter1 = new SurveyPoint();
             SurveyPoint inter2 = new SurveyPoint();

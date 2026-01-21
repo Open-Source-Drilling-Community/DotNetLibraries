@@ -19,10 +19,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public double? ScalingFactor { get; set; } = 1.0;
         /// <summary>
-        /// The borehole radius at the survey station
-        /// </summary>
-        public double? BoreholeRadius { get; set; } = 0.0;
-        /// <summary>
         /// The principal axes of the ellipsoid of uncertainty
         /// </summary>
         public Vector3D? EllipsoidRadii { get; set; }
@@ -66,12 +62,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             if (EllipsoidSurveyStation is { } &&
                 EllipsoidSurveyStation.EigenValues is { } ev &&
+                EllipsoidSurveyStation.BoreholeRadius is double boreholeRadius &&
                 ev.X is double evX &&
                 ev.Y is double evY &&
                 ev.Z is double evZ &&
                 ConfidenceFactor is double confidenceFactor &&
-                ScalingFactor is double scalingFactor &&
-                BoreholeRadius is double boreholeRadius)
+                ScalingFactor is double scalingFactor)
             {
                 double chiSquare = Statistics.GetChiSquare3D(confidenceFactor);
                 double kScale = System.Math.Sqrt(chiSquare);
@@ -100,13 +96,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <returns></returns>
         public bool CalculateHorizontalEllipseParameters()
         {
-            if (EllipsoidSurveyStation is { } surveyStation && surveyStation.Covariance is { } cov &&
+            if (EllipsoidSurveyStation is { } surveyStation && 
+                surveyStation.Covariance is { } cov &&
+                surveyStation.BoreholeRadius is double boreholeRadius &&
                     cov[0, 0] is double cov00 &&
                     cov[0, 1] is double cov01 &&
                     cov[1, 1] is double cov11 &&
                     ConfidenceFactor is double confidenceFactor &&
-                    ScalingFactor is double scalingFactor &&
-                    BoreholeRadius is double boreholeRadius)
+                    ScalingFactor is double scalingFactor)
             {
                 HorizontalEllipse = new() { EllipseCenter = surveyStation };
                 double chiSquare = Statistics.GetChiSquare3D(confidenceFactor);
@@ -155,7 +152,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <returns>true if calculations went ok, false otherwise</returns>
         public bool CalculateVerticalEllipseParameters()
         {
-            if (EllipsoidSurveyStation is { } s && s.Azimuth is double azim && s.Covariance is { } cov &&
+            if (EllipsoidSurveyStation is { } s &&
+                s.BoreholeRadius is double boreholeRadius &&
+                s.Azimuth is double azim && 
+                s.Covariance is { } cov &&
                     cov[0, 0] is double cov00 &&
                     cov[0, 1] is double cov01 &&
                     cov[1, 1] is double cov11 &&
@@ -163,8 +163,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     cov[1, 2] is double cov12 &&
                     cov[2, 2] is double cov22 &&
                     ConfidenceFactor is double confidenceFactor &&
-                    ScalingFactor is double scalingFactor &&
-                    BoreholeRadius is double boreholeRadius)
+                    ScalingFactor is double scalingFactor)
             {
                 VerticalEllipse = new() { EllipseCenter = s };
                 double chiSquare = Statistics.GetChiSquare3D(confidenceFactor);
@@ -220,7 +219,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         public bool CalculatePerpendicularEllipseParameters()
         {
             if (EllipsoidSurveyStation is { } s &&
-                    s.Inclination is double incl &&
+                s.BoreholeRadius is double boreholeRadius &&
+                s.Inclination is double incl &&
                     s.Azimuth is double azim &&
                     s.Covariance is { } cov && cov[0, 0] is double cov00 &&
                         cov[0, 1] is double cov01 &&
@@ -229,8 +229,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         cov[1, 2] is double cov12 &&
                         cov[2, 2] is double cov22 &&
                     ConfidenceFactor is double confidenceFactor &&
-                    ScalingFactor is double scalingFactor &&
-                    BoreholeRadius is double boreholeRadius)
+                    ScalingFactor is double scalingFactor)
             {
                 PerpendicularEllipse = new() { EllipseCenter = s };
                 double chiSquare = Statistics.GetChiSquare3D(confidenceFactor);

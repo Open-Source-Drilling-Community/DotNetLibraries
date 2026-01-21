@@ -1,5 +1,4 @@
-﻿using NORCE.Drilling.SurveyInstrument.Model;
-using OSDC.DotnetLibraries.Drilling.Surveying;
+﻿using OSDC.DotnetLibraries.Drilling.Surveying;
 
 namespace DrillingProperties
 {
@@ -33,7 +32,7 @@ namespace DrillingProperties
                 Inclination = 2.0 * System.Math.PI / 180.0,
                 Azimuth = 30.0 * System.Math.PI / 180.0
             };
-            SurveyStationList surveyStationList =
+            List<SurveyStation> surveyStationList =
             [
                 new SurveyStation() {
                         SurveyTool = instrument,
@@ -58,7 +57,7 @@ namespace DrillingProperties
                         TVD = survey2.TVD
                     }
             ];
-            if (surveyStationList.Calculate())
+            if (SurveyPoint.CompleteSurvey(surveyStationList))
             {
                 bool ok = CovarianceCalculatorWolffDeWardt.Calculate(surveyStationList);
                 if (ok)
