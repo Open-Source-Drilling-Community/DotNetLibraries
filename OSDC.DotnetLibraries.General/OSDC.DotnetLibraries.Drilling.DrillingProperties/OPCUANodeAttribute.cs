@@ -10,11 +10,17 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
     public class OPCUANodeAttribute : Attribute
     {
         public virtual string? NameSpace { get; set; } = null;
+        public virtual int? NameSpaceID { get; set; } = null;
         public virtual string? ID { get; set; }
 
         public OPCUANodeAttribute(string? ns, string? id) : base()
         {
             NameSpace = ns;
+            ID = id;
+        }
+        public OPCUANodeAttribute(int? nsID, string? id) : base()
+        {
+            NameSpaceID = nsID;
             ID = id;
         }
     }
