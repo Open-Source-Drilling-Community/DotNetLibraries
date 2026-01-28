@@ -20,9 +20,10 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
             PrefixID = prefixID;
             ID = id;
         }
-        public OPCUANodeAttribute(int? nsID, string? id) : base()
+        public OPCUANodeAttribute(int? nsID, string? prefixID, string? id) : base()
         {
             NameSpaceID = nsID;
+            PrefixID = prefixID;
             ID = id;
         }
     }
