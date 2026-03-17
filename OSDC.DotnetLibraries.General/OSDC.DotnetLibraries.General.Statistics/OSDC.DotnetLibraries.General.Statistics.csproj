@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <Version>3.2.0</Version>
+    <Version>3.3.0</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Standard Statistical Classes</Title>
     <Company>NORCE Norwegian Research Center</Company>
