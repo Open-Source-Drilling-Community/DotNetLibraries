@@ -3,6 +3,8 @@
 namespace OSDC.DotnetLibraries.General.Math
 {
     /// <summary>
+    /// @deprecated, 
+    /// use GeodeticPoint3D instead. This is kept for backward compatibility. It is not recommended to use this interface in new code.
     /// Describe a 3D Point
     /// </summary>
     [Serializable]

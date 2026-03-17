@@ -5,6 +5,8 @@ using System.Text;
 namespace OSDC.DotnetLibraries.General.Math
 {
     /// <summary>
+    /// @deprecated, 
+    /// use IGeodeticPoint3D instead. This is kept for backward compatibility. It is not recommended to use this interface in new code.
     /// an interface for Global Cordinate 3D point
     /// </summary>
     public interface IPoint3DGlobalCoordinates : IPoint3D
