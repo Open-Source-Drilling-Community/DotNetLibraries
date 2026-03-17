@@ -85,11 +85,38 @@ namespace OSDC.DotnetLibraries.General.Math
             }
         }
         /// <summary>
+        /// constructor with initialization from IPoint3D instance
+        /// </summary>
+        /// <param name="pt"></param>
+        public Vector3D(IPoint3D pt)
+        {
+            if (pt != null)
+            {
+                X = pt.X;
+                Y = pt.Y;
+                Z = pt.Z;
+            }
+        }
+        /// <summary>
         /// constructor as a bipoint
         /// </summary>
         /// <param name="pt1"></param>
         /// <param name="pt2"></param>
         public Vector3D(Point3D pt1, Point3D pt2) : base()
+        {
+            if (pt1 != null && pt2 != null)
+            {
+                X = pt2.X - pt1.X;
+                Y = pt2.Y - pt1.Y;
+                Z = pt2.Z - pt1.Z;
+            }
+        }
+        /// <summary>
+        /// constructor as a bipoint
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        public Vector3D(IPoint3D pt1, IPoint3D pt2) : base()
         {
             if (pt1 != null && pt2 != null)
             {
