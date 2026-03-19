@@ -218,8 +218,8 @@ namespace OSDC.DotnetLibraries.General.Math
 
             public static double[,] CreateGeocentricToNedRotation(GeodeticPoint3D reference)
             {
-                double lat = DegToRad(reference.LatitudeWGS84!.Value);
-                double lon = DegToRad(reference.LongitudeWGS84!.Value);
+                double lat = reference.LatitudeWGS84!.Value;
+                double lon = reference.LongitudeWGS84!.Value;
 
                 double sinLat = System.Math.Sin(lat);
                 double cosLat = System.Math.Cos(lat);
@@ -236,8 +236,8 @@ namespace OSDC.DotnetLibraries.General.Math
 
             private static (double x, double y, double z) GeodeticToGeocentric(GeodeticPoint3D point)
             {
-                double lat = DegToRad(point.LatitudeWGS84!.Value);
-                double lon = DegToRad(point.LongitudeWGS84!.Value);
+                double lat = point.LatitudeWGS84!.Value;
+                double lon = point.LongitudeWGS84!.Value;
                 double h = -point.TvdWGS84!.Value;
 
                 double sinLat = System.Math.Sin(lat);
@@ -271,8 +271,8 @@ namespace OSDC.DotnetLibraries.General.Math
 
                 return new GeodeticPoint3D
                 {
-                    LatitudeWGS84 = RadToDeg(lat),
-                    LongitudeWGS84 = RadToDeg(lon),
+                    LatitudeWGS84 = lat,
+                    LongitudeWGS84 = lon,
                     TvdWGS84 = -h
                 };
             }
@@ -283,16 +283,6 @@ namespace OSDC.DotnetLibraries.General.Math
                        point.LatitudeWGS84 != null &&
                        point.LongitudeWGS84 != null &&
                        point.TvdWGS84 != null;
-            }
-
-            private static double DegToRad(double degrees)
-            {
-                return degrees * System.Math.PI / 180.0;
-            }
-
-            private static double RadToDeg(double radians)
-            {
-                return radians * 180.0 / System.Math.PI;
             }
         }
     }
