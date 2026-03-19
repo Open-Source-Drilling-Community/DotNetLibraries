@@ -158,13 +158,19 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 for (int i = 1; i < surveyList.Count; i++)
                 {
                     var sp2 = surveyList[i];
+                    // First evaluate X, Y, Z from S, I, A
                     if (sp2 != null && (sp2.Abscissa != null || sp2.MD != null) && sp2.Inclination != null && sp2.Azimuth != null)
                     {
                         ok = sp1.CompleteFromSIA(sp2);
                         sp1 = sp2;
                         if (!ok) break;
                     }
-                    else if (sp2 != null && (sp2.Abscissa != null || sp2.MD != null) && sp2.Inclination != null && sp2.Azimuth != null)
+                    // Then, evaluate S, I, A from X, Y, Z. IMPORTANT notice, if conditions are met, first prevail
+                    else if (
+                        sp2 != null &&
+                        (sp2.X != null || sp2.RiemannianNorth != null) && 
+                        (sp2.Y != null || sp2.RiemannianEast != null) && 
+                        sp2.Z != null)
                     {
                         ok = sp1.CompleteFromXYZ(sp2);
                         sp1 = sp2;
@@ -189,8 +195,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             if (interpolatedPoint == null ||
                 Numeric.IsUndefined(MD) ||
                 surveyList.Count < 2 ||
-                Numeric.LT(MD, surveyList.First<SurveyPoint>().MD) ||
-                Numeric.GT(MD, surveyList.Last<SurveyPoint>().MD))
+                Numeric.LT(MD, surveyList.First<A>().MD) ||
+                Numeric.GT(MD, surveyList.Last<A>().MD))
             {
                 return false;
             }
