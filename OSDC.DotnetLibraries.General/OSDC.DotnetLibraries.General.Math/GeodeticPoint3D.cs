@@ -139,5 +139,161 @@ namespace OSDC.DotnetLibraries.General.Math
                 && Numeric.EQ(LongitudeWGS84, 0)
                 && Numeric.EQ(TvdWGS84, 0);
         }
+
+        /// <summary>
+        /// Converts 'this' point to local NED coordinates relative to <paramref name="reference"/>.
+        /// </summary>
+        public virtual Point3D? GeodeticToLocalNED(GeodeticPoint3D reference)
+        {
+            return GeodeticTransforms.GeodeticToLocalNED(this, reference);
+        }
+
+        /// <summary>
+        /// Converts local NED coordinates to geodetic coordinates using <paramref name="reference"/>.
+        /// </summary>
+        public static GeodeticPoint3D? LocalNEDToGeodetic(Point3D localNed, GeodeticPoint3D reference)
+        {
+            return GeodeticTransforms.LocalNEDToGeodetic(localNed, reference);
+        }
+
+        /// <summary>
+        /// Deterministic WGS84 / local NED conversion utilities.
+        /// TVD is treated as positive downward, therefore ellipsoidal height is h = -TVD.
+        /// </summary>
+        public static class GeodeticTransforms
+        {
+            // WGS84 spheroid parameters
+            private const double SemiMajorAxis = 6378137.0;
+            private const double Flattening = 1.0 / 298.257223563;
+            private const double FirstEccentricitySquared = Flattening * (2.0 - Flattening);
+            private const double SemiMinorAxis = SemiMajorAxis * (1.0 - Flattening);
+            private const double SecondEccentricitySquared = (SemiMajorAxis * SemiMajorAxis - SemiMinorAxis * SemiMinorAxis) / (SemiMinorAxis * SemiMinorAxis);
+
+            public static Point3D? GeodeticToLocalNED(GeodeticPoint3D? point, GeodeticPoint3D? reference)
+            {
+                if (!IsValid(point) || !IsValid(reference))
+                {
+                    return null;
+                }
+
+                (double x, double y, double z) = GeodeticToGeocentric(point!);
+                (double x0, double y0, double z0) = GeodeticToGeocentric(reference!);
+
+                double dx = x - x0;
+                double dy = y - y0;
+                double dz = z - z0;
+
+                double[,] c = CreateGeocentricToNedRotation(reference!);
+
+                double north = c[0, 0] * dx + c[0, 1] * dy + c[0, 2] * dz;
+                double east = c[1, 0] * dx + c[1, 1] * dy + c[1, 2] * dz;
+                double down = c[2, 0] * dx + c[2, 1] * dy + c[2, 2] * dz;
+
+                return new Point3D(north, east, down);
+            }
+
+            public static GeodeticPoint3D? LocalNEDToGeodetic(Point3D? localNed, GeodeticPoint3D? reference)
+            {
+                if (localNed?.X == null || localNed.Y == null || localNed.Z == null || !IsValid(reference))
+                {
+                    return null;
+                }
+
+                (double x0, double y0, double z0) = GeodeticToGeocentric(reference!);
+
+                double[,] c = CreateGeocentricToNedRotation(reference!);
+                double[,] ct =
+                {
+                { c[0, 0], c[1, 0], c[2, 0] },
+                { c[0, 1], c[1, 1], c[2, 1] },
+                { c[0, 2], c[1, 2], c[2, 2] }
+            };
+
+                double dx = ct[0, 0] * localNed.X.Value + ct[0, 1] * localNed.Y.Value + ct[0, 2] * localNed.Z.Value;
+                double dy = ct[1, 0] * localNed.X.Value + ct[1, 1] * localNed.Y.Value + ct[1, 2] * localNed.Z.Value;
+                double dz = ct[2, 0] * localNed.X.Value + ct[2, 1] * localNed.Y.Value + ct[2, 2] * localNed.Z.Value;
+
+                return GeocentricToGeodetic(x0 + dx, y0 + dy, z0 + dz);
+            }
+
+            public static double[,] CreateGeocentricToNedRotation(GeodeticPoint3D reference)
+            {
+                double lat = DegToRad(reference.LatitudeWGS84!.Value);
+                double lon = DegToRad(reference.LongitudeWGS84!.Value);
+
+                double sinLat = System.Math.Sin(lat);
+                double cosLat = System.Math.Cos(lat);
+                double sinLon = System.Math.Sin(lon);
+                double cosLon = System.Math.Cos(lon);
+
+                return new[,]
+                {
+                { -sinLat * cosLon, -sinLat * sinLon,  cosLat },
+                { -sinLon,            cosLon,           0.0    },
+                { -cosLat * cosLon, -cosLat * sinLon, -sinLat }
+            };
+            }
+
+            private static (double x, double y, double z) GeodeticToGeocentric(GeodeticPoint3D point)
+            {
+                double lat = DegToRad(point.LatitudeWGS84!.Value);
+                double lon = DegToRad(point.LongitudeWGS84!.Value);
+                double h = -point.TvdWGS84!.Value;
+
+                double sinLat = System.Math.Sin(lat);
+                double cosLat = System.Math.Cos(lat);
+                double sinLon = System.Math.Sin(lon);
+                double cosLon = System.Math.Cos(lon);
+
+                double n = SemiMajorAxis / System.Math.Sqrt(1.0 - FirstEccentricitySquared * sinLat * sinLat);
+
+                double x = (n + h) * cosLat * cosLon;
+                double y = (n + h) * cosLat * sinLon;
+                double z = (n * (1.0 - FirstEccentricitySquared) + h) * sinLat;
+                return (x, y, z);
+            }
+
+            private static GeodeticPoint3D GeocentricToGeodetic(double x, double y, double z)
+            {
+                double p = System.Math.Sqrt(x * x + y * y);
+                double theta = System.Math.Atan2(z * SemiMajorAxis, p * SemiMinorAxis);
+                double sinTheta = System.Math.Sin(theta);
+                double cosTheta = System.Math.Cos(theta);
+
+                double lon = System.Math.Atan2(y, x);
+                double lat = System.Math.Atan2(
+                    z + SecondEccentricitySquared * SemiMinorAxis * sinTheta * sinTheta * sinTheta,
+                    p - FirstEccentricitySquared * SemiMajorAxis * cosTheta * cosTheta * cosTheta);
+
+                double sinLat = System.Math.Sin(lat);
+                double n = SemiMajorAxis / System.Math.Sqrt(1.0 - FirstEccentricitySquared * sinLat * sinLat);
+                double h = p / System.Math.Cos(lat) - n;
+
+                return new GeodeticPoint3D
+                {
+                    LatitudeWGS84 = RadToDeg(lat),
+                    LongitudeWGS84 = RadToDeg(lon),
+                    TvdWGS84 = -h
+                };
+            }
+
+            private static bool IsValid(GeodeticPoint3D? point)
+            {
+                return point != null &&
+                       point.LatitudeWGS84 != null &&
+                       point.LongitudeWGS84 != null &&
+                       point.TvdWGS84 != null;
+            }
+
+            private static double DegToRad(double degrees)
+            {
+                return degrees * System.Math.PI / 180.0;
+            }
+
+            private static double RadToDeg(double radians)
+            {
+                return radians * 180.0 / System.Math.PI;
+            }
+        }
     }
 }
