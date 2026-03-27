@@ -33,6 +33,32 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         public double? BoreholeRadius { get; set; } = 0.0;
 
         /// <summary>
+        /// default constructor
+        /// </summary>
+        public SurveyStation() : base() { }
+        /// <summary>
+        /// copy constructor
+        /// </summary>
+        /// <param name="sp"></param>
+        public SurveyStation(SurveyPoint src) : base(src) { }
+        /// <summary>
+        /// copy constructor
+        /// </summary>
+        /// <param name="surveyStation"></param>
+        public SurveyStation(SurveyStation src) : base(src)
+        {
+            if (src != null)
+            {
+                BoreholeRadius = src.BoreholeRadius;
+                SurveyTool = src.SurveyTool;
+                Bias = src.Bias;
+                EigenValues = src.EigenValues;
+                EigenVectors = src.EigenVectors;
+                Covariance = src.Covariance;
+            }
+        }
+
+        /// <summary>
         /// Calculates the eigen vectors and eigen values of the covariance matrix
         /// </summary>
         /// <returns>true if calculation went ok, false otherwise</returns>

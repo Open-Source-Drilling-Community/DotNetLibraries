@@ -20,14 +20,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public double? MD { get => base.Abscissa; set => base.Abscissa = value; }
         /// <summary>
-        /// redefinition to add drilling properties
-        /// </summary>
-        public override double? Azimuth { get => base.Azimuth; set => base.Azimuth = value; }
-        /// <summary>
-        /// redefinition to add drilling properties
-        /// </summary>
-        public override double? Inclination { get => base.Inclination; set => base.Inclination = value; }
-        /// <summary>
         /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the equator to the latitude of this point. 
         /// Positive in the north direction.
         /// </summary>
@@ -117,6 +109,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public double? TUR { get; set; } = null;
         /// <summary>
+        /// Gets or sets the vertical section value associated with the survey point.
+        /// </summary>
+        public double? VerticalSection { get; set; } = null;
+        /// <summary>
         /// Default constructor
         /// </summary>
         public SurveyPoint() : base()
@@ -130,9 +126,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             if (src != null)
             {
-                Abscissa = src.Abscissa;
-                Inclination = src.Inclination;
-                Azimuth = src.Azimuth;
+                Toolface = src.Toolface;
+                BUR = src.BUR;
+                TUR = src.TUR;
+                VerticalSection = src.VerticalSection;
             }
         }
         /// <summary>
@@ -168,8 +165,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     // Then, evaluate S, I, A from X, Y, Z. IMPORTANT notice, if conditions are met, first prevail
                     else if (
                         sp2 != null &&
-                        (sp2.X != null || sp2.RiemannianNorth != null) && 
-                        (sp2.Y != null || sp2.RiemannianEast != null) && 
+                        (sp2.X != null || sp2.RiemannianNorth != null) &&
+                        (sp2.Y != null || sp2.RiemannianEast != null) &&
                         sp2.Z != null)
                     {
                         ok = sp1.CompleteFromXYZ(sp2);
@@ -370,7 +367,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double i1 = Inclination.Value;
             double a1 = Azimuth.Value;
             double s1 = Abscissa != null ? Abscissa.Value : MD!.Value;
-            double s2 = next.Abscissa != null ? next.Abscissa.Value: next.MD!.Value;
+            double s2 = next.Abscissa != null ? next.Abscissa.Value : next.MD!.Value;
             double i2 = next.Inclination.Value;
             double a2 = next.Azimuth.Value;
             double dm = s2 - s1;
@@ -443,6 +440,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         }
                     }
                 }
+            }
+            if (VerticalSection is not null && next.X is not null && next.Y is not null)
+            {
+                next.VerticalSection = VerticalSection + Math.Sqrt((X.Value - next.X.Value) * (X.Value - next.X.Value) + (Y.Value - next.Y.Value) * (Y.Value - next.Y.Value));
             }
             return true;
         }
@@ -568,6 +569,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 Inclination != null &&
                 Azimuth != null)
             {
+                if (VerticalSection is not null)
+                {
+                    next.VerticalSection = VerticalSection + Math.Sqrt((X.Value - next.X.Value) * (X.Value - next.X.Value) + (Y.Value - next.Y.Value) * (Y.Value - next.Y.Value));
+                }
                 double ci = System.Math.Cos(Inclination.Value);
                 double si = System.Math.Sin(Inclination.Value);
                 double ca = System.Math.Cos(Azimuth.Value);
@@ -885,6 +890,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     }
                 }
             }
+            if (VerticalSection is not null && X is not null && Y is not null && next.X is not null && next.Y is not null)
+            {
+                next.VerticalSection = VerticalSection + Math.Sqrt((X.Value - next.X.Value) * (X.Value - next.X.Value) + (Y.Value - next.Y.Value) * (Y.Value - next.Y.Value));
+            }
             return true;
         }
         public bool CompleteCDTSDT2(SurveyPoint? next, double DLS, double TF)
@@ -936,6 +945,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double alpha1 = Azimuth.Value + r * Math.Log(Math.Abs(Math.Tan(0.5 * next.Inclination.Value))) - r * Math.Log(Math.Tan(0.5 * Inclination.Value));
             double alpha2 = Azimuth.Value - r * Math.Log(Math.Abs(Math.Tan(0.5 * next.Inclination.Value))) + r * Math.Log(Math.Tan(0.5 * Inclination.Value));
             next.Azimuth = alpha1;
+            if (VerticalSection is not null && X is not null && Y is not null && next.X is not null && next.Y is not null)
+            {
+                next.VerticalSection = VerticalSection + Math.Sqrt((X.Value - next.X.Value) * (X.Value - next.X.Value) + (Y.Value - next.Y.Value) * (Y.Value - next.Y.Value));
+            }
 
             return true;
         }
@@ -1124,6 +1137,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     result.Toolface = Toolface;
                     result.BUR = BUR;
                     result.TUR = TUR;
+                    result.VerticalSection = VerticalSection;
                     return true;
                 }
                 else
@@ -1155,6 +1169,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     result.Toolface = tf;
                     result.BUR = 0;
                     result.TUR = 0;
+                    if (VerticalSection is not null && X is not null && Y is not null && result.X is not null && result.Y is not null)
+                    {
+                        result.VerticalSection = VerticalSection + Math.Sqrt((X.Value - result.X.Value) * (X.Value - result.X.Value) + (Y.Value - result.Y.Value) * (Y.Value - result.Y.Value));
+                    }
                     return true;
                 }
                 else
@@ -1172,6 +1190,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         result.Toolface = az;
                         result.BUR = dls;
                         result.TUR = 0;
+                        if (VerticalSection is not null && X is not null && Y is not null && result.X is not null && result.Y is not null)
+                        {
+                            result.VerticalSection = VerticalSection + Math.Sqrt((X.Value - result.X.Value) * (X.Value - result.X.Value) + (Y.Value - result.Y.Value) * (Y.Value - result.Y.Value));
+                        }
                         return true;
                     }
                     else
@@ -1254,6 +1276,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                     {
                                         result.TUR = (sv2.Azimuth - sv1.Azimuth + 2.0 * Numeric.PI) / ds;
                                     }
+                                }
+                                if (VerticalSection is not null && X is not null && Y is not null && result.X is not null && result.Y is not null)
+                                {
+                                    result.VerticalSection = VerticalSection + Math.Sqrt((X.Value - result.X.Value) * (X.Value - result.X.Value) + (Y.Value - result.Y.Value) * (Y.Value - result.Y.Value));
                                 }
                             }
                         }
