@@ -259,18 +259,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     // First evaluate X, Y, Z from S, I, A
                     if (sp2 != null && (sp2.Abscissa != null || sp2.MD != null) && sp2.Inclination != null && sp2.Azimuth != null)
                     {
-                        switch (calculationMethod)
-                        {
-                            case TrajectoryCalculationType.ConstantCurvatureAndToolfaceMethod:
-                                ok = sp1.CompleteFromSIA(sp2);
-                                break;
-                            case TrajectoryCalculationType.ConstantBuildAndTurnMethod:
-                                ok = sp1.CompleteFromSIA(sp2);
-                                break;
-                            default:
-                                ok = sp1.CompleteFromSIA(sp2);
-                                break;
-                        }
+                        ok = sp1.CompleteFromSIA(sp2, calculationMethod);
                         sp1 = sp2;
                         if (!ok) break;
                     }
@@ -281,18 +270,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         (sp2.Y != null || sp2.RiemannianEast != null) &&
                         sp2.Z != null)
                     {
-                        switch (calculationMethod)
-                        {
-                            case TrajectoryCalculationType.ConstantCurvatureAndToolfaceMethod:
-                                ok = sp1.CompleteFromXYZ(sp2);
-                                break;
-                            case TrajectoryCalculationType.ConstantBuildAndTurnMethod:
-                                ok = sp1.CompleteFromXYZ(sp2);
-                                break;
-                            default:
-                                ok = sp1.CompleteFromXYZ(sp2);
-                                break;
-                        }
+                        ok = sp1.CompleteFromXYZ(sp2, calculationMethod);
                         sp1 = sp2;
                         if (!ok) break;
                     }
@@ -527,7 +505,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         /// <param name="next"></param>
         /// <returns></returns>
-        public bool CompleteNext(CurvilinearPoint3D next)
+        public bool CompleteNext(CurvilinearPoint3D next, TrajectoryCalculationType calculationMethod = TrajectoryCalculationType.MinimumCurvatureMethod)
         {
             if (next == null || X == null || Y == null || Z == null || Inclination == null || Azimuth == null || Abscissa == null)
             {
@@ -535,11 +513,11 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             if (next.Abscissa != null && next.Inclination != null && next.Azimuth != null)
             {
-                return CompleteFromSIA(next);
+                return CompleteFromSIA(next, calculationMethod);
             }
             else if (next.X != null && next.Y != null && next.Z != null)
             {
-                return CompleteFromXYZ(next);
+                return CompleteFromXYZ(next, calculationMethod);
             }
             else
             {
