@@ -109,7 +109,7 @@ and
 $$\lambda = \frac{y}{R(\phi)}$$
 
 In the implementation, the inverse transformation from `RiemannianNorth` to latitude is performed numerically. The method
-`LatitudeFromMeridianDistance` solves the nonlinear equation for $\phi$, while `RiemannianEast` continues to use the direct
+`LatitudeFromMeridianDistance` solves the nonlinear equation for $\phi$, while `RiemannianEast` uses the direct
 parallel-arc expression above.
 
 It is tempting to use the incomplete elliptic integral of the second kind as an intuitive approximation for the meridional
