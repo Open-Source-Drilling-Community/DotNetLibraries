@@ -91,16 +91,37 @@ $$R(\phi) = \frac{a^2\cos{\phi}}{\sqrt{a^2\cos^2{\phi}+b^2\sin^2{\phi}}}$$
 
 At that geodetic latitude, the $y$-coordinate (east-west) is the length of the circular arc counted from the Greenwich meridian, i.e., the longitude angle, $\lambda$:
 $y = R(\phi) \cdot \lambda$
-The $x$-coordinate (south-north) is the length of the elliptical arc counted from the equator using the latitude. 
-This involves the elliptic integral of the second kind, denoted $E(\phi, e^2)$. 
-Its definition is: $E(\phi, m) = \int_0^\phi \sqrt{1 - m \cdot \sin^2(t)} \, dt$.
-The definition of $x$ is then: $x = a \cdot E(\phi, e^2)$.
 
-Conversely, to retrieve the latitude and longitude from the $x$ and $y$ coordinates, i.e., arc lengths, the following method is used:
-$\phi = E^{-1}(\frac{x}{a}, e^2)$ and $\lambda = \frac{y}{R(\phi)}$.
+The $x$-coordinate (south-north) is the curvilinear abscissa along the meridian counted from the equator. Since a meridian is a geodesic on the spheroid, this is the meridian distance:
 
-The elliptic integral of the second kind is calculated using the special function defined in `OSDC.DotnetLibraries.General.Math`, 
-namely `SpecialFunctions.EllipseE(phi, m)` and its inverse is `Elliptic.InverseEllipseE(x, m)`.
+$$x(\phi)=\int_0^\phi M(u)\,du$$
+
+where $M(\phi)$ is the meridian radius of curvature:
+
+$$M(\phi)=\frac{a(1-e^2)}{(1-e^2\sin^2\phi)^{3/2}}$$
+
+Conversely, to retrieve the latitude and longitude from the $x$ and $y$ coordinates, the following method is used:
+
+$$\phi = x^{-1}(s) \text{ such that } s=\int_0^\phi M(u)\,du$$
+
+and
+
+$$\lambda = \frac{y}{R(\phi)}$$
+
+In the implementation, the inverse transformation from `RiemannianNorth` to latitude is performed numerically. The method
+`LatitudeFromMeridianDistance` solves the nonlinear equation for $\phi$, while `RiemannianEast` continues to use the direct
+parallel-arc expression above.
+
+It is tempting to use the incomplete elliptic integral of the second kind as an intuitive approximation for the meridional
+coordinate because the meridian is an ellipse in the meridian plane. That approach leads to the expression
+$a\cdot E(\phi,e^2)$, which looks natural but is not the same integral as the meridian distance. The meridional
+curvilinear abscissa is defined by integrating the meridian radius of curvature $M(\phi)$, whereas the incomplete elliptic
+integral of the second kind is:
+
+$$E(\phi,m)=\int_0^\phi\sqrt{1-m\sin^2 t}\,dt$$
+
+These two integrals are not identical, so the elliptic-integral expression is not correct for the `RiemannianNorth`
+coordinate when that coordinate is intended to be the true curvilinear abscissa along the meridian.
 
 For short lateral displacements, considering that `X` and `Y` are cartesian coordinates does not introduce much error (typically 0.15m error between the bottom of two 1km-depth wells, distant by 1km in `X` or `Y`; error being roughly proportional to either `X`, `Y`, or `Z`). This is actually what is assumed
 by most Earth Model software used in E&P applications. So `X` and `Y` can be considered as respectively a sort of Northing and Easting coordinate.
@@ -162,6 +183,20 @@ CartesianX: 3284101.435 m, CartesianY: 328216.605 m, CartesianZ: 5478668.203 m
 The distance between two points on an oblate can be calculated using the inverse problem algorithm described by Vincenty 
 [doi:10.1179/sre.1975.23.176.88](https://doi.org/10.1179/sre.1975.23.176.88) and 
 [doi:10.5281/zenodo.32999](https://doi.org/10.5281/zenodo.32999). 
+
+It is important to distinguish the Riemannian coordinates from the geodesic distance on the manifold. `RiemannianEast`
+at a given latitude is the length of the circular arc along the parallel, counted from the Greenwich meridian. However,
+the Riemannian distance between two points is the length of the shortest path on the manifold. Therefore, for two points
+located on the same parallel of an oblate, the Riemannian distance is in general not
+equal to the length of the circular arc on that parallel. Away from the equator, the shortest path can be made slightly
+closer to the pole before coming back to the target point. In the North hemisphere, this means drifting slightly
+northward; in the South hemisphere, it means drifting slightly eastward. By contrast, a meridian is a geodesic. 
+Therefore, for two points located on the same
+meridian, the shortest Riemannian distance is exactly the meridian distance along that meridian. This is why
+the difference in `RiemannianNorth` between two points at the same longitude matches their geodesic distance on the
+manifold.
+
+![Geodesic between two points on the same parallel](img/ParallelArcVsGeodesic.png)
 
 It remains to find the distance between two points that are not at 0 TVD and not necessarily at the same TVD either.
 
@@ -236,6 +271,211 @@ And the execution result is:
 Calculated displacements: dZ= 29.994 m, dNorth= 0.453 m, dEast= 0.262 m
 Interpolated survey: dZ= 10.000 m, dNorth= 0.050 m, dEast= 0.029 m, Inclination= 0.667 °, Azimuth= 30.000 °, Curvature= 2.000 °/30m, Toolface= 30.000 °, BUR= 2.000 °/30m, TUR= 0.000 °/30m
 </pre>
+
+## Constant Curvature and Toolface Method
+The library also implements a constant curvature and toolface method, abbreviated here as `CDT`. In this model, the scalar curvature
+`DLS` and the toolface `TF` are constant along the segment. The corresponding direct and inverse methods are:
+
+- `CompleteCDTSDT`: direct problem from measured depth increment, curvature and toolface
+- `CompleteCDTSIA`: direct problem from measured depth increment and final inclination / azimuth
+- `CompleteCDTXYZ`: inverse problem from Cartesian target coordinates
+
+The implementation uses the same sign convention as the rest of the surveying package:
+
+- `Abscissa` is the curvilinear abscissa, i.e. measured depth
+- `Inclination` is normalized in $[0,\pi]$
+- `Azimuth` is normalized in $[0,2\pi)$
+- when a raw inclination evolution crosses $0$ or $\pi$, the canonical representation is restored by reflecting the inclination and shifting the azimuth by $\pi$
+
+### Direct CDT from SDT: `CompleteCDTSDT`
+Let the starting survey be defined by:
+
+- position $(X_1,Y_1,Z_1)$
+- inclination $I_1$
+- azimuth $A_1$
+- abscissa $S_1$
+
+and let the end abscissa be $S_2$, so that the segment length is:
+
+$$L=S_2-S_1$$
+
+For a constant curvature $DLS$ and constant toolface $TF$, the code defines:
+
+$$\beta=DLS\cos(TF)$$
+
+and
+
+$$\gamma=\sqrt{DLS^2-\beta^2}$$
+
+In the implementation, $\beta$ is the constant build component and $\gamma$ is the constant turn component in the local CDT model.
+The inclination evolves linearly with abscissa:
+
+$$I(s)=I_1+\beta s$$
+
+for $s \in [0,L]$.
+
+For the regular case, the azimuth evolution is obtained from the CDT relation:
+
+$$A(s)=A_1+\frac{\gamma}{\beta}\ln{\left|\frac{\tan{\left(\frac{I(s)}{2}\right)}}{\tan{\left(\frac{I_1}{2}\right)}}\right|}$$
+
+and the position is given by integrating the tangent vector:
+
+$$\frac{dX}{ds}=\sin{I(s)}\cos{A(s)}$$
+
+$$\frac{dY}{ds}=\sin{I(s)}\sin{A(s)}$$
+
+$$\frac{dZ}{ds}=\cos{I(s)}$$
+
+The code evaluates:
+
+$$Z_2=Z_1+\frac{\sin{(I_1+\beta L)}-\sin{I_1}}{\beta}$$
+
+and computes $X_2$ and $Y_2$ by Simpson integration of the corresponding tangent components. The numerical integration count is adapted to
+the total angular variation of the segment so that mild segments do not pay the cost of a worst-case discretization.
+
+There are several special cases:
+
+- if `DLS = 0`, the code falls back to the circular-arc / minimum-curvature path
+- if $I_1 = 0$ or $I_1=\pi/2$, the implementation also falls back to the circular-arc path
+- if $TF=\pi/2$ or $TF=3\pi/2$, then $\beta=0$ exactly, which is again handled by the circular-arc path
+- if $\beta$ is only near zero, the code keeps the CDT kinematics but switches from the closed form to Simpson integration, because the closed formulas contain divisions by $\beta$ and suffer from cancellation
+
+After the raw end attitude is computed, the method canonicalizes the result. If a raw inclination exits the interval $[0,\pi]$, it is folded back and the azimuth is shifted by $\pi$.
+This keeps all public results in the standard survey representation while still allowing the internal raw trajectory to cross the inclination boundaries.
+
+The method also returns:
+
+- `Curvature = DLS`
+- `Toolface = TF`
+- `BUR = \beta`
+- `TUR = \gamma / \sin(I_2)`
+
+where $I_2$ is the raw end inclination before canonicalization of the public survey representation.
+
+### Direct CDT from SIA: `CompleteCDTSIA`
+`CompleteCDTSIA` solves the following problem:
+
+- the end abscissa $S_2$ is known
+- the end inclination $I_2$ is known
+- the end azimuth $A_2$ is known
+- the unknowns are the CDT parameters $DLS$ and $TF$
+
+This is not the same as the minimum-curvature dogleg inversion, because a CDT curve is generally not planar. The implementation therefore
+does not reuse the circular-arc relation directly. Instead it uses the specific CDT kinematics.
+
+For a raw, not yet canonicalized, end inclination $I_2^{raw}$ one has:
+
+$$\beta=\frac{I_2^{raw}-I_1}{L}$$
+
+and from the CDT azimuth law:
+
+$$A_2^{raw}-A_1=\frac{\gamma}{\beta}\ln{\left|\frac{\tan{\left(\frac{I_2^{raw}}{2}\right)}}{\tan{\left(\frac{I_1}{2}\right)}}\right|}$$
+
+Hence, if one defines:
+
+$$\Lambda=\ln{\left|\frac{\tan{\left(\frac{I_2^{raw}}{2}\right)}}{\tan{\left(\frac{I_1}{2}\right)}}\right|}$$
+
+then
+
+$$\gamma=\beta\frac{A_2^{raw}-A_1}{\Lambda}$$
+
+and therefore:
+
+$$DLS=\sqrt{\beta^2+\gamma^2}$$
+
+The corresponding toolface follows from:
+
+$$\cos(TF)=\frac{\beta}{DLS}$$
+
+which yields the two symmetric candidates:
+
+$$TF=\arccos{\left(\frac{\beta}{DLS}\right)}$$
+
+and
+
+$$TF=2\pi-\arccos{\left(\frac{\beta}{DLS}\right)}$$
+
+The difficulty is that the published end attitude $(I_2,A_2)$ is canonical, whereas the actual raw trajectory may have crossed $0$ or $\pi$.
+For that reason, the implementation enumerates a family of raw target variants:
+
+- the canonical target itself
+- the branch corresponding to a crossing of $0$
+- the branch corresponding to a crossing of $\pi$
+
+For each raw target variant, the code also explores the azimuth sheets:
+
+$$A_2^{raw}-A_1+2k\pi$$
+
+because the logarithmic azimuth relation is multi-sheeted. The admissible range of $k$ is not a fixed small constant; it is computed adaptively
+from the geometry and from the current search limits on `DLS`.
+
+Each candidate pair `(DLS, TF)` is validated by calling `CompleteCDTSDT`. The resulting survey is canonicalized and compared to the requested canonical `(S,I,A)`.
+The method then:
+
+- returns the best candidate as the default result
+- optionally returns all distinct exact branches through the overload that outputs a list of solutions
+
+This is important because for some configurations, especially when the raw inclination crosses $0$ or $\pi$, the canonical end `SIA` may correspond
+to more than one exact CDT branch. In that situation, the ambiguity is real and is exposed by the overload returning all valid solutions.
+
+### Inverse CDT from XYZ: `CompleteCDTXYZ`
+`CompleteCDTXYZ` solves the point-to-point inverse problem:
+
+- start position and start tangent are known
+- target Cartesian point $(X_2,Y_2,Z_2)$ is known
+- unknowns are the end abscissa, curvature and toolface of a single CDT segment
+
+The direct forward model is unique for a given triple `(toolface, curvature, length)`, so the implementation is built directly on `CompleteCDTSDT`.
+The internal optimization variables are:
+
+$$\phi=TF$$
+
+$$\eta=\ln(DLS)$$
+
+$$\ell=\ln(L)$$
+
+so that:
+
+$$DLS=e^\eta$$
+
+$$L=e^\ell$$
+
+This log-parameterization guarantees positivity of curvature and length and improves numerical conditioning over solving directly in `(TF,DLS,L)`.
+
+The residual minimized by the solver is the normalized position mismatch:
+
+$$r(\phi,\eta,\ell)=\frac{1}{s}\begin{bmatrix}X(\phi,\eta,\ell)-X_2\\Y(\phi,\eta,\ell)-Y_2\\Z(\phi,\eta,\ell)-Z_2\end{bmatrix}$$
+
+with
+
+$$s=\max{(\|P_2-P_1\|,1)}$$
+
+The default local solver is a damped least-squares method using finite-difference derivatives of `CompleteCDTSDT`. A Nelder-Mead fallback is also used
+for difficult cases where the Jacobian-based solve stalls.
+
+The most important implementation detail is the seed generation. The inverse problem is nonlinear and may admit several branches, so the code does not rely on a single initial guess.
+Instead it builds a seed family from:
+
+- the minimum-curvature / circular-arc inverse `CompleteCAXYZ`
+- the corresponding CA-derived CDT curvature and toolface
+- opposite-toolface seeds `TF + \pi`
+- quarter-turn seeds `TF \pm \pi/2`
+- small neighborhoods around those angles
+- endpoint-derived seeds obtained by converting plausible end `SIA` attitudes back into local CDT parameters
+- mirrored endpoint-attitude variants
+- special zero-crossing seeds for low-inclination cases where the raw trajectory is expected to cross $I=0$
+
+Each seed is refined against `CompleteCDTSDT`, and all distinct acceptable solutions can be returned through the overload that outputs a list of solutions.
+The default overload returns the best-ranked branch.
+
+This branch generation is necessary because, unlike the direct `SDT` problem, the inverse `XYZ` problem is not guaranteed to be single-valued. Different
+triples `(TF,DLS,L)` may lead to the same target point, or to very similar points, especially for long segments, low inclinations and trajectories crossing the canonical inclination boundaries.
+
+In summary:
+
+- `CompleteCDTSDT` is the unique forward CDT propagator
+- `CompleteCDTSIA` is a partially multi-valued inverse because canonical end `SIA` can hide raw crossing branches
+- `CompleteCDTXYZ` is a genuinely nonlinear inverse solved numerically against the unique forward model `CompleteCDTSDT`
 
 # A Plain Trajectory: `SurveyList`
 The class `SurveyList` represents a plain trajectory, i.e., a list of `Survey`. It is sub-class of `List<Survey>`. There is a `Calculate` method to 
