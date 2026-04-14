@@ -19,10 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OSDC.DotnetLibraries.General.Common\OSDC.DotnetLibraries.General.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="LICENSE">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

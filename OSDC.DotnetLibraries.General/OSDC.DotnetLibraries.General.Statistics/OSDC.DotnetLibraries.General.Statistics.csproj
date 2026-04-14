@@ -22,8 +22,4 @@
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OSDC.DotnetLibraries.General.Math\OSDC.DotnetLibraries.General.Math.csproj" />
-  </ItemGroup>
-
 </Project>
