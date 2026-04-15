@@ -1,4 +1,5 @@
 using MathNet.Numerics.Integration;
+using MathNet.Numerics.LinearAlgebra;
 using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 
@@ -213,6 +214,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public double? VerticalSection { get; set; } = null;
         /// <summary>
+        /// gets or sets a possible annotation for the survey point
+        /// </summary>
+        public string? Annotation { get; set; } = null;
+        /// <summary>
         /// Default constructor
         /// </summary>
         public SurveyPoint() : base()
@@ -231,6 +236,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 BUR = src.BUR;
                 TUR = src.TUR;
                 VerticalSection = src.VerticalSection;
+                Annotation = src.Annotation;
             }
         }
         /// <summary>
@@ -322,16 +328,39 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return false;
             }
         }
+        public static bool InterpolateAtAbscissa<A>(List<A> surveyList, double MD, SurveyPoint interpolatedPoint, TrajectoryCalculationType calculationMethod) where A : SurveyPoint
+        {
+            if (interpolatedPoint == null ||
+                Numeric.IsUndefined(MD) ||
+                surveyList.Count < 2 ||
+                Numeric.LT(MD, surveyList.First<A>().MD) ||
+                Numeric.GT(MD, surveyList.Last<A>().MD))
+            {
+                return false;
+            }
+            else
+            {
+                for (int i = 1; i < surveyList.Count; i++)
+                {
+                    if (Numeric.GE(MD, surveyList[i - 1]?.MD) && Numeric.LE(MD, surveyList[i]?.MD))
+                    {
+                        return surveyList[i - 1].InterpolateAtAbscissa(surveyList[i], MD, interpolatedPoint, calculationMethod);
+                    }
+                }
+                return false;
+            }
+        }
         /// <summary>
         /// Return an interpolated SurveyList. The interpolation step is passed in argument. In addition
         /// interpolations are made at the abscissas given in a list. The interpolation uses the minimum curvature method.
         /// </summary>
         /// <param name="mdStep"></param>
+        /// <param name="referenceDepth"></param>
         /// <param name="abscissaList"></param>
         /// <returns></returns>
-        public static List<SurveyPoint>? Interpolate<A>(List<A> surveyList, double mdStep, List<double>? abscissaList = null) where A : SurveyPoint
+        public static List<SurveyPoint>? Interpolate<A>(List<A> surveyList, double? mdStep, double? referenceDepth = null, List<(double, string)>? abscissaList = null) where A : SurveyPoint
         {
-            return Interpolate(surveyList, mdStep, TrajectoryCalculationType.MinimumCurvatureMethod, null, abscissaList);
+            return Interpolate(surveyList, mdStep, referenceDepth, TrajectoryCalculationType.MinimumCurvatureMethod, null, abscissaList);
         }
         /// <summary>
         /// Return an interpolated SurveyList. The interpolation step is passed in argument. In addition
@@ -340,58 +369,70 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// a prescribed threshold. The interpolation uses the selected calculation method.
         /// </summary>
         /// <param name="mdStep"></param>
+        /// <param name="referenceDepth"></param>
         /// <param name="calculationMethod"></param>
         /// <param name="maxChordMidArcDistance"></param>
         /// <param name="abscissaList"></param>
         /// <returns></returns>
-        public static List<SurveyPoint>? Interpolate<A>(List<A> surveyList, double mdStep, TrajectoryCalculationType calculationMethod, double? maxChordMidArcDistance, List<double>? abscissaList = null) where A : SurveyPoint
+        public static List<SurveyPoint>? Interpolate<A>(List<A> surveyList, double? mdStep, double? referenceDepth, TrajectoryCalculationType calculationMethod, double? maxChordMidArcDistance, List<(double, string)>? abscissaList = null) where A : SurveyPoint
         {
             if (surveyList is { Count: > 1 } &&
-                Numeric.IsDefined(mdStep) &&
-                Numeric.GT(mdStep, 0) &&
                 surveyList[0].MD is { } md0 &&
                 surveyList.Last<SurveyPoint>().MD is { } mdf)
             {
-                List<double> abscissaFilteredList = [];
+                double step = mdStep ?? double.NaN;
+                bool useStepInterpolation = Numeric.IsDefined(step) &&
+                    Numeric.GT(step, 0);
+                double referenceDepthValue = referenceDepth ?? md0;
+
+                List<(double Abscissa, string? Annotation)> targetAbscissas = [];
                 if (abscissaList != null)
                 {
-                    foreach (double s in abscissaList)
+                    foreach ((double s, string annotation) in abscissaList)
                     {
                         if (Numeric.GE(s, md0) && Numeric.LE(s, mdf))
                         {
-                            abscissaFilteredList.Add(s);
+                            targetAbscissas.Add((s, annotation));
                         }
                     }
                 }
-                List<double> targetAbscissas = [md0];
-                for (double s = md0 + mdStep; Numeric.LT(s, mdf); s += mdStep)
+
+                if (useStepInterpolation)
                 {
-                    targetAbscissas.Add(s);
+                    double nStart = System.Math.Ceiling((md0 - referenceDepthValue) / step);
+                    double nEnd = System.Math.Floor((mdf - referenceDepthValue) / step);
+                    for (double n = nStart; Numeric.LE(n, nEnd); n += 1.0)
+                    {
+                        double s = referenceDepthValue + n * step;
+                        if (Numeric.GE(s, md0) && Numeric.LE(s, mdf))
+                        {
+                            targetAbscissas.Add((s, null));
+                        }
+                    }
                 }
-                targetAbscissas.Add(mdf);
-                targetAbscissas.AddRange(abscissaFilteredList);
+
+                if (targetAbscissas.Count == 0)
+                {
+                    return null;
+                }
+
                 targetAbscissas.Sort();
 
-                List<double> uniqueAbscissas = [];
-                foreach (double s in targetAbscissas)
+                List<(double Abscissa, string? Annotation)> uniqueAbscissas = [];
+                foreach ((double s, string? annotation) in targetAbscissas)
                 {
-                    if (uniqueAbscissas.Count == 0 || !Numeric.EQ(uniqueAbscissas.Last(), s))
+                    if (uniqueAbscissas.Count == 0 || !Numeric.EQ(uniqueAbscissas.Last().Abscissa, s))
                     {
-                        uniqueAbscissas.Add(s);
+                        uniqueAbscissas.Add((s, annotation));
+                    }
+                    else if (!string.IsNullOrEmpty(annotation))
+                    {
+                        uniqueAbscissas[^1] = (uniqueAbscissas[^1].Abscissa, annotation);
                     }
                 }
 
                 SurveyPoint? CreatePointAtAbscissa(double abscissa)
                 {
-                    if (Numeric.EQ(abscissa, md0))
-                    {
-                        return surveyList[0];
-                    }
-                    if (Numeric.EQ(abscissa, mdf))
-                    {
-                        return surveyList.Last();
-                    }
-
                     SurveyPoint sp = new();
                     return InterpolateAtAbscissa(surveyList, abscissa, sp, calculationMethod) ? sp : null;
                 }
@@ -459,12 +500,16 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 }
 
                 List<SurveyPoint> basePoints = [];
-                foreach (double s in uniqueAbscissas)
+                foreach ((double s, string? annotation) in uniqueAbscissas)
                 {
                     SurveyPoint? point = CreatePointAtAbscissa(s);
                     if (point == null)
                     {
                         return null;
+                    }
+                    if (!string.IsNullOrEmpty(annotation))
+                    {
+                        point.Annotation = annotation;
                     }
                     if (basePoints.Count == 0 || point.MD == null || basePoints.Last().MD == null || !Numeric.EQ(point.MD, basePoints.Last().MD))
                     {
@@ -550,6 +595,31 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         }
         protected void CalculateCurvaturesToolfaceVerticalSection(SurveyPoint next, TrajectoryCalculationType calculationMethod = TrajectoryCalculationType.MinimumCurvatureMethod)
         {
+            if (Abscissa != null &&
+                Inclination != null &&
+                next.Abscissa != null &&
+                next.Inclination != null)
+            {
+                double dm = next.Abscissa.Value - Abscissa.Value;
+                if (!Numeric.EQ(dm, 0.0) &&
+                    (Numeric.EQ(Inclination.Value, 0.0) ||
+                     Numeric.EQ(Inclination.Value, Numeric.PI) ||
+                     Numeric.EQ(next.Inclination.Value, 0.0) ||
+                     Numeric.EQ(next.Inclination.Value, Numeric.PI)))
+                {
+                    next.BUR = (next.Inclination.Value - Inclination.Value) / dm;
+                    next.TUR = 0.0;
+                    next.Curvature = System.Math.Abs(next.BUR.Value);
+                    next.Toolface = Numeric.GE(next.BUR.Value, 0.0) ? 0.0 : Numeric.PI;
+
+                    if (VerticalSection is not null && X is not null && Y is not null && next.X is not null && next.Y is not null)
+                    {
+                        next.VerticalSection = VerticalSection + Math.Sqrt((X.Value - next.X.Value) * (X.Value - next.X.Value) + (Y.Value - next.Y.Value) * (Y.Value - next.Y.Value));
+                    }
+                    return;
+                }
+            }
+
             CurvilinearPoint3D prev = new CurvilinearPoint3D();
             double ds = GetAdaptiveInterpolationDeltaAbscissa(next, calculationMethod);
             if (next.Abscissa is not null && next.Inclination is not null && next.Azimuth is not null && InterpolateAtAbscissa(next, next.Abscissa.Value - ds, prev, calculationMethod))
@@ -679,6 +749,24 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double a2 = next.Azimuth.Value;
             double s2 = next.Abscissa.Value;
             double dm = s2 - s1;
+
+            if (Numeric.EQ(i1, 0.0) || Numeric.EQ(i1, Numeric.PI))
+            {
+                bool ok = CompleteCASIA(next);
+                if (ok && collectSolutions)
+                {
+                    solutions.Add(new SurveyPoint()
+                    {
+                        X = next.X,
+                        Y = next.Y,
+                        Z = next.Z,
+                        Abscissa = next.Abscissa,
+                        Inclination = next.Inclination,
+                        Azimuth = next.Azimuth
+                    });
+                }
+                return ok;
+            }
 
             if (Numeric.EQ(dm, 0))
             {
@@ -821,13 +909,27 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 {
                     double deltaCandidate = deltaAz + 2.0 * Numeric.PI * k;
                     double dls;
+                    double[]? forcedTfCandidates = null;
                     if (Numeric.EQ(logTerm, 0.0))
                     {
-                        if (!Numeric.EQ(deltaCandidate, 0.0))
+                        if (Numeric.EQ(deltaCandidate, 0.0))
+                        {
+                            dls = System.Math.Abs(bur);
+                        }
+                        else if (Numeric.EQ(bur, 0.0))
+                        {
+                            double sinI1 = System.Math.Sin(i1);
+                            if (Numeric.EQ(sinI1, 0.0) || Numeric.EQ(dm, 0.0))
+                            {
+                                continue;
+                            }
+                            dls = System.Math.Abs(deltaCandidate * sinI1 / dm);
+                            forcedTfCandidates = new double[] { Numeric.PI / 2.0, 3.0 * Numeric.PI / 2.0 };
+                        }
+                        else
                         {
                             continue;
                         }
-                        dls = System.Math.Abs(bur);
                     }
                     else
                     {
@@ -844,9 +946,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         ? 1.0
                         : System.Math.Max(-1.0, System.Math.Min(1.0, bur / dls));
                     double tf0 = System.Math.Acos(ratioClamped);
-                    double[] tfCandidates = Numeric.EQ(tf0, 0.0) || Numeric.EQ(tf0, Numeric.PI)
+                    double[] tfCandidates = forcedTfCandidates ?? (Numeric.EQ(tf0, 0.0) || Numeric.EQ(tf0, Numeric.PI)
                         ? new double[] { tf0 }
-                        : new double[] { tf0, 2.0 * Numeric.PI - tf0 };
+                        : new double[] { tf0, 2.0 * Numeric.PI - tf0 });
                     foreach (double tfCandidate in tfCandidates)
                     {
                         SurveyPoint candidate = new SurveyPoint()
@@ -1727,6 +1829,31 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     Curvature = candidate.Curvature,
                     Toolface = candidate.Toolface
                 };
+            static double SolveDeltaFromChordRatio(double ratio)
+            {
+                ratio = System.Math.Max(0.0, System.Math.Min(1.0, ratio));
+                if (ratio >= 1.0 - 1e-12)
+                {
+                    return 0.0;
+                }
+
+                double lower = 0.0;
+                double upper = 2.0 * Numeric.PI - 1e-9;
+                for (int iter = 0; iter < 100; iter++)
+                {
+                    double mid = 0.5 * (lower + upper);
+                    double value = 2.0 * System.Math.Sin(0.5 * mid) / mid;
+                    if (value > ratio)
+                    {
+                        lower = mid;
+                    }
+                    else
+                    {
+                        upper = mid;
+                    }
+                }
+                return 0.5 * (lower + upper);
+            }
             void TryAddSolution(SurveyPoint candidate)
             {
                 if (!collectSolutions ||
@@ -1833,6 +1960,89 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 }
             }
 
+            bool TrySolveZeroBurSameInclination(out SurveyPoint zeroBurCandidate)
+            {
+                zeroBurCandidate = new SurveyPoint();
+                double cosI1 = System.Math.Cos(i1);
+                double sinI1 = System.Math.Sin(i1);
+                double horizontalChord = System.Math.Sqrt(dx * dx + dy * dy);
+                if (System.Math.Abs(cosI1) <= 1e-10 || System.Math.Abs(sinI1) <= 1e-10)
+                {
+                    return false;
+                }
+
+                double length = dz / cosI1;
+                if (!Numeric.GT(length, 0.0))
+                {
+                    return false;
+                }
+
+                double projectedArcLength = System.Math.Abs(sinI1 * length);
+                if (!Numeric.GT(projectedArcLength, 0.0))
+                {
+                    return false;
+                }
+
+                double ratio = horizontalChord / projectedArcLength;
+                if (!Numeric.IsDefined(ratio) || ratio > 1.0 + 1e-8)
+                {
+                    return false;
+                }
+
+                double delta = SolveDeltaFromChordRatio(ratio);
+                double bestResidual = double.PositiveInfinity;
+                SurveyPoint? best = null;
+
+                foreach (double signedDelta in new[] { delta, -delta })
+                {
+                    SurveyPoint candidate = new()
+                    {
+                        Abscissa = s1 + length,
+                        Inclination = i1,
+                        Azimuth = WrapAngle(a1 + signedDelta)
+                    };
+
+                    if (!CompleteCDTSIA(candidate))
+                    {
+                        continue;
+                    }
+                    if (candidate.X == null || candidate.Y == null || candidate.Z == null)
+                    {
+                        continue;
+                    }
+
+                    double residual =
+                        (candidate.X.Value - targetX) * (candidate.X.Value - targetX) +
+                        (candidate.Y.Value - targetY) * (candidate.Y.Value - targetY) +
+                        (candidate.Z.Value - targetZ) * (candidate.Z.Value - targetZ);
+                    if (residual < bestResidual)
+                    {
+                        bestResidual = residual;
+                        best = candidate;
+                    }
+                }
+
+                if (best == null || best.Abscissa == null || best.Inclination == null || best.Azimuth == null || bestResidual > 1e-16)
+                {
+                    return false;
+                }
+
+                zeroBurCandidate = best;
+                return true;
+            }
+
+            if (TrySolveZeroBurSameInclination(out SurveyPoint zeroBurCandidate))
+            {
+                next.Abscissa = zeroBurCandidate.Abscissa;
+                next.Inclination = zeroBurCandidate.Inclination;
+                next.Azimuth = zeroBurCandidate.Azimuth;
+                next.X = targetX;
+                next.Y = targetY;
+                next.Z = targetZ;
+                TryAddSolution(zeroBurCandidate);
+                return true;
+            }
+
             const double wLength = 1e-5;
             const double wCurvature = 1e-4;
             const double solveTol = 1e-8;
@@ -1889,6 +2099,98 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     residual = [rx, ry, rz];
                 }
                 return true;
+            }
+
+            bool TryRefineEndpointSia(SurveyPoint seed, out SurveyPoint refined, out double residualNorm2)
+            {
+                refined = new SurveyPoint();
+                residualNorm2 = double.PositiveInfinity;
+                if (seed.Abscissa == null || seed.Inclination == null || seed.Azimuth == null)
+                {
+                    return false;
+                }
+
+                double s = seed.Abscissa.Value;
+                double inc = seed.Inclination.Value;
+                double azi = WrapAngle(seed.Azimuth.Value);
+                SurveyPoint bestLocal = new();
+                double bestLocalResidual = double.PositiveInfinity;
+
+                bool EvaluateSia(double candidateS, double candidateInc, double candidateAzi, out SurveyPoint evaluated, out double[] residual)
+                {
+                    evaluated = new SurveyPoint()
+                    {
+                        Abscissa = candidateS,
+                        Inclination = candidateInc,
+                        Azimuth = WrapAngle(candidateAzi)
+                    };
+                    residual = new double[3];
+                    if (!Numeric.GT(candidateS - s1, 0.0) ||
+                        !Numeric.GT(candidateInc, 0.0) ||
+                        !Numeric.LT(candidateInc, Numeric.PI) ||
+                        !CompleteCDTSIA(evaluated) ||
+                        evaluated.X == null || evaluated.Y == null || evaluated.Z == null)
+                    {
+                        return false;
+                    }
+                    residual[0] = evaluated.X.Value - targetX;
+                    residual[1] = evaluated.Y.Value - targetY;
+                    residual[2] = evaluated.Z.Value - targetZ;
+                    return true;
+                }
+
+                for (int iter = 0; iter < 8; iter++)
+                {
+                    if (!EvaluateSia(s, inc, azi, out SurveyPoint current, out double[] residual))
+                    {
+                        break;
+                    }
+
+                    double currentResidual = residual[0] * residual[0] + residual[1] * residual[1] + residual[2] * residual[2];
+                    if (currentResidual < bestLocalResidual)
+                    {
+                        bestLocalResidual = currentResidual;
+                        bestLocal = current;
+                    }
+                    if (currentResidual <= 1e-20)
+                    {
+                        refined = current;
+                        residualNorm2 = currentResidual;
+                        return true;
+                    }
+
+                    double hs = System.Math.Max(1e-6, 1e-6 * System.Math.Max(1.0, s - s1));
+                    const double hi = 1e-6;
+                    const double ha = 1e-6;
+                    double[,] jacobian = new double[3, 3];
+
+                    if (!EvaluateSia(s + hs, inc, azi, out _, out double[] rs) ||
+                        !EvaluateSia(s, inc + hi, azi, out _, out double[] ri) ||
+                        !EvaluateSia(s, inc, azi + ha, out _, out double[] ra))
+                    {
+                        break;
+                    }
+
+                    for (int row = 0; row < 3; row++)
+                    {
+                        jacobian[row, 0] = (rs[row] - residual[row]) / hs;
+                        jacobian[row, 1] = (ri[row] - residual[row]) / hi;
+                        jacobian[row, 2] = (ra[row] - residual[row]) / ha;
+                    }
+
+                    if (!Solve3x3(jacobian, new[] { -residual[0], -residual[1], -residual[2] }, out double[] step))
+                    {
+                        break;
+                    }
+
+                    s += step[0];
+                    inc += step[1];
+                    azi = WrapAngle(azi + step[2]);
+                }
+
+                refined = bestLocal;
+                residualNorm2 = bestLocalResidual;
+                return bestLocal.Abscissa != null;
             }
 
             bool TryDerivative(double[] state, int index, double[] baseResidual, bool regularize, out double[] column)
@@ -2660,6 +2962,17 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return false;
             }
 
+            if (TryRefineEndpointSia(best, out SurveyPoint refinedBest, out double refinedResidual) &&
+                refinedBest.Abscissa != null &&
+                refinedBest.Inclination != null &&
+                refinedBest.Azimuth != null &&
+                refinedResidual < bestResidual)
+            {
+                best = refinedBest;
+                bestResidual = refinedResidual;
+                TryAddSolution(best);
+            }
+
             next.Abscissa = best.Abscissa;
             next.Inclination = best.Inclination;
             next.Azimuth = best.Azimuth;
@@ -2965,8 +3278,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             double C = Azimuth.Value - A * Math.Log(Math.Abs(Math.Tan(0.5 * Inclination.Value)));
             Func<double, double> fx = s => Math.Sin(beta * s + Inclination.Value) * Math.Cos(A * Math.Log(Math.Abs(Math.Tan(0.5 * (beta * s + Inclination.Value)))) + C);
             Func<double, double> fy = s => Math.Sin(beta * s + Inclination.Value) * Math.Sin(A * Math.Log(Math.Abs(Math.Tan(0.5 * (beta * s + Inclination.Value)))) + C);
-            next.X = SimpsonRule.IntegrateComposite(fx, 0, l, integrationCount);
-            next.Y = SimpsonRule.IntegrateComposite(fy, 0, l, integrationCount);
+            next.X = X.Value + SimpsonRule.IntegrateComposite(fx, 0, l, integrationCount);
+            next.Y = Y.Value + SimpsonRule.IntegrateComposite(fy, 0, l, integrationCount);
             next.Inclination = Inclination.Value + beta * l;
             next.Curvature = DLS;
             next.Toolface = TF;
@@ -3046,6 +3359,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 {
                     result.VerticalSection = VerticalSection + Math.Sqrt((X.Value - result.X.Value) * (X.Value - result.X.Value) + (Y.Value - result.Y.Value) * (Y.Value - result.Y.Value));
                 }
+
+                double? curvature = result.Curvature;
+                double? verticalSection = result.VerticalSection;
+                CalculateCurvaturesToolfaceVerticalSection(result, calculationMethod);
+                result.Curvature = curvature;
+                result.VerticalSection = verticalSection;
             }
             else if (calculationMethod == TrajectoryCalculationType.ConstantCurvatureAndToolfaceMethod &&
                      next is SurveyPoint nextSurvey &&

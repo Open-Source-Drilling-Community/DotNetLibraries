@@ -511,9 +511,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             List<SurveyPoint>? interpolated = SurveyPoint.Interpolate(
                 new List<SurveyPoint>() { start, end },
                 10.0,
+                null,
                 TrajectoryCalculationType.ConstantBuildAndTurnMethod,
                 null,
-                new List<double>() { 15.0 });
+                new List<(double, string)>() { (15.0, "mid") });
 
             Assert.NotNull(interpolated);
             Assert.That(interpolated!.Count, Is.EqualTo(5));
@@ -528,6 +529,90 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             Assert.That(actualAt15.Z, Is.EqualTo(expectedAt15.Z).Within(1e-8));
             Assert.That(actualAt15.Inclination, Is.EqualTo(expectedAt15.Inclination).Within(1e-8));
             Assert.That(actualAt15.Azimuth, Is.EqualTo(expectedAt15.Azimuth).Within(1e-8));
+        }
+
+        [Test]
+        public void Test15bInterpolateListPreservesSurveyProperties()
+        {
+            SurveyPoint start = new SurveyPoint()
+            {
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Abscissa = 0.0,
+                Inclination = 0.2,
+                Azimuth = 0.3,
+                VerticalSection = 0.0
+            };
+
+            SurveyPoint end = new SurveyPoint()
+            {
+                Abscissa = 30.0,
+                Inclination = 0.45,
+                Azimuth = 0.9
+            };
+
+            Assert.That(start.CompleteFromSIA(end, TrajectoryCalculationType.ConstantBuildAndTurnMethod), Is.True);
+
+            List<SurveyPoint>? interpolated = SurveyPoint.Interpolate(
+                new List<SurveyPoint>() { start, end },
+                10.0,
+                null,
+                TrajectoryCalculationType.ConstantBuildAndTurnMethod,
+                null,
+                new List<(double, string)>() { (15.0, "mid") });
+
+            Assert.That(interpolated, Is.Not.Null);
+
+            SurveyPoint expectedAt15 = new SurveyPoint();
+            Assert.That(start.InterpolateAtAbscissa(end, 15.0, expectedAt15, TrajectoryCalculationType.ConstantBuildAndTurnMethod), Is.True);
+
+            SurveyPoint actualAt15 = interpolated!.Single(sp => sp.MD == 15.0);
+            Assert.That(actualAt15.VerticalSection, Is.EqualTo(expectedAt15.VerticalSection).Within(1e-8));
+            Assert.That(actualAt15.Curvature, Is.EqualTo(expectedAt15.Curvature).Within(1e-8));
+            Assert.That(actualAt15.BUR, Is.EqualTo(expectedAt15.BUR).Within(1e-8));
+            Assert.That(actualAt15.TUR, Is.EqualTo(expectedAt15.TUR).Within(1e-8));
+        }
+
+        [Test]
+        public void Test15cInterpolateListMinimumCurvaturePreservesLocalRates()
+        {
+            SurveyPoint start = new SurveyPoint()
+            {
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Abscissa = 0.0,
+                Inclination = 0.2,
+                Azimuth = 0.3,
+                VerticalSection = 0.0
+            };
+
+            SurveyPoint end = new SurveyPoint()
+            {
+                Abscissa = 30.0,
+                Inclination = 0.45,
+                Azimuth = 0.9
+            };
+
+            Assert.That(start.CompleteFromSIA(end, TrajectoryCalculationType.MinimumCurvatureMethod), Is.True);
+
+            List<SurveyPoint>? interpolated = SurveyPoint.Interpolate(
+                new List<SurveyPoint>() { start, end },
+                10.0,
+                null,
+                TrajectoryCalculationType.MinimumCurvatureMethod,
+                null,
+                new List<(double, string)>() { (15.0, "mid") });
+
+            Assert.That(interpolated, Is.Not.Null);
+
+            SurveyPoint expectedAt15 = new SurveyPoint();
+            Assert.That(start.InterpolateAtAbscissa(end, 15.0, expectedAt15, TrajectoryCalculationType.MinimumCurvatureMethod), Is.True);
+
+            SurveyPoint actualAt15 = interpolated!.Single(sp => sp.MD == 15.0);
+            Assert.That(actualAt15.BUR, Is.EqualTo(expectedAt15.BUR).Within(1e-8));
+            Assert.That(actualAt15.TUR, Is.EqualTo(expectedAt15.TUR).Within(1e-8));
         }
 
         [Test]
@@ -555,12 +640,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             List<SurveyPoint>? coarse = SurveyPoint.Interpolate(
                 new List<SurveyPoint>() { start, end },
                 100.0,
+                null,
                 TrajectoryCalculationType.MinimumCurvatureMethod,
                 null);
 
             List<SurveyPoint>? refined = SurveyPoint.Interpolate(
                 new List<SurveyPoint>() { start, end },
                 100.0,
+                null,
                 TrajectoryCalculationType.MinimumCurvatureMethod,
                 0.01);
 
@@ -1244,6 +1331,275 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
             {
                 Assert.Pass(summary);
             }
+        }
+
+        [TestCase(0.0)]
+        [TestCase(System.Math.PI)]
+        public void Test19bCompleteCDTSIAFallsBackToCircularArcWhenStartInclinationIsSingular(double startInclination)
+        {
+            const double tolerance = 1e-8;
+
+            SurveyPoint start = new SurveyPoint()
+            {
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Abscissa = 0.0,
+                Inclination = startInclination,
+                Azimuth = 0.7
+            };
+
+            SurveyPoint expected = new SurveyPoint()
+            {
+                Abscissa = 125.0,
+                Inclination = startInclination == 0.0 ? 0.35 : System.Math.PI - 0.35,
+                Azimuth = 1.2
+            };
+            Assert.That(start.CompleteCASIA(expected), Is.True);
+
+            SurveyPoint actual = new SurveyPoint()
+            {
+                Abscissa = expected.Abscissa,
+                Inclination = expected.Inclination,
+                Azimuth = expected.Azimuth
+            };
+            bool ok = start.CompleteCDTSIA(actual, out List<SurveyPoint> solutions);
+
+            Assert.That(ok, Is.True);
+            Assert.That(solutions.Count, Is.GreaterThan(0));
+            Assert.That(actual.X, Is.Not.Null);
+            Assert.That(actual.Y, Is.Not.Null);
+            Assert.That(actual.Z, Is.Not.Null);
+            Assert.That(actual.X!.Value, Is.EqualTo(expected.X!.Value).Within(tolerance));
+            Assert.That(actual.Y!.Value, Is.EqualTo(expected.Y!.Value).Within(tolerance));
+            Assert.That(actual.Z!.Value, Is.EqualTo(expected.Z!.Value).Within(tolerance));
+            Assert.That(actual.Inclination!.Value, Is.EqualTo(expected.Inclination!.Value).Within(tolerance));
+            Assert.That(actual.Azimuth!.Value, Is.EqualTo(expected.Azimuth!.Value).Within(tolerance));
+        }
+
+        [Test]
+        public void Test19cCompleteCDTSIARoundTripForSpecificFieldCase()
+        {
+            const double tolerance = 1e-7;
+
+            static double NormalizeAngle(double angle)
+            {
+                double twoPi = 2.0 * Numeric.PI;
+                angle %= twoPi;
+                if (angle < 0.0)
+                {
+                    angle += twoPi;
+                }
+                return angle;
+            }
+
+            static double SignedAngleDifference(double angle1, double angle2)
+            {
+                double diff = NormalizeAngle(angle1) - NormalizeAngle(angle2);
+                if (diff > Numeric.PI)
+                {
+                    diff -= 2.0 * Numeric.PI;
+                }
+                else if (diff < -Numeric.PI)
+                {
+                    diff += 2.0 * Numeric.PI;
+                }
+                return diff;
+            }
+
+            static bool MatchesTargetSIA(CurvilinearPoint3D candidate, SurveyPoint target)
+                => candidate.Abscissa != null &&
+                   candidate.Inclination != null &&
+                   candidate.Azimuth != null &&
+                   System.Math.Abs(candidate.Abscissa.Value - target.Abscissa!.Value) <= tolerance &&
+                   System.Math.Abs(candidate.Inclination.Value - target.Inclination!.Value) <= tolerance &&
+                   System.Math.Abs(SignedAngleDifference(candidate.Azimuth.Value, target.Azimuth!.Value)) <= tolerance;
+
+            SurveyPoint start = new SurveyPoint()
+            {
+                Abscissa = 891.8,
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Inclination = 0.30543261909900765,
+                Azimuth = 3.1066860685499056
+            };
+
+            SurveyPoint end = new SurveyPoint()
+            {
+                Abscissa = 911.8,
+                Inclination = 0.30543261909900765,
+                Azimuth = 3.1415926535897931
+            };
+            bool MatchesTargetXYZThroughForward(CurvilinearPoint3D candidate, SurveyPoint target)
+            {
+                if (candidate.Abscissa == null || candidate.Inclination == null || candidate.Azimuth == null)
+                {
+                    return false;
+                }
+
+                SurveyPoint candidateForward = new SurveyPoint()
+                {
+                    Abscissa = candidate.Abscissa,
+                    Inclination = candidate.Inclination,
+                    Azimuth = candidate.Azimuth
+                };
+
+                if (!start.CompleteCDTSIA(candidateForward, out _))
+                {
+                    return false;
+                }
+
+                return candidateForward.X != null &&
+                       candidateForward.Y != null &&
+                       candidateForward.Z != null &&
+                       System.Math.Abs(candidateForward.X.Value - target.X!.Value) <= tolerance &&
+                       System.Math.Abs(candidateForward.Y.Value - target.Y!.Value) <= tolerance &&
+                       System.Math.Abs(candidateForward.Z.Value - target.Z!.Value) <= tolerance;
+            }
+
+            bool okForward = start.CompleteCDTSIA(end, out List<SurveyPoint> forwardSolutions);
+
+            Assert.That(okForward, Is.True);
+            Assert.That(forwardSolutions.Count, Is.GreaterThan(0));
+            Assert.That(end.X, Is.Not.Null);
+            Assert.That(end.Y, Is.Not.Null);
+            Assert.That(end.Z, Is.Not.Null);
+
+            CurvilinearPoint3D recovered = new CurvilinearPoint3D()
+            {
+                X = end.X,
+                Y = end.Y,
+                Z = end.Z
+            };
+
+            bool okInverse = start.CompleteCDTXYZ(recovered, out List<SurveyPoint> recoveredSolutions);
+
+            Assert.That(okInverse, Is.True);
+            Assert.That(
+                MatchesTargetSIA(recovered, end) ||
+                MatchesTargetXYZThroughForward(recovered, end) ||
+                recoveredSolutions.Any(candidate => MatchesTargetSIA(candidate, end) || MatchesTargetXYZThroughForward(candidate, end)),
+                Is.True,
+                "The CDT inverse did not recover a solution branch that reproduces the target XYZ for the specific field case.");
+        }
+
+        [Test]
+        public void Test19dCompleteCDTSIAAppliesStartCoordinateOffset()
+        {
+            const double tolerance = 1e-8;
+
+            SurveyPoint originStart = new SurveyPoint()
+            {
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Abscissa = 1000.0,
+                Inclination = 0.4,
+                Azimuth = 1.1
+            };
+            SurveyPoint translatedStart = new SurveyPoint()
+            {
+                X = 125.0,
+                Y = -80.0,
+                Z = 0.0,
+                Abscissa = originStart.Abscissa,
+                Inclination = originStart.Inclination,
+                Azimuth = originStart.Azimuth
+            };
+
+            SurveyPoint originEnd = new SurveyPoint()
+            {
+                Abscissa = 1040.0,
+                Inclination = 0.55,
+                Azimuth = 1.45
+            };
+            SurveyPoint translatedEnd = new SurveyPoint()
+            {
+                Abscissa = originEnd.Abscissa,
+                Inclination = originEnd.Inclination,
+                Azimuth = originEnd.Azimuth
+            };
+
+            Assert.That(originStart.CompleteCDTSIA(originEnd), Is.True);
+            Assert.That(translatedStart.CompleteCDTSIA(translatedEnd), Is.True);
+
+            Assert.That(originEnd.X, Is.Not.Null);
+            Assert.That(originEnd.Y, Is.Not.Null);
+            Assert.That(originEnd.Z, Is.Not.Null);
+            Assert.That(translatedEnd.X, Is.Not.Null);
+            Assert.That(translatedEnd.Y, Is.Not.Null);
+            Assert.That(translatedEnd.Z, Is.Not.Null);
+
+            Assert.That(translatedEnd.X!.Value - originEnd.X!.Value, Is.EqualTo(translatedStart.X!.Value - originStart.X!.Value).Within(tolerance));
+            Assert.That(translatedEnd.Y!.Value - originEnd.Y!.Value, Is.EqualTo(translatedStart.Y!.Value - originStart.Y!.Value).Within(tolerance));
+            Assert.That(translatedEnd.Z!.Value - originEnd.Z!.Value, Is.EqualTo(translatedStart.Z!.Value - originStart.Z!.Value).Within(tolerance));
+        }
+
+        [Test]
+        public void Test19eCompleteCASIASingularStartInclinationKeepsTurnRateZero()
+        {
+            const double tolerance = 1e-8;
+
+            SurveyPoint start1 = new SurveyPoint()
+            {
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Abscissa = 1000.0,
+                Inclination = 0.0,
+                Azimuth = 0.35
+            };
+            SurveyPoint start2 = new SurveyPoint()
+            {
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Abscissa = 1000.0,
+                Inclination = 0.0,
+                Azimuth = 5.4
+            };
+
+            SurveyPoint end1 = new SurveyPoint()
+            {
+                Abscissa = 1060.0,
+                Inclination = 0.42,
+                Azimuth = 2.1
+            };
+            SurveyPoint end2 = new SurveyPoint()
+            {
+                Abscissa = 1060.0,
+                Inclination = 0.42,
+                Azimuth = 2.1
+            };
+
+            double expectedDls = (end1.Inclination.Value - start1.Inclination.Value) / (end1.Abscissa.Value - start1.Abscissa.Value);
+
+            Assert.That(start1.CompleteFromSIA(end1, TrajectoryCalculationType.MinimumCurvatureMethod), Is.True);
+            Assert.That(start2.CompleteFromSIA(end2, TrajectoryCalculationType.MinimumCurvatureMethod), Is.True);
+
+            Assert.That(end1.X, Is.Not.Null);
+            Assert.That(end1.Y, Is.Not.Null);
+            Assert.That(end1.Z, Is.Not.Null);
+            Assert.That(end1.BUR, Is.Not.Null);
+            Assert.That(end1.TUR, Is.Not.Null);
+            Assert.That(end1.Curvature, Is.Not.Null);
+            Assert.That(end2.X, Is.Not.Null);
+            Assert.That(end2.Y, Is.Not.Null);
+            Assert.That(end2.Z, Is.Not.Null);
+            Assert.That(end2.BUR, Is.Not.Null);
+            Assert.That(end2.TUR, Is.Not.Null);
+            Assert.That(end2.Curvature, Is.Not.Null);
+
+            Assert.That(end1.TUR!.Value, Is.EqualTo(0.0).Within(tolerance));
+            Assert.That(end1.BUR!.Value, Is.EqualTo(expectedDls).Within(tolerance));
+            Assert.That(end1.Curvature!.Value, Is.EqualTo(expectedDls).Within(tolerance));
+            Assert.That(end2.TUR!.Value, Is.EqualTo(0.0).Within(tolerance));
+            Assert.That(end2.BUR!.Value, Is.EqualTo(expectedDls).Within(tolerance));
+            Assert.That(end2.Curvature!.Value, Is.EqualTo(expectedDls).Within(tolerance));
+            Assert.That(end2.X!.Value, Is.EqualTo(end1.X!.Value).Within(tolerance));
+            Assert.That(end2.Y!.Value, Is.EqualTo(end1.Y!.Value).Within(tolerance));
+            Assert.That(end2.Z!.Value, Is.EqualTo(end1.Z!.Value).Within(tolerance));
         }
 
         [Test]
