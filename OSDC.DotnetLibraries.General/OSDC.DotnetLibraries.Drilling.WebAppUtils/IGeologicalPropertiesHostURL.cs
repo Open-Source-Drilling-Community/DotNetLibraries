@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IGeologicalPropertiesHostURL
     {
-        public static string? GeologicalPropertiesHostURL { get; set; }
+        public string? GeologicalPropertiesHostURL { get; set; }
     }
 }

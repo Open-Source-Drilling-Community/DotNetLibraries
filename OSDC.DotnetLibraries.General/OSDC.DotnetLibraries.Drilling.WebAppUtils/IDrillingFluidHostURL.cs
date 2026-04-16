@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IDrillingFluidHostURL
     {
-        public static string? DrillingFluidHostURL { get; set; }
+        public string? DrillingFluidHostURL { get; set; }
     }
 }

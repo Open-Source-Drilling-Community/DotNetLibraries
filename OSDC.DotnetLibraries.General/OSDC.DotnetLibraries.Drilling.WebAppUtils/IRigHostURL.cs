@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IRigHostURL
     {
-        public static string? RigHostURL { get; set; }
+        public string? RigHostURL { get; set; }
     }
 }

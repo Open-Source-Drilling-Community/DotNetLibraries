@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IGeodeticDatumHostURL
     {
-        public static string? GeodeticDatumHostURL { get; set; }
+        public string? GeodeticDatumHostURL { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IGeothermalPropertiesHostURL
     {
-        public static string? GeothermalPropertiesHostURL { get; set; }
+        public string? GeothermalPropertiesHostURL { get; set; }
     }
 }

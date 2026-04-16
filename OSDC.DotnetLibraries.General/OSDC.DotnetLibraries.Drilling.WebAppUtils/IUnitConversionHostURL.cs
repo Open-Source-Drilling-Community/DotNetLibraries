@@ -8,7 +8,7 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IUnitConversionHostURL
     {
-        public static string? UnitConversionHostURL { get; set; }
+        public string? UnitConversionHostURL { get; set; }
 
     }
 }

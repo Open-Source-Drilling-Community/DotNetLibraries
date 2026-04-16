@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface ICartographicProjectionHostURL
     {
-        public static string? CartographicProjectionHostURL { get; set; }
+        public string? CartographicProjectionHostURL { get; set; }
     }
 }

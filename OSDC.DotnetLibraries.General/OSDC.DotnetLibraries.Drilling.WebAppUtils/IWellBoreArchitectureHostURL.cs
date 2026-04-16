@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IWellBoreArchitectureHostURL
     {
-        public static string? WellBoreArchitectureHostURL { get; set; }
+        public string? WellBoreArchitectureHostURL { get; set; }
     }
 }

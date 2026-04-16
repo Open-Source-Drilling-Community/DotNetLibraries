@@ -8,7 +8,7 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface IClusterHostURL
     {
-        public static string? ClusterHostURL { get; set; }
+        public string? ClusterHostURL { get; set; }
 
     }
 }

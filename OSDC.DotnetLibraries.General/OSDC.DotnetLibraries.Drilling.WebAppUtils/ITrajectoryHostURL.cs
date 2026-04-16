@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface ITrajectoryHostURL
     {
-        public static string? TrajectoryHostURL { get; set; }
+        public string? TrajectoryHostURL { get; set; }
     }
 }
