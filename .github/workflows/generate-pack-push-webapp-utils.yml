@@ -1,0 +1,76 @@
+name: Generate - Pack - Push WebAppUtils
+
+on:
+  push:
+    paths:
+      - './OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.WebAppUtils/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+          fetch-depth: 0 # use the whole commit history
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'  # specify your dotnet version
+
+      - name: Restore dependencies for all projects
+        run: dotnet restore ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.sln
+
+      # Step 1: Install GitVersion
+      - name: Install GitVersion
+        run: dotnet tool install --global GitVersion.Tool
+
+      - name: Run GitVersion
+        id: gitversion
+        run: echo "FullSemVer=$(dotnet-gitversion /output json /showvariable FullSemVer)" >> "$GITHUB_OUTPUT"
+      
+      - name: add build in version
+        id: addBuildInVersion
+        run: echo "BuildFullSemVer=$(echo ${{ steps.gitversion.outputs.FullSemVer }} | sed 's/-/-build./' )" >> "$GITHUB_OUTPUT"
+
+      - name: echo version variable
+        id: echoVersionVariable
+        run: |
+          echo "The value of FullSemVer is ${{ steps.gitversion.outputs.FullSemVer }}"
+          echo "The value of BuildFullSemVer is ${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}"
+
+      - name: set version WebAppUtils
+        id: setVersionModel
+        run: |        
+          sed -i "s|<Version>.*</Version>|<Version>${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}</Version>|" OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.WebAppUtils/OSDC.DotnetLibraries.Drilling.WebAppUtils.csproj
+
+      - name: commit and push
+        id: commitPushWithNewVersion
+        run: |
+          git add OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.WebAppUtils/*.csproj
+          git commit -m "Bump version to ${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      # Step 2: Build and package OSDC.DotnetLibraries.Drilling.WebAppUtils
+      - name: Build projects
+        run: |
+          dotnet build ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.WebAppUtils --configuration Release
+
+      # Step 3: Pack the project for NuGet
+      - name: Pack NuGet package
+        run: |
+          dotnet pack ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.WebAppUtils --configuration Release
+
+      # Step 4: Push packages to NuGet.org
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push ./OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.WebAppUtils/bin/Release/*${{ steps.addBuildInVersion.outputs.BuildFullSemVer }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

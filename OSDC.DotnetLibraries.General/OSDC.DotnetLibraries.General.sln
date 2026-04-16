@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.1.11312.151 d18.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.General.DataManagement", "OSDC.DotnetLibraries.General.DataManagement\OSDC.DotnetLibraries.General.DataManagement.csproj", "{51EE11E1-26B1-4422-B49F-2EE6E1E8EE61}"
 EndProject
@@ -75,6 +75,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Surveying.Example06", "OSDC.DotnetLibraries.Drilling.Surveying.Example06\OSDC.DotnetLibraries.Drilling.Surveying.Example06.csproj", "{8DF7F872-1E58-4F0C-B4AF-C07582EF7269}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.Statistics.UnitTest", "OSDC.DotnetLibraries.General.Statistics.UnitTest\OSDC.DotnetLibraries.General.Statistics.UnitTest.csproj", "{45C55E86-63C6-462E-8297-CCB245358CED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.WebAppUtils", "OSDC.DotnetLibraries.Drilling.WebAppUtils\OSDC.DotnetLibraries.Drilling.WebAppUtils.csproj", "{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -218,6 +220,10 @@ Global
 		{45C55E86-63C6-462E-8297-CCB245358CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45C55E86-63C6-462E-8297-CCB245358CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45C55E86-63C6-462E-8297-CCB245358CED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

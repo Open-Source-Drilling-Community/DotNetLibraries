@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>OSDC.DotnetLibraries.Drilling.WebAppUtils</Title>
+    <Authors>Eric Cayeux</Authors>
+    <Company>NORCE</Company>
+    <Description>A common place for shared functions used in web pages based on the microservice architecture used in OSDC</Description>
+    <PackageProjectUrl>https://github.com/Open-Source-Drilling-Community/DotNetLibraries/OSDC.DotnetLibraries.Drilling.WebAppUtils</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Open-Source-Drilling-Community/DotNetLibraries/OSDC.DotnetLibraries.Drilling.WebAppUtils</RepositoryUrl>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OSDC.UnitConversion.DrillingRazorMudComponents" Version="3.3.47" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

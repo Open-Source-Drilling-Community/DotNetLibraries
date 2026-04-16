@@ -2329,5 +2329,48 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest
 
             Assert.That(failures, Is.Empty, summary);
         }
+
+        [Test]
+        public void Test24InterpolateWithNullMdStepAndAdditionalDepthsOnly()
+        {
+            const double tolerance = 1e-6;
+
+            SurveyPoint start = new SurveyPoint()
+            {
+                X = 0.0,
+                Y = 0.0,
+                Z = 0.0,
+                Abscissa = 0.0,
+                Inclination = 0.0,
+                Azimuth = 0.0
+            };
+
+            SurveyPoint end = new SurveyPoint()
+            {
+                Abscissa = 100.0,
+                Inclination = 10.0 * Numeric.PI / 180.0,
+                Azimuth = 20.0 * Numeric.PI / 180.0
+            };
+
+            Assert.That(start.CompleteFromSIA(end), Is.True);
+
+            List<SurveyPoint> surveyList = [start, end];
+            List<(double, string)> requestedDepths =
+            [
+                (25.0, "A"),
+                (75.0, "B")
+            ];
+
+            List<SurveyPoint>? interpolated = SurveyPoint.Interpolate(surveyList, null, null, requestedDepths);
+
+            Assert.NotNull(interpolated);
+            Assert.That(interpolated, Has.Count.EqualTo(2));
+
+            Assert.That(interpolated![0].MD, Is.EqualTo(25.0).Within(tolerance));
+            Assert.That(interpolated[0].Annotation, Is.EqualTo("A"));
+
+            Assert.That(interpolated[1].MD, Is.EqualTo(75.0).Within(tolerance));
+            Assert.That(interpolated[1].Annotation, Is.EqualTo("B"));
+        }
     }
 }
