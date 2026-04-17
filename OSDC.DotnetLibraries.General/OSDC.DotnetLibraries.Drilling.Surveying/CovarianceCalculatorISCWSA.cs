@@ -1,3 +1,4 @@
+﻿using OSDC.DotnetLibraries.General.Math;
 ﻿using System.Text.Json;
 using static OSDC.DotnetLibraries.Drilling.Surveying.ErrorSource;
 
@@ -22,18 +23,20 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             if (surveyStationList is { } && surveyStationList.Count > 0)
             { 
                 ok = SurveyStation.CompleteSurvey(surveyStationList); // make sure that all survey stations member variables are complete
-                if (ok) {
+                if (ok) 
+                {
                     List<ISCWSAErrorAccumulator> errorSourcesAccumulator = [];
-                    // Start from i = 0 to include the first surveystation. This will typically have radius 0
-                    // TODO: deal with case i=0
-                    // Start from i = 1 to exclude the first surveystation
                     int startIdx = surveyStationsIndices is null ? 0 : surveyStationsIndices[0];
                     int endIdx = surveyStationsIndices is null ? surveyStationList.Count - 1 : surveyStationsIndices[^1];
-                    // The error at first survey station is assumed to be 0
-                    surveyStationList[startIdx].Covariance = new();
-                    // The ISCWSA error accumulator is initialized
-                    foreach (var errorSource in surveyStationList[startIdx]!.SurveyTool!.ErrorSourceList!)
-                        errorSourcesAccumulator.Add(new());
+
+                    // If the covariance of the first station is null, we need to calculate from the beginning of the list.
+                    if (surveyStationList[startIdx].Covariance == null) startIdx = 0;
+                    // The error at first survey station (at index 0) is assumed to be 0
+                    // We should only set the covariance of the first station to 0 if we are starting at the beginning of the list,
+                    // otherwise we might be overwriting a covariance that has already been calculated for a previous station.
+                    if (startIdx == 0)
+                    {
+                        surveyStationList[startIdx].Covariance ??= new SymmetricMatrix3x3();
                     for (int j = 0; j < 3; j++)
                     {
                         for (int k = 0; k < 3; k++)
@@ -41,7 +44,15 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             surveyStationList[startIdx].Covariance![j, k] = 0.0;
                         }
                     }
-                    for (int i =  1 + startIdx; i <= endIdx; i++)
+                    }
+
+                    // The ISCWSA error accumulator is initialized
+                    foreach (var errorSource in surveyStationList[startIdx]!.SurveyTool!.ErrorSourceList!)
+                        errorSourcesAccumulator.Add(new());
+
+                    // Since startIdx 0 is handled above, and since we send the previous station to the CalculateCovariance method, we need to start at index 1 here.
+                    // However, if startIdx is greater than 1, we need to start at startIdx to make sure we calculate the covariance for all stations in the list up to endIdx.
+                    for (int i = Math.Max(startIdx, 1); i <= endIdx; i++)
                     {
                         if (surveyStationList[i].SurveyTool is { } tool &&
                             tool.ErrorSourceList is { } errorSources &&
@@ -66,12 +77,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             if (!ok)
                                 throw new Exception($"Calling CalculateCovariance() failed at iteration {i}");
                         }
-                        //}
-                        //SurveyStationList[i].Uncertainty.Calculate(SurveyStationList[i], confidenceFactor, scalingFactor);
-                        //surveyList.Add(SurveyStationList[i]);
+
+                        // TODO: implement the code below?
+                        // The default of the UseUncertaintyCylinder was false in the original code. See commented code in UncertaintyEnvelope (original version of CalculateUncertaintyCylinder)
                         //if (UseUncertaintyCylinder)
                         //{
-                        //    CalculateUncertaintyCylinder(SurveyStationList[i], confidenceFactor);
+                        //    CalculateUncertaintyCylinder(surveyStationList[i], confidenceFactor);
                         //}
                     }
                 }
@@ -102,9 +113,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             {
                 double[,] drdp = new double[3, 3];
                 if (stationIdx > 0)
-                    drdp = CalculateDisplacementErrorMatrix(surveyStation, surveyStationPrev, stationIdx);
+                    drdp = CalculateDisplacementErrorMatrix(surveyStation, surveyStationPrev);
                 double[,] drdpNext = new double[3, 3];
-                drdpNext = CalculateDisplacementErrorMatrixNext(surveyStation, surveyStationNext, stationIdx);
+                drdpNext = CalculateDisplacementErrorMatrixNext(surveyStation, surveyStationNext);
                 // initializing the covariance matrix
                 surveyStation.Covariance = new();
                 for (int j = 0; j < 3; j++)
@@ -130,7 +141,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <param name="station_k"></param>
         /// <param name="station_kprev"></param>
         /// <returns></returns>
-        public static double[,] CalculateDisplacementErrorMatrix(SurveyStation station_k, SurveyStation station_kprev, int k)
+        public static double[,] CalculateDisplacementErrorMatrix(SurveyStation station_k, SurveyStation station_kprev)
         {
             // drk = the displacement between survey station k-1 and k
             double[] drk_dDepth = new double[3];
@@ -191,7 +202,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <param name="station_k"></param>
         /// <param name="station_knext"></param>
         /// <returns></returns>
-        public static double[,] CalculateDisplacementErrorMatrixNext(SurveyStation station_k, SurveyStation station_knext, int k)
+        public static double[,] CalculateDisplacementErrorMatrixNext(SurveyStation station_k, SurveyStation station_knext)
         {
             // drk = the displacement between survey station k and k+1
             double[] drk_dDepth = new double[3];

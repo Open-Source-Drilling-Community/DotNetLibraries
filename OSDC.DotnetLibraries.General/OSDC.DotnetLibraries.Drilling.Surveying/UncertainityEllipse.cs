@@ -37,9 +37,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// Discretize the ellipse of uncertainty according to its parameters
         /// The coordinates of the discretized ellipse are computed as a list of survey points
         /// </summary>
+        /// <param name="meshSectorCount"></param>
         /// <param name="zOffset">an offset along the axis of the uncertainty ellipse to position the discretized ellipse from</param>
-        /// <param name="high"></param>
-        /// <param name="low"></param>
         /// <returns></returns>
         public bool DiscretizeEllipse(int meshSectorCount, double zOffset = 0)
         {
@@ -57,8 +56,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 double cosI = System.Math.Cos(incl);
                 double sinA = System.Math.Sin(azim);
                 double cosA = System.Math.Cos(azim);
-                bool useInclAz = true;
-                bool usePhi = false;
+                bool useInclAz = true; // Original defaults were opposite here
+                bool usePhi = false; // Original defaults were opposite here
                 // Default numbering of the ellipse vertices
                 if (useInclAz)
                 {

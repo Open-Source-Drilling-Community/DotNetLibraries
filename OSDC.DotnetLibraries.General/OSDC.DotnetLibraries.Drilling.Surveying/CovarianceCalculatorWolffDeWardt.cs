@@ -23,19 +23,38 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     }
                     int startIdx = surveyStationsIndices is null ? 0 : surveyStationsIndices[0];
                     int endIdx = surveyStationsIndices is null ? surveyStationList.Count - 1 : surveyStationsIndices[^1];
-                    // The error at first survey station is assumed to be 0
-                    for (int j = 0; j < 3; j++)
+
+                    // If the covariance of the first station is null, we need to calculate from the beginning of the list.
+                    if (surveyStationList[startIdx].Covariance == null) startIdx = 0;
+                    // The error at first survey station (at index 0) is assumed to be 0
+                    // We should only set the covariance of the first station to 0 if we are starting at the beginning of the list,
+                    // otherwise we might be overwriting a covariance that has already been calculated for a previous station.
+                    if (startIdx == 0)
                     {
-                        for (int k = 0; k < 3; k++)
+                        surveyStationList[startIdx].Covariance ??= new SymmetricMatrix3x3();
+                        for (int j = 0; j < 3; j++)
                         {
-                            surveyStationList[startIdx].Covariance![j, k] = 0.0;
+                            for (int k = 0; k < 3; k++)
+                            {
+                                surveyStationList[startIdx].Covariance![j, k] = 0.0;
+                            }
                         }
                     }
-                    for (int i = 1 + startIdx; i <= endIdx; i++)
+
+                    // Since startIdx 0 is handled above, and since we send the previous station to the CalculateCovariance method, we need to start at index 1 here.
+                    // However, if startIdx is greater than 1, we need to start at startIdx to make sure we calculate the covariance for all stations in the list up to endIdx.
+                    for (int i = Math.Max(startIdx, 1); i <= endIdx; i++)
                     {
                         A = CalculateCovariance(surveyStationList[i - 1], surveyStationList[i], A);
                     }
                     ok = true;
+
+                    // TODO: implement the code below?
+                    // The default of the UseUncertaintyCylinder was false in the original code. See commented code in UncertaintyEnvelope (original version of CalculateUncertaintyCylinder)
+                    //if (UseUncertaintyCylinder)
+                    //{
+                    //    CalculateUncertaintyCylinder(surveyStationList[i], confidenceFactor);
+                    //}
                 }
             }
             return ok;

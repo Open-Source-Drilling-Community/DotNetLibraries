@@ -75,14 +75,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 MeshLongitudinalLength is double
                 ) 
             {
-                double[,] AAAAA = new double[6, 3];
-                for (int i = 0; i < AAAAA.GetLength(0); i++)
-                {
-                    for (int j = 0; j < AAAAA.GetLength(1); j++)
-                    {
-                        AAAAA[i, j] = 0.0;
-                    }
-                }
                 // If required, collect survey stations between specified depth intervals (TVD or MD)
                 List<int> surveyStationsIndices = Enumerable.Range(0, SurveyStationList.Count).ToList();
                 if (DepthTypeSelector is Func<SurveyStation, double> selector &&
@@ -225,119 +217,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             return false;
         }
 
-
-        //public List<UncertaintyEllipsoid> GetPlainUncertaintyEnvelope(double confidenceFactor, double scalingFactor, double boreholeRadius, int intermediateEllipseNumbers = 0, double? minimumDistanceMD = null)
-        //{
-        //    double[,] A = new double[6, 3];
-        //    for (int i = 0; i < A.GetLength(0); i++)
-        //    {
-        //        for (int j = 0; j < A.GetLength(1); j++)
-        //        {
-        //            A[i, j] = 0.0;
-        //        }
-        //    }
-
-        //    // Start from i = 0 to include the first surveystation. This will typically have radius 0
-        //    for (int i = 0; i < _surveyList.Count; i++)
-        //    {
-        //        if (_surveyList[i].Uncertainty == null)
-        //        {
-        //            WdWSurveyStationUncertainty wdwun = new WdWSurveyStationUncertainty();
-        //            SurveyInstrument.Model.SurveyInstrument surveyTool = new SurveyInstrument.Model.SurveyInstrument(SurveyInstrument.Model.SurveyInstrument.WdWGoodMag);
-        //            _surveyList[i].SurveyTool = surveyTool;
-        //            _surveyList[i].Uncertainty = wdwun;
-        //        }
-        //        if (((_useWdwCovariance == _surveyList[i].Uncertainty is WdWSurveyStationUncertainty && i > 0) || (_surveyList.Count > 1 && _surveyList[i].Uncertainty.Covariance[0, 0] == null)))
-        //        {
-        //            WdWSurveyStationUncertainty wdwSurveyStatoinUncertainty = (WdWSurveyStationUncertainty)_surveyList[i].Uncertainty;
-        //            A = wdwSurveyStatoinUncertainty.CalculateCovariances(_surveyList[i], _surveyList[i - 1], A);
-        //        }
-        //        if (_useWdwCovariance == _surveyList[i].Uncertainty is WdWSurveyStationUncertainty && i > 0)
-        //        {
-        //            WdWSurveyStationUncertainty wdwSurveyStatoinUncertainty = (WdWSurveyStationUncertainty)_surveyList[i].Uncertainty;
-        //            A = wdwSurveyStatoinUncertainty.CalculateCovariances(_surveyList[i], _surveyList[i - 1], A);
-        //        }
-        //        _surveyList[i].Uncertainty.Calculate(_surveyList[i], confidenceFactor, scalingFactor, boreholeRadius);
-        //    }
-
-        //    List<UncertaintyEllipsoid> uncertaintyEnvelope = new List<UncertaintyEllipsoid>();
-
-        //    for (int i = 0; i < _surveyList.Count - 1; i++)
-        //    {
-        //        UncertaintyEllipsoid uncertaintyEnvelopeEllipse = new UncertaintyEllipsoid();
-
-        //        Vector2D ellipseRadius = new Vector2D();
-        //        ellipseRadius = _surveyList[i].Uncertainty.EllipseRadius;
-        //        Vector2D ellipseRadiusNext = new Vector2D();
-        //        ellipseRadiusNext = _surveyList[i + 1].Uncertainty.EllipseRadius;
-        //        double distance = (double)_surveyList[i + 1].MdWGS84 - (double)_surveyList[i].MdWGS84;
-
-        //        uncertaintyEnvelopeEllipse.Azimuth = _surveyList[i].AzWGS84;
-        //        uncertaintyEnvelopeEllipse.Inclination = _surveyList[i].Incl;
-        //        uncertaintyEnvelopeEllipse.X = _surveyList[i].NorthOfWellHead;
-        //        uncertaintyEnvelopeEllipse.Y = _surveyList[i].EastOfWellHead;
-        //        uncertaintyEnvelopeEllipse.Z = _surveyList[i].TvdWGS84;
-        //        uncertaintyEnvelopeEllipse.MD = _surveyList[i].MdWGS84;
-        //        uncertaintyEnvelopeEllipse.EllipseRadius = ellipseRadius;
-        //        List<GlobalCoordinatePoint3D> ellipseCoordinates = GetUncertaintyEllipseCoordinates(uncertaintyEnvelopeEllipse);
-        //        uncertaintyEnvelopeEllipse.EllipseCoordinates = ellipseCoordinates;
-        //        uncertaintyEnvelope.Add(uncertaintyEnvelopeEllipse);
-
-        //        if (minimumDistanceMD != null)
-        //        {
-        //            intermediateEllipseNumbers = (int)System.Math.Ceiling(distance / (double)minimumDistanceMD);
-        //        }
-        //        for (int n = 1; n < intermediateEllipseNumbers; n++)
-        //        {
-        //            Vector2D ellipseR = new Vector2D();
-        //            ellipseR[0] = ellipseRadius[0] + (double)n * (ellipseRadiusNext[0] - ellipseRadius[0]) / (double)intermediateEllipseNumbers;
-        //            ellipseR[1] = ellipseRadius[1] + (double)n * (ellipseRadiusNext[1] - ellipseRadius[1]) / (double)intermediateEllipseNumbers;
-
-        //            double inclination = ((double)_surveyList[i].Incl + (double)n * ((double)_surveyList[i + 1].Incl - (double)_surveyList[i].Incl) / (double)intermediateEllipseNumbers);
-        //            double azimuth = ((double)_surveyList[i].AzWGS84 + (double)n * ((double)_surveyList[i + 1].AzWGS84 - (double)_surveyList[i].AzWGS84) / (double)intermediateEllipseNumbers);
-        //            double north = (double)_surveyList[i].NorthOfWellHead + (double)n * ((double)_surveyList[i + 1].NorthOfWellHead - (double)_surveyList[i].NorthOfWellHead) / (double)intermediateEllipseNumbers;
-        //            double east = (double)_surveyList[i].EastOfWellHead + (double)n * ((double)_surveyList[i + 1].EastOfWellHead - (double)_surveyList[i].EastOfWellHead) / (double)intermediateEllipseNumbers;
-        //            double tvd = (double)_surveyList[i].TvdWGS84 + (double)n * ((double)_surveyList[i + 1].TvdWGS84 - (double)_surveyList[i].TvdWGS84) / (double)intermediateEllipseNumbers;
-        //            double md = (double)_surveyList[i].MdWGS84 + (double)n * ((double)_surveyList[i + 1].MdWGS84 - (double)_surveyList[i].MdWGS84) / (double)intermediateEllipseNumbers;
-        //            double perpendicularDirection = _surveyList[i].Uncertainty.PerpendicularDirection + (double)n * (_surveyList[i + 1].Uncertainty.PerpendicularDirection - _surveyList[i + 1].Uncertainty.PerpendicularDirection) / (double)intermediateEllipseNumbers;
-
-        //            UncertaintyEllipsoid uncertaintyEnvelopeEllipseInter = new UncertaintyEllipsoid();
-        //            uncertaintyEnvelopeEllipseInter.Azimuth = azimuth;
-        //            uncertaintyEnvelopeEllipseInter.Inclination = inclination;
-        //            uncertaintyEnvelopeEllipseInter.X = north;
-        //            uncertaintyEnvelopeEllipseInter.Y = east;
-        //            uncertaintyEnvelopeEllipseInter.Z = tvd;
-        //            uncertaintyEnvelopeEllipseInter.MD = md;
-        //            uncertaintyEnvelopeEllipseInter.EllipseRadius = ellipseR;
-
-        //            uncertaintyEnvelopeEllipseInter.CrossSectionOrientation = perpendicularDirection;
-
-        //            List<GlobalCoordinatePoint3D> ellipseCoordinatesInter = GetUncertaintyEllipseCoordinates(uncertaintyEnvelopeEllipseInter);
-        //            uncertaintyEnvelopeEllipseInter.EllipseCoordinates = ellipseCoordinatesInter;
-        //            uncertaintyEnvelope.Add(uncertaintyEnvelopeEllipseInter);
-        //        }
-
-        //        if (i == _surveyList.Count - 2)
-        //        {
-        //            uncertaintyEnvelopeEllipse = new UncertaintyEllipsoid();
-        //            //Vector2D ellipseRadius = new Vector2D();
-        //            ellipseRadius = _surveyList[_surveyList.Count - 1].Uncertainty.EllipseRadius;
-
-        //            uncertaintyEnvelopeEllipse.Azimuth = _surveyList[_surveyList.Count - 1].AzWGS84;
-        //            uncertaintyEnvelopeEllipse.Inclination = _surveyList[_surveyList.Count - 1].Incl;
-        //            uncertaintyEnvelopeEllipse.X = _surveyList[_surveyList.Count - 1].NorthOfWellHead;
-        //            uncertaintyEnvelopeEllipse.Y = _surveyList[_surveyList.Count - 1].EastOfWellHead;
-        //            uncertaintyEnvelopeEllipse.Z = _surveyList[_surveyList.Count - 1].TvdWGS84;
-        //            uncertaintyEnvelopeEllipse.MD = _surveyList[_surveyList.Count - 1].MdWGS84;
-        //            uncertaintyEnvelopeEllipse.EllipseRadius = ellipseRadius;
-        //            ellipseCoordinates = GetUncertaintyEllipseCoordinates(uncertaintyEnvelopeEllipse);
-        //            uncertaintyEnvelopeEllipse.EllipseCoordinates = ellipseCoordinates;
-        //            uncertaintyEnvelope.Add(uncertaintyEnvelopeEllipse);
-        //        }
-        //    }
-        //    UncertaintyEnvelope = uncertaintyEnvelope;
-        //    return uncertaintyEnvelope;
-        //}
 
         //private void CalculateUncertaintyCylinder(SurveyStation surveyStation, double confidenceFactor)
         //{
