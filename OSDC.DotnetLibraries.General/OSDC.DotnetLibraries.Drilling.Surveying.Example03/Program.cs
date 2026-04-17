@@ -25,7 +25,7 @@ namespace DrillingProperties
             {
                 Console.WriteLine("Calculated Trajectory");
                 PrintTrajectory(traj);
-                List<SurveyPoint> interpolatedTraj = SurveyPoint.Interpolate(traj, 10.0, new List<double>() { 229.0- groundLevel });
+                List<SurveyPoint> interpolatedTraj = SurveyPoint.Interpolate(traj, 10.0, null, new List<(double, string)>() { (229.0 - groundLevel, "target") });
                 if (interpolatedTraj != null)
                 {
                     Console.WriteLine("Interpolated Trajectory");
