@@ -297,7 +297,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
             else
             {
-                int last = ChiSquare3D.GetLength(1) - 1;
+                int last = ChiSquare3D.GetLength(0) - 1;
                 if (chiSquare3D < ChiSquare3D[0].ChiSquare)
                 {
                     double factor = (chiSquare3D - ChiSquare3D[0].ChiSquare) / (ChiSquare3D[1].ChiSquare - ChiSquare3D[0].ChiSquare);
@@ -336,7 +336,7 @@ namespace OSDC.DotnetLibraries.General.Statistics
             }
             else
             {
-                int last = ChiSquare3D.GetLength(1) - 1;
+                int last = ChiSquare3D.GetLength(0) - 1;
                 if (probability < ChiSquare3D[0].Probability)
                 {
                     double factor = (probability - ChiSquare3D[0].Probability) / (ChiSquare3D[1].Probability - ChiSquare3D[0].Probability);
