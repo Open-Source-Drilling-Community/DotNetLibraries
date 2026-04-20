@@ -52,127 +52,88 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 EllipseRadii[0] is double semiMajorAxis &&
                 EllipseRadii[1] is double semiMinorAxis)
             {
-                double sinI = System.Math.Sin(incl);
-                double cosI = System.Math.Cos(incl);
-                double sinA = System.Math.Sin(azim);
-                double cosA = System.Math.Cos(azim);
-                bool useInclAz = true; // Original defaults were opposite here
-                bool usePhi = false; // Original defaults were opposite here
+                // Initialize ellipse bounding box to ellipse center
+                BoundingBox = new(X, Y, Z, X, Y, Z);
+
+                Matrix3x3 Rz = new();
+                Rz.RotZAssign(azim);
+                Matrix3x3 Ry = new();
+                Ry.RotYAssign(incl);
+                Matrix3x3 R0 = (Matrix3x3)Rz.Multiply(Ry);
+
+                //double sinI = System.Math.Sin(incl);
+                //double cosI = System.Math.Cos(incl);
+                //double sinA = System.Math.Sin(azim);
+                //double cosA = System.Math.Cos(azim);
+                
+                // Use original boolean settings, with usePhi = true
+                bool useInclAz = false;
+                bool usePhi = true;
+                
+                IMatrix? R = null;
                 // Default numbering of the ellipse vertices
                 if (useInclAz)
                 {
-                        //crossSectionMeshDensity = (int)Numeric.Max(Numeric.Max(EllipseRadii[0], EllipseRadii[1]), crossSectionMeshDensity);
-                        Matrix3x3 Rz = new();
-                    Rz.RotZAssign(azim);
-                        Matrix3x3 Ry = new();
-                    Ry.RotYAssign(incl);
-                        IMatrix R = Rz.Multiply(Ry);
-
-                        if (R != null &&
-                            R[0, 0] is double r00 &&
-                            R[0, 1] is double r01 &&
-                            R[0, 2] is double r02 &&
-                            R[1, 0] is double r10 &&
-                            R[1, 1] is double r11 &&
-                            R[1, 2] is double r12 &&
-                            R[2, 0] is double r20 &&
-                            R[2, 1] is double r21 &&
-                            R[2, 2] is double r22
-                            )
-                    {
-                        // Initialize ellipse bounding box to ellipse center
-                        BoundingBox = new(X, Y, Z, X, Y, Z);
-                            for (int j = 0; j <= meshSectorCount; j++)
-                            {
-                                double phi = (double)j * 2.0 * Math.PI / (double)meshSectorCount;
-                                double xCyl = semiMajorAxis * System.Math.Cos(phi);
-                                double yCyl = semiMinorAxis * System.Math.Sin(phi);
-                                double zCyl = zOffset;
-                                //double xNEH = cosI * cosA * xCyl - sinA * yCyl + sinI * cosA * zCyl;
-                                //double yNEH = cosI * sinA * xCyl + cosA * yCyl + sinI * sinA * zCyl;
-                                //double zNEH = -sinI * xCyl + cosI * zCyl;
-                                double xNEH = r00 * xCyl + r01 * yCyl + r02 * zCyl;
-                                double yNEH = r10 * xCyl + r11 * yCyl + r12 * zCyl;
-                                double zNEH = r20 * xCyl + r21 * yCyl + r22 * zCyl;
-                                xNEH += X;
-                                yNEH += Y;
-                                zNEH += Z;
-                                SurveyPoint point = new SurveyPoint() { X = xNEH, Y = yNEH, Z = zNEH };
-                                EllipseVertices ??= new();
-                                EllipseVertices.Add(point);
-                                if (xNEH < BoundingBox.MinX) BoundingBox.MinX = xNEH;
-                                if (xNEH > BoundingBox.MaxX) BoundingBox.MaxX = xNEH;
-                                if (yNEH < BoundingBox.MinY) BoundingBox.MinY = yNEH;
-                                if (yNEH > BoundingBox.MaxY) BoundingBox.MaxY = yNEH;
-                                if (zNEH < BoundingBox.MinZ) BoundingBox.MinZ = zNEH;
-                                if (zNEH > BoundingBox.MaxZ) BoundingBox.MaxZ = zNEH;
-                            }
-                    }
-                    return true;
+                    R = R0;
                 }
                 // Guided numbering of the ellipse vertices
                 else if (usePhi &&
                     EllipseOrientationAngle is double orientationAngle)
                 {
-                    //double sinP = System.Math.Sin((double)MeshAngularOffset);
-                    //double cosP = System.Math.Cos((double)MeshAngularOffset);
-
-                    Matrix3x3 Rz = new();
-                    Rz.RotZAssign((double)EllipseCenter.Azimuth);
-                    Matrix3x3 Ry = new();
-                    Ry.RotYAssign((double)EllipseCenter.Inclination);
-                    Matrix3x3 R0 = (Matrix3x3)Rz.Multiply(Ry);
                     Matrix3x3 Rz2 = new();
                     Rz2.RotZAssign((double)orientationAngle);
-                    IMatrix R = R0.Multiply(Rz2);
-                    if (R != null &&
-                            R[0, 0] is double r00 &&
-                            R[0, 1] is double r01 &&
-                            R[0, 2] is double r02 &&
-                            R[1, 0] is double r10 &&
-                            R[1, 1] is double r11 &&
-                            R[1, 2] is double r12 &&
-                            R[2, 0] is double r20 &&
-                            R[2, 1] is double r21 &&
-                            R[2, 2] is double r22
-                            )
-                    {
-                        for (int j = 0; j <= meshSectorCount; j++)
-                        {
-                            double phi = (double)j * 2.0 * Math.PI / (double)meshSectorCount;
-                            double xCyl = semiMajorAxis * System.Math.Cos(phi);
-                            double yCyl = semiMinorAxis * System.Math.Sin(phi);
-                            double zCyl = zOffset;
-                            //double xNEH0 = (cosP * cosI * cosA - sinP * sinA * cosI) * xCyl - (cosP * sinA + sinP * cosA) * yCyl + (cosP * sinI * cosA - sinP * sinA * sinA) * zCyl;
-                            //double yNEH0 = (sinP * cosI * sinA - cosP * sinA * cosI) * xCyl + (cosP * cosA - sinP * sinA) * yCyl + (cosP * sinI * sinA + sinP * cosA * sinI) * zCyl;
-                            //double zNEH0 = -sinI * xCyl + cosI * zCyl;
-                            double xNEH = r00 * xCyl + r01 * yCyl + r02 * zCyl;
-                            double yNEH = r10 * xCyl + r11 * yCyl + r12 * zCyl;
-                            double zNEH = r20 * xCyl + r21 * yCyl + r22 * zCyl;
-                            //if (MeshAngularOffset > 0.5)
-                            //{
-                            //    bool ok = false;
-                            //}
-                            xNEH += X;
-                            yNEH += Y;
-                            zNEH += Z;
-                            SurveyPoint point = new() { X = xNEH, Y = yNEH, Z = zNEH };
-                            //if (phi == 0)
-                            //{
-                            //    pointx.Add(point);
-
-                            //}
-                            //if (phi == Math.PI / 2 + Math.PI)
-                            //{
-                            //    pointy.Add(point);
-
-                            //}
-                            EllipseVertices ??= new();
-                            EllipseVertices.Add(point);
-                        }
-                    }
-                    return true;
+                    R = R0.Multiply(Rz2);
                 }
+
+                if (R != null &&
+                    R[0, 0] is double r00 &&
+                    R[0, 1] is double r01 &&
+                    R[0, 2] is double r02 &&
+                    R[1, 0] is double r10 &&
+                    R[1, 1] is double r11 &&
+                    R[1, 2] is double r12 &&
+                    R[2, 0] is double r20 &&
+                    R[2, 1] is double r21 &&
+                    R[2, 2] is double r22
+                    )
+                {
+                    for (int j = 0; j <= meshSectorCount; j++)
+                    {
+                        double phi = (double)j * 2.0 * Math.PI / (double)meshSectorCount;
+                        double xCyl = semiMajorAxis * System.Math.Cos(phi);
+                        double yCyl = semiMinorAxis * System.Math.Sin(phi);
+                        double zCyl = zOffset;
+
+                        // useInclAz
+                        //double xNEH = cosI * cosA * xCyl - sinA * yCyl + sinI * cosA * zCyl;
+                        //double yNEH = cosI * sinA * xCyl + cosA * yCyl + sinI * sinA * zCyl;
+                        //double zNEH = -sinI * xCyl + cosI * zCyl;
+
+                        // usePhi
+                        //double xNEH0 = (cosP * cosI * cosA - sinP * sinA * cosI) * xCyl - (cosP * sinA + sinP * cosA) * yCyl + (cosP * sinI * cosA - sinP * sinA * sinA) * zCyl;
+                        //double yNEH0 = (sinP * cosI * sinA - cosP * sinA * cosI) * xCyl + (cosP * cosA - sinP * sinA) * yCyl + (cosP * sinI * sinA + sinP * cosA * sinI) * zCyl;
+                        //double zNEH0 = -sinI * xCyl + cosI * zCyl;
+                        
+                        double xNEH = r00 * xCyl + r01 * yCyl + r02 * zCyl;
+                        double yNEH = r10 * xCyl + r11 * yCyl + r12 * zCyl;
+                        double zNEH = r20 * xCyl + r21 * yCyl + r22 * zCyl;
+
+                        xNEH += X;
+                        yNEH += Y;
+                        zNEH += Z;
+                        
+                        SurveyPoint point = new() { X = xNEH, Y = yNEH, Z = zNEH };
+                        EllipseVertices ??= new();
+                        EllipseVertices.Add(point);
+                        if (xNEH < BoundingBox.MinX) BoundingBox.MinX = xNEH;
+                        if (xNEH > BoundingBox.MaxX) BoundingBox.MaxX = xNEH;
+                        if (yNEH < BoundingBox.MinY) BoundingBox.MinY = yNEH;
+                        if (yNEH > BoundingBox.MaxY) BoundingBox.MaxY = yNEH;
+                        if (zNEH < BoundingBox.MinZ) BoundingBox.MinZ = zNEH;
+                        if (zNEH > BoundingBox.MaxZ) BoundingBox.MaxZ = zNEH;
+                    }
+                }
+                return true;
             }
             return false;
         }
