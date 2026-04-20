@@ -13,6 +13,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 ok = SurveyStation.CompleteSurvey(surveyStationList); // make sure that all survey stations member variables are complete
                 if (ok)
                 {
+                    // Since A is not saved, it is set to 0 initially, therefore we need to start at the beginning of the list
                     double[,]? A = new double[6, 3];
                     for (int i = 0; i < A.GetLength(0); i++)
                     {
@@ -21,7 +22,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             A[i, j] = 0;
                         }
                     }
-                    int startIdx = surveyStationsIndices is null ? 0 : surveyStationsIndices[0];
+
+                    // We should always start at startIdx 0 since A is not saved, and it is used to calculate the covariance
+                    int startIdx = 0; //surveyStationsIndices is null ? 0 : surveyStationsIndices[0];
                     int endIdx = surveyStationsIndices is null ? surveyStationList.Count - 1 : surveyStationsIndices[^1];
 
                     // If the covariance of the first station is null, we need to calculate from the beginning of the list.

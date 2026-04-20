@@ -23,18 +23,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public double? ScalingFactor { get; set; } = 1.0;
         /// <summary>
-        /// The delegate function used to select the type of depth range (in TVD or MD) on which the envelope of uncertainty is computed
-        /// </summary>
-        public Func<SurveyStation, double>? DepthTypeSelector { get; set; } = null;
-        /// <summary>
-        /// The lower bound of the depth range (in TVD or MD) on which the evelope of uncertainty is computed
-        /// </summary>
-        public double? MinDepth { get; set; } = null;
-        /// <summary>
-        /// The upper bound of the depth range (in TVD or MD) on which the evelope of uncertainty is computed
-        /// </summary>
-        public double? MaxDepth { get; set; } = null;
-        /// <summary>
         /// The list of ellipsoids of uncertainty at all survey stations
         /// </summary>
         public List<UncertaintyEllipsoid>? UncertaintyEllipsoidList { get; set; }
@@ -80,10 +68,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             {
                 // If required, collect survey stations between specified depth intervals (TVD or MD)
                 List<int> surveyStationsIndices = Enumerable.Range(0, SurveyStationList.Count).ToList();
-                if (DepthTypeSelector is Func<SurveyStation, double> selector &&
-                    MinDepth is double minD &&
-                    MaxDepth is double maxD)
-                    surveyStationsIndices = (List<int>)FilterSurveyStationsInDepthInterval(DepthTypeSelector, minD, maxD);
 
                 /////////////////////////////////////////////////////////////////////////////////////////////
                 // Calculate covariance matrices at each survey station according to specified error model //
@@ -400,32 +384,5 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         //    }
         //    return isPartOf;
         //}
-
-        /// <summary>
-        /// A utility function used to filter survey stations located in a depth interval, associated to given member selector (TVD or MD).
-        ///     - a survey station is selected if it, or its predecessor, or its successor lie in the given interval
-        ///     - list ordering is preserved
-        ///     - non-contiguous survey stations intervals are kept
-        /// </summary>
-        /// <param name="stations">the list of survey stations</param>
-        /// <param name="memberSelector">the delegate function to select the queried member variable</param>
-        /// <param name="minDepth">the min depth to satisfy</param>
-        /// <param name="maxDepth">the max depth to satisfy</param>
-        /// <returns>The list of indices of the survey stations located in a given depth interval (TDV or MD)</returns>
-        private IEnumerable<int> FilterSurveyStationsInDepthInterval(
-            Func<SurveyStation, double> memberSelector,
-            double minDepth,
-            double maxDepth)
-        {
-            bool InRange(int k)
-            {
-                if (k < 0 || k >= SurveyStationList!.Count) return false;
-                double v = memberSelector(SurveyStationList![k]);
-                return v >= minDepth && v <= maxDepth;
-            }
-            for (int i = 0; i < SurveyStationList!.Count; i++)
-                if (InRange(i) || InRange(i - 1) || InRange(i + 1))
-                    yield return i; // note that cases of non-contiguous depth intervals are preserved
-        }
     }
 }
