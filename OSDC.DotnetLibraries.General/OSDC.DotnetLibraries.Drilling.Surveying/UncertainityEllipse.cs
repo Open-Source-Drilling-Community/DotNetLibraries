@@ -61,13 +61,11 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 // Default numbering of the ellipse vertices
                 if (useInclAz)
                 {
-                    if (EllipseRadii[0] != null && EllipseRadii[1] != null)
-                    {
                         //crossSectionMeshDensity = (int)Numeric.Max(Numeric.Max(EllipseRadii[0], EllipseRadii[1]), crossSectionMeshDensity);
                         Matrix3x3 Rz = new();
-                        Rz.RotZAssign((double)EllipseCenter.Azimuth);
+                    Rz.RotZAssign(azim);
                         Matrix3x3 Ry = new();
-                        Ry.RotYAssign((double)EllipseCenter.Inclination);
+                    Ry.RotYAssign(incl);
                         IMatrix R = Rz.Multiply(Ry);
 
                         if (R != null &&
@@ -81,6 +79,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             R[2, 1] is double r21 &&
                             R[2, 2] is double r22
                             )
+                    {
+                        // Initialize ellipse bounding box to ellipse center
+                        BoundingBox = new(X, Y, Z, X, Y, Z);
                             for (int j = 0; j <= meshSectorCount; j++)
                             {
                                 double phi = (double)j * 2.0 * Math.PI / (double)meshSectorCount;
@@ -99,8 +100,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                 SurveyPoint point = new SurveyPoint() { X = xNEH, Y = yNEH, Z = zNEH };
                                 EllipseVertices ??= new();
                                 EllipseVertices.Add(point);
-                                // Initialize ellipse bounding box to ellipse center
-                                BoundingBox = new(X, Y, Z, X, Y, Z);
                                 if (xNEH < BoundingBox.MinX) BoundingBox.MinX = xNEH;
                                 if (xNEH > BoundingBox.MaxX) BoundingBox.MaxX = xNEH;
                                 if (yNEH < BoundingBox.MinY) BoundingBox.MinY = yNEH;
@@ -109,6 +108,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                 if (zNEH > BoundingBox.MaxZ) BoundingBox.MaxZ = zNEH;
                             }
                     }
+                    return true;
                 }
                 // Guided numbering of the ellipse vertices
                 else if (usePhi &&

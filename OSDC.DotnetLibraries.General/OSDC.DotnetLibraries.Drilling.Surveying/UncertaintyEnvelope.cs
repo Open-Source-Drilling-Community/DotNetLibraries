@@ -51,9 +51,13 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         public int? MeshSectorCount { get; set; } = 32;
         /// <summary>
         /// The maximum length [SI] of one mesh element of the envelope of uncertainty between two consecutive survey stations
-        /// The same density is used at all survey stations
+        /// The same density is used at all survey stations - unless the MeshLongitudinalCount is specified, in which case the MeshLongitudinalLength is used instead
         /// </summary>
-        public double? MeshLongitudinalLength { get; set; } = 3;
+        public double MeshLongitudinalLength { get; set; } = 3.0;
+        /// <summary>
+        /// If the MeshLongitudinalCount is null, the MeshLongitudinalLength is used to define the number of mesh elements of the envelope of uncertainty between two consecutive survey stations
+        /// </summary>
+        public int? MeshLongitudinalCount { get; set; } = null;
         /// <summary>
         /// The maximum number of ellipses used to discretize the envelope of uncertainty
         /// </summary>
@@ -71,8 +75,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             if (SurveyStationList is { Count: >= 3 } && // 3 survey stations needed for an envelope
                 ErrorModel is { } errorModel &&
                 ConfidenceFactor is double confidenceFactor &&
-                ScalingFactor is double scalingFactor &&
-                MeshLongitudinalLength is double
+                ScalingFactor is double scalingFactor
                 ) 
             {
                 // If required, collect survey stations between specified depth intervals (TVD or MD)
@@ -108,7 +111,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             ConfidenceFactor = confidenceFactor,
                             ScalingFactor = scalingFactor,
                         };
-                        ok = uncertaintyEnvelopeEllipsoid.Calculate();
+                        ok &= uncertaintyEnvelopeEllipsoid.Calculate();
                         if (!ok) break;
                         UncertaintyEllipsoidList.Add(uncertaintyEnvelopeEllipsoid);
                     }
@@ -142,7 +145,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             // Add current ellipse
                             MeshedEllipseList.Add(ellipse);
                             double distance = mdNext - md;
-                            int meshLongitudinalCount = (int)(distance / MeshLongitudinalLength);
+                            int meshLongitudinalCount = MeshLongitudinalCount.HasValue ? MeshLongitudinalCount.Value : (int)Math.Ceiling(distance / MeshLongitudinalLength);
                             bool skipLast = false;
                             // Construct intermediate ellipses
                             for (int n = 1; n < meshLongitudinalCount; n++)
@@ -191,7 +194,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         }
                     }
                     // Finally, discretize all ellipses (at survey stations and intermediate locations)
-                    DiscretizeEllipses();
+                    ok &= DiscretizeEllipses();
                 }
             }
             return ok;

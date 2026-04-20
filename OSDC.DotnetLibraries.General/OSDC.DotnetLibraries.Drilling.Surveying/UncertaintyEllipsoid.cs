@@ -62,7 +62,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             if (EllipsoidSurveyStation is { } &&
                 EllipsoidSurveyStation.EigenValues is { } ev &&
-                EllipsoidSurveyStation.BoreholeRadius is double boreholeRadius &&
+                (EllipsoidSurveyStation.BoreholeRadius ?? 0.0) is double boreholeRadius &&
                 ev.X is double evX &&
                 ev.Y is double evY &&
                 ev.Z is double evZ &&
@@ -98,7 +98,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             if (EllipsoidSurveyStation is { } surveyStation && 
                 surveyStation.Covariance is { } cov &&
-                surveyStation.BoreholeRadius is double boreholeRadius &&
+                (surveyStation.BoreholeRadius ?? 0.0) is double boreholeRadius &&
                     cov[0, 0] is double cov00 &&
                     cov[0, 1] is double cov01 &&
                     cov[1, 1] is double cov11 &&
@@ -153,7 +153,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         public bool CalculateVerticalEllipseParameters()
         {
             if (EllipsoidSurveyStation is { } s &&
-                s.BoreholeRadius is double boreholeRadius &&
+                (s.BoreholeRadius ?? 0.0) is double boreholeRadius &&
                 s.Azimuth is double azim && 
                 s.Covariance is { } cov &&
                     cov[0, 0] is double cov00 &&
@@ -219,7 +219,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         public bool CalculatePerpendicularEllipseParameters()
         {
             if (EllipsoidSurveyStation is { } s &&
-                s.BoreholeRadius is double boreholeRadius &&
+                (s.BoreholeRadius ?? 0.0) is double boreholeRadius &&
                 s.Inclination is double incl &&
                     s.Azimuth is double azim &&
                     s.Covariance is { } cov && cov[0, 0] is double cov00 &&
