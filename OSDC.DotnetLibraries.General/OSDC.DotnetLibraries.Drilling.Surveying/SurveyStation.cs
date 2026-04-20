@@ -1,5 +1,6 @@
 ﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
+using OSDC.DotnetLibraries.General.Statistics;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
