@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="OSDC.DotnetLibraries.General.Common" Version="1.1.0" />
-    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.3.2" />
+    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.3.4" />
   </ItemGroup>
 
 </Project>
