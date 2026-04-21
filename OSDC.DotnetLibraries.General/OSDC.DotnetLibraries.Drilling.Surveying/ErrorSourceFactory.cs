@@ -1800,12 +1800,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             return src;
         }
 
-        public static ErrorSource Create_AMIL(double? startInclination = null, double? endInclination = null, double? initInclination = null, double? magnitude = null)
+        public static ErrorSource Create_AMID(double? startInclination = null, double? endInclination = null, double? initInclination = null, double? magnitude = null)
         {
             var src = new ErrorSource
             {
                 MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("f2527672-1226-45d0-ae3a-9b52591aaed8") },
-                ErrorCode = ErrorCode.MSZ,
+                ErrorCode = ErrorCode.AMID,
                 Description = "MWD: Axial Interference - SinI.SinA error",
                 Index = 28,
                 IsSystematic = true,

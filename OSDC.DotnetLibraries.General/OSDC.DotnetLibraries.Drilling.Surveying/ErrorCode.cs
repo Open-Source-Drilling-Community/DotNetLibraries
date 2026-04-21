@@ -36,7 +36,7 @@
         MSXY_TI2,
         MSXY_TI3,
         MSZ,
-        AMIL,
+        AMID,
         DEC_U,
         DEC_OS,
         DEC_OH,
