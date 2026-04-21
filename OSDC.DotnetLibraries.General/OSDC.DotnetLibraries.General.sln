@@ -74,8 +74,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.github\workflows\generate-pack-push-octree.yml = ..\.github\workflows\generate-pack-push-octree.yml
 		..\.github\workflows\generate-pack-push-statistics.yml = ..\.github\workflows\generate-pack-push-statistics.yml
 		..\.github\workflows\generate-pack-push-surveying.yml = ..\.github\workflows\generate-pack-push-surveying.yml
-		..\.github\workflows\generate-pack-push-webapp-utils.yml = ..\.github\workflows\generate-pack-push-webapp-utils.yml
-	EndProjectSection
+		..\.github\workflows\generate-pack-push-webapp-utils.yml = ..\.github\workflows\generate-pack-push-webapp-utils.yml	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Surveying.Example05", "OSDC.DotnetLibraries.Drilling.Surveying.Example05\OSDC.DotnetLibraries.Drilling.Surveying.Example05.csproj", "{B2A9837F-A8A3-424C-9DBC-48A93A459EAC}"
 EndProject
