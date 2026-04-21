@@ -1,0 +1,56 @@
+name: Publish Math NuGet
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: NuGet package version to publish, for example 1.0.0
+        required: true
+        type: string
+  push:
+    tags:
+      - 'math-v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Resolve package version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#math-v}"
+          fi
+
+          if [ -z "$VERSION" ]; then
+            echo "Package version is empty."
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Math/OSDC.DotnetLibraries.General.Math.csproj
+
+      - name: Build
+        run: dotnet build OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Math/OSDC.DotnetLibraries.General.Math.csproj --configuration Release --no-restore
+
+      - name: Pack
+        run: dotnet pack OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Math/OSDC.DotnetLibraries.General.Math.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.version }} --output ${{ github.workspace }}/artifacts
+
+      - name: Push to NuGet.org
+        run: dotnet nuget push "${{ github.workspace }}/artifacts/OSDC.DotnetLibraries.General.Math.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.0.9.6" />
+    <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.3.4" />
   </ItemGroup>
 
   <ItemGroup>
