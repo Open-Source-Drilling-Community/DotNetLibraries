@@ -67,12 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F6E6525-870A-4093-A818-B84534207E39}"
 	ProjectSection(SolutionItems) = preProject
-		..\.github\workflows\generate-pack-push-common.yml = ..\.github\workflows\generate-pack-push-common.yml
-		..\.github\workflows\generate-pack-push-datamanagement.yml = ..\.github\workflows\generate-pack-push-datamanagement.yml
 		..\.github\workflows\generate-pack-push-drilling-properties.yml = ..\.github\workflows\generate-pack-push-drilling-properties.yml
-		..\.github\workflows\generate-pack-push-math.yml = ..\.github\workflows\generate-pack-push-math.yml
-		..\.github\workflows\generate-pack-push-octree.yml = ..\.github\workflows\generate-pack-push-octree.yml
-		..\.github\workflows\generate-pack-push-statistics.yml = ..\.github\workflows\generate-pack-push-statistics.yml
 		..\.github\workflows\generate-pack-push-surveying.yml = ..\.github\workflows\generate-pack-push-surveying.yml
 		..\.github\workflows\generate-pack-push-webapp-utils.yml = ..\.github\workflows\generate-pack-push-webapp-utils.yml
 	EndProjectSection
