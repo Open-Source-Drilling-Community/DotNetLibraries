@@ -1312,7 +1312,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             var src = new ErrorSource
             {
                 MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("05cdcccf-6036-4903-8a10-45579b0cd1c0") },
-                ErrorCode = ErrorCode.ASXY_TI3S,
+                ErrorCode = ErrorCode.ASZ,
                 Description = "MWD: Z-Accelerometer Scale Factor error",
                 Index = 10,
                 IsSystematic = true,
