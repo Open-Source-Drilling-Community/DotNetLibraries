@@ -2418,7 +2418,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("8f9f9af9-5e4e-4df7-9f53-366306cc1dcc") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("99ee8d3e-3adb-498f-84af-a56045acc998") },
                 ErrorCode = ErrorCode.AXYZ_ZB,
                 Description = "Gyro 3-axis: z accelerometer bias  error",
                 Index = 37,
@@ -2473,7 +2473,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("8aeebd78-28fe-443b-933f-83d753ec52a3") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("df900d16-4df3-4e92-a7ce-af26b24c745d") },
                 ErrorCode = ErrorCode.AXYZ_SF,
                 Description = "Gyro 3-axis: accelerometer scale factor error",
                 Index = 38,
@@ -2524,7 +2524,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("6770a9a5-b184-4b13-a470-e5149c1f5082") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("896b3650-5fab-4e9f-aff2-7c3659562d49") },
                 ErrorCode = ErrorCode.AXYZ_MIS,
                 Description = "Gyro 3-axis: accelerometer misalignment error",
                 Index = 39,
@@ -4444,7 +4444,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("1b7d3e3d-4694-43a7-97ba-5952f396a1fb") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("21caeb11-f0e0-4185-822e-4e96dc5594cd") },
                 ErrorCode = ErrorCode.GXY_GD,
                 Description = "Gyro 3-axis, continuous: xy gyro drift",
                 Index = 53,
@@ -4504,7 +4504,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("f2527672-1226-45d0-ae3a-9b52591aaed8") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("55f3db0d-1ebd-459e-86e1-c8d15fa29190") },
                 ErrorCode = ErrorCode.GXY_RW,
                 Description = "Gyro 3-axis, continuous: xy gyro random walk",
                 Index = 53,
