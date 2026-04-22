@@ -666,7 +666,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("703462b6-daa1-443f-b23f-471a4917f196") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("e6dd431c-bf5b-45cf-8b67-d6551c11c562") },
                 ErrorCode = ErrorCode.XCLH,
                 Description = "Depth: Long Course Length High Side XCL",
                 Index = 35,
@@ -764,7 +764,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("31a07b36-9d62-4f49-b440-567e0a7a3b3a") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("26813f1a-2de2-4eab-b933-4ec2a81551ec") },
                 ErrorCode = ErrorCode.XCLA,
                 Description = " Depth: Long Course Length Azimuth XCL",
                 Index = 34,
@@ -880,7 +880,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("d3a8730a-6489-40ac-8215-d85515e84dcb") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("bb933384-b5f2-4a7e-82aa-5b8a644e257e") },
                 ErrorCode = ErrorCode.ABXY_TI2S,
                 Description = "MWD TF Ind: X and Y Accelerometer Bias error",
                 Index = 5,
@@ -1187,7 +1187,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("4bdf5134-e742-4ee5-a07f-4157fcec543e") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("ced5a08c-1d25-4158-8274-f91599574032") },
                 ErrorCode = ErrorCode.ASXY_TI2S,
                 Description = "MWD TF Ind: X and Y Accelerometer Scale Factor error",
                 Index = 8,
@@ -1311,7 +1311,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("05cdcccf-6036-4903-8a10-45579b0cd1c0") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("45ec5f10-0f0e-4528-a0c4-ef7261d58efd") },
                 ErrorCode = ErrorCode.ASZ,
                 Description = "MWD: Z-Accelerometer Scale Factor error",
                 Index = 10,
@@ -1864,7 +1864,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("8c0b58ed-9c3d-4379-b9a4-4456d8848af1") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("5f4407c3-07c0-4074-8b7a-56d3ac212de7") },
                 ErrorCode = ErrorCode.DEC_U,
                 Description = "MWD: Declination - Uncorrelated error",
                 Index = 18,
@@ -1913,7 +1913,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("2326af01-5fe5-4615-8ab8-5dd33cb586c8") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("d634def2-f691-4b70-aa3a-1ce76577af06") },
                 ErrorCode = ErrorCode.DEC_OS,
                 Description = "MWD: Declination - Crustal Omission SD Ref Models error",
                 Index = 19,
@@ -2011,7 +2011,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("025ac751-b194-424d-9528-6b5462d1573f") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("216ee0e3-e3a2-4c10-93f9-60eed2e93a54") },
                 ErrorCode = ErrorCode.DEC_OI,
                 Description = "MWD: Declination - Crustal Omission IFR Ref Models error",
                 Index = 21,
@@ -2109,7 +2109,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("bac97f7c-bd87-4a4c-8d74-f2aad5f9e994") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("1b6e1848-b15c-417e-a6d4-4e1ba26b388d") },
                 ErrorCode = ErrorCode.DBH_U,
                 Description = "MWD: BH-Dependent Declination - Uncorrelated error",
                 Index = 23,
@@ -2211,7 +2211,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("f10bb03e-d6e8-4bac-95c0-66dd1ffa6c7f") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("2966d61c-b831-4eb3-9e64-efd40fda5855") },
                 ErrorCode = ErrorCode.DBH_OH,
                 Description = "MWD: BH-Dependent Declination - Crustal Omission HD Ref Models  error",
                 Index = 25,
@@ -2313,7 +2313,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             var src = new ErrorSource
             {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("421e40f3-586c-41b8-bb35-8735a353f56f") },
+                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("a89b1dfb-01d3-403e-9f61-78885dd34276") },
                 ErrorCode = ErrorCode.DBHR,
                 Description = "MWD: BH-Dependent Declination - Random error",
                 Index = 27,
