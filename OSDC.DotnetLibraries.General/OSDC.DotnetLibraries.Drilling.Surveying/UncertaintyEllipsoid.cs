@@ -1,4 +1,4 @@
-﻿using OSDC.DotnetLibraries.General.Common;
+using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 using OSDC.DotnetLibraries.General.Statistics;
 
@@ -22,6 +22,18 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// The principal axes of the ellipsoid of uncertainty
         /// </summary>
         public Vector3D? EllipsoidRadii { get; set; }
+        /// <summary>
+        /// Controls whether the horizontal ellipse projection should be calculated.
+        /// </summary>
+        public bool CalculateHorizontalEllipse { get; set; } = true;
+        /// <summary>
+        /// Controls whether the vertical ellipse projection should be calculated.
+        /// </summary>
+        public bool CalculateVerticalEllipse { get; set; } = true;
+        /// <summary>
+        /// Controls whether the perpendicular ellipse projection should be calculated.
+        /// </summary>
+        public bool CalculatePerpendicularEllipse { get; set; } = true;
         /// <summary>
         /// The horizontal projection of the ellipsoid of uncertainty
         /// </summary>
@@ -77,10 +89,32 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     Y = (kScale * System.Math.Sqrt(evY) + boreholeRadius) * scalingFactor,
                     Z = (kScale * System.Math.Sqrt(evZ) + boreholeRadius) * scalingFactor
                 };
-                return
-                    CalculateHorizontalEllipseParameters() &&
-                    CalculateVerticalEllipseParameters() &&
-                    CalculatePerpendicularEllipseParameters();
+                bool ok = true;
+                if (CalculateHorizontalEllipse)
+                {
+                    ok &= CalculateHorizontalEllipseParameters();
+                }
+                else
+                {
+                    HorizontalEllipse = null;
+                }
+                if (CalculateVerticalEllipse)
+                {
+                    ok &= CalculateVerticalEllipseParameters();
+                }
+                else
+                {
+                    VerticalEllipse = null;
+                }
+                if (CalculatePerpendicularEllipse)
+                {
+                    ok &= CalculatePerpendicularEllipseParameters();
+                }
+                else
+                {
+                    PerpendicularEllipse = null;
+                }
+                return ok;
             }
             return false;
         }

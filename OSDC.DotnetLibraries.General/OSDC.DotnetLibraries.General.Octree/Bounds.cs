@@ -1,5 +1,6 @@
 ﻿using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
+using System.ComponentModel.Design;
 
 namespace OSDC.DotnetLibraries.General.Octree
 {
@@ -55,6 +56,23 @@ namespace OSDC.DotnetLibraries.General.Octree
             {
                 bounds.Copy(this);
             }
+        }
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="bounds"></param>
+        public static Bounds? Join(BoundingBox3D firstBoundingBox3D, BoundingBox3D secondBoundingBox3D)
+        {
+            if (firstBoundingBox3D != null && secondBoundingBox3D != null)
+            {
+                return new Bounds(System.Math.Min(firstBoundingBox3D.MinX, secondBoundingBox3D.MinX),
+                    System.Math.Max(firstBoundingBox3D.MaxX, secondBoundingBox3D.MaxX),
+                    System.Math.Min(firstBoundingBox3D.MinY, secondBoundingBox3D.MinY),
+                    System.Math.Max(firstBoundingBox3D.MaxY, secondBoundingBox3D.MaxY),
+                    System.Math.Min(firstBoundingBox3D.MinZ, secondBoundingBox3D.MinZ),
+                    System.Math.Max(firstBoundingBox3D.MaxZ, secondBoundingBox3D.MaxZ));
+            }
+            return null;
         }
 
         /// <summary>
@@ -204,6 +222,52 @@ namespace OSDC.DotnetLibraries.General.Octree
             {
                 // One of the corner points of otherBounds are contained in this bound or vice verca
                 return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the boundingBox3D intersects the bounds
+        /// </summary>
+        /// <param name="boundingBox3D"></param>
+        /// <returns></returns>
+        public bool Intersects(BoundingBox3D boundingBox3D)
+        {
+            if (MinX is double minX &&
+                MinY is double minY &&
+                MinZ is double minZ &&
+                MaxX is double maxX &&
+                MaxY is double maxY &&
+                MaxZ is double maxZ)
+            {
+                if (boundingBox3D != null &&
+                      (Contains(boundingBox3D.MinX, boundingBox3D.MinY, boundingBox3D.MinZ)
+                    || Contains(boundingBox3D.MaxX, boundingBox3D.MinY, boundingBox3D.MinZ)
+                    || Contains(boundingBox3D.MinX, boundingBox3D.MaxY, boundingBox3D.MinZ)
+                    || Contains(boundingBox3D.MaxX, boundingBox3D.MaxY, boundingBox3D.MinZ)
+                    || Contains(boundingBox3D.MinX, boundingBox3D.MinY, boundingBox3D.MaxZ)
+                    || Contains(boundingBox3D.MaxX, boundingBox3D.MinY, boundingBox3D.MaxZ)
+                    || Contains(boundingBox3D.MinX, boundingBox3D.MaxY, boundingBox3D.MaxZ)
+                    || Contains(boundingBox3D.MaxX, boundingBox3D.MaxY, boundingBox3D.MaxZ)
+                    || boundingBox3D.Contains(minX, minY, minZ)
+                    || boundingBox3D.Contains(maxX, minY, minZ)
+                    || boundingBox3D.Contains(minX, maxY, minZ)
+                    || boundingBox3D.Contains(maxX, maxY, minZ)
+                    || boundingBox3D.Contains(minX, minY, maxZ)
+                    || boundingBox3D.Contains(maxX, minY, maxZ)
+                    || boundingBox3D.Contains(minX, maxY, maxZ)
+                    || boundingBox3D.Contains(maxX, maxY, maxZ)))
+                {
+                    // One of the corner points of otherBounds are contained in this bound or vice verca
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {

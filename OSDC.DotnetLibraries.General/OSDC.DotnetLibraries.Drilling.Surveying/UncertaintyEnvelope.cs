@@ -27,6 +27,18 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public List<UncertaintyEllipsoid>? UncertaintyEllipsoidList { get; set; }
         /// <summary>
+        /// Controls whether the horizontal ellipse projection should be calculated for each ellipsoid.
+        /// </summary>
+        public bool CalculateHorizontalEllipse { get; set; } = true;
+        /// <summary>
+        /// Controls whether the vertical ellipse projection should be calculated for each ellipsoid.
+        /// </summary>
+        public bool CalculateVerticalEllipse { get; set; } = true;
+        /// <summary>
+        /// Controls whether the perpendicular ellipse projection should be calculated for each ellipsoid.
+        /// </summary>
+        public bool CalculatePerpendicularEllipse { get; set; } = true;
+        /// <summary>
         /// The list of meshed ellipses of uncertainty defining the envelope of uncertainty
         ///     - includes the perpendicular ellipses of uncertainty at all survey stations
         ///     - and intermediary ellipses of uncertainty interpolated between the survey stations
@@ -94,6 +106,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             EllipsoidSurveyStation = SurveyStationList[i],
                             ConfidenceFactor = confidenceFactor,
                             ScalingFactor = scalingFactor,
+                            CalculateHorizontalEllipse = CalculateHorizontalEllipse,
+                            CalculateVerticalEllipse = CalculateVerticalEllipse,
+                            CalculatePerpendicularEllipse = CalculatePerpendicularEllipse,
                         };
                         ok &= uncertaintyEnvelopeEllipsoid.Calculate();
                         if (!ok) break;
