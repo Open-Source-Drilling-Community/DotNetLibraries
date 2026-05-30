@@ -8,6 +8,6 @@ namespace OSDC.DotnetLibraries.Drilling.WebAppUtils
 {
     public interface ISurveyInstrumentHostURL
     {
-        public string? SurveyInstrumentURL { get; set; }
+        public string? SurveyInstrumentHostURL { get; set; }
     }
 }
