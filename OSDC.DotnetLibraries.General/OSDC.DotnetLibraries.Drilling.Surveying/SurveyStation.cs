@@ -58,6 +58,156 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         }
 
         /// <summary>
+        /// Interpolates a survey station at a given measured depth, including the station-level uncertainty metadata.
+        /// </summary>
+        /// <param name="surveyStationList">the ordered list of survey stations to interpolate from</param>
+        /// <param name="md">the measured depth at which to interpolate</param>
+        /// <param name="interpolatedStation">the resulting interpolated survey station</param>
+        /// <param name="calculationMethod">the trajectory calculation method to use for the geometric interpolation</param>
+        /// <returns>true if the interpolation succeeded</returns>
+        public static bool InterpolateAtAbscissa(
+            List<SurveyStation> surveyStationList,
+            double md,
+            out SurveyStation? interpolatedStation,
+            TrajectoryCalculationType calculationMethod = TrajectoryCalculationType.MinimumCurvatureMethod)
+        {
+            interpolatedStation = new SurveyStation();
+            if (!InterpolateAtAbscissa(surveyStationList, md, interpolatedStation, calculationMethod))
+            {
+                interpolatedStation = null;
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Interpolates a survey station at a given measured depth, including the station-level uncertainty metadata.
+        /// </summary>
+        /// <param name="surveyStationList">the ordered list of survey stations to interpolate from</param>
+        /// <param name="md">the measured depth at which to interpolate</param>
+        /// <param name="interpolatedStation">the resulting interpolated survey station</param>
+        /// <param name="calculationMethod">the trajectory calculation method to use for the geometric interpolation</param>
+        /// <returns>true if the interpolation succeeded</returns>
+        public static bool InterpolateAtAbscissa(
+            List<SurveyStation> surveyStationList,
+            double md,
+            SurveyStation interpolatedStation,
+            TrajectoryCalculationType calculationMethod = TrajectoryCalculationType.MinimumCurvatureMethod)
+        {
+            if (surveyStationList == null || interpolatedStation == null || surveyStationList.Count < 2 || Numeric.IsUndefined(md))
+            {
+                return false;
+            }
+
+            for (int i = 1; i < surveyStationList.Count; i++)
+            {
+                SurveyStation previous = surveyStationList[i - 1];
+                SurveyStation next = surveyStationList[i];
+                if (previous.MD is not { } previousMd || next.MD is not { } nextMd ||
+                    !Numeric.IsDefined(previousMd) || !Numeric.IsDefined(nextMd) ||
+                    !Numeric.IsBetween(md, previousMd, nextMd))
+                {
+                    continue;
+                }
+
+                if (Numeric.EQ(md, previousMd))
+                {
+                    CopySurveyStation(previous, interpolatedStation);
+                    return true;
+                }
+                if (Numeric.EQ(md, nextMd))
+                {
+                    CopySurveyStation(next, interpolatedStation);
+                    return true;
+                }
+
+                if (!previous.InterpolateAtAbscissa(next, md, interpolatedStation, calculationMethod))
+                {
+                    return false;
+                }
+
+                double ratio = (md - previousMd) / (nextMd - previousMd);
+                interpolatedStation.Covariance = InterpolateCovariance(previous.Covariance, next.Covariance, ratio);
+                interpolatedStation.Bias = InterpolateVector(previous.Bias, next.Bias, ratio);
+                interpolatedStation.BoreholeRadius = InterpolateValue(previous.BoreholeRadius, next.BoreholeRadius, ratio);
+                interpolatedStation.SurveyTool = next.SurveyTool ?? previous.SurveyTool;
+                if (interpolatedStation.Covariance != null)
+                {
+                    interpolatedStation.CalculateEigenProperties();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void CopySurveyStation(SurveyStation source, SurveyStation target)
+        {
+            SurveyStation copy = new(source);
+            target.Z = copy.Z;
+            target.Abscissa = copy.Abscissa;
+            target.Azimuth = copy.Azimuth;
+            target.Inclination = copy.Inclination;
+            target.X = copy.X;
+            target.Y = copy.Y;
+            target.Curvature = copy.Curvature;
+            target.Toolface = copy.Toolface;
+            target.BUR = copy.BUR;
+            target.TUR = copy.TUR;
+            target.Covariance = copy.Covariance;
+            target.EigenVectors = copy.EigenVectors;
+            target.EigenValues = copy.EigenValues;
+            target.Bias = copy.Bias;
+            target.SurveyTool = copy.SurveyTool;
+            target.BoreholeRadius = copy.BoreholeRadius;
+        }
+
+        private static SymmetricMatrix3x3? InterpolateCovariance(SymmetricMatrix3x3? previous, SymmetricMatrix3x3? next, double ratio)
+        {
+            if (previous == null || next == null)
+            {
+                return previous ?? next;
+            }
+
+            SymmetricMatrix3x3 covariance = new();
+            for (int row = 0; row < covariance.RowCount; row++)
+            {
+                for (int col = 0; col < covariance.ColumnCount; col++)
+                {
+                    covariance[row, col] = InterpolateValue(previous[row, col], next[row, col], ratio);
+                }
+            }
+            return covariance;
+        }
+
+        private static Vector3D? InterpolateVector(Vector3D? previous, Vector3D? next, double ratio)
+        {
+            if (previous == null || next == null)
+            {
+                return previous ?? next;
+            }
+
+            return new Vector3D
+            {
+                X = InterpolateValue(previous.X, next.X, ratio),
+                Y = InterpolateValue(previous.Y, next.Y, ratio),
+                Z = InterpolateValue(previous.Z, next.Z, ratio)
+            };
+        }
+
+        private static double? InterpolateValue(double? previous, double? next, double ratio)
+        {
+            if (previous is not { } previousValue || next is not { } nextValue)
+            {
+                return previous ?? next;
+            }
+
+            return previousValue + ratio * (nextValue - previousValue);
+        }
+
+        /// <summary>
         /// Calculates the eigen vectors and eigen values of the covariance matrix
         /// </summary>
         /// <returns>true if calculation went ok, false otherwise</returns>
