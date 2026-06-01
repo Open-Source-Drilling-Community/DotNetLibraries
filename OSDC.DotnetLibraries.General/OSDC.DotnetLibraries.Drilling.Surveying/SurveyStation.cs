@@ -156,6 +156,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             target.Toolface = copy.Toolface;
             target.BUR = copy.BUR;
             target.TUR = copy.TUR;
+            target.VerticalSection = copy.VerticalSection;
+            target.Annotation = copy.Annotation;
             target.Covariance = copy.Covariance;
             target.EigenVectors = copy.EigenVectors;
             target.EigenValues = copy.EigenValues;
