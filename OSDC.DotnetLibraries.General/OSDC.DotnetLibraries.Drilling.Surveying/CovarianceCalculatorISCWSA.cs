@@ -871,6 +871,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         errorSourcesAccumulator[i].Covariance = CovarianceI;
                     }
                 }
+                // Write the accumulated per-station total back into surveyStation.Covariance.
+                // Without this assignment the computed covarianceSum is discarded and the station
+                // keeps the zero matrix set in CalculateCovariance(), so Calculate() returns
+                // all-zero covariances (e.g. Example06 prints zeros). Compare the commented legacy
+                // line above (`//surveyStation.Uncertainty.Covariance[j, k] += CovarianceI[j, k];`).
+                for (int j = 0; j < 3; j++)
+                    for (int k = 0; k < 3; k++)
+                        surveyStation.Covariance![j, k] = covarianceSum[j, k];
                 return true;
             }
             return false;
