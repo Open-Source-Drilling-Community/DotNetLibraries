@@ -37,13 +37,15 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     if (startIdx == 0)
                     {
                         surveyStationList[startIdx].Covariance ??= new SymmetricMatrix3x3();
-                    for (int j = 0; j < 3; j++)
-                    {
-                        for (int k = 0; k < 3; k++)
+                        for (int j = 0; j < 3; j++)
                         {
-                            surveyStationList[startIdx].Covariance![j, k] = 0.0;
+                            for (int k = 0; k < 3; k++)
+                            {
+                                surveyStationList[startIdx].Covariance![j, k] = 0.0;
+                            }
                         }
-                    }
+                        surveyStationList[startIdx].CalculateEigenProperties();
+
                     }
 
                     // The ISCWSA error accumulator is initialized
@@ -125,6 +127,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         surveyStation.Covariance[j, k] = 0.0;
                     }
                 }
+
+                surveyStation.CalculateEigenProperties();
+
                 return CalculateAllCovariance(surveyStation, surveyStationPrev, surveyStationNext, drdp, drdpNext, stationIdx, errorSourcesAccumulator);
             }
             catch (Exception ex)

@@ -42,6 +42,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                 surveyStationList[startIdx].Covariance![j, k] = 0.0;
                             }
                         }
+                        surveyStationList[startIdx].CalculateEigenProperties();
                     }
 
                     // Since startIdx 0 is handled above, and since we send the previous station to the CalculateCovariance method, we need to start at index 1 here.
@@ -148,6 +149,8 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             surveyStation.Covariance[i, j] = A[0, i] * A[0, j] + A[1, i] * A[1, j] + A[2, i] * A[2, j] + A[3, i] * A[3, j] + A[4, i] * A[4, j] + A[5, i] * A[5, j] + ((i == j) ? tmp : 0.0) - A[4, i] * A[4, j];
                         }
                     }
+                    
+                    surveyStation.CalculateEigenProperties();
 
                     // apply horizontal magnetic deviations
                     surveyStation.Bias ??= new Vector3D();
