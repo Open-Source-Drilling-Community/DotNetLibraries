@@ -536,76 +536,47 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         bool continuousMode = IsContinuousMode(errorSources, inclination, errorSourcesAccumulator);
 
                         #region Case: stationary gyro
-                        // Case: stationary gyro has been initialized for too long
-                        if (IsStationary(eSource) && isInitialized &&
-                            (MD - errorSourcesAccumulator[i].InitializationMD) > minDistance &&
-                            eSource.InitInclination is double initIncl)
+                        // FIX (bug #6): the previous stationary-gyro logic dead-locked. wf_azim was
+                        // only assigned a real value inside a branch whose condition required
+                        // isInitialized==true (line "isInitialized || inc>EndInclination || continuousMode"),
+                        // but isInitialized was *only* ever set to true *inside* that very branch. For a
+                        // typical stationary tool (no continuous source, small InitInclination, large
+                        // MinDist) the condition could therefore never fire, so wf_azim stayed 0 and
+                        // every GXY term produced an identically-zero covariance contribution. Verified
+                        // empirically on Example06: all GXY terms reported dpde=[0,0,0] at every station,
+                        // so the printed (non-zero) covariance came entirely from the non-gyro terms.
+                        //
+                        // Published ISCWSA / SPE 90408 behaviour (cross-checked against welleng): a
+                        // stationary gyrocompass takes a fresh reading at every station while the
+                        // inclination is in range (inc <= EndInclination); above that the XY gyro can no
+                        // longer resolve azimuth (the weighting carries a 1/cos(inc) term that blows up),
+                        // so the last in-range weighting is held. GyroH carries that last value.
+                        //
+                        // NB: isInitialized is intentionally NOT set here — setting it flips
+                        // `allSystematic` (see top of CalculateAllCovariance) which would turn every
+                        // random source systematic, diverging from the published model. The GXY_RN
+                        // noise-reduction split (random below / systematic*NoiseRed above EndInclination)
+                        // is left as a follow-up; it needs the random/systematic accumulation to be
+                        // combined per-station.
+                        if (IsStationary(eSource) && eSource.EndInclination is double endIncl)
                         {
-                            // weighting function is evaluated at initialization inclination
-                            args =
-                            [
-                                new KeyValuePair<ParameterType, double>(ParameterType.Inclination, initIncl),
-                                new KeyValuePair<ParameterType, double>(ParameterType.Azimuth, azimuth),
-                            ];
-                            if (eSource?.WeightingFunctionAzim?.Invoke(args) is double azim_tmp)
+                            if (inclination <= endIncl)
                             {
-                                wf_azim = azim_tmp;
-                                errorSourcesAccumulator[i].GyroH = wf_azim;
-                                initializationMD = MD; // gyro re-initialization
-                            }
-                        }
-                        // Case: stationary gyro re-initialization (TODO rev Gilles 13.11.2025: not sure I understand all conditions, especially referring back to continuous mode here...)
-                        if (IsStationary(eSource!) &&
-                            (isInitialized || (!isInitialized && inclination > eSource!.EndInclination) || continuousMode) &&
-                            eSource!.InitInclination is double initIncl2)
-                        {
-                            if (false && toReInitialize) //TODO: code not reached
-                            {
-                                // weighting function is evaluated at initialization inclination
+                                // fresh stationary reading at the current station
                                 args =
                                 [
-                                    new KeyValuePair<ParameterType, double>(ParameterType.Inclination, initIncl),
+                                    new KeyValuePair<ParameterType, double>(ParameterType.Inclination, inclination),
                                     new KeyValuePair<ParameterType, double>(ParameterType.Azimuth, azimuth),
                                 ];
-                                if (eSource?.WeightingFunctionAzim?.Invoke(args) is double azim_tmp)
-                                {
-                                    wf_azim = azim_tmp;
-                                    initializationMD = MD; // gyro re-initialization
-                                }
+                                wf_azim = eSource.WeightingFunctionAzim?.Invoke(args) ?? 0.0;
                             }
                             else
                             {
+                                // out of range: hold the last in-range weighting
                                 wf_azim = errorSourcesAccumulator[i].GyroH;
                             }
-                            if (!isInitialized &&
-                                eSource.InitInclination is double initIncl3 &&
-                                (inclination < initIncl3 || inclination > eSource.EndInclination || initIncl3 < 0))
-                            {
-                                //azim = eSource.FunctionAz(inclination, azimuth); //Azimuth NB! Unsure
-                                //azim = ISCWSAErrorDataTmp[i].GyroH + (azim- ISCWSAErrorDataTmp[i].GyroH)/2;
-                                if (initIncl3 > 0)
-                                {
-                                    // weighting function is evaluated at initialization inclination
-                                    args =
-                                    [
-                                        new KeyValuePair<ParameterType, double>(ParameterType.Inclination, initIncl3),
-                                        new KeyValuePair<ParameterType, double>(ParameterType.Azimuth, azimuth),
-                                    ];
-                                    if (eSource?.WeightingFunctionAzim?.Invoke(args) is double azim_tmp)
-                                        wf_azim = azim_tmp;
-                                }
-                                if ((eSource!.ErrorCode is ErrorCode.GXY_RN || eSource.ErrorCode is ErrorCode.GXYZ_XYRN) &&
-                                    surveyStation.SurveyTool.GyroNoiseRed is double noiseRedFactor)
-                                {
-                                    wf_azim = noiseRedFactor * wf_azim;// noiseredFactor * ISCWSAErrorDataTmp[i].GyroH;
-                                }
-                                // gyro re-initialization
-                                initializationMD = MD;
-                            }
-                            isInitialized = true;
-                            errorSourcesAccumulator[i].IsInitialized = true;
+                            errorSourcesAccumulator[i].GyroH = wf_azim;
                         }
-                        errorSourcesAccumulator[i].IsInitialized = isInitialized;//New
                         #endregion
 
                         // Finalize
@@ -871,6 +842,13 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         errorSourcesAccumulator[i].Covariance = CovarianceI;
                     }
                 }
+                // FIX (ss port, 2026-06-25): write the accumulated per-station total back into
+                // surveyStation.Covariance. Upstream regression: covarianceSum was computed but never
+                // assigned (cf. commented legacy line `//surveyStation.Uncertainty.Covariance[j,k] += ...`),
+                // so Example06 printed all-zero covariance. Restores the intended behaviour.
+                for (int j = 0; j < 3; j++)
+                    for (int k = 0; k < 3; k++)
+                        surveyStation.Covariance![j, k] = covarianceSum[j, k];
                 return true;
             }
             return false;
