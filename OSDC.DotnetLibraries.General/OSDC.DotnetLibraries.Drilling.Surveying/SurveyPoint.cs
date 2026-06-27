@@ -13,8 +13,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
     }
     public class SurveyPoint : CurvilinearPoint3D
     {
-        private double? latitude_ = null;
-        private double? longitude_ = null;
         public static readonly double InterpolationDeltaAbscissa = 0.01;
         public static double CompleteCTCSDT1Step = 0.1;
         public static int CompleteCTCSDT2Count = 1000;
@@ -120,78 +118,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// synonym of Abscsissa
         /// </summary>
         public double? MD { get => base.Abscissa; set => base.Abscissa = value; }
-        /// <summary>
-        /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the equator to the latitude of this point. 
-        /// Positive in the north direction.
-        /// </summary>
-        public override double? X
-        {
-            get => base.X;
-            set
-            {
-                base.X = value;
-                UpdateX(value);
-            }
-        }
-        /// <summary>
-        /// The length of the arc on the earth (modelled as a WGS84 spheroid) from the Greenwich meridian to the longitude of this point.
-        /// Positive in the east direction.
-        /// </summary>
-        public override double? Y
-        {
-            get => base.Y;
-            set
-            {
-                base.Y = value;
-                UpdateY(value);
-            }
-        }
-        /// <summary>
-        /// synonym of Z
-        /// </summary>
-        public double? TVD { get => base.Z; set => base.Z = value; }
-        /// <summary>
-        /// Synonym of X. However, it is called Riemannian because the x-coordinate is defined in a Riemannian space
-        /// of curvature corresponding to the Earth spheroid. The RiemannianNorth is the arc length from the equator
-        /// to the latitude of the point.
-        /// </summary>
-        public double? RiemannianNorth
-        {
-            get => X; set => X = value;
-        }
-        /// <summary>
-        /// Synonym of Y. However, it is called Riemannian because the y-coordinate is defined in a Riemannian space
-        /// of curvature corresponding to the Earth spheroid. The RiemannianEast is the arc length from the Greenwich meridian
-        /// to the longitude of the point following the parallel at that latitude.
-        /// </summary>
-        public double? RiemannianEast
-        {
-            get => Y; set => Y = value;
-        }
-        /// <summary>
-        /// Latitude of the point on the WGS84 spheroid
-        /// </summary>
-        public double? Latitude
-        {
-            get { return latitude_; }
-            set
-            {
-                latitude_ = value;
-                UpdateLatitude(value);
-            }
-        }
-        /// <summary>
-        /// Longitude of the point on the WGS84 spheroid
-        /// </summary>
-        public double? Longitude
-        {
-            get { return longitude_; }
-            set
-            {
-                longitude_ = value;
-                UpdateLongitude(value);
-            }
-        }
         /// <summary>
         /// The local curvature at this Survey calculated using the minimum curvature method
         /// </summary>
@@ -3636,35 +3562,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             result.Azimuth = interpolated.Azimuth;
             return true;
         }
-        private void UpdateX(double? value)
-        {
-            if (value != null && Y != null)
-            {
-                SetLatitudeLongitude((double)value, (double)Y);
-            }
-        }
-        private void UpdateY(double? value)
-        {
-            if (value != null && X != null)
-            {
-                SetLatitudeLongitude((double)X, (double)value);
-
-            }
-        }
-        private void UpdateLatitude(double? value)
-        {
-            if (value != null && longitude_ != null)
-            {
-                SetRiemannianNorthEast((double)value, (double)longitude_);
-            }
-        }
-        private void UpdateLongitude(double? value)
-        {
-            if (value != null && latitude_ != null)
-            {
-                SetRiemannianNorthEast((double)latitude_, (double)value);
-            }
-        }
         public double? Riemannian2DDistance(double? latitude2, double? longitude2)
         {
             return Riemannian2DDistanceKarney(latitude2, longitude2);
@@ -3821,54 +3718,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             return s12;
         }
 
-        public static double LatitudeFromMeridianDistance(double s)
-        {
-            double a = Constants.EarthSemiMajorAxisWGS84;
-            double f = 1.0 / Constants.EarthInverseFlateningWGS84;
-            double e2 = 2.0 * f - f * f;
-
-            static double MeridianRadiusOfCurvature(double phi, double a, double e2)
-            {
-                double sinPhi = System.Math.Sin(phi);
-                double denom = System.Math.Pow(1.0 - e2 * sinPhi * sinPhi, 1.5);
-                return a * (1.0 - e2) / denom;
-            }
-
-            static double MeridianDistance(double phi, double a, double e2)
-            {
-                // Numerical quadrature could be used here, but for Newton
-                // it is better to replace this with a meridian arc series.
-                int n = 200;
-                double h = phi / n;
-                double sum = 0.0;
-
-                for (int i = 0; i <= n; i++)
-                {
-                    double u = i * h;
-                    double w = (i == 0 || i == n) ? 1.0 : (i % 2 == 0 ? 2.0 : 4.0);
-                    sum += w * MeridianRadiusOfCurvature(u, a, e2);
-                }
-
-                return sum * h / 3.0;
-            }
-
-            double phi = s / a; // initial guess
-
-            for (int i = 0; i < 10; i++)
-            {
-                double F = MeridianDistance(phi, a, e2) - s;
-                double dF = MeridianRadiusOfCurvature(phi, a, e2);
-                double delta = F / dF;
-                phi -= delta;
-
-                if (System.Math.Abs(delta) < 1e-14)
-                {
-                    break;
-                }
-            }
-
-            return phi;
-        }
         /// <summary>
         /// Find the minimum MD-delta between two survey points
         /// The method, using generics, applies to SurveyList and SurveyStationList as well
@@ -3908,57 +3757,6 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 }
             }
             return maxDeltaMD;
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="riemannianNorth"></param>
-        /// <param name="riemannianEast"></param>
-        public void SetLatitudeLongitude(double riemannianNorth, double riemannianEast)
-        {
-            double f = 1.0 / Constants.EarthInverseFlateningWGS84;
-            double a = Constants.EarthSemiMajorAxisWGS84;
-            double b = a * (1.0 - f);
-            double b2 = b * b;
-            double a2 = a * a;
-            double e2 = (a2 - b2) / a2;
-            double e = System.Math.Sqrt(e2);
-            double latitude = LatitudeFromMeridianDistance(riemannianNorth);
-            latitude_ = latitude;
-            double sinLat = System.Math.Sin(latitude);
-            double cosLat = System.Math.Cos(latitude);
-            double R = a * cosLat / System.Math.Sqrt(1 - e2 * sinLat * sinLat);
-            if (Numeric.EQ(R, 0))
-            {
-                longitude_ = null;
-            }
-            else
-            {
-                longitude_ = riemannianEast / R;
-            }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="latitude"></param>
-        /// <param name="longitude"></param>
-        public void SetRiemannianNorthEast(double latitude, double longitude)
-        {
-            double f = 1.0 / Constants.EarthInverseFlateningWGS84;
-            double a = Constants.EarthSemiMajorAxisWGS84;
-            double b = a * (1.0 - f);
-            double a2 = a * a;
-            double b2 = b * b;
-            double e2 = (a2 - b2) / a2;
-            double sinLat = System.Math.Sin(latitude);
-            double cosLat = System.Math.Cos(latitude);
-            double R = a * cosLat / System.Math.Sqrt(1 - e2 * sinLat * sinLat);
-            base.Y = R * longitude;
-            SurveyPoint temp = new();
-            temp.latitude_ = 0;
-            temp.longitude_ = longitude;
-            double? meridianDistance = temp.Riemannian2DDistance(latitude, longitude);
-            base.X = meridianDistance == null ? null : System.Math.Sign(latitude) * meridianDistance.Value;
         }
         /// <summary>
         /// return a SphericalPoint3D referred to a global coordinate system centered at the center of the Earth.

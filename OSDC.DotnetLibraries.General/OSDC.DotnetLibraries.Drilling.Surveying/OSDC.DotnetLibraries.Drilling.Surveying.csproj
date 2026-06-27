@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="GeographicLib.NET" Version="2.3.2" />
-    <PackageReference Include="OSDC.DotnetLibraries.Drilling.DrillingProperties" Version="10.2.3" />
+    <PackageReference Include="OSDC.DotnetLibraries.Drilling.DrillingProperties" Version="10.2.8" />
     <PackageReference Include="OSDC.DotnetLibraries.General.DataManagement" Version="2.1.1" />
   </ItemGroup>
 
