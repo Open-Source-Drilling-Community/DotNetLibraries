@@ -13,11 +13,11 @@ namespace OSDC.DotnetLibraries.General.Math
     /// </summary>
     public interface IGeodeticPoint3D
     {
-        double? LatitudeWGS84 { get; set; }
+        double? Latitude { get; set; }
 
-        double? LongitudeWGS84 { get; set; }
+        double? Longitude { get; set; }
 
-        double? TvdWGS84 { get; set; }
+        double? TVD { get; set; }
 
         /// <summary>
         /// Creates a deep copy.

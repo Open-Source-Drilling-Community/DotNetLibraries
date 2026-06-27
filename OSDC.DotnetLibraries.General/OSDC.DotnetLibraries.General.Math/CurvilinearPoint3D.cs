@@ -2,7 +2,7 @@
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public class CurvilinearPoint3D : Point3D, ICurvilinear3D, IEquatable<CurvilinearPoint3D>
+    public class CurvilinearPoint3D : Point3DGlobalCoordinates, ICurvilinear3D, IEquatable<CurvilinearPoint3D>
     {
         /// <summary>
         /// the curvilinear abscissa

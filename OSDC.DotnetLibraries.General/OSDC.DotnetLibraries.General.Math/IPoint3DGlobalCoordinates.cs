@@ -5,16 +5,18 @@ using System.Text;
 namespace OSDC.DotnetLibraries.General.Math
 {
     /// <summary>
-    /// @deprecated, 
-    /// use IGeodeticPoint3D instead. This is kept for backward compatibility. It is not recommended to use this interface in new code.
-    /// an interface for Global Cordinate 3D point
+    /// an interface for a 3D point carrying both Riemannian coordinates and geodetic coordinates.
     /// </summary>
-    public interface IPoint3DGlobalCoordinates : IPoint3D
+    public interface IPoint3DGlobalCoordinates : IPoint3D, IGeodeticPoint3D
     {
-        double? LatitudeWGS84 { get; set; }
+        /// <summary>
+        /// Synonym of X. Arc length from the equator to the latitude of the point.
+        /// </summary>
+        double? RiemannianNorth { get; set; }
 
-        double? LongitudeWGS84 { get; set; }
-
-        double? TvdWGS84 { get; set; }
+        /// <summary>
+        /// Synonym of Y. Arc length from the Greenwich meridian to the longitude of the point along the latitude parallel.
+        /// </summary>
+        double? RiemannianEast { get; set; }
     }
 }

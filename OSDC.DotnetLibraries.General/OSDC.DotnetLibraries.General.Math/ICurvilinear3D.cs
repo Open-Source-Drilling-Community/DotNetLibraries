@@ -2,7 +2,7 @@
 
 namespace OSDC.DotnetLibraries.General.Math
 {
-    public interface ICurvilinear3D : IPoint3D, IEquivalent<ICurvilinear3D>
+    public interface ICurvilinear3D : IPoint3DGlobalCoordinates, IEquivalent<ICurvilinear3D>
     {
         /// <summary>
         /// the curvilinear abscissa or measured depth

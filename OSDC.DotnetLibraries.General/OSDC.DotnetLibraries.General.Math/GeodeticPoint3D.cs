@@ -15,17 +15,17 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <summary>
         /// Latitude in degrees in the WGS84 reference system.
         /// </summary>
-        public double? LatitudeWGS84 { get; set; }
+        public double? Latitude { get; set; }
 
         /// <summary>
         /// Longitude in degrees in the WGS84 reference system.
         /// </summary>
-        public double? LongitudeWGS84 { get; set; }
+        public double? Longitude { get; set; }
 
         /// <summary>
         /// True vertical depth associated with the WGS84 position.
         /// </summary>
-        public double? TvdWGS84 { get; set; }
+        public double? TVD { get; set; }
 
         /// <summary>
         /// Default constructor.
@@ -42,9 +42,9 @@ namespace OSDC.DotnetLibraries.General.Math
         {
             if (pt != null)
             {
-                LatitudeWGS84 = pt.LatitudeWGS84;
-                LongitudeWGS84 = pt.LongitudeWGS84;
-                TvdWGS84 = pt.TvdWGS84;
+                Latitude = pt.Latitude;
+                Longitude = pt.Longitude;
+                TVD = pt.TVD;
             }
         }
 
@@ -56,9 +56,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="tvdWGS84">True vertical depth.</param>
         public GeodeticPoint3D(double latitudeWGS84, double longitudeWGS84, double tvdWGS84)
         {
-            LatitudeWGS84 = latitudeWGS84;
-            LongitudeWGS84 = longitudeWGS84;
-            TvdWGS84 = tvdWGS84;
+            Latitude = latitudeWGS84;
+            Longitude = longitudeWGS84;
+            TVD = tvdWGS84;
         }
 
         /// <summary>
@@ -69,23 +69,23 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <param name="tvdWGS84">True vertical depth.</param>
         public GeodeticPoint3D(double? latitudeWGS84, double? longitudeWGS84, double? tvdWGS84)
         {
-            LatitudeWGS84 = latitudeWGS84;
-            LongitudeWGS84 = longitudeWGS84;
-            TvdWGS84 = tvdWGS84;
+            Latitude = latitudeWGS84;
+            Longitude = longitudeWGS84;
+            TVD = tvdWGS84;
         }
 
         /// <summary>
         /// Constructor with initialization from an array.
-        /// Expected order: [LatitudeWGS84, LongitudeWGS84, TvdWGS84].
+        /// Expected order: [Latitude, Longitude, TVD].
         /// </summary>
         /// <param name="dat">Input array.</param>
         public GeodeticPoint3D(double[] dat)
         {
             if (dat != null && dat.Length >= 3)
             {
-                LatitudeWGS84 = dat[0];
-                LongitudeWGS84 = dat[1];
-                TvdWGS84 = dat[2];
+                Latitude = dat[0];
+                Longitude = dat[1];
+                TVD = dat[2];
             }
         }
 
@@ -103,9 +103,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         public virtual void SetUndefined()
         {
-            LatitudeWGS84 = Numeric.UNDEF_DOUBLE;
-            LongitudeWGS84 = Numeric.UNDEF_DOUBLE;
-            TvdWGS84 = Numeric.UNDEF_DOUBLE;
+            Latitude = Numeric.UNDEF_DOUBLE;
+            Longitude = Numeric.UNDEF_DOUBLE;
+            TVD = Numeric.UNDEF_DOUBLE;
         }
 
         /// <summary>
@@ -114,9 +114,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns>True if undefined; otherwise false.</returns>
         public virtual bool IsUndefined()
         {
-            return Numeric.IsUndefined(LatitudeWGS84)
-                || Numeric.IsUndefined(LongitudeWGS84)
-                || Numeric.IsUndefined(TvdWGS84);
+            return Numeric.IsUndefined(Latitude)
+                || Numeric.IsUndefined(Longitude)
+                || Numeric.IsUndefined(TVD);
         }
 
         /// <summary>
@@ -124,9 +124,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         public virtual void SetZero()
         {
-            LatitudeWGS84 = 0;
-            LongitudeWGS84 = 0;
-            TvdWGS84 = 0;
+            Latitude = 0;
+            Longitude = 0;
+            TVD = 0;
         }
 
         /// <summary>
@@ -135,9 +135,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// <returns>True if all coordinates are zero; otherwise false.</returns>
         public virtual bool IsZero()
         {
-            return Numeric.EQ(LatitudeWGS84, 0)
-                && Numeric.EQ(LongitudeWGS84, 0)
-                && Numeric.EQ(TvdWGS84, 0);
+            return Numeric.EQ(Latitude, 0)
+                && Numeric.EQ(Longitude, 0)
+                && Numeric.EQ(TVD, 0);
         }
 
         /// <summary>
@@ -218,8 +218,8 @@ namespace OSDC.DotnetLibraries.General.Math
 
             public static double[,] CreateGeocentricToNedRotation(GeodeticPoint3D reference)
             {
-                double lat = reference.LatitudeWGS84!.Value;
-                double lon = reference.LongitudeWGS84!.Value;
+                double lat = reference.Latitude!.Value;
+                double lon = reference.Longitude!.Value;
 
                 double sinLat = System.Math.Sin(lat);
                 double cosLat = System.Math.Cos(lat);
@@ -236,9 +236,9 @@ namespace OSDC.DotnetLibraries.General.Math
 
             private static (double x, double y, double z) GeodeticToGeocentric(GeodeticPoint3D point)
             {
-                double lat = point.LatitudeWGS84!.Value;
-                double lon = point.LongitudeWGS84!.Value;
-                double h = -point.TvdWGS84!.Value;
+                double lat = point.Latitude!.Value;
+                double lon = point.Longitude!.Value;
+                double h = -point.TVD!.Value;
 
                 double sinLat = System.Math.Sin(lat);
                 double cosLat = System.Math.Cos(lat);
@@ -271,18 +271,18 @@ namespace OSDC.DotnetLibraries.General.Math
 
                 return new GeodeticPoint3D
                 {
-                    LatitudeWGS84 = lat,
-                    LongitudeWGS84 = lon,
-                    TvdWGS84 = -h
+                    Latitude = lat,
+                    Longitude = lon,
+                    TVD = -h
                 };
             }
 
             private static bool IsValid(GeodeticPoint3D? point)
             {
                 return point != null &&
-                       point.LatitudeWGS84 != null &&
-                       point.LongitudeWGS84 != null &&
-                       point.TvdWGS84 != null;
+                       point.Latitude != null &&
+                       point.Longitude != null &&
+                       point.TVD != null;
             }
         }
     }
