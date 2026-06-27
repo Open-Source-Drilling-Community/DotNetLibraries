@@ -85,9 +85,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 double kScale = System.Math.Sqrt(chiSquare);
                 EllipsoidRadii = new()
                 {
-                    X = (kScale * System.Math.Sqrt(evX) + boreholeRadius) * scalingFactor,
-                    Y = (kScale * System.Math.Sqrt(evY) + boreholeRadius) * scalingFactor,
-                    Z = (kScale * System.Math.Sqrt(evZ) + boreholeRadius) * scalingFactor
+                    X = scalingFactor * kScale * System.Math.Sqrt(evX) + boreholeRadius,
+                    Y = scalingFactor * kScale * System.Math.Sqrt(evY) + boreholeRadius,
+                    Z = scalingFactor * kScale * System.Math.Sqrt(evZ) + boreholeRadius
                 };
                 bool ok = true;
                 if (CalculateHorizontalEllipse)
