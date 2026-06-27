@@ -1,4 +1,4 @@
-﻿using OSDC.DotnetLibraries.General.Math;
+using OSDC.DotnetLibraries.General.Math;
 
 namespace OSDC.DotnetLibraries.General.Statistics
 {
@@ -29,17 +29,17 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// <summary>
         /// WGS84 latitude of the mean point, in degrees.
         /// </summary>
-        double? LatitudeWGS84 { get; set; }
+        double? Latitude { get; set; }
 
         /// <summary>
         /// WGS84 longitude of the mean point, in degrees.
         /// </summary>
-        double? LongitudeWGS84 { get; set; }
+        double? Longitude { get; set; }
 
         /// <summary>
         /// True vertical depth of the mean point relative to the WGS84 ellipsoid. Positive downward.
         /// </summary>
-        double? TvdWGS84 { get; set; }
+        double? TVD { get; set; }
 
         /// <summary>
         /// Creates a deep copy of this instance.
@@ -148,19 +148,19 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// Realizes a sample from this geodetic Gaussian distribution in the general case where
         /// the NED covariance coordinates are correlated.
         /// <para>
-        /// Strategy (linearize → sample → back-project):
+        /// Strategy (linearize ? sample ? back-project):
         /// <list type="number">
         ///   <item>Re-express the covariance in the NED frame of the effective reference point.</item>
-        ///   <item>Cholesky-decompose that covariance: Σ = L·Lᵀ.</item>
-        ///   <item>Draw z ~ N(0,I₃) and form the NED sample: ned_sample = ned_mean + L·z.</item>
+        ///   <item>Cholesky-decompose that covariance: S = L�L?.</item>
+        ///   <item>Draw z ~ N(0,I3) and form the NED sample: ned_sample = ned_mean + L�z.</item>
         ///   <item>Back-project the NED sample to geodetic WGS84 via <see cref="GeodeticTransforms.LocalNEDToGeodetic"/>.</item>
         /// </list>
         /// </para>
         /// <remarks>
-        /// The non-linearity of the geodetic ↔ NED mapping is deliberately confined to step 4.
-        /// Steps 1–3 are entirely linear, which is consistent with the linearized-covariance
+        /// The non-linearity of the geodetic ? NED mapping is deliberately confined to step 4.
+        /// Steps 1�3 are entirely linear, which is consistent with the linearized-covariance
         /// contract of this class. The approximation is accurate as long as the uncertainty
-        /// ellipsoid is small relative to the Earth's curvature — the same assumption that
+        /// ellipsoid is small relative to the Earth's curvature � the same assumption that
         /// underlies the covariance representation itself.
         /// Both <see cref="Realize"/> and <see cref="RealizeIndependent"/> apply the same
         /// back-projection, so the distinction between them is identical to the Euclidean case:

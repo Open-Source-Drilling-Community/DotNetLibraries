@@ -1,4 +1,4 @@
-﻿using OSDC.DotnetLibraries.General.Math;
+using OSDC.DotnetLibraries.General.Math;
 
 namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
 {
@@ -12,12 +12,12 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         private static void AssertGeodeticPointEqual(GeodeticPoint3D? p, double? lat, double? lon, double? tvd, double tol = 1e-10)
         {
             Assert.That(p, Is.Not.Null);
-            Assert.That(p!.LatitudeWGS84, Is.Not.Null);
-            Assert.That(p.LongitudeWGS84, Is.Not.Null);
-            Assert.That(p.TvdWGS84, Is.Not.Null);
-            Assert.That(System.Math.Abs(p.LatitudeWGS84!.Value - lat!.Value), Is.LessThanOrEqualTo(tol));
-            Assert.That(System.Math.Abs(p.LongitudeWGS84!.Value - lon!.Value), Is.LessThanOrEqualTo(tol));
-            Assert.That(System.Math.Abs(p.TvdWGS84!.Value - tvd!.Value), Is.LessThanOrEqualTo(tol));
+            Assert.That(p!.Latitude, Is.Not.Null);
+            Assert.That(p.Longitude, Is.Not.Null);
+            Assert.That(p.TVD, Is.Not.Null);
+            Assert.That(System.Math.Abs(p.Latitude!.Value - lat!.Value), Is.LessThanOrEqualTo(tol));
+            Assert.That(System.Math.Abs(p.Longitude!.Value - lon!.Value), Is.LessThanOrEqualTo(tol));
+            Assert.That(System.Math.Abs(p.TVD!.Value - tvd!.Value), Is.LessThanOrEqualTo(tol));
         }
 
         private static void AssertPointEqual(Point3D? p, double? x, double? y, double? z, double tol = 1e-8)
@@ -57,9 +57,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
             Assert.That(p.GeodeticMean, Is.Null);
             Assert.That(p.CovarianceNED, Is.Null);
             Assert.That(p.ReferencePoint, Is.Null);
-            Assert.That(p.LatitudeWGS84, Is.Null);
-            Assert.That(p.LongitudeWGS84, Is.Null);
-            Assert.That(p.TvdWGS84, Is.Null);
+            Assert.That(p.Latitude, Is.Null);
+            Assert.That(p.Longitude, Is.Null);
+            Assert.That(p.TVD, Is.Null);
             Assert.IsFalse(p.IsValidMean());
             Assert.IsFalse(p.IsValidCovariance());
             Assert.IsFalse(p.IsValid());
@@ -70,9 +70,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D mean = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 1500.0
+                Latitude = 60.0,
+                Longitude = 2.0,
+                TVD = 1500.0
             };
             Matrix3x3 cov = new Matrix3x3(4.0, 0.1, 0.2,
                                           0.1, 5.0, 0.3,
@@ -94,15 +94,15 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D mean = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 61.0,
-                LongitudeWGS84 = 3.0,
-                TvdWGS84 = 2500.0
+                Latitude = 61.0,
+                Longitude = 3.0,
+                TVD = 2500.0
             };
             GeodeticPoint3D linearization = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.5,
-                LongitudeWGS84 = 2.5,
-                TvdWGS84 = 2000.0
+                Latitude = 60.5,
+                Longitude = 2.5,
+                TVD = 2000.0
             };
             Matrix3x3 cov = new Matrix3x3(1.0, 0.0, 0.0,
                                           0.0, 2.0, 0.0,
@@ -124,9 +124,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
 
             GaussianGeodeticPoint3D p = new GaussianGeodeticPoint3D(10.0, 20.0, 30.0, cov);
 
-            Assert.That(p.LatitudeWGS84, Is.EqualTo(10.0));
-            Assert.That(p.LongitudeWGS84, Is.EqualTo(20.0));
-            Assert.That(p.TvdWGS84, Is.EqualTo(30.0));
+            Assert.That(p.Latitude, Is.EqualTo(10.0));
+            Assert.That(p.Longitude, Is.EqualTo(20.0));
+            Assert.That(p.TVD, Is.EqualTo(30.0));
             AssertGeodeticPointEqual(p.ReferencePoint, 10.0, 20.0, 30.0);
             Assert.IsTrue(p.IsValid());
         }
@@ -159,9 +159,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
                 0.2, 0.3, 30.0);
             p1.SetReferencePoint(new GeodeticPoint3D
             {
-                LatitudeWGS84 = 4.0,
-                LongitudeWGS84 = 5.0,
-                TvdWGS84 = 6.0
+                Latitude = 4.0,
+                Longitude = 5.0,
+                TVD = 6.0
             });
 
             GaussianGeodeticPoint3D p2 = new GaussianGeodeticPoint3D(p1);
@@ -178,13 +178,13 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
                               0.1, 20.0, 0.3,
                               0.2, 0.3, 30.0);
 
-            p1.LatitudeWGS84 = 100.0;
+            p1.Latitude = 100.0;
             p1.CovarianceNED![0, 0] = 999.0;
-            p1.ReferencePoint!.LatitudeWGS84 = 200.0;
+            p1.ReferencePoint!.Latitude = 200.0;
 
-            Assert.That(p2.LatitudeWGS84, Is.EqualTo(1.0));
+            Assert.That(p2.Latitude, Is.EqualTo(1.0));
             Assert.That(p2.CovarianceNED![0, 0], Is.EqualTo(10.0));
-            Assert.That(p2.ReferencePoint!.LatitudeWGS84, Is.EqualTo(4.0));
+            Assert.That(p2.ReferencePoint!.Latitude, Is.EqualTo(4.0));
         }
 
         [Test]
@@ -197,9 +197,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
                 0.0, 0.0, 6.0);
             p1.SetReferencePoint(new GeodeticPoint3D
             {
-                LatitudeWGS84 = 7.0,
-                LongitudeWGS84 = 8.0,
-                TvdWGS84 = 9.0
+                Latitude = 7.0,
+                Longitude = 8.0,
+                TVD = 9.0
             });
 
             GaussianGeodeticPoint3D p2 = (GaussianGeodeticPoint3D)p1.Clone();
@@ -291,9 +291,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
                                           7.0, 8.0, 9.0));
             p.SetReferencePoint(new GeodeticPoint3D
             {
-                LatitudeWGS84 = 11.0,
-                LongitudeWGS84 = 21.0,
-                TvdWGS84 = 31.0
+                Latitude = 11.0,
+                Longitude = 21.0,
+                TVD = 31.0
             });
 
             AssertGeodeticPointEqual(p.GeodeticMean, 10.0, 20.0, 30.0);
@@ -335,9 +335,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
 
             GeodeticPoint3D q = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 1.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 3.0
+                Latitude = 1.0,
+                Longitude = 2.0,
+                TVD = 3.0
             };
 
             Assert.IsTrue(p.EQ(q));
@@ -349,9 +349,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D reference = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 1500.0
+                Latitude = 60.0,
+                Longitude = 2.0,
+                TVD = 1500.0
             };
 
             GaussianGeodeticPoint3D p = new GaussianGeodeticPoint3D(reference,
@@ -369,9 +369,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D reference = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 1500.0
+                Latitude = 60.0,
+                Longitude = 2.0,
+                TVD = 1500.0
             };
 
             GaussianGeodeticPoint3D p = new GaussianGeodeticPoint3D(reference,
@@ -392,9 +392,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D reference = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 1500.0
+                Latitude = 60.0,
+                Longitude = 2.0,
+                TVD = 1500.0
             };
 
             GaussianGeodeticPoint3D p = new GaussianGeodeticPoint3D(reference,
@@ -417,9 +417,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D reference = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 1000.0
+                Latitude = 60.0,
+                Longitude = 2.0,
+                TVD = 1000.0
             };
             Point3D local = new Point3D(100.0, 50.0, 25.0);
 
@@ -441,9 +441,9 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D reference = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 1000.0
+                Latitude = 60.0,
+                Longitude = 2.0,
+                TVD = 1000.0
             };
             GaussianPoint3D local = new GaussianPoint3D(
                 100.0, 50.0, 25.0,
@@ -474,15 +474,15 @@ namespace OSDC.DotnetLibraries.General.Statistics.UnitTest
         {
             GeodeticPoint3D sourceReference = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.0,
-                LongitudeWGS84 = 2.0,
-                TvdWGS84 = 1000.0
+                Latitude = 60.0,
+                Longitude = 2.0,
+                TVD = 1000.0
             };
             GeodeticPoint3D targetReference = new GeodeticPoint3D
             {
-                LatitudeWGS84 = 60.001,
-                LongitudeWGS84 = 2.001,
-                TvdWGS84 = 1000.0
+                Latitude = 60.001,
+                Longitude = 2.001,
+                TVD = 1000.0
             };
 
             GaussianGeodeticPoint3D p = new GaussianGeodeticPoint3D(

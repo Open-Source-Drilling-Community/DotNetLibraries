@@ -1,4 +1,4 @@
-﻿using MathNet.Numerics.Distributions;
+using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra;
 using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
@@ -34,36 +34,36 @@ namespace OSDC.DotnetLibraries.General.Statistics
         /// </summary>
         public virtual GeodeticPoint3D? ReferencePoint { get; set; } = null;
 
-        public virtual double? LatitudeWGS84
+        public virtual double? Latitude
         {
-            get => GeodeticMean?.LatitudeWGS84;
+            get => GeodeticMean?.Latitude;
             set
             {
                 GeodeticMean ??= new GeodeticPoint3D();
-                GeodeticMean.LatitudeWGS84 = value;
+                GeodeticMean.Latitude = value;
             }
         }
 
-        public virtual double? LongitudeWGS84
+        public virtual double? Longitude
         {
-            get => GeodeticMean?.LongitudeWGS84;
+            get => GeodeticMean?.Longitude;
             set
             {
                 GeodeticMean ??= new GeodeticPoint3D();
-                GeodeticMean.LongitudeWGS84 = value;
+                GeodeticMean.Longitude = value;
             }
         }
 
         /// <summary>
         /// True vertical depth relative to WGS84 ellipsoid. Positive downward.
         /// </summary>
-        public virtual double? TvdWGS84
+        public virtual double? TVD
         {
-            get => GeodeticMean?.TvdWGS84;
+            get => GeodeticMean?.TVD;
             set
             {
                 GeodeticMean ??= new GeodeticPoint3D();
-                GeodeticMean.TvdWGS84 = value;
+                GeodeticMean.TVD = value;
             }
         }
 
@@ -99,9 +99,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         {
             GeodeticMean = new GeodeticPoint3D
             {
-                LatitudeWGS84 = latitudeWgs84,
-                LongitudeWGS84 = longitudeWgs84,
-                TvdWGS84 = tvdWgs84
+                Latitude = latitudeWgs84,
+                Longitude = longitudeWgs84,
+                TVD = tvdWgs84
             };
             CovarianceNED = DeepCopy(covarianceNed);
             ReferencePoint = DeepCopy(GeodeticMean);
@@ -114,9 +114,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         {
             GeodeticMean = new GeodeticPoint3D
             {
-                LatitudeWGS84 = latitudeWgs84,
-                LongitudeWGS84 = longitudeWgs84,
-                TvdWGS84 = tvdWgs84
+                Latitude = latitudeWgs84,
+                Longitude = longitudeWgs84,
+                TVD = tvdWgs84
             };
             CovarianceNED = new Matrix3x3(cov00, cov01, cov02, cov10, cov11, cov12, cov20, cov21, cov22);
             ReferencePoint = DeepCopy(GeodeticMean);
@@ -130,21 +130,21 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public virtual void SetZero()
         {
             GeodeticMean ??= new GeodeticPoint3D();
-            GeodeticMean.LatitudeWGS84 = 0.0;
-            GeodeticMean.LongitudeWGS84 = 0.0;
-            GeodeticMean.TvdWGS84 = 0.0;
+            GeodeticMean.Latitude = 0.0;
+            GeodeticMean.Longitude = 0.0;
+            GeodeticMean.TVD = 0.0;
             CovarianceNED = new Matrix3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
             ReferencePoint ??= new GeodeticPoint3D();
-            ReferencePoint.LatitudeWGS84 = 0.0;
-            ReferencePoint.LongitudeWGS84 = 0.0;
-            ReferencePoint.TvdWGS84 = 0.0;
+            ReferencePoint.Latitude = 0.0;
+            ReferencePoint.Longitude = 0.0;
+            ReferencePoint.TVD = 0.0;
         }
 
         public virtual bool IsZero()
         {
-            return Numeric.EQ(LatitudeWGS84, 0.0) &&
-                   Numeric.EQ(LongitudeWGS84, 0.0) &&
-                   Numeric.EQ(TvdWGS84, 0.0) &&
+            return Numeric.EQ(Latitude, 0.0) &&
+                   Numeric.EQ(Longitude, 0.0) &&
+                   Numeric.EQ(TVD, 0.0) &&
                    IsZero(CovarianceNED);
         }
 
@@ -156,9 +156,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public virtual bool IsValidMean()
         {
             return GeodeticMean != null &&
-                   GeodeticMean.LatitudeWGS84 != null &&
-                   GeodeticMean.LongitudeWGS84 != null &&
-                   GeodeticMean.TvdWGS84 != null;
+                   GeodeticMean.Latitude != null &&
+                   GeodeticMean.Longitude != null &&
+                   GeodeticMean.TVD != null;
         }
 
         public virtual bool IsValidCovariance()
@@ -179,9 +179,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         {
             GeodeticPoint3D? p = GetReferencePointOrMean();
             return p != null &&
-                   p.LatitudeWGS84 != null &&
-                   p.LongitudeWGS84 != null &&
-                   p.TvdWGS84 != null;
+                   p.Latitude != null &&
+                   p.Longitude != null &&
+                   p.TVD != null;
         }
 
         public virtual bool HasIndependentCoordinates()
@@ -200,9 +200,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
         public virtual void SetMean(double latitudeWgs84, double longitudeWgs84, double tvdWgs84)
         {
             GeodeticMean ??= new GeodeticPoint3D();
-            GeodeticMean.LatitudeWGS84 = latitudeWgs84;
-            GeodeticMean.LongitudeWGS84 = longitudeWgs84;
-            GeodeticMean.TvdWGS84 = tvdWgs84;
+            GeodeticMean.Latitude = latitudeWgs84;
+            GeodeticMean.Longitude = longitudeWgs84;
+            GeodeticMean.TVD = tvdWgs84;
         }
 
         public virtual void SetCovariance(Matrix3x3 covarianceNed)
@@ -224,17 +224,17 @@ namespace OSDC.DotnetLibraries.General.Statistics
 
             return new GeodeticPoint3D
             {
-                LatitudeWGS84 = GeodeticMean!.LatitudeWGS84,
-                LongitudeWGS84 = GeodeticMean.LongitudeWGS84,
-                TvdWGS84 = GeodeticMean.TvdWGS84
+                Latitude = GeodeticMean!.Latitude,
+                Longitude = GeodeticMean.Longitude,
+                TVD = GeodeticMean.TVD
             };
         }
 
         public virtual GeodeticPoint3D? GetReferencePointOrMean()
         {
-            if (ReferencePoint?.LatitudeWGS84 != null &&
-                ReferencePoint.LongitudeWGS84 != null &&
-                ReferencePoint.TvdWGS84 != null)
+            if (ReferencePoint?.Latitude != null &&
+                ReferencePoint.Longitude != null &&
+                ReferencePoint.TVD != null)
             {
                 return ReferencePoint;
             }
@@ -348,9 +348,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 return false;
             }
 
-            return Numeric.EQ(LatitudeWGS84, cmp.LatitudeWGS84) &&
-                   Numeric.EQ(LongitudeWGS84, cmp.LongitudeWGS84) &&
-                   Numeric.EQ(TvdWGS84, cmp.TvdWGS84);
+            return Numeric.EQ(Latitude, cmp.Latitude) &&
+                   Numeric.EQ(Longitude, cmp.Longitude) &&
+                   Numeric.EQ(TVD, cmp.TVD);
         }
 
         public virtual bool EQ(GeodeticPoint3D cmp, double precision)
@@ -360,28 +360,28 @@ namespace OSDC.DotnetLibraries.General.Statistics
                 return false;
             }
 
-            return Numeric.EQ(LatitudeWGS84, cmp.LatitudeWGS84, precision) &&
-                   Numeric.EQ(LongitudeWGS84, cmp.LongitudeWGS84, precision) &&
-                   Numeric.EQ(TvdWGS84, cmp.TvdWGS84, precision);
+            return Numeric.EQ(Latitude, cmp.Latitude, precision) &&
+                   Numeric.EQ(Longitude, cmp.Longitude, precision) &&
+                   Numeric.EQ(TVD, cmp.TVD, precision);
         }
 
         /// <summary>
         /// Realizes a sample from this geodetic Gaussian distribution in the general case where
         /// the NED covariance coordinates are correlated.
         /// <para>
-        /// Strategy (linearize → sample → back-project):
+        /// Strategy (linearize ? sample ? back-project):
         /// <list type="number">
         ///   <item>Re-express the covariance in the NED frame of the effective reference point.</item>
-        ///   <item>Cholesky-decompose that covariance: Σ = L·Lᵀ.</item>
-        ///   <item>Draw z ~ N(0,I₃) and form the NED sample: ned_sample = ned_mean + L·z.</item>
+        ///   <item>Cholesky-decompose that covariance: S = L�L?.</item>
+        ///   <item>Draw z ~ N(0,I3) and form the NED sample: ned_sample = ned_mean + L�z.</item>
         ///   <item>Back-project the NED sample to geodetic WGS84 via <see cref="GeodeticTransforms.LocalNEDToGeodetic"/>.</item>
         /// </list>
         /// </para>
         /// <remarks>
-        /// The non-linearity of the geodetic ↔ NED mapping is deliberately confined to step 4.
-        /// Steps 1–3 are entirely linear, which is consistent with the linearized-covariance
+        /// The non-linearity of the geodetic ? NED mapping is deliberately confined to step 4.
+        /// Steps 1�3 are entirely linear, which is consistent with the linearized-covariance
         /// contract of this class. The approximation is accurate as long as the uncertainty
-        /// ellipsoid is small relative to the Earth's curvature — the same assumption that
+        /// ellipsoid is small relative to the Earth's curvature � the same assumption that
         /// underlies the covariance representation itself.
         /// Both <see cref="Realize"/> and <see cref="RealizeIndependent"/> apply the same
         /// back-projection, so the distinction between them is identical to the Euclidean case:
@@ -503,9 +503,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
 
             return new GeodeticPoint3D
             {
-                LatitudeWGS84 = src.LatitudeWGS84,
-                LongitudeWGS84 = src.LongitudeWGS84,
-                TvdWGS84 = src.TvdWGS84
+                Latitude = src.Latitude,
+                Longitude = src.Longitude,
+                TVD = src.TVD
             };
         }
 
@@ -535,9 +535,9 @@ namespace OSDC.DotnetLibraries.General.Statistics
 
         protected static bool AreSameGeodeticPoint(GeodeticPoint3D p1, GeodeticPoint3D p2)
         {
-            return Numeric.EQ(p1.LatitudeWGS84, p2.LatitudeWGS84) &&
-                   Numeric.EQ(p1.LongitudeWGS84, p2.LongitudeWGS84) &&
-                   Numeric.EQ(p1.TvdWGS84, p2.TvdWGS84);
+            return Numeric.EQ(p1.Latitude, p2.Latitude) &&
+                   Numeric.EQ(p1.Longitude, p2.Longitude) &&
+                   Numeric.EQ(p1.TVD, p2.TVD);
         }
 
         protected static double[,] ToArray(Matrix3x3 matrix)
