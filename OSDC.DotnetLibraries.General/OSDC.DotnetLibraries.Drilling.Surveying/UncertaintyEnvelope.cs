@@ -253,7 +253,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         //        uncertaintyEnvelopeEllipse.Inclination = surveyStation.Incl;
         //        uncertaintyEnvelopeEllipse.X = surveyStation.NorthOfWellHead;
         //        uncertaintyEnvelopeEllipse.Y = surveyStation.EastOfWellHead;
-        //        uncertaintyEnvelopeEllipse.Z = surveyStation.TvdWGS84;
+        //        uncertaintyEnvelopeEllipse.Z = surveyStation.TVD;
         //        uncertaintyEnvelopeEllipse.MD = (double)surveyStation.MdWGS84;
         //        uncertaintyEnvelopeEllipse.EllipseRadius = ellipseRadius;
         //        uncertaintyEnvelopeEllipse.CrossSectionOrientation = surveyStation.Uncertainty.PerpendicularDirection;
@@ -282,7 +282,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         //            uncertaintyEnvelopeEllipseInter.Inclination = surveyStation.Incl;
         //            uncertaintyEnvelopeEllipseInter.X = surveyStation.NorthOfWellHead;
         //            uncertaintyEnvelopeEllipseInter.Y = surveyStation.EastOfWellHead;
-        //            uncertaintyEnvelopeEllipseInter.Z = surveyStation.TvdWGS84;
+        //            uncertaintyEnvelopeEllipseInter.Z = surveyStation.TVD;
         //            uncertaintyEnvelopeEllipseInter.MD = (double)surveyStation.MdWGS84;
         //            uncertaintyEnvelopeEllipseInter.EllipseRadius = ellipseRadius;
         //            uncertaintyEnvelopeEllipseInter.CrossSectionOrientation = surveyStation.Uncertainty.PerpendicularDirection;
@@ -316,7 +316,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         //                uncertaintyEnvelopeEllipseInter.Inclination = surveyStation.Incl;
         //                uncertaintyEnvelopeEllipseInter.X = surveyStation.NorthOfWellHead;
         //                uncertaintyEnvelopeEllipseInter.Y = surveyStation.EastOfWellHead;
-        //                uncertaintyEnvelopeEllipseInter.Z = surveyStation.TvdWGS84;
+        //                uncertaintyEnvelopeEllipseInter.Z = surveyStation.TVD;
         //                uncertaintyEnvelopeEllipseInter.MD = (double)surveyStation.MdWGS84;
         //                uncertaintyEnvelopeEllipseInter.EllipseRadius = ellipseRadius;
         //                uncertaintyEnvelopeEllipseInter.CrossSectionOrientation = surveyStation.Uncertainty.PerpendicularDirection;
@@ -334,7 +334,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         //                uncertaintyEnvelopeEllipseInter.Inclination = surveyStation.Incl;
         //                uncertaintyEnvelopeEllipseInter.X = surveyStation.NorthOfWellHead;
         //                uncertaintyEnvelopeEllipseInter.Y = surveyStation.EastOfWellHead;
-        //                uncertaintyEnvelopeEllipseInter.Z = surveyStation.TvdWGS84;
+        //                uncertaintyEnvelopeEllipseInter.Z = surveyStation.TVD;
         //                uncertaintyEnvelopeEllipseInter.MD = (double)surveyStation.MdWGS84;
         //                uncertaintyEnvelopeEllipseInter.EllipseRadius = ellipseRadius;
         //                uncertaintyEnvelopeEllipseInter.CrossSectionOrientation = surveyStation.Uncertainty.PerpendicularDirection;

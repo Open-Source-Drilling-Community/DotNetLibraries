@@ -1,120 +1,240 @@
-﻿# OSDC.DotnetLibraries.Drilling.WebAppUtils
+# OSDC.DotnetLibraries.Drilling.WebAppUtils
 
-A comprehensive .NET library providing utilities and interfaces for drilling-related web applications. This library offers standardized abstractions for accessing drilling data services through configurable host URLs and includes utility functions for API interactions and data manipulation.
+Shared .NET utilities and small configuration abstractions used by OSDC drilling web applications.
 
-## Overview
-
-OSDC.DotnetLibraries.Drilling.WebAppUtils is part of the OSDC (Open Subsurface Data Collaborative) initiative to create interoperable, reusable .NET libraries for the oil and gas industry. This specific library focuses on providing web application utilities tailored for drilling operations and related subsurface data management.
+The package targets `net8.0` and is intended for Blazor/web-page projects that need common host URL configuration, API client setup, and reusable unit/reference source objects for `OSDC.UnitConversion.DrillingRazorMudComponents`.
 
 ## Features
 
-- **Standardized Host URL Interfaces**: Abstractions for various drilling-related services:
-  - Cartographic Projection hosting
-  - Cluster data management
-  - Drilling Fluid properties
-  - Drill String configuration
-  - Field data management
-  - Geodetic Datum references
-  - Geological Properties
-  - Geothermal Properties
-  - Rig information
-  - Trajectory data
-  - Unit Conversion services
-  - WellBore Architecture
-  - WellBore data
-  - Well information
-
-- **Utility Classes**: Helper functions for common operations:
-  - `APIUtils`: Utilities for API interactions
-  - `DataUtils`: General-purpose data manipulation utilities
-
-## Requirements
-
-- .NET 8.0 or higher
-- Visual Studio 2022 or compatible IDE (optional)
+- Host URL interfaces for drilling-related microservices.
+- `APIUtils.SetHttpClient(...)` helper for JSON HTTP clients.
+- `DataUtils.UnitAndReferenceParameters` for shared unit/reference selector state.
+- `DataUtils` reference-source classes compatible with `MudUnitAndReferenceChoiceTag`.
+- Support for depth, position, and geodetic datum reference sources.
 
 ## Installation
 
-### NuGet Package
-
-Install the package via NuGet Package Manager:
-
-```bash
+```powershell
 dotnet add package OSDC.DotnetLibraries.Drilling.WebAppUtils
 ```
 
-Or via the Package Manager Console:
+The package depends on:
 
-```powershell
-Install-Package OSDC.DotnetLibraries.Drilling.WebAppUtils
-```
+- `OSDC.UnitConversion.DrillingRazorMudComponents`
 
-### Manual Reference
+## Host URL Interfaces
 
-Alternatively, reference the project directly in your solution or build from source.
+The package provides small interfaces for projects that need to pass service host URLs through configuration or dependency injection.
 
-## Getting Started
+Available interfaces:
 
-### Basic Usage
+- `ICartographicProjectionHostURL`
+- `IClusterHostURL`
+- `IDrillingFluidHostURL`
+- `IDrillStringHostURL`
+- `IFieldHostURL`
+- `IGeodeticDatumHostURL`
+- `IGeologicalPropertiesHostURL`
+- `IGeothermalPropertiesHostURL`
+- `IRigHostURL`
+- `ISurveyInstrumentHostURL`
+- `ITrajectoryHostURL`
+- `IUnitConversionHostURL`
+- `IWellBoreArchitectureHostURL`
+- `IWellBoreHostURL`
+- `IWellHostURL`
 
-To use the host URL interfaces, implement them in your application or inject them as dependencies:
+Each interface exposes a nullable string property named after the service. For example:
 
 ```csharp
 using OSDC.DotnetLibraries.Drilling.WebAppUtils;
 
-// Implement an interface for your specific needs
-public class MyDrillingService : IWellHostURL
+public sealed class WebPagesHostConfiguration : IWellHostURL, ITrajectoryHostURL
 {
-    public string GetWellHostURL()
-    {
-        return "https://api.example.com/wells";
-    }
+    public string? WellHostURL { get; set; }
+    public string? TrajectoryHostURL { get; set; }
 }
-
-// Use utility classes
-var apiHelper = new APIUtils();
-var dataHelper = new DataUtils();
 ```
 
-### Configuring Host URLs
-
-Each host URL interface provides an abstraction for accessing specific drilling-related services. Implement the interfaces in your configuration or dependency injection setup to define the actual endpoints for your application.
+Example dependency injection registration:
 
 ```csharp
-// Example of dependency injection setup
-services.AddSingleton<IWellHostURL, MyWellHostURLProvider>();
-services.AddSingleton<IDrillStringHostURL, MyDrillStringHostURLProvider>();
-// ... configure other interfaces as needed
+builder.Services.AddSingleton<IWellHostURL>(configuration);
+builder.Services.AddSingleton<ITrajectoryHostURL>(configuration);
+```
+
+## APIUtils
+
+`APIUtils.SetHttpClient` creates an `HttpClient` with:
+
+- `BaseAddress = new Uri(host + microServiceUri)`
+- `Accept: application/json`
+- a handler that accepts the server certificate presented by the service
+
+```csharp
+HttpClient httpClient = APIUtils.SetHttpClient(
+    host: "https://localhost:5001",
+    microServiceUri: "/api/Trajectory/");
+```
+
+## DataUtils
+
+`DataUtils` contains lightweight classes used by drilling web pages to share unit and reference settings with `MudUnitAndReferenceChoiceTag`.
+
+### UnitAndReferenceParameters
+
+```csharp
+DataUtils.UnitAndReferenceParameters.UnitSystemName
+DataUtils.UnitAndReferenceParameters.DepthReferenceName
+DataUtils.UnitAndReferenceParameters.PositionReferenceName
+DataUtils.UnitAndReferenceParameters.GeodeticReferenceName
+DataUtils.UnitAndReferenceParameters.AzimuthReferenceName
+DataUtils.UnitAndReferenceParameters.PressureReferenceName
+DataUtils.UnitAndReferenceParameters.DateReferenceName
+```
+
+Defaults:
+
+- `UnitSystemName = "Metric"`
+- `DepthReferenceName = "Rotary table"`
+- `PositionReferenceName = "Well-head"`
+
+The remaining reference names default to `null`.
+
+### Reference Source Classes
+
+The nested `DataUtils` classes implement the reference-source interfaces from `OSDC.UnitConversion.DrillingRazorMudComponents`.
+
+Depth references:
+
+```csharp
+DataUtils.GroundMudLineDepthReferenceSource
+DataUtils.RotaryTableDepthReferenceSource
+DataUtils.SeaWaterLevelDepthReferenceSource
+```
+
+Position references:
+
+```csharp
+DataUtils.WellHeadPositionReferenceSource
+DataUtils.CartographicGridPositionReferenceSource
+DataUtils.FieldPositionReferenceSource
+DataUtils.ClusterPositionReferenceSource
+```
+
+Geodetic datum reference:
+
+```csharp
+DataUtils.CartographicProjectionDatumGeodeticReferenceSource
+```
+
+`FieldPositionReferenceSource` is the current name for the former lease-line reference concept.
+
+## Reference Source Properties
+
+### Depth
+
+```csharp
+public class GroundMudLineDepthReferenceSource : IGroundMudLineDepthReferenceSource
+{
+    public double? GroundMudLineDepthReference { get; set; }
+}
+
+public class RotaryTableDepthReferenceSource : IRotaryTableDepthReferenceSource
+{
+    public double? RotaryTableDepthReference { get; set; }
+}
+
+public class SeaWaterLevelDepthReferenceSource : ISeaWaterLevelDepthReferenceSource
+{
+    public double? SeaWaterLevelDepthReference { get; set; }
+}
+```
+
+### Position
+
+```csharp
+public class WellHeadPositionReferenceSource : IWellHeadPositionReferenceSource
+{
+    public double? WellHeadNorthPositionReference { get; set; }
+    public double? WellHeadEastPositionReference { get; set; }
+}
+
+public class CartographicGridPositionReferenceSource : ICartographicGridPositionReferenceSource
+{
+    public double? CartographicGridNorthPositionReference { get; set; }
+    public double? CartographicGridEastPositionReference { get; set; }
+}
+
+public class FieldPositionReferenceSource : IFieldPositionReferenceSource
+{
+    public double? FieldNorthPositionReference { get; set; }
+    public double? FieldEastPositionReference { get; set; }
+}
+
+public class ClusterPositionReferenceSource : IClusterPositionReferenceSource
+{
+    public double? ClusterNorthPositionReference { get; set; }
+    public double? ClusterEastPositionReference { get; set; }
+}
+```
+
+### Geodetic Datum
+
+```csharp
+public class CartographicProjectionDatumGeodeticReferenceSource
+    : ICartographicProjectionDatumGeodeticReferenceSource
+{
+    public double? CartographicProjectionDatumLatitudeReference { get; set; }
+    public double? CartographicProjectionDatumLongitudeReference { get; set; }
+}
+```
+
+Latitude and longitude references are expected in SI angle units.
+
+## Example: Wiring MudUnitAndReferenceChoiceTag
+
+```razor
+@using OSDC.DotnetLibraries.Drilling.WebAppUtils
+@using OSDC.UnitConversion.DrillingRazorMudComponents
+
+<MudUnitAndReferenceChoiceTag UnitSystemName="@DataUtils.UnitAndReferenceParameters.UnitSystemName"
+                              DepthReferenceName="@DataUtils.UnitAndReferenceParameters.DepthReferenceName"
+                              PositionReferenceName="@DataUtils.UnitAndReferenceParameters.PositionReferenceName"
+                              GeodeticReferenceName="@DataUtils.UnitAndReferenceParameters.GeodeticReferenceName"
+                              RotaryTableDepthReferenceSource="@rotaryTable"
+                              WellHeadPositionReferenceSource="@wellHead"
+                              FieldPositionReferenceSource="@field"
+                              CartographicProjectionDatumGeodeticReferenceSource="@cartographicProjectionDatum">
+    @ChildContent
+</MudUnitAndReferenceChoiceTag>
+
+@code {
+    private readonly DataUtils.RotaryTableDepthReferenceSource rotaryTable = new();
+    private readonly DataUtils.WellHeadPositionReferenceSource wellHead = new();
+    private readonly DataUtils.FieldPositionReferenceSource field = new();
+    private readonly DataUtils.CartographicProjectionDatumGeodeticReferenceSource cartographicProjectionDatum = new();
+}
 ```
 
 ## Project Structure
 
-```
+```text
 OSDC.DotnetLibraries.Drilling.WebAppUtils/
-├── APIUtils.cs                          # API interaction utilities
-├── DataUtils.cs                         # Data manipulation utilities
-├── I*HostURL.cs                         # Host URL interface definitions
+├── APIUtils.cs
+├── DataUtils.cs
+├── I*HostURL.cs
 ├── OSDC.DotnetLibraries.Drilling.WebAppUtils.csproj
-└── Readme.md                            # This file
+└── Readme.md
 ```
 
-## Contributing
+## Notes
 
-Contributions are welcome! Please ensure that:
-- Code follows .NET coding standards and conventions
-- Changes include appropriate documentation
-- All interfaces maintain backward compatibility where possible
+- Reference source values are expected in SI units.
+- The helper source classes are intentionally small data carriers.
+- `FieldPositionReferenceSource` replaces the older `LeaseLinePositionReferenceSource` naming.
+- Use `CartographicProjectionDatumGeodeticReferenceSource` when enabling the geodetic reference selector in `MudUnitAndReferenceChoiceTag`.
 
 ## License
 
-This project is licensed under the terms specified in the LICENSE file. See the LICENSE file for details.
-
-## Support
-
-For issues, questions, or contributions, please refer to the OSDC (Open Subsurface Data Collaborative) project guidelines and repository.
-
-## Additional Resources
-
-- [OSDC Official Website](https://www.opensubsurfacedata.org/)
-- [.NET 8.0 Documentation](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8)
-- Open Subsurface Data Collaborative Standards and Specifications
+This project is licensed under the terms specified in the `LICENSE` file.

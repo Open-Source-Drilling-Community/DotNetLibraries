@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSDC.UnitConversion.DrillingRazorMudComponents" Version="3.3.48" />
+    <PackageReference Include="OSDC.UnitConversion.DrillingRazorMudComponents" Version="3.3.51" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,6 +12,8 @@ namespace OSDC.DotnetLibraries.General.Math
         private double? longitude_;
         private double? tvd_;
 
+        protected virtual bool SynchronizeGeodeticCoordinates => true;
+
         /// <summary>
         /// Arc length from the equator to the latitude of the point.
         /// </summary>
@@ -21,7 +23,7 @@ namespace OSDC.DotnetLibraries.General.Math
             set
             {
                 base.X = value;
-                if (value != null && base.Y != null)
+                if (SynchronizeGeodeticCoordinates && value != null && base.Y != null)
                 {
                     SetLatitudeLongitude(value.Value, base.Y.Value);
                 }
@@ -37,7 +39,7 @@ namespace OSDC.DotnetLibraries.General.Math
             set
             {
                 base.Y = value;
-                if (base.X != null && value != null)
+                if (SynchronizeGeodeticCoordinates && base.X != null && value != null)
                 {
                     SetLatitudeLongitude(base.X.Value, value.Value);
                 }
@@ -84,7 +86,7 @@ namespace OSDC.DotnetLibraries.General.Math
             set
             {
                 latitude_ = value;
-                if (value != null && longitude_ != null)
+                if (SynchronizeGeodeticCoordinates && value != null && longitude_ != null)
                 {
                     SetRiemannianNorthEast(value.Value, longitude_.Value);
                 }
@@ -100,7 +102,7 @@ namespace OSDC.DotnetLibraries.General.Math
             set
             {
                 longitude_ = value;
-                if (latitude_ != null && value != null)
+                if (SynchronizeGeodeticCoordinates && latitude_ != null && value != null)
                 {
                     SetRiemannianNorthEast(latitude_.Value, value.Value);
                 }
@@ -216,6 +218,11 @@ namespace OSDC.DotnetLibraries.General.Math
         /// </summary>
         public override bool IsUndefined()
         {
+            if (!SynchronizeGeodeticCoordinates)
+            {
+                return base.IsUndefined();
+            }
+
             return base.IsUndefined()
                 || Numeric.IsUndefined(latitude_)
                 || Numeric.IsUndefined(longitude_)

@@ -4,6 +4,8 @@ namespace OSDC.DotnetLibraries.General.Math
 {
     public class CurvilinearPoint3D : Point3DGlobalCoordinates, ICurvilinear3D, IEquatable<CurvilinearPoint3D>
     {
+        protected override bool SynchronizeGeodeticCoordinates => false;
+
         /// <summary>
         /// the curvilinear abscissa
         /// </summary>
