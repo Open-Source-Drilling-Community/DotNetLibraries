@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <Version>3.3.2</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Standard Statistical Classes</Title>
+    <Company>NORCE Norwegian Research Center</Company>
+    <Authors>NORCE Drilling &amp; Well Modeling Group</Authors>
+    <Description>This package contains classes to perform statistical calculations.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\OSDC.DotnetLibraries.General.DataManagement\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OSDC.DotnetLibraries.General.Math\OSDC.DotnetLibraries.General.Math.csproj" />
+  </ItemGroup>
+
+</Project>
