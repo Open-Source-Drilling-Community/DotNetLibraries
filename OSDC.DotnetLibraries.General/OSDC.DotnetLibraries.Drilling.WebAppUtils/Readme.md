@@ -1,5 +1,7 @@
 # OSDC.DotnetLibraries.Drilling.WebAppUtils
 
+The package depends on `OSDC.UnitConversion.DrillingRazorMudComponents` 3.4.2, aligned with MudBlazor 9.9.0.
+
 Shared .NET utilities and small configuration abstractions used by OSDC drilling web applications.
 
 The package targets `net8.0` and is intended for Blazor/web-page projects that need common host URL configuration, API client setup, and reusable unit/reference source objects for `OSDC.UnitConversion.DrillingRazorMudComponents`.
