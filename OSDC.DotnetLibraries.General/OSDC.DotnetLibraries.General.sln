@@ -88,6 +88,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Genera
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.WebAppUtils", "OSDC.DotnetLibraries.Drilling.WebAppUtils\OSDC.DotnetLibraries.Drilling.WebAppUtils.csproj", "{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.Section.UnitTest", "OSDC.DotnetLibraries.Drilling.Section.UnitTest\OSDC.DotnetLibraries.Drilling.Section.UnitTest.csproj", "{DE3357C6-6459-4423-B63C-9CE557E25161}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSDC.DotnetLibraries.Drilling.Streamlines", "OSDC.DotnetLibraries.Drilling.Streamlines\OSDC.DotnetLibraries.Drilling.Streamlines.csproj", "{933EE1FE-81D0-40B6-83CC-0E0A9596F888}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest", "OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest\OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest.csproj", "{440965ED-5882-4D6A-B642-7DA1898B3EFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -238,6 +244,18 @@ Global
 		{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A80FD4B-C37B-4AEF-A70A-06B41C4B4D9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE3357C6-6459-4423-B63C-9CE557E25161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE3357C6-6459-4423-B63C-9CE557E25161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE3357C6-6459-4423-B63C-9CE557E25161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE3357C6-6459-4423-B63C-9CE557E25161}.Release|Any CPU.Build.0 = Release|Any CPU
+		{933EE1FE-81D0-40B6-83CC-0E0A9596F888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{933EE1FE-81D0-40B6-83CC-0E0A9596F888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{933EE1FE-81D0-40B6-83CC-0E0A9596F888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{933EE1FE-81D0-40B6-83CC-0E0A9596F888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{440965ED-5882-4D6A-B642-7DA1898B3EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{440965ED-5882-4D6A-B642-7DA1898B3EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{440965ED-5882-4D6A-B642-7DA1898B3EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{440965ED-5882-4D6A-B642-7DA1898B3EFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

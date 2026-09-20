@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OSDC.DotnetLibraries.Drilling.Surveying\OSDC.DotnetLibraries.Drilling.Surveying.csproj" />
-    <ProjectReference Include="..\OSDC.DotnetLibraries.General.Math\OSDC.DotnetLibraries.General.Math.csproj" />
   </ItemGroup>
 
 </Project>

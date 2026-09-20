@@ -1,0 +1,7 @@
+# U7 perpendicular ellipse of uncertainty, confidence 0.99
+# calculation ac5b5b5f-fc20-4eda-94f8-07cfcbac65f5, trajectory 3dd0444f-f11d-4372-b482-4bfcf03d6b5a
+# MD(m)  Inclination(deg)  Azimuth(deg)  SemiMajor(m)  SemiMinor(m)  AngleFromHighSide(deg)
+-91.2000	0.000000	0.000000	0.123952	0.123952	135.000000
+-49.2200	1.710000	169.950000	0.429064	0.408214	90.000000
+0.7800	4.410000	169.430000	0.861637	0.719724	90.127655
+50.7800	7.150000	165.950000	1.458946	1.056950	91.614558

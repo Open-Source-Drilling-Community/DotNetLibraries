@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -19,6 +19,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OSDC.DotnetLibraries.Drilling.Surveying\OSDC.DotnetLibraries.Drilling.Surveying.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ctc_reference_vectors.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="reduced_order_trajectory_vectors.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="UllriggSurveys\**\*.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

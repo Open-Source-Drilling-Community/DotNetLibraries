@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 
@@ -10,8 +10,8 @@ namespace OSDC.DotnetLibraries.Drilling.Section
     [Serializable]
     public abstract class ArcSection
     {
-        public CurvilinearPoint3D Start { get; set; } = new CurvilinearPoint3D();
-        public CurvilinearPoint3D End { get; set; } = new CurvilinearPoint3D();
+        public TrajectoryPoint3D Start { get; set; } = new TrajectoryPoint3D();
+        public TrajectoryPoint3D End { get; set; } = new TrajectoryPoint3D();
 
         public abstract NonLocalizedCurve Curve { get; set; }
 
@@ -51,7 +51,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             double s1 = (double)End.Abscissa;
             if (Numeric.EQ(s0, s1))
             {
-                return new CurvilinearPoint3D(Start);
+                return new TrajectoryPoint3D(Start);
             }
             CurvilinearPoint3D inter = null;
             int c = 0;

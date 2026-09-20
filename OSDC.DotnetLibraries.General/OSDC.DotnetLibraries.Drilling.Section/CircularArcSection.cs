@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using OSDC.DotnetLibraries.General.Math;
@@ -74,7 +74,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         {
         }
 
-        public CircularArcSection(CurvilinearPoint3D start, CurvilinearPoint3D end)
+        public CircularArcSection(TrajectoryPoint3D start, TrajectoryPoint3D end)
         {
             if (start != null)
             {
@@ -524,9 +524,17 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 Numeric.IsDefined(End.Azimuth) &&
                 Numeric.IsDefined(End.Abscissa))
             {
-                Start.MinimumCurvatureMethod(End);
-                Circle.Curvature = Start.GetDLS(End);
-                Circle.ReferenceToolface = Start.GetToolface(End);
+                // The circular arc geometry is defined once, in
+                // OSDC.DotnetLibraries.General.Math, on TrajectoryPoint3D, and used here rather than restated. It
+                // reports the curvature and the toolface angle at the start of the arc exactly, so
+                // neither has to be recomputed afterwards.
+                if (!Start.CompleteCASIA(End))
+                {
+                    return false;
+                }
+                Circle.Curvature = End.Curvature;
+                Circle.ReferenceToolface = End.Toolface;
+                Circle.Length = End.Abscissa - Start.Abscissa;
                 return true;
             }
             else
@@ -563,17 +571,12 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 }
                 else
                 {
-                    double dl = Numeric.AcosEqual(System.Math.Cos((double)(End.Inclination - Start.Inclination)) - (1.0 - System.Math.Cos((double)(End.Azimuth - Start.Azimuth))) * System.Math.Sin((double)End.Inclination) * System.Math.Sin((double)Start.Inclination));
+                    double dl = TrajectoryPoint3D.DoglegAngle(
+                        (double)Start.Inclination, (double)Start.Azimuth,
+                        (double)End.Inclination, (double)End.Azimuth);
                     Circle.Length = dl / Circle.Curvature;
                     End.Abscissa = Start.Abscissa + Circle.Length;
                     bool ok = CalculateSIA();
-                    //if (false)
-                    //{
-                    //    using (System.IO.StreamWriter writer = new System.IO.StreamWriter("c:\\temp\\LDT.txt", true))
-                    //    {
-                    //        writer.WriteLine("DLS=" + (Circle.Curvature * 180.0 * 30.0 / Math.PI).ToString() + "\tTF=" + (Circle.ReferenceToolface * 180.0 / Math.PI).ToString() + "\tL=" + Circle.Length + "\tIncl=" + (End.Inclination * 180.0 / Math.PI).ToString() + "\tAz=" + (End.Azimuth * 180.0 / Math.PI).ToString() + "\tZ=" + End.Z + "\tX=" + End.X + "\tY=" + End.Y);
-                    //    }
-                    //}
                     return ok;
                 }
             }
@@ -588,87 +591,16 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 Numeric.IsDefined(End.Y) &&
                 Numeric.IsDefined(End.Z))
             {
-                double ci = System.Math.Cos((double)Start.Inclination);
-                double si = System.Math.Sin((double)Start.Inclination);
-                double ca = System.Math.Cos((double)Start.Azimuth);
-                double sa = System.Math.Sin((double)Start.Azimuth);
-                Vector3D v1 = Vector3D.CreateSpheric(1.0, Start.Inclination, Start.Azimuth);
-                Vector3D v2 = new Vector3D(Start, End);
-                if (Numeric.EQ(End.Distance(Start), 0.0) || v1.IsParallel(v2, 1e-4))
+                // A circular arc leaving a known tangent and passing through a known point is closed
+                // form: the chord bisects the angle between the tangents at its two ends.
+                if (!Start.CompleteCAXYZ(End))
                 {
-                    Circle.Curvature = 0.0;
-                    Circle.ReferenceToolface = 0.0;
-                    Circle.Length = Start.Distance(End);
-                    End.Inclination = Start.Inclination;
-                    End.Azimuth = Start.Azimuth;
-                    End.Abscissa = Start.Abscissa + Circle.Length;
-                    return true;
+                    return false;
                 }
-                else
-                {
-                    double dls = 0;
-                    double a = 0;
-                    Point3D p1 = Start.TransCoord2PtsTg(End, End);
-                    if (!Numeric.EQ(p1.Z, 0))
-                    {
-                        dls = (double)(2.0 * p1.Y / (p1.Y * p1.Y + p1.Z * p1.Z));
-                        a = 2.0 * System.Math.Atan(System.Math.Abs((double)p1.Y) / System.Math.Abs((double)p1.Z));
-                        if (Numeric.LE(p1.Z, 0))
-                        {
-                            a = 2.0 * Numeric.PI - (a - Numeric.PI * System.Math.Floor(a / Numeric.PI));
-                        }
-                        else
-                        {
-                            a = a - Numeric.PI * System.Math.Floor(a / Numeric.PI);
-                        }
-                    }
-                    Point3D p3 = new Point3D
-                    {
-                        X = 0.0,
-                        Y = System.Math.Sin(a),
-                        Z = System.Math.Cos(a)
-                    };
-                    Point3D pt2 = Start.TransCoord2PtsTgReversed(End, p3);
-                    double c1 = (double)(pt2.Z - Start.Z);
-                    double b1 = (double)(pt2.Y - Start.Y);
-                    double a1 = (double)(pt2.X - Start.X);
-                    if (Numeric.EQ(dls, 0))
-                    {
-                        Circle.Length = Start.Distance(End);
-                    }
-                    else
-                    {
-                        Circle.Length = a / dls;
-                    }
-                    End.Abscissa = Start.Abscissa + Circle.Length;
-                    End.Inclination = Numeric.AcosEqual(c1);
-                    if (Numeric.EQ(a1, 0))
-                    {
-                        if (Numeric.GE(b1, 0))
-                        {
-                            End.Azimuth = Numeric.PI / 2.0;
-                        }
-                        else
-                        {
-                            End.Azimuth = 3.0 * Numeric.PI / 2.0;
-                        }
-                    }
-                    else
-                    {
-                        End.Azimuth = System.Math.Atan(b1 / a1);
-                    }
-                    if (Numeric.LT(a1, 0))
-                    {
-                        End.Azimuth = End.Azimuth + Numeric.PI;
-                    }
-                    if (End.Azimuth < 0)
-                    {
-                        End.Azimuth = End.Azimuth + 2.0 * Numeric.PI;
-                    }
-                    Circle.Curvature = dls;
-                    Circle.ReferenceToolface = Start.GetAngle(End, ci, si, ca, sa);
-                    return true;
-                }
+                Circle.Curvature = End.Curvature;
+                Circle.ReferenceToolface = End.Toolface;
+                Circle.Length = End.Abscissa - Start.Abscissa;
+                return true;
             }
             else
             {
@@ -694,13 +626,6 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                             End.Azimuth = Start.Azimuth;
                             End.Abscissa = Start.Abscissa;
                             Circle.Length = 0;
-                            //if (false)
-                            //{
-                            //    using (System.IO.StreamWriter writer = new System.IO.StreamWriter("c:\\temp\\DTZ.txt", true))
-                            //    {
-                            //        writer.WriteLine("A#\tDLS=" + (Circle.Curvature * 180.0 * 30.0 / Math.PI).ToString() + "\tTF=" + (Circle.ReferenceToolface * 180.0 / Math.PI).ToString() + "\tL=" + Circle.Length + "\tIncl=" + (End.Inclination * 180.0 / Math.PI).ToString() + "\tAz=" + (End.Azimuth * 180.0 / Math.PI).ToString() + "\tZ=" + End.Z + "\tX=" + End.X + "\tY=" + End.Y);
-                            //    }
-                            //}
                             return true;
                         }
                         else
@@ -720,146 +645,81 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                         {
                             End.Abscissa = Start.Abscissa + dm;
                             bool ok = CalculateSDT();
-                            //if (false)
-                            //{
-                            //    using (System.IO.StreamWriter writer = new System.IO.StreamWriter("c:\\temp\\DTZ.txt", true))
-                            //    {
-                            //        writer.WriteLine("B#\tDLS=" + (Circle.Curvature * 180.0 * 30.0 / Math.PI).ToString() + "\tTF=" + (Circle.ReferenceToolface * 180.0 / Math.PI).ToString() + "\tL=" + Circle.Length + "\tIncl=" + (End.Inclination * 180.0 / Math.PI).ToString() + "\tAz=" + (End.Azimuth * 180.0 / Math.PI).ToString() + "\tZ=" + End.Z + "\tX=" + End.X + "\tY=" + End.Y);
-                            //    }
-                            //}
                             return ok;
                         }
-                    }
-                }
-                else if (Numeric.EQ(Circle.ReferenceToolface, 0) || Numeric.EQ(Circle.ReferenceToolface, Numeric.PI))
-                {
-                    double centerZ = (double)(Start.Z + ((Numeric.EQ(Circle.ReferenceToolface, 0)) ? -1 : 1) * System.Math.Sin((double)Start.Inclination) / (double)Circle.Curvature);
-                    if (End.Z > centerZ+ 1.0/Circle.Curvature || End.Z < centerZ - 1.0/Circle.Curvature)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        double incl2 = (double)(Numeric.AsinEqual(((Numeric.EQ(Circle.ReferenceToolface, Numeric.PI)) ? -1 : 1) * (End.Z - centerZ) * Circle.Curvature));
-                        double length = System.Math.Abs((double)(incl2 - Start.Inclination) / (double)Circle.Curvature);
-                        if (End.Z < Start.Z)
-                        {
-                            //length = 2.0 * Numeric.PI / (double)Circle.Curvature - length;
-                            length = Numeric.PI / (double)Circle.Curvature + length;
-                        }
-                        Circle.Length = length;
-                        End.Abscissa = Start.Abscissa + length;
-                        bool ok = CalculateSDT();
-                        //if (false)
-                        //{
-                        //    using (System.IO.StreamWriter writer = new System.IO.StreamWriter("c:\\temp\\DTZ.txt", true))
-                        //    {
-                        //        writer.WriteLine("C#\tDLS=" + (Circle.Curvature * 180.0 * 30.0 / Math.PI).ToString() + "\tTF=" + (Circle.ReferenceToolface * 180.0 / Math.PI).ToString() + "\tL=" + Circle.Length + "\tIncl=" + (End.Inclination * 180.0 / Math.PI).ToString() + "\tAz=" + (End.Azimuth * 180.0 / Math.PI).ToString() + "\tZ=" + End.Z + "\tX=" + End.X + "\tY=" + End.Y);
-                        //    }
-                        //}
-                        return ok;
                     }
                 }
                 else
                 {
-                    double ci = System.Math.Cos((double)Start.Inclination);
-                    double si = System.Math.Sin((double)Start.Inclination);
-                    double ca = System.Math.Cos((double)Start.Azimuth);
-                    double sa = System.Math.Sin((double)Start.Azimuth);
-                    double ct = System.Math.Cos((double)Circle.ReferenceToolface);
-                    double st = System.Math.Sin((double)Circle.ReferenceToolface);
-                    double dz = (double)(End.Z - Start.Z);
-                    double R = 1.0 / (double)Circle.Curvature;
-                    double a1 = ct * ci * ca - st * sa;
-                    double b1 = ct * ci * sa + st * ca;
-                    double c1 = -ct * si;
-                    double a2 = -st * ci * ca - ct * sa;
-                    double b2 = ct * ca - st * ci * sa;
-                    double c2 = st * si;
-                    double a3 = si * ca;
-                    double b3 = si * sa;
-                    double c3 = ci;
-                    double p = 0;
-                    double q = 0;
-                    double r = 0;
-                    double s = 0;
-                    if (!Numeric.EQ(a2, 0, 100.0*Numeric.DOUBLE_ACCURACY))
-                    {
-                        p = b1 - a1 * b2 / a2;
-                        q = dz * (c1 - a1 * c2 / a2);
-                        r = b3 - a3 * b2 / a2;
-                        s = dz * (c3 - a3 * c2 / a2);
-                    }
-                    else
-                    {
-                        if (!Numeric.EQ(b2, 0, 100.0*Numeric.DOUBLE_ACCURACY))
-                        {
-                            p = a1 - b1 * a2 / b2;
-                            q = dz * (c1 - b1 * c2 / b2);
-                            r = a3 - b3 * a2 / b2;
-                            s = dz * (c3 - b3 * c2 / b2);
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    double x, y;
-                    int sol = Numeric.SolveRealQuadraticEquation(p * p + r * r, 2 * (p * (q - R) + r * s), s * s + (q - R) * (q - R) - R * R, out x, out y);
-                    if (sol > 0)
-                    {
-                        if (sol == 1)
-                        {
-                            y = x;
-                        }
-                        double teta1 = Numeric.AsinEqual((r * x + s) / R);
-                        double teta2 = Numeric.AsinEqual((r * y + s) / R);
-                        if (Numeric.GT(teta1, 0) && Numeric.GT(teta2, 0))
-                        {
-                            if (useMax)
-                            {
-                                teta1 = System.Math.Max(teta1, teta2);
-                            }
-                            else
-                            {
-                                teta1 = System.Math.Min(teta1, teta2);
-                            }
-                        }
-                        else if (Numeric.GT(teta1, 0))
-                        {
+                    // Along a circular arc of curvature k and reference toolface f, the tangent turns in
+                    // the plane spanned by the start tangent t0 and the arc normal n, so after an arc
+                    // angle w the depth gained is
+                    //
+                    //     dz(w) = ( t0z*sin(w) + nz*(1 - cos(w)) ) / k
+                    //
+                    // with t0z = cos(i0) and nz = -cos(f)*sin(i0). Collecting the harmonics turns this
+                    // into a single sinusoid, which is solved exactly. That covers the toolface aligned
+                    // with the build plane as one case among the rest, with no special branch, and it
+                    // keeps both roots of the sine so that arcs turning past the horizontal are reached.
+                    double curvature = (double)Circle.Curvature;
+                    double tangentZ = System.Math.Cos((double)Start.Inclination);
+                    double normalZ = -System.Math.Cos((double)Circle.ReferenceToolface) * System.Math.Sin((double)Start.Inclination);
+                    double target = (double)(End.Z - Start.Z) * curvature;
 
-                        }
-                        else if (Numeric.GT(teta2, 0))
+                    // tangentZ*sin(w) - normalZ*cos(w) = target - normalZ
+                    double amplitude = System.Math.Sqrt(tangentZ * tangentZ + normalZ * normalZ);
+                    double offset = target - normalZ;
+                    if (Numeric.EQ(amplitude, 0.0))
+                    {
+                        // The arc lies in a horizontal plane, so no depth other than the present one is
+                        // ever reached and no length is singled out when it is the one requested.
+                        return false;
+                    }
+                    double ratio = offset / amplitude;
+                    if (ratio < -1.0 || ratio > 1.0)
+                    {
+                        if (Numeric.EQ(System.Math.Abs(ratio), 1.0))
                         {
-                            teta1 = teta2;
-                        }
-                        else
-                        {
-                            teta1 = -1.0;
-                        }
-                        if (Numeric.GT(teta1, 0))
-                        {
-                            Circle.Length = R * teta1;
-                            End.Abscissa = Start.Abscissa + R * teta1;
-                            bool ok =  CalculateSDT();
-                            //if (false)
-                            //{
-                            //    using (System.IO.StreamWriter writer = new System.IO.StreamWriter("c:\\temp\\DTZ.txt", true))
-                            //    {
-                            //        writer.WriteLine("D#\tDLS=" + (Circle.Curvature * 180.0 * 30.0 / Math.PI).ToString() + "\tTF=" + (Circle.ReferenceToolface * 180.0 / Math.PI).ToString() + "\tL=" + Circle.Length + "\tIncl=" + (End.Inclination * 180.0 / Math.PI).ToString() + "\tAz=" + (End.Azimuth * 180.0 / Math.PI).ToString() + "\tZ=" + End.Z + "\tX=" + End.X + "\tY=" + End.Y);
-                            //    }
-                            //}
-                            return ok;
+                            ratio = System.Math.Sign(ratio);
                         }
                         else
                         {
+                            // The requested depth lies outside the range the arc ever spans.
                             return false;
                         }
                     }
-                    else
+                    double phase = System.Math.Atan2(-normalZ, tangentZ);
+                    double principal = System.Math.Asin(ratio);
+
+                    // Both roots of the sine, each brought into [0, 2pi) as an arc angle.
+                    double best = double.PositiveInfinity;
+                    foreach (double root in new double[] { principal, Numeric.PI - principal })
+                    {
+                        double angle = root - phase;
+                        angle -= 2.0 * Numeric.PI * System.Math.Floor(angle / (2.0 * Numeric.PI));
+                        if (Numeric.EQ(angle, 2.0 * Numeric.PI))
+                        {
+                            angle = 0.0;
+                        }
+                        if (useMax)
+                        {
+                            if (angle > best || double.IsInfinity(best))
+                            {
+                                best = angle;
+                            }
+                        }
+                        else if (angle < best)
+                        {
+                            best = angle;
+                        }
+                    }
+                    if (double.IsInfinity(best))
                     {
                         return false;
                     }
+                    Circle.Length = best / curvature;
+                    End.Abscissa = Start.Abscissa + (double)Circle.Length;
+                    return CalculateSDT();
                 }
             }
             else
@@ -875,110 +735,75 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             {
                 if (Numeric.EQ(Circle.Curvature, 0))
                 {
+                    // A straight line holds its inclination, so nothing fixes the length.
                     return false;
                 }
-                else
+
+                // Along a circular arc of curvature k and reference toolface f, the tangent after an
+                // arc angle w is t0*cos(w) + n*sin(w), and reading its vertical component gives the
+                // inclination directly:
+                //
+                //     cos(i(w)) = cos(i0)*cos(w) - cos(f)*sin(i0)*sin(w)
+                //
+                // Collecting the two harmonics into a single cosine solves this exactly for w. The
+                // arc angle, not the length, is what the equation yields, so the length follows by
+                // division by the curvature - the earlier formulation added a bare 2*pi to a length.
+                double curvature = (double)Circle.Curvature;
+                double tangentZ = System.Math.Cos((double)Start.Inclination);
+                double normalZ = -System.Math.Cos((double)Circle.ReferenceToolface) * System.Math.Sin((double)Start.Inclination);
+
+                // tangentZ*cos(w) + normalZ*sin(w) = cos(i1)
+                double amplitude = System.Math.Sqrt(tangentZ * tangentZ + normalZ * normalZ);
+                if (Numeric.EQ(amplitude, 0.0))
                 {
-                    if (Numeric.EQ(Start.Inclination, 0))
+                    // The arc lies in a horizontal plane and holds a horizontal inclination throughout.
+                    return false;
+                }
+                double ratio = System.Math.Cos((double)End.Inclination) / amplitude;
+                if (ratio < -1.0 || ratio > 1.0)
+                {
+                    if (Numeric.EQ(System.Math.Abs(ratio), 1.0))
                     {
-                        Circle.Length = (End.Inclination - Start.Inclination) / Circle.Curvature;
-                        End.Abscissa = Start.Abscissa + Circle.Length;
-                        return CalculateSDT();
+                        ratio = System.Math.Sign(ratio);
                     }
                     else
                     {
-                        if (Numeric.EQ(Circle.ReferenceToolface, Numeric.PI /2.0) ||
-                            Numeric.EQ(Circle.ReferenceToolface, 3.0*Numeric.PI/ 2.0))
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            if (Numeric.EQ(Circle.ReferenceToolface, 0))
-                            {
-                                if (End.Inclination >= Start.Inclination)
-                                {
-                                    Circle.Length = (End.Inclination - Start.Inclination) / Circle.Curvature;
-                                }
-                                else
-                                {
-                                    Circle.Length = 2.0 * Numeric.PI + (End.Inclination - Start.Inclination) / Circle.Curvature;
-                                }
-                                End.Abscissa = Start.Abscissa + Circle.Length;
-                                return CalculateSDT();
-                            }
-                            else
-                            {
-                                if (Numeric.EQ(Circle.ReferenceToolface, Numeric.PI) || Numeric.EQ(Circle.ReferenceToolface, -Numeric.PI))
-                                {
-                                    if (End.Inclination < Start.Inclination)
-                                    {
-                                        Circle.Length = - (End.Inclination - Start.Inclination) / Circle.Curvature;
-                                    }
-                                    else
-                                    {
-                                        Circle.Length = - 2.0 * Numeric.PI + (End.Inclination - Start.Inclination) / Circle.Curvature;
-                                    }
-                                    End.Abscissa = Start.Abscissa + Circle.Length;
-                                    return CalculateSDT();
-                                }
-                                else
-                                {
-                                    double ci = System.Math.Cos((double)Start.Inclination);
-                                    double si = System.Math.Sin((double)Start.Inclination);
-                                    double ct = System.Math.Cos((double)Circle.ReferenceToolface);
-                                    double cif = System.Math.Cos((double)End.Inclination);
-                                    double r = 1.0 / (double)Circle.Curvature;
-                                    double a = ci + cif;
-                                    double b = 2.0 * ct * si;
-                                    double c = cif - ci;
-                                    double x, y;
-                                    int sol = Numeric.SolveRealQuadraticEquation(a, b, c, out x, out y);
-                                    if (sol > 0)
-                                    {
-                                        if (sol == 1)
-                                        {
-                                            y = x;
-                                        }
-                                        double teta1 = System.Math.Atan(x);
-                                        double teta2 = System.Math.Atan(y);
-                                        if (Numeric.GT(teta1, 0) && Numeric.GT(teta2, 0))
-                                        {
-                                            if (useMax)
-                                            {
-                                                teta1 = Math.Max(teta1, teta2);
-                                            }
-                                            else
-                                            {
-                                                teta1 = Math.Min(teta1, teta2);
-                                            }
-                                        } 
-                                        else if (Numeric.GT(teta1, 0))
-                                        {
-
-                                        }
-                                        else if (Numeric.GT(teta2, 0))
-                                        {
-                                            teta1 = teta2;
-                                        }
-                                        else
-                                        {
-                                            teta1 = -1.0;
-                                        }
-                                        if (Numeric.GT(teta1, 0))
-                                        {
-                                            Circle.Length = 2.0 * r * teta1;
-                                            End.Abscissa = Start.Abscissa + Circle.Length;
-                                            return CalculateSDT();
-                                        }
-                                        return false;
-                                    }
-                                    return false;
-                                }
-                            }
-                        }
+                        // The requested inclination lies outside the range the arc ever spans.
+                        return false;
                     }
                 }
+                double phase = System.Math.Atan2(normalZ, tangentZ);
+                double principal = System.Math.Acos(ratio);
+
+                // Both roots of the cosine, each brought into [0, 2pi) as an arc angle.
+                double best = double.PositiveInfinity;
+                foreach (double root in new double[] { principal, -principal })
+                {
+                    double angle = root + phase;
+                    angle -= 2.0 * Numeric.PI * System.Math.Floor(angle / (2.0 * Numeric.PI));
+                    if (Numeric.EQ(angle, 2.0 * Numeric.PI))
+                    {
+                        angle = 0.0;
+                    }
+                    if (useMax)
+                    {
+                        if (double.IsInfinity(best) || angle > best)
+                        {
+                            best = angle;
+                        }
+                    }
+                    else if (angle < best)
+                    {
+                        best = angle;
+                    }
+                }
+                if (double.IsInfinity(best))
+                {
+                    return false;
+                }
+                Circle.Length = best / curvature;
+                End.Abscissa = Start.Abscissa + (double)Circle.Length;
+                return CalculateSDT();
             }
             else
             {
@@ -993,13 +818,6 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             {
                 End.Abscissa = Start.Abscissa + Curve.Length;
                 bool ok= CalculateSDT();
-                //if (false)
-                //{
-                //    using (System.IO.StreamWriter writer = new System.IO.StreamWriter("c:\\temp\\LDT.txt", true))
-                //    {
-                //        writer.WriteLine("DLS=" + (Circle.Curvature * 180.0 * 30.0 / Math.PI).ToString() + "\tTF=" + (Circle.ReferenceToolface * 180.0 / Math.PI).ToString() + "\tL=" + Circle.Length + "\tIncl=" + (End.Inclination * 180.0 / Math.PI).ToString() + "\tAz=" + (End.Azimuth * 180.0 / Math.PI).ToString() + "\tZ=" + End.Z + "\tX=" + End.X + "\tY=" + End.Y);
-                //    }
-                //}
                 return ok;
             }
             else
@@ -1013,97 +831,17 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 Numeric.IsDefined(Circle.ReferenceToolface) &&
                 Numeric.IsDefined(End.Abscissa))
             {
-                if (Numeric.EQ(Circle.Curvature, 0))
-                {
-                    double dm = (double)(End.Abscissa - Start.Abscissa);
-                    Circle.Length = dm;
-                    double si = System.Math.Sin((double)Start.Inclination);
-                    End.Inclination = Start.Inclination;
-                    End.Azimuth = Start.Azimuth;
-                    End.X = Start.X + dm * si * System.Math.Cos((double)Start.Azimuth);
-                    End.Y = Start.Y + dm * si * System.Math.Sin((double)Start.Azimuth);
-                    End.Z = Start.Z + dm * System.Math.Cos((double)Start.Inclination);
-                    return true;
-                }
-                else if (Numeric.EQ(Start.Inclination, 0)) 
-                {
-                    double dm = (double)(End.Abscissa - Start.Abscissa);
-                    Circle.Length = dm;
-                    End.Inclination = (dm * Circle.Curvature) % Numeric.PI;
-                    End.Azimuth = Circle.ReferenceToolface;
-                    int halfCircleSign = 1;
-                    if (Numeric.GT(dm * Circle.Curvature, Numeric.PI))
-                    {
-                        End.Azimuth += Numeric.PI;
-                        End.Inclination = Numeric.PI - End.Inclination;
-                        // Note that the InterpolateAtMD method does not take into account sections with more than half the circle, so there will still be problems with WellPath Calculator
-                        halfCircleSign = -1;
-                    }
-                    double ci = System.Math.Cos((double)End.Inclination);
-                    End.X = Start.X + halfCircleSign * System.Math.Cos((double)End.Azimuth) * (1.0 - ci) / Circle.Curvature;
-                    End.Y = Start.Y + halfCircleSign * System.Math.Sin((double)End.Azimuth) * (1.0 - ci) / Circle.Curvature;
-                    End.Z = Start.Z + halfCircleSign * System.Math.Sin((double)End.Inclination) / Circle.Curvature;
-                    return true;
-                }
-                else
-                {
-                    double dm = (double)(End.Abscissa - Start.Abscissa);
-                    Circle.Length = dm;
-                    Point3D p1 = new Point3D(0, 0, 0);
-                    Point3D p2 = new Point3D(0, 0, 0);
-                    CurvilinearPoint3D s = Start;
-                    CurvilinearPoint3D f = End;
-                    double dls = (double)Circle.Curvature;
-                    double teta = dm * dls;
-                    double st = System.Math.Sin(teta);
-                    double ct = System.Math.Cos(teta);
-                    p1.X = (1 - ct) / dls;
-                    p1.Y = 0.0;
-                    p1.Z = st / dls;
-                    Point3D pt = s.TransCoord3RotsReversed((double)Circle.ReferenceToolface, p1);
-                    f.X = s.X + pt.X;
-                    f.Y = s.Y + pt.Y;
-                    f.Z = s.Z + pt.Z;
-                    p1.X = st;
-                    p1.Y = 0;
-                    p1.Z = ct;
-                    pt = s.TransCoord3RotsReversed((double)Circle.ReferenceToolface, p1);
-                    f.Inclination = Numeric.AcosEqual(pt.Z);
-                    if (Numeric.EQ(pt.Z, 1.0))
-                    {
-                        f.Azimuth = s.Azimuth;
-                    }
-                    else
-                    {
-                        if (Numeric.EQ(pt.X, 0.0) && Numeric.EQ(pt.Y, 0))
-                        {
-                            f.Azimuth = Numeric.UNDEF_DOUBLE;
-                        }
-                        else
-                        {
-                            double teta2 = (double)(Numeric.AcosEqual(pt.X / System.Math.Sqrt((double)(pt.X * pt.X + pt.Y * pt.Y))));
-                            if (pt.Y >= 0.0)
-                            {
-                                f.Azimuth = teta2;
-                            }
-                            else
-                            {
-                                f.Azimuth = 2.0 * Numeric.PI - teta2;
-                            }
-                        }
-                    }
-                    return true;
-                }
+                Circle.Length = End.Abscissa - Start.Abscissa;
+                return Start.CompleteCASDT(End, (double)Circle.Curvature, (double)Circle.ReferenceToolface);
             }
             else
             {
                 return false;
             }
         }
-
         public override CurvilinearPoint3D InterpolateAtMD(double md)
         {
-            CurvilinearPoint3D point = new CurvilinearPoint3D();
+            CurvilinearPoint3D point = new TrajectoryPoint3D();
             point.SetUndefined();
             bool success = InterpolateAtMD(md, point);
             if (success)
@@ -1117,138 +855,28 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         }
         public bool InterpolateAtMD(double md, CurvilinearPoint3D point)
         {
-            if (point != null)
-            {
-                CurvilinearPoint3D point1 = Start;
-                CurvilinearPoint3D point2 = End;
-                if (Numeric.EQ(point1.Abscissa, md, Numeric.DEPTH_ACCURACY))
-                {
-                    point.Set(point1);
-                    return true;
-                }
-                else if (!Numeric.IsBetween(md, (double)point1.Abscissa, (double)point2.Abscissa))
-                {
-                    return false;
-                }
-                double x1 = (double)point1.X;
-                double y1 = (double)point1.Y;
-                double z1 = (double)point1.Z;
-                double i2 = (double)point2.Inclination;
-                double i1 = (double)point1.Inclination;
-                double a2 = (double)point2.Azimuth;
-                double a1 = (double)point1.Azimuth;
-                double sini1 = System.Math.Sin(i1);
-                double sini2 = System.Math.Sin(i2);
-                double DL = System.Math.Acos(System.Math.Cos(i2 - i1) - (1 - System.Math.Cos(a2 - a1)) * sini2 * sini1);
-                double DM = (double)(point2.Abscissa - point1.Abscissa);
-                if (Numeric.EQ(DM, 0, Numeric.DEPTH_ACCURACY))
-                {
-                    if (Numeric.EQ(point1.Abscissa, md))
-                    {
-                        point.Set(point1);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    point.Abscissa = md;
-                    double dx = (double)(point2.X - x1);
-                    double dy = (double)(point2.Y - y1);
-                    double dz = (double)(point2.Z - z1);
-                    double Ci = System.Math.Cos(i1);
-                    double Si = System.Math.Sin(i1);
-                    double Ca = System.Math.Cos(a1);
-                    double Sa = System.Math.Sin(a1);
-                    double X = dx * Ci * Ca + dy * Sa * Ci - dz * Si;
-                    double Y = dy * Ca - dx * Sa;
-                    double L = System.Math.Sqrt(X * X + Y * Y);
-                    double TF = 0;
-                    if (!Numeric.EQ(L, 0))
-                    {
-                        if (Numeric.GE(Y, 0))
-                        {
-                            TF = System.Math.Acos(X / L);
-                        }
-                        else
-                        {
-                            TF = 2 * Numeric.PI - System.Math.Acos(X / L);
-                        }
-                    }
-                    double DLS = DL / DM;
-                    double dm = md - (double)point1.Abscissa;
-                    if (Numeric.EQ(DLS, 0))
-                    {
-                        point.Inclination = i1;
-                        point.Azimuth = a1;
-                        point.X = x1 + dm * System.Math.Cos(a1) * sini1;
-                        point.Y = y1 + dm * System.Math.Sin(a1) * sini1;
-                        point.Z = z1 + dm * System.Math.Cos(i1);
-                    }
-                    else
-                    {
-                        if (Numeric.EQ(i1, 0))
-                        {
-                            point.Inclination = dm * DLS;
-                            if (Numeric.IsUndefined(TF))
-                            {
-                                point.Azimuth = point2.Azimuth;
-                            }
-                            else
-                            {
-                                point.Azimuth = TF;
-                            }
-                            double ci = System.Math.Cos((double)point.Inclination);
-                            point.X = x1 + System.Math.Cos((double)point.Azimuth) * (1 - ci) / DLS;
-                            point.Y = y1 + System.Math.Sin((double)point.Azimuth) * (1 - ci) / DLS;
-                            point.Z = z1 + System.Math.Sin((double)point.Inclination) / DLS;
-                        }
-                        else
-                        {
-                            double teta = dm * DLS;
-                            double deltaXp = (1 - System.Math.Cos(teta)) / DLS;
-                            double deltaZp = System.Math.Sin(teta) / DLS;
-                            double ctf = System.Math.Cos(TF);
-                            double stf = System.Math.Sin(TF);
-                            double cosi1 = System.Math.Cos(i1);
-                            double cosa1 = System.Math.Cos(a1);
-                            double sina1 = System.Math.Sin(a1);
-                            point.X = x1 + deltaXp * (ctf * cosa1 * cosi1 - sina1 * stf) + deltaZp * sini1 * cosa1;
-                            point.Y = y1 + deltaXp * (stf * cosa1 + ctf * sina1 * cosi1) + deltaZp * sini1 * sina1;
-                            point.Z = z1 - deltaXp * ctf * sini1 + deltaZp * cosi1;
-                            double deltaXt = System.Math.Sin(teta);
-                            double deltaZt = System.Math.Cos(teta);
-                            double xt = deltaXt * (ctf * cosa1 * cosi1 - sina1 * stf) + deltaZt * sini1 * cosa1;
-                            double yt = deltaXt * (stf * cosa1 + ctf * sina1 * cosi1) + deltaZt * sini1 * sina1;
-                            double zt = -deltaXt * ctf * sini1 + deltaZt * cosi1;
-                            point.Inclination = System.Math.Acos(zt);
-                            if (Numeric.EQ(zt, 1))
-                            {
-                                point.Azimuth = point1.Azimuth;
-                            }
-                            else
-                            {
-                                double omega = System.Math.Acos(xt / System.Math.Sqrt(xt * xt + yt * yt));
-                                if (Numeric.GE(yt, 0))
-                                {
-                                    point.Azimuth = omega;
-                                }
-                                else
-                                {
-                                    point.Azimuth = 2 * Numeric.PI - omega;
-                                }
-                            }
-                        }
-                    }
-                    return true;
-                }
-            }else
+            if (point == null)
             {
                 return false;
             }
+            if (Numeric.EQ(Start.Abscissa, md, Numeric.DEPTH_ACCURACY))
+            {
+                point.Set(Start);
+                return true;
+            }
+            if (Numeric.EQ(End.Abscissa, md, Numeric.DEPTH_ACCURACY))
+            {
+                point.Set(End);
+                return true;
+            }
+            if (!Numeric.IsBetween(md, (double)Start.Abscissa, (double)End.Abscissa))
+            {
+                return false;
+            }
+            // Interpolation along a circular arc is defined once, in
+            // OSDC.DotnetLibraries.General.Math, on TrajectoryPoint3D, and used here rather than restated.
+            return Start.InterpolateAtAbscissaCA(End, md, point);
         }
+
     }
 }

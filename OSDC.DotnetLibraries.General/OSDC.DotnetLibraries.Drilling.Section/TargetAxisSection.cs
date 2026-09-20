@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -43,7 +43,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             {
                 if (inputSections_.Count > 0)
                 {
-                    CurvilinearPoint3D start = new CurvilinearPoint3D();
+                    TrajectoryPoint3D start = new TrajectoryPoint3D();
                     start.Set(inputSections_[0].Start);
                     if (Numeric.IsUndefined(start.Inclination) || Numeric.IsUndefined(start.Azimuth))
                     {
@@ -80,7 +80,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                                 downstreamSection.Circle.ReferenceToolface = doubleArcSection.DoubleArcCurve.DownstreamReferenceToolface;
                                 downstreamSection.Circle.Length = doubleArcSection.End.Abscissa - doubleArcSection.Intermediate.Abscissa;
                                 calculatedSections_.Add(downstreamSection);
-                                start = new CurvilinearPoint3D(downstreamSection.End);
+                                start = new TrajectoryPoint3D(downstreamSection.End);
                             }
                             else
                             {
@@ -94,7 +94,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                             if (section.CalculateXYZ())
                             {
                                 calculatedSections_.Add(section);
-                                start = new CurvilinearPoint3D(section.End);
+                                start = new TrajectoryPoint3D(section.End);
                             }
                             else
                             {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using OSDC.DotnetLibraries.General.Common;
@@ -233,7 +233,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                     // guess using a cubic spline
                     CubicSection cubicSection = new CubicSection();
                     cubicSection.Start = sections[0].Start;
-                    cubicSection.End = new CurvilinearPoint3D(sections[sections.Count - 1].End);
+                    cubicSection.End = new TrajectoryPoint3D(sections[sections.Count - 1].End);
                     if (cubicSection.Calculate())
                     {
                         //if (false)
@@ -264,7 +264,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                         double? az2 = null;
                         CircularArcSection arc = new CircularArcSection();
                         arc.Start = sections[0].Start;
-                        arc.End = new CurvilinearPoint3D(sections[sections.Count - 1].End);
+                        arc.End = new TrajectoryPoint3D(sections[sections.Count - 1].End);
                         if (arc.CalculateXYZ())
                         {
                             incl2 = arc.End.Inclination;
@@ -298,7 +298,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                             // guess using a cubic spline
                             CubicSection cubicSection = new CubicSection();
                             cubicSection.Start = sections[0].Start;
-                            cubicSection.End = new CurvilinearPoint3D(sections[sections.Count - 1].End);
+                            cubicSection.End = new TrajectoryPoint3D(sections[sections.Count - 1].End);
                             cubicSection.End.Inclination = incl1;
                             cubicSection.End.Azimuth = az1;
                             if (cubicSection.Calculate())
@@ -320,7 +320,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                     CircularArcSection.FunctionType chosen = possibilities[possibilities.Count - 1];
                     CircularArcSection arc = new CircularArcSection();
                     arc.Start = sections[0].Start;
-                    arc.End = new CurvilinearPoint3D(sections[sections.Count - 1].End);
+                    arc.End = new TrajectoryPoint3D(sections[sections.Count - 1].End);
                     if (arc.Calculate(chosen))
                     {
                         List<double> MDs = GenerateMDs(sections, intermediates, arc);
@@ -345,7 +345,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                     }
                     if (TFIndex >= 0)
                     {
-                        CurvilinearPoint3D target = new CurvilinearPoint3D(sections[sections.Count - 1].End);
+                        CurvilinearPoint3D target = new TrajectoryPoint3D(sections[sections.Count - 1].End);
                         double bestTF = 0;
                         double min = double.MaxValue;
                         for (double tf = 0; tf < 2.0 * Math.PI; tf += 10.0 * Math.PI / 180.0)

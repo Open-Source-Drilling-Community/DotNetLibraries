@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using OSDC.DotnetLibraries.General.Common;
@@ -43,7 +43,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public CubicSection(CurvilinearPoint3D start, CurvilinearPoint3D end)
+        public CubicSection(TrajectoryPoint3D start, TrajectoryPoint3D end)
         {
             Start = start;
             End = end;
@@ -63,7 +63,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             {
                 if (Numeric.EQ(Start.Abscissa, End.Abscissa))
                 {
-                    return new CurvilinearPoint3D(Start);
+                    return new TrajectoryPoint3D(Start);
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                     {
                         t = t0;
                     }
-                    CurvilinearPoint3D p = new CurvilinearPoint3D();                
+                    CurvilinearPoint3D p = new TrajectoryPoint3D();                
                     double t2 = t * t;
                     double t3 = t * t2;
                     p.Set(a_[0] * t3 + b_[0] * t2 + c_[0] * t + d_[0], a_[1] * t3 + b_[1] * t2 + c_[1] * t + d_[1], a_[2] * t3 + b_[2] * t2 + c_[2] * t + d_[2]);

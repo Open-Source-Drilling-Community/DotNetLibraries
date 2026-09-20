@@ -213,6 +213,81 @@ namespace OSDC.DotnetLibraries.General.Math
             return base.IsZero() && Numeric.EQ(Abscissa, 0) && Numeric.EQ(Inclination, 0.0) && Numeric.EQ(Azimuth, 0.0);
         }
 
+        /// <summary>
+        /// Wraps an angle difference into (-PI, PI]. System.Math.IEEERemainder is used rather than the
+        /// operator %, which returns a result carrying the sign of the dividend: the naive form
+        /// (a + PI) % (2*PI) - PI is wrong for a negative angle and also loses the last bit or two on
+        /// small differences. IEEERemainder returns [-PI, PI], so the only fix up needed is mapping an
+        /// exact -PI onto +PI to make the interval half open.
+        /// </summary>
+        public static double WrapToPi(double angle)
+        {
+            double wrapped = System.Math.IEEERemainder(angle, 2.0 * Numeric.PI);
+            if (wrapped <= -Numeric.PI)
+            {
+                wrapped += 2.0 * Numeric.PI;
+            }
+            return wrapped;
+        }
+
+        /// <summary>
+        /// Apply the minimum curvature method between this survey and the next
+        /// </summary>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        /// <summary>
+        /// The dogleg angle between two attitudes, that is the angle between the two unit tangents.
+        ///
+        /// Evaluated in the half angle form
+        ///     2*asin( sqrt( sin^2(di/2) + sin(i1)*sin(i2)*sin^2(da/2) ) )
+        /// rather than as the arc cosine of the dot product. The dot product of two nearly parallel
+        /// tangents is within rounding of one, where the arc cosine has an infinite derivative and loses
+        /// about half of the available digits: at a dogleg of 1e-9 rad it returns nothing but noise,
+        /// whereas this form stays accurate to the last bit over the whole range. It is also bounded by
+        /// construction, so no clamping is needed.
+        ///
+        /// The result is invariant to whole turns in either azimuth, because sin^2(da/2) is.
+        /// </summary>
+        public static double DoglegAngle(double inclinationStart, double azimuthStart, double inclinationEnd, double azimuthEnd)
+        {
+            double halfInclination = System.Math.Sin(0.5 * (inclinationEnd - inclinationStart));
+            double halfAzimuth = System.Math.Sin(0.5 * (azimuthEnd - azimuthStart));
+            double squared = halfInclination * halfInclination
+                + System.Math.Sin(inclinationStart) * System.Math.Sin(inclinationEnd) * halfAzimuth * halfAzimuth;
+            if (squared <= 0.0)
+            {
+                return 0.0;
+            }
+            double root = System.Math.Sqrt(squared);
+            return 2.0 * System.Math.Asin(root > 1.0 ? 1.0 : root);
+        }
+
+        /// <summary>
+        /// The toolface angle at the START of the circular arc joining two attitudes.
+        ///
+        /// Along a circular arc the toolface angle is not constant, unlike along a constant curvature and
+        /// toolface curve, so a single value has to be chosen. The one at the start of the arc is the
+        /// meaningful one: it is the angle the arc is set off at, and it is exactly the argument
+        /// <see cref="CompleteCASDT"/> takes, so reporting it makes the two constructions inverses of one
+        /// another.
+        ///
+        /// With h the high side and r the right hand side at the start station, the arc turns towards
+        /// t1 - (t1.t0)t0, whose components along h and r give
+        ///     toolface = atan2( sin(i2)*sin(a2-a1), sin(i2)*cos(i1)*cos(a2-a1) - sin(i1)*cos(i2) ).
+        /// Being built from a difference of azimuths inside a sine and a cosine, it is unaffected by
+        /// whole turns in either azimuth.
+        /// </summary>
+        public static double StartToolface(double inclinationStart, double azimuthStart, double inclinationEnd, double azimuthEnd)
+        {
+            double sinStart = System.Math.Sin(inclinationStart);
+            double cosStart = System.Math.Cos(inclinationStart);
+            double sinEnd = System.Math.Sin(inclinationEnd);
+            double cosEnd = System.Math.Cos(inclinationEnd);
+            double dAzimuth = azimuthEnd - azimuthStart;
+            double alongRightHandSide = sinEnd * System.Math.Sin(dAzimuth);
+            double alongHighSide = sinEnd * cosStart * System.Math.Cos(dAzimuth) - sinStart * cosEnd;
+            return System.Math.Atan2(alongRightHandSide, alongHighSide);
+        }
         public double? GetToolface(ICurvilinear3D p)
         {
             if (Inclination != null && Azimuth != null && p != null && p.Inclination != null && p.Azimuth != null)
@@ -225,9 +300,7 @@ namespace OSDC.DotnetLibraries.General.Math
                 double sinI1 = System.Math.Sin(inclination1);
                 double cosI2 = System.Math.Cos(inclination2);
                 double sinI2 = System.Math.Sin(inclination2);
-                double numerator = sinI2 * System.Math.Sin(azimuth2 - azimuth1);
-                double denominator = sinI2 * cosI1 * System.Math.Cos(azimuth2 - azimuth1) - sinI1 * cosI2;
-                return System.Math.Atan2(numerator, denominator);
+                return StartToolface(inclination1, azimuth1, inclination2, azimuth2);
             }
             else
             {
@@ -321,14 +394,10 @@ namespace OSDC.DotnetLibraries.General.Math
                 }
                 else
                 {
-                    double dAzimuth = ((double)p.Azimuth - (double)Azimuth) % 2.0 * Numeric.PI;
-                    double _2PI = 2.0 * Numeric.PI;
-                    if (dAzimuth >= 0) _2PI *= -1.0;
-                    if (System.Math.Abs(dAzimuth) > System.Math.Abs(dAzimuth + _2PI))
-                    {
-                        dAzimuth += _2PI;
-                    }
-                    return dAzimuth / (p.Abscissa - Abscissa);
+                    // The azimuth is reported modulo a full turn, so the difference has to be taken
+                    // the short way round. Note that "% 2.0 * Numeric.PI" does not do that: it binds as
+                    // "(x % 2.0) * PI", taking the remainder modulo two and then multiplying by pi.
+                    return WrapToPi((double)p.Azimuth - (double)Azimuth) / (p.Abscissa - Abscissa);
                 }
             }
             else
@@ -351,7 +420,7 @@ namespace OSDC.DotnetLibraries.General.Math
                 }
                 else
                 {
-                    return Numeric.AcosEqual(System.Math.Cos((double)p.Inclination - (double)Inclination) - ((1.0 - System.Math.Cos((double)p.Azimuth - (double)Azimuth)) * System.Math.Sin((double)p.Inclination) * System.Math.Sin((double)Inclination))) / (p.Abscissa - Abscissa);
+                    return DoglegAngle((double)Inclination, (double)Azimuth, (double)p.Inclination, (double)p.Azimuth) / (p.Abscissa - Abscissa);
                 }
             }
             else
@@ -440,7 +509,7 @@ namespace OSDC.DotnetLibraries.General.Math
                     double sa = System.Math.Sin((double)Azimuth);
                     double ca = System.Math.Cos((double)Azimuth);
                     double dm = (double)p.Abscissa - (double)Abscissa;
-                    double dl = Numeric.AcosEqual(System.Math.Cos((double)p.Inclination - (double)Inclination) - ((1.0 - System.Math.Cos((double)p.Azimuth - (double)Azimuth)) * si2 * si));
+                    double dl = DoglegAngle((double)Inclination, (double)Azimuth, (double)p.Inclination, (double)p.Azimuth);
                     double rf = 0;
                     if (Numeric.LE(dl, 0.02))
                     {
