@@ -648,6 +648,28 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
         // cutting the streamlines by the cross-sections
         // =========================================================================================
 
+        /// <summary>
+        /// Where every member crosses the plane of every cross-section, in the frame of that
+        /// cross-section, together with how many members each one collected.
+        /// <para>
+        /// The population matters more than it looks: the span a factory keeps is the longest run of
+        /// cross-sections reaching the largest population any of them reaches, so a member recorded as
+        /// absent at one cross-section breaks the run there and the shorter side is discarded. A member
+        /// absent at an <em>end</em> is a real fact, and trimming there is the point. A member absent in
+        /// the <em>middle</em> cannot be a fact at all: the signed distance along a cross-section's own
+        /// axis runs from negative where a member starts to positive where it ends, so its path crosses
+        /// the plane of every cross-section it spans. An interior deficit is therefore always an artefact
+        /// of how the crossings were looked for, and it used to cost real corridor \u2014 measured on
+        /// Ullrigg, one member of twelve whose steps were longer than the station spacing cost a corridor
+        /// 520 m of its 1100 m.
+        /// </para>
+        /// <para>
+        /// So the segment walk, which is fast because it only looks near where the last segment was, is
+        /// followed by a repair pass over whatever it missed. The repair only ever adds a crossing the
+        /// walk failed to find, never changes one it found, so a bundle whose members were all recorded
+        /// everywhere already is unaffected.
+        /// </para>
+        /// </summary>
         private void CollectCrossings(IStreamlineSource source, IReadOnlyList<int> members,
                                       double[] median, double[] tangent,
                                       double[] firstNormal, double[] secondNormal, int stationCount,
@@ -661,6 +683,9 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
 
             double[] buffer = Array.Empty<double>();
             double[] best = new double[stationCount];
+            int[] bestSegment = new int[stationCount];
+            int[] bracketLow = new int[stationCount];
+            int[] bracketHigh = new int[stationCount];
             for (int m = 0; m < members.Count; m++)
             {
                 int count = ReadMember(source, members[m], ref buffer);
@@ -669,6 +694,7 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
                     continue;
                 }
                 Array.Fill(best, double.MaxValue);
+                Array.Fill(bestSegment, -1);
                 int guess = 0;
                 int previousGuess = 0;
                 for (int j = 1; j < count; j++)
@@ -680,60 +706,114 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
                     guess = NearestStation(median, stationCount, buffer, j, previousGuess);
                     int from = System.Math.Max(0, System.Math.Min(previousGuess, guess) - 1);
                     int to = System.Math.Min(stationCount - 1, System.Math.Max(previousGuess, guess) + 1);
-                    double dx = buffer[3 * j] - buffer[3 * (j - 1)];
-                    double dy = buffer[3 * j + 1] - buffer[3 * (j - 1) + 1];
-                    double dz = buffer[3 * j + 2] - buffer[3 * (j - 1) + 2];
-                    double segment = System.Math.Sqrt(dx * dx + dy * dy + dz * dz);
                     for (int k = from; k <= to; k++)
                     {
-                        double f0 = (buffer[3 * (j - 1)] - median[3 * k]) * tangent[3 * k]
-                                    + (buffer[3 * (j - 1) + 1] - median[3 * k + 1]) * tangent[3 * k + 1]
-                                    + (buffer[3 * (j - 1) + 2] - median[3 * k + 2]) * tangent[3 * k + 2];
-                        double f1 = (buffer[3 * j] - median[3 * k]) * tangent[3 * k]
-                                    + (buffer[3 * j + 1] - median[3 * k + 1]) * tangent[3 * k + 1]
-                                    + (buffer[3 * j + 2] - median[3 * k + 2]) * tangent[3 * k + 2];
-                        if ((f0 > 0 && f1 > 0) || (f0 < 0 && f1 < 0))
-                        {
-                            // a segment ending exactly on the plane still crosses it, which matters at the
-                            // very first and very last station
-                            continue;
-                        }
-                        double span = f0 - f1;
-                        double t = span != 0 ? f0 / span : 0;
-                        if (t < 0) { t = 0; } else if (t > 1) { t = 1; }
-                        double ox = buffer[3 * (j - 1)] + t * dx - median[3 * k];
-                        double oy = buffer[3 * (j - 1) + 1] + t * dy - median[3 * k + 1];
-                        double oz = buffer[3 * (j - 1) + 2] + t * dz - median[3 * k + 2];
-                        double u = ox * firstNormal[3 * k] + oy * firstNormal[3 * k + 1] + oz * firstNormal[3 * k + 2];
-                        double v = ox * secondNormal[3 * k] + oy * secondNormal[3 * k + 1] + oz * secondNormal[3 * k + 2];
-                        double offset = u * u + v * v;
-                        // a streamline that wanders back through a plane is taken where it is nearest the
-                        // median curve
-                        if (offset >= best[k])
-                        {
-                            continue;
-                        }
-                        if (best[k] == double.MaxValue)
-                        {
-                            population[k]++;
-                        }
-                        best[k] = offset;
-                        int at = m * stationCount + k;
-                        crossU[at] = (float)u;
-                        crossV[at] = (float)v;
-                        if (segment > 0)
-                        {
-                            // the direction the streamline is going here, turned to agree with the median
-                            // so that streamlines traversed the other way round do not cancel out
-                            double along = dx * tangent[3 * k] + dy * tangent[3 * k + 1] + dz * tangent[3 * k + 2];
-                            double sign = along < 0 ? -1.0 / segment : 1.0 / segment;
-                            direction[3 * k] += sign * dx;
-                            direction[3 * k + 1] += sign * dy;
-                            direction[3 * k + 2] += sign * dz;
-                        }
+                        TakeCrossing(buffer, j, median, tangent, firstNormal, secondNormal, stationCount,
+                                     k, m, best, bestSegment, crossU, crossV, population, direction);
                     }
                     previousGuess = guess;
                 }
+
+                // ---- whatever the walk missed ------------------------------------------------------
+                // Each missed cross-section is bracketed by the segments where its recorded neighbours
+                // were crossed, so the search stays local: the crossings are in the same order as the
+                // cross-sections wherever the bundle is not doubling back, and where it is, the bracket
+                // is merely wider.
+                int recorded = -1;
+                for (int k = 0; k < stationCount; k++)
+                {
+                    bracketLow[k] = recorded;
+                    if (bestSegment[k] >= 0) { recorded = bestSegment[k]; }
+                }
+                recorded = -1;
+                for (int k = stationCount - 1; k >= 0; k--)
+                {
+                    bracketHigh[k] = recorded;
+                    if (bestSegment[k] >= 0) { recorded = bestSegment[k]; }
+                }
+                for (int k = 0; k < stationCount; k++)
+                {
+                    if (bestSegment[k] >= 0)
+                    {
+                        continue;
+                    }
+                    int low = bracketLow[k] >= 0 ? bracketLow[k] : 1;
+                    int high = bracketHigh[k] >= 0 ? bracketHigh[k] : count - 1;
+                    if (high < low)
+                    {
+                        (low, high) = (high, low);
+                    }
+                    low = System.Math.Max(1, low - 1);
+                    high = System.Math.Min(count - 1, high + 1);
+                    for (int j = low; j <= high; j++)
+                    {
+                        TakeCrossing(buffer, j, median, tangent, firstNormal, secondNormal, stationCount,
+                                     k, m, best, bestSegment, crossU, crossV, population, direction);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Takes the crossing of one member segment with the plane of one cross-section, keeping it only
+        /// when it is nearer the median curve than any crossing of that plane already kept for the same
+        /// member.
+        /// </summary>
+        private static void TakeCrossing(double[] buffer, int j, double[] median, double[] tangent,
+                                         double[] firstNormal, double[] secondNormal, int stationCount,
+                                         int k, int m, double[] best, int[] bestSegment,
+                                         float[] crossU, float[] crossV, int[] population,
+                                         double[] direction)
+        {
+            double f0 = (buffer[3 * (j - 1)] - median[3 * k]) * tangent[3 * k]
+                        + (buffer[3 * (j - 1) + 1] - median[3 * k + 1]) * tangent[3 * k + 1]
+                        + (buffer[3 * (j - 1) + 2] - median[3 * k + 2]) * tangent[3 * k + 2];
+            double f1 = (buffer[3 * j] - median[3 * k]) * tangent[3 * k]
+                        + (buffer[3 * j + 1] - median[3 * k + 1]) * tangent[3 * k + 1]
+                        + (buffer[3 * j + 2] - median[3 * k + 2]) * tangent[3 * k + 2];
+            if ((f0 > 0 && f1 > 0) || (f0 < 0 && f1 < 0))
+            {
+                // a segment ending exactly on the plane still crosses it, which matters at the
+                // very first and very last station
+                return;
+            }
+            double dx = buffer[3 * j] - buffer[3 * (j - 1)];
+            double dy = buffer[3 * j + 1] - buffer[3 * (j - 1) + 1];
+            double dz = buffer[3 * j + 2] - buffer[3 * (j - 1) + 2];
+            double span = f0 - f1;
+            double t = span != 0 ? f0 / span : 0;
+            if (t < 0) { t = 0; } else if (t > 1) { t = 1; }
+            double ox = buffer[3 * (j - 1)] + t * dx - median[3 * k];
+            double oy = buffer[3 * (j - 1) + 1] + t * dy - median[3 * k + 1];
+            double oz = buffer[3 * (j - 1) + 2] + t * dz - median[3 * k + 2];
+            double u = ox * firstNormal[3 * k] + oy * firstNormal[3 * k + 1] + oz * firstNormal[3 * k + 2];
+            double v = ox * secondNormal[3 * k] + oy * secondNormal[3 * k + 1] + oz * secondNormal[3 * k + 2];
+            double offset = u * u + v * v;
+            // a streamline that wanders back through a plane is taken where it is nearest the
+            // median curve
+            if (offset >= best[k])
+            {
+                return;
+            }
+            if (best[k] == double.MaxValue)
+            {
+                population[k]++;
+            }
+            best[k] = offset;
+            bestSegment[k] = j;
+            int at = m * stationCount + k;
+            crossU[at] = (float)u;
+            crossV[at] = (float)v;
+            double segment = System.Math.Sqrt(dx * dx + dy * dy + dz * dz);
+            if (segment > 0)
+            {
+                // the direction the streamline is going here, turned to agree with the median
+                // so that streamlines traversed the other way round do not cancel out
+                double along = dx * tangent[3 * k] + dy * tangent[3 * k + 1] + dz * tangent[3 * k + 2];
+                double sign = along < 0 ? -1.0 / segment : 1.0 / segment;
+                direction[3 * k] += sign * dx;
+                direction[3 * k + 1] += sign * dy;
+                direction[3 * k + 2] += sign * dz;
             }
         }
 

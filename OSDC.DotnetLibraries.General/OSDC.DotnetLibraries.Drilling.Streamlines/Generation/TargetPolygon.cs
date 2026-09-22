@@ -24,7 +24,27 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         /// <see cref="TargetPolygon.LandingLength"/>. Approximate, and smooth: the turn is spread over
         /// that length instead of taken at a face.
         /// </summary>
-        Guided
+        Guided,
+
+        /// <summary>
+        /// It must arrive along the normal, because the flow is drawn to a sink laid
+        /// <see cref="TargetPolygon.ThroughLength"/> <em>beyond</em> the target and reachable only by a
+        /// tube running out from the target along the normal.
+        /// <para>
+        /// The difference from <see cref="Perpendicular"/> is where the rate is drawn, and it decides
+        /// everything. A walled landing puts the tube on the approach side and the sink at the target, so
+        /// the flow wants to go one way and may only enter another, and it resolves the disagreement by
+        /// turning hard at the tube's mouth. Here the sink is past the target, so the flow is already
+        /// travelling the wanted direction before it meets any wall, and the tube has almost nothing left
+        /// to turn.
+        /// </para>
+        /// <para>
+        /// The stretch beyond the target is a construction and not a well: it is where the rate is drawn
+        /// so that the direction through the target is the one asked for, and the produced streamlines
+        /// are cut at the target plane before anyone sees them.
+        /// </para>
+        /// </summary>
+        Through
     }
 
     /// <summary>
@@ -122,6 +142,18 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         /// </para>
         /// </summary>
         public double LandingLength { get; set; } = 30.0;
+
+        /// <summary>
+        /// How far beyond the target the sink is laid, m, used only when the incidence is
+        /// <see cref="TargetIncidence.Through"/>.
+        /// <para>
+        /// It plays no part in the well: nothing of it is reported. It only has to be long enough for the
+        /// flow to be heading the right way as it crosses the target, and short enough not to run into
+        /// something. Sixty metres is a starting point on a field where the ground beyond a target is not
+        /// known to be clear.
+        /// </para>
+        /// </summary>
+        public double ThroughLength { get; set; } = 60.0;
 
         /// <summary>
         /// how much easier the medium is made along the normal than across it, used only when the
@@ -353,7 +385,8 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         /// <param name="maximum"></param>
         public void GetLandingBox(double[] minimum, double[] maximum)
         {
-            double reach = Incidence == TargetIncidence.Perpendicular ? LandingLength : 0;
+            double reach = Incidence == TargetIncidence.Perpendicular ? LandingLength
+                           : Incidence == TargetIncidence.Through ? ThroughLength : 0;
             // a guided landing needs no uniform cells, the medium having no faces to pinch
             double[] axis = { normal_[0], normal_[1], normal_[2] };
             for (int a = 0; a < 3; a++)

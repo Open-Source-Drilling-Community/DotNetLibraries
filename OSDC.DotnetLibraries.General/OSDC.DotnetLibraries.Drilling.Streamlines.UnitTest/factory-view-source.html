@@ -1,0 +1,832 @@
+<title>Ullrigg Anti-Collision Corridor</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --ground: #eef0f4;
+    --panel: #ffffff;
+    --panel-edge: #d3d8e2;
+    --ink: #1b2130;
+    --muted: #616b7e;
+    --accent: #b25f1c;
+    --alert: #b3382c;
+    --gentle: #1f7a62;
+    --volume: #41688f;
+    --goal: #2d6f8e;
+    --spine: #6d4b96;
+    --grid: #c3cad6;
+    --scene: #e7eaf0;
+    --shadow: 0 1px 3px rgba(20, 28, 44, .10), 0 6px 20px rgba(20, 28, 44, .07);
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #141821;
+      --panel: #1d2330;
+      --panel-edge: #2e3747;
+      --ink: #dde3ec;
+      --muted: #8d97a8;
+      --accent: #d98b45;
+      --alert: #e0564a;
+      --gentle: #4fb392;
+      --volume: #7d9bc0;
+      --goal: #64a8c8;
+      --spine: #a98ad6;
+      --grid: #333d4e;
+      --scene: #11151d;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .4), 0 8px 26px rgba(0, 0, 0, .34);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #141821;
+    --panel: #1d2330;
+    --panel-edge: #2e3747;
+    --ink: #dde3ec;
+    --muted: #8d97a8;
+    --accent: #d98b45;
+    --alert: #e0564a;
+    --gentle: #4fb392;
+    --volume: #7d9bc0;
+    --goal: #64a8c8;
+    --spine: #a98ad6;
+    --grid: #333d4e;
+    --scene: #11151d;
+    --shadow: 0 1px 3px rgba(0, 0, 0, .4), 0 8px 26px rgba(0, 0, 0, .34);
+  }
+
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .shell { display: flex; flex-direction: column; height: 100%; }
+
+  header {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px 20px;
+    padding-block: 12px 11px; padding-inline: 20px;
+    border-bottom: 1px solid var(--panel-edge);
+    background: var(--panel);
+  }
+  .heading { flex: 1 1 320px; min-width: 0; }
+  h1 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
+  .sub { margin: 0; color: var(--muted); font-size: 12.5px; max-width: 80ch; }
+
+  .cases { display: flex; flex: none; border: 1px solid var(--panel-edge); border-radius: 3px; }
+  .cases button {
+    font: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    padding-block: 5px; padding-inline: 12px;
+    background: transparent; color: var(--muted); border: 0;
+    border-right: 1px solid var(--panel-edge);
+  }
+  .cases button:first-child { border-radius: 2px 0 0 2px; }
+  .cases button:last-child { border-right: 0; border-radius: 0 2px 2px 0; }
+  .cases button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .cases button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .figures {
+    display: flex; flex-wrap: wrap; gap: 0; margin: 0;
+    border-bottom: 1px solid var(--panel-edge);
+    background: var(--panel);
+  }
+  .figure {
+    flex: 1 1 128px; min-width: 0;
+    padding-block: 9px 11px; padding-inline: 20px;
+    border-right: 1px solid var(--panel-edge);
+  }
+  .figure:last-child { border-right: 0; }
+  .figure dt {
+    font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 1px;
+  }
+  .figure dd {
+    margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 16px; font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+  }
+  .figure dd small {
+    display: block; font-size: 11px; color: var(--muted);
+    font-family: "IBM Plex Sans", sans-serif; letter-spacing: 0;
+  }
+  .figure.flagged dd { color: var(--alert); }
+  .figure.clear dd { color: var(--gentle); }
+
+  .stage { position: relative; flex: 1 1 auto; min-height: 360px; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+
+  .controls {
+    position: absolute; left: 14px; bottom: 14px;
+    display: flex; flex-direction: column; gap: 9px;
+    background: color-mix(in srgb, var(--panel) 91%, transparent);
+    border: 1px solid var(--panel-edge); border-radius: 3px;
+    padding-block: 10px; padding-inline: 12px; box-shadow: var(--shadow);
+    max-width: calc(100% - 28px);
+  }
+  .group { display: flex; flex-wrap: wrap; gap: 5px 12px; align-items: center; }
+  .grouplabel {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); width: 100%; margin-bottom: -3px;
+  }
+  label.toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12.5px; }
+  label.toggle input { accent-color: var(--accent); margin: 0; }
+  .short { display: none; }
+  .swatch { width: 11px; height: 11px; border-radius: 2px; flex: none; }
+  button.view {
+    font: inherit; font-size: 12px; padding-block: 3px; padding-inline: 9px; cursor: pointer;
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--panel-edge); border-radius: 2px;
+  }
+  button.view:hover { border-color: var(--accent); color: var(--accent); }
+  button.view:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  label.toggle input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* the dogleg filter is the point of the page, so it gets a row of its own */
+  .filter { display: flex; align-items: center; gap: 9px; width: 100%; }
+  .filter input[type="range"] { flex: 1 1 130px; min-width: 90px; accent-color: var(--accent); }
+  .filter output {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px;
+    font-variant-numeric: tabular-nums; min-width: 10ch; text-align: right;
+  }
+  .ramp {
+    display: flex; align-items: center; gap: 7px; width: 100%;
+    font-size: 10.5px; color: var(--muted);
+  }
+  .routeline {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums;
+  }
+  .routeline b { font-weight: 500; font-family: "IBM Plex Sans", sans-serif; }
+  .rampbar {
+    flex: 1 1 auto; height: 7px; border-radius: 2px;
+    background: linear-gradient(to right, var(--gentle), var(--accent) 45%, var(--alert));
+  }
+
+  .readout {
+    position: absolute; right: 14px; bottom: 14px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px; color: var(--muted); text-align: right;
+    background: color-mix(in srgb, var(--panel) 86%, transparent);
+    border: 1px solid var(--panel-edge); border-radius: 3px;
+    padding-block: 7px; padding-inline: 10px; pointer-events: none;
+  }
+  .notebar { border-top: 1px solid var(--panel-edge); background: var(--panel); }
+  .note {
+    margin: 0; padding-block: 10px 14px; padding-inline: 20px;
+    color: var(--muted); font-size: 12.5px; max-width: 80ch;
+  }
+  .note b { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 660px) {
+    header { padding-block: 10px; padding-inline: 16px; }
+    .heading { flex-basis: 100%; }
+    .controls { left: 10px; right: 10px; bottom: 10px; max-width: none;
+                padding-block: 8px; padding-inline: 10px; gap: 7px; }
+    .group { gap: 4px 10px; }
+    label.toggle, button.view { font-size: 12px; }
+    .readout { display: none; }
+    .figure { flex: 1 1 50%; padding-inline: 16px; }
+    .figure:nth-child(even) { border-right: 0; }
+    .stage { min-height: 340px; }
+    .long { display: none; }
+    .short { display: inline; }
+    .note { padding-inline: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .spin { display: none; } }
+</style>
+
+<div class="shell">
+  <header>
+    <div class="heading">
+      <h1>Ullrigg anti-collision corridor</h1>
+      <p class="sub">36 candidate paths from a new slot to a target 400&nbsp;m out and 900&nbsp;m down, coloured by how hard they turn, against the 99&nbsp;% uncertainty volumes of the 13 existing wells</p>
+    </div>
+    <div class="cases" id="cases" role="group" aria-label="Which case to show"></div>
+  </header>
+
+  <dl class="figures" id="figures"></dl>
+
+  <div class="stage">
+    <canvas id="view"></canvas>
+    <div class="controls">
+      <div class="group">
+        <span class="grouplabel">Keep only paths that turn no harder than</span>
+        <span class="filter">
+          <input type="range" id="limit" min="4" max="60" step="1" value="60"
+                 aria-label="Dogleg limit, degrees per 30 m">
+          <output id="limitValue">all</output>
+        </span>
+      </div>
+      <div class="ramp">
+        <span>0</span><span class="rampbar"></span><span>20+ &deg;/30&thinsp;m</span>
+      </div>
+      <div class="group" id="routelist"></div>
+      <div class="group">
+        <span class="grouplabel">Layers</span>
+        <label class="toggle"><input type="checkbox" id="showLines" checked><span class="long">Generated paths</span><span class="short">Paths</span></label>
+        <label class="toggle"><input type="checkbox" id="showConduit" checked><span class="swatch" style="background:var(--ink)"></span><span class="long">Conduit</span><span class="short">Conduit</span></label>
+        <label class="toggle"><input type="checkbox" id="showSpine" checked><span class="swatch" style="background:var(--spine)"></span><span class="long">Routes</span><span class="short">Routes</span></label>
+        <label class="toggle"><input type="checkbox" id="showVolumes" checked><span class="swatch" style="background:var(--volume)"></span><span class="long">Uncertainty volumes</span><span class="short">Volumes</span></label>
+        <label class="toggle"><input type="checkbox" id="showTarget" checked><span class="swatch" style="background:var(--goal)"></span><span class="long">Target</span><span class="short">Target</span></label>
+        <label class="toggle"><input type="checkbox" id="showGround" checked><span class="swatch" style="background:var(--grid)"></span><span class="long">Grid &amp; scale</span><span class="short">Grid</span></label>
+      </div>
+      <div class="group">
+        <span class="grouplabel">View</span>
+        <button class="view" data-view="iso" type="button"><span class="long">Isometric</span><span class="short">Iso</span></button>
+        <button class="view" data-view="north" type="button"><span class="long">Section N</span><span class="short">Sec N</span></button>
+        <button class="view" data-view="east" type="button"><span class="long">Section E</span><span class="short">Sec E</span></button>
+        <button class="view" data-view="plan" type="button"><span class="long">Plan</span><span class="short">Plan</span></button>
+        <label class="toggle spin"><input type="checkbox" id="spin" checked><span class="long">Rotate</span><span class="short">Spin</span></label>
+      </div>
+    </div>
+    <div class="readout" id="readout">drag to orbit · wheel to zoom · right-drag to pan</div>
+  </div>
+
+  <div class="notebar"><p class="note" id="note"></p></div>
+</div>
+
+<script id="scene-data" type="application/json">/*SCENE_JSON*/</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  var data = JSON.parse(document.getElementById("scene-data").textContent);
+  var canvas = document.getElementById("view");
+  var readout = document.getElementById("readout");
+  var GROUND = data.ground;                 // the wellheads, vertical positive downward
+  var STATION = 30.0;                       // dogleg severity is quoted over this, as a survey does
+
+  function css(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function colour(name) { return new THREE.Color(css(name)); }
+  function toScene(p) { return new THREE.Vector3(p[1], -p[2], -p[0]); }
+  function span(a, b) {
+    var dn = a[0] - b[0], de = a[1] - b[1], dv = a[2] - b[2];
+    return Math.sqrt(dn * dn + de * de + dv * dv);
+  }
+
+  var tinted = [];
+  var traces = [];
+  var captions = [];
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, 1, 1, 40000);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x3a4250, 1.6));
+  var sun = new THREE.DirectionalLight(0xffffff, 1.1);
+  sun.position.set(600, 900, 500);
+  scene.add(sun);
+
+  // ---- dogleg severity along a path, the same way the library measures it ------------------------
+  // Resample at a fixed station length first: the recorded positions sit one per cell, so an angle
+  // taken between them would report the octree's cell size rather than the path's curvature.
+  function doglegAt(line) {
+    var along = [0];
+    for (var i = 1; i < line.length; i++) {
+      along.push(along[i - 1] + span(line[i], line[i - 1]));
+    }
+    var total = along[along.length - 1];
+    var count = Math.floor(total / STATION) + 1;
+    if (count < 3) { return { atVertex: line.map(function () { return 0; }), worst: 0 }; }
+
+    var stations = [];
+    var cursor = 0;
+    for (var k = 0; k < count; k++) {
+      var want = k * STATION;
+      while (cursor + 1 < line.length && along[cursor + 1] < want) { cursor++; }
+      var a = line[cursor];
+      var b = line[Math.min(cursor + 1, line.length - 1)];
+      var run = along[Math.min(cursor + 1, line.length - 1)] - along[cursor];
+      var t = run > 0 ? (want - along[cursor]) / run : 0;
+      stations.push([a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]), a[2] + t * (b[2] - a[2])]);
+    }
+
+    var turn = new Array(stations.length).fill(0);
+    var worst = 0;
+    for (var s = 1; s + 1 < stations.length; s++) {
+      var u = [stations[s][0] - stations[s - 1][0], stations[s][1] - stations[s - 1][1],
+               stations[s][2] - stations[s - 1][2]];
+      var v = [stations[s + 1][0] - stations[s][0], stations[s + 1][1] - stations[s][1],
+               stations[s + 1][2] - stations[s][2]];
+      var lu = Math.sqrt(u[0] * u[0] + u[1] * u[1] + u[2] * u[2]);
+      var lv = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+      if (!(lu > 0) || !(lv > 0)) { continue; }
+      var cosine = (u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) / (lu * lv);
+      turn[s] = Math.acos(Math.max(-1, Math.min(1, cosine))) * 180 / Math.PI;
+      if (turn[s] > worst) { worst = turn[s]; }
+    }
+
+    var atVertex = [];
+    for (var j = 0; j < line.length; j++) {
+      var index = Math.round(along[j] / STATION);
+      atVertex.push(turn[Math.max(0, Math.min(turn.length - 1, index))]);
+    }
+    return { atVertex: atVertex, worst: worst };
+  }
+
+  // gentle to sharp, through the page's own tokens so it holds in both themes
+  var stopGentle = new THREE.Color(), stopMiddle = new THREE.Color(), stopSharp = new THREE.Color();
+  function ramp(degrees, into) {
+    var t = Math.max(0, Math.min(1, degrees / 20));
+    if (t < 0.45) {
+      into.copy(stopGentle).lerp(stopMiddle, t / 0.45);
+    } else {
+      into.copy(stopMiddle).lerp(stopSharp, (t - 0.45) / 0.55);
+    }
+    return into;
+  }
+
+  // ---- what each case produced, measured here rather than asserted -------------------------------
+  data.cases.forEach(function (one) {
+    var lengths = [];
+    one.above = 0;
+    one.offNormal = 0;
+    one.profiles = [];
+    one.streamlines.forEach(function (line, index) {
+      // a path that never reached the target is not a candidate and says nothing about arrivals
+      var candidate = one.doglegs[index] > 0;
+      var length = 0;
+      var rose = false;
+      for (var i = 0; i < line.length; i++) {
+        if (line[i][2] < GROUND - 1) { rose = true; }
+        if (i > 0) { length += span(line[i], line[i - 1]); }
+      }
+      if (rose && candidate) { one.above++; }
+      if (candidate) { lengths.push(length); }
+      one.profiles.push(doglegAt(line));
+      for (var k = line.length - 1; k > 0; k--) {
+        var dn = line[k][0] - line[k - 1][0];
+        var de = line[k][1] - line[k - 1][1];
+        var dv = line[k][2] - line[k - 1][2];
+        if (!(Math.sqrt(dn * dn + de * de + dv * dv) > 1e-9)) { continue; }
+        if (dv > 0 && candidate) {
+          var tilt = Math.atan2(Math.sqrt(dn * dn + de * de), dv) * 180 / Math.PI;
+          if (tilt > one.offNormal) { one.offNormal = tilt; }
+        }
+        break;
+      }
+    });
+    // a path too short to carry a turn reports zero, which is not a gentle path but a stagnated
+    // stub, so it is left out of the statistics rather than flattering them
+    one.reach = 0;
+    (one.conduits || []).forEach(function (run) {
+      for (var i = 1; i < run.length; i++) { one.reach += span(run[i], run[i - 1]); }
+    });
+    var sorted = one.doglegs.filter(function (d) { return d > 0; }).sort(function (a, b) {
+      return a - b;
+    });
+    one.measurable = sorted.length;
+    one.gentlest = sorted.length ? sorted[0] : NaN;
+    one.withinTen = sorted.filter(function (d) { return d <= 10; }).length;
+    lengths.sort(function (a, b) { return a - b; });
+    one.median = lengths.length ? lengths[lengths.length >> 1] : 0;
+  });
+
+  // ---- the extent, so every case is framed the same way ------------------------------------------
+  var box = new THREE.Box3();
+  data.cases.forEach(function (one) {
+    one.streamlines.forEach(function (line) {
+      line.forEach(function (p) { box.expandByPoint(toScene(p)); });
+    });
+  });
+  data.wells.forEach(function (well) {
+    well.rings.forEach(function (ring) {
+      ring.forEach(function (p) { box.expandByPoint(toScene(p)); });
+    });
+  });
+  var focus = box.getCenter(new THREE.Vector3());
+  var extent = box.getSize(new THREE.Vector3());
+  var reach = extent.length();
+
+  // ---- uncertainty volumes, shared by every case --------------------------------------------------
+  var volumes = new THREE.Group();
+  data.wells.forEach(function (well) {
+    var rings = well.rings;
+    if (rings.length < 2) { return; }
+    var around = rings[0].length;
+    var positions = [];
+    var indices = [];
+    rings.forEach(function (ring) {
+      ring.forEach(function (p) {
+        var v = toScene(p);
+        positions.push(v.x, v.y, v.z);
+      });
+    });
+    for (var r = 0; r + 1 < rings.length; r++) {
+      for (var a = 0; a < around; a++) {
+        var b = (a + 1) % around;
+        var i0 = r * around + a, i1 = r * around + b;
+        var j0 = (r + 1) * around + a, j1 = (r + 1) * around + b;
+        indices.push(i0, j0, i1, i1, j0, j1);
+      }
+    }
+    var geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    var material = new THREE.MeshLambertMaterial({
+      color: colour("--volume"), transparent: true, opacity: 0.32,
+      side: THREE.DoubleSide, depthWrite: false
+    });
+    tinted.push({ material: material, token: "--volume" });
+    volumes.add(new THREE.Mesh(geometry, material));
+  });
+  scene.add(volumes);
+
+  // ---- one group of paths, one target and one spine per case --------------------------------------
+  var pathGroups = [];
+  var goalGroups = [];
+  var spineGroups = [];
+  var conduitGroups = [];
+  data.cases.forEach(function (one) {
+    var paths = new THREE.Group();
+    one.streamlines.forEach(function (line, index) {
+      var positions = [];
+      line.forEach(function (p) {
+        var v = toScene(p);
+        positions.push(v.x, v.y, v.z);
+      });
+      var geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute("color",
+                            new THREE.Float32BufferAttribute(new Float32Array(3 * line.length), 3));
+      traces.push({ geometry: geometry, profile: one.profiles[index] });
+      var drawn = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: true }));
+      drawn.userData.worst = one.doglegs[index];
+      paths.add(drawn);
+    });
+    scene.add(paths);
+    pathGroups.push(paths);
+
+    var goal = new THREE.Group();
+    var corners = one.target.map(toScene);
+    var quad = new THREE.BufferGeometry();
+    quad.setAttribute("position", new THREE.Float32BufferAttribute([
+      corners[0].x, corners[0].y, corners[0].z, corners[1].x, corners[1].y, corners[1].z,
+      corners[2].x, corners[2].y, corners[2].z, corners[0].x, corners[0].y, corners[0].z,
+      corners[2].x, corners[2].y, corners[2].z, corners[3].x, corners[3].y, corners[3].z
+    ], 3));
+    quad.computeVertexNormals();
+    var face = new THREE.MeshBasicMaterial({
+      color: colour("--goal"), transparent: true, opacity: 0.3, side: THREE.DoubleSide
+    });
+    var rim = new THREE.LineBasicMaterial({ color: colour("--goal") });
+    tinted.push({ material: face, token: "--goal" }, { material: rim, token: "--goal" });
+    goal.add(new THREE.Mesh(quad, face));
+    goal.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(corners.concat([corners[0]])), rim));
+    scene.add(goal);
+    goalGroups.push(goal);
+
+    // The conduit is the stretch of well path the flow solve did not produce, so no streamline
+    // covers it. Leaving it out would show the paths starting hundreds of metres down.
+    var conduit = new THREE.Group();
+    var conduitMaterial = new THREE.LineBasicMaterial({ color: colour("--ink") });
+    tinted.push({ material: conduitMaterial, token: "--ink" });
+    (one.conduits || []).forEach(function (run) {
+      if (run.length < 2) { return; }
+      conduit.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(run.map(toScene)),
+                                 conduitMaterial));
+    });
+    scene.add(conduit);
+    conduitGroups.push(conduit);
+
+    // the case's own directive path is no longer drawn: the distinct routes are drawn once, below,
+    // since they do not depend on which case is showing
+    spineGroups.push(new THREE.Group());
+  });
+
+  // the directive path, or paths where more than one way round has been asked for
+  var routes = new THREE.Group();
+  var routeTints = [];
+  (data.routes || []).forEach(function (route, index) {
+    var material = new THREE.LineBasicMaterial({ color: colour("--spine") });
+    routeTints.push({ material: material, shift: index / Math.max(1, data.routes.length) });
+    routes.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(route.points.map(toScene)), material));
+  });
+  scene.add(routes);
+
+  var slot = toScene(data.slot);
+  var pin = new THREE.MeshBasicMaterial({ color: colour("--accent") });
+  tinted.push({ material: pin, token: "--accent" });
+  var marker = new THREE.Mesh(new THREE.SphereGeometry(Math.max(6, reach * 0.004), 16, 12), pin);
+  marker.position.copy(slot);
+  scene.add(marker);
+
+  // ---- the ground plane, a depth ruler and a north mark -------------------------------------------
+  var ground = new THREE.Group();
+  var half = Math.max(extent.x, extent.z) * 0.72;
+  var gridPoints = [];
+  for (var g = -Math.ceil(half / 200) * 200; g <= half; g += 200) {
+    gridPoints.push(new THREE.Vector3(slot.x + g, -GROUND, slot.z - half),
+                    new THREE.Vector3(slot.x + g, -GROUND, slot.z + half),
+                    new THREE.Vector3(slot.x - half, -GROUND, slot.z + g),
+                    new THREE.Vector3(slot.x + half, -GROUND, slot.z + g));
+  }
+  var mesh = new THREE.LineBasicMaterial({ color: colour("--grid"), transparent: true, opacity: 0.8 });
+  var rule = new THREE.LineBasicMaterial({ color: colour("--grid") });
+  tinted.push({ material: mesh, token: "--grid" }, { material: rule, token: "--grid" });
+  ground.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gridPoints), mesh));
+
+  function caption(text, position, height) {
+    var surface = document.createElement("canvas");
+    surface.width = 256;
+    surface.height = 64;
+    var texture = new THREE.CanvasTexture(surface);
+    var sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: texture, transparent: true, depthTest: false
+    }));
+    sprite.scale.set(height * 4, height, 1);
+    sprite.position.copy(position);
+    function draw() {
+      var context = surface.getContext("2d");
+      context.clearRect(0, 0, 256, 64);
+      context.font = "500 34px 'IBM Plex Mono', ui-monospace, monospace";
+      context.fillStyle = css("--muted");
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText(text, 128, 34);
+      texture.needsUpdate = true;
+    }
+    draw();
+    captions.push(draw);
+    return sprite;
+  }
+
+  var mark = reach * 0.038;
+  var rulerX = slot.x - half;
+  var rulerZ = slot.z + half;
+  var ticks = [new THREE.Vector3(rulerX, -GROUND, rulerZ), new THREE.Vector3(rulerX, -1500, rulerZ)];
+  for (var tvd = 0; tvd <= 1500; tvd += 250) {
+    ticks.push(new THREE.Vector3(rulerX, -tvd, rulerZ),
+               new THREE.Vector3(rulerX + half * 0.06, -tvd, rulerZ));
+    if (tvd % 500 === 0) {
+      ground.add(caption(String(tvd), new THREE.Vector3(rulerX - half * 0.13, -tvd, rulerZ), mark));
+    }
+  }
+  ground.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), rule));
+  ground.add(caption("m TVD",
+                     new THREE.Vector3(rulerX - half * 0.13, -GROUND + mark * 1.4, rulerZ), mark));
+  ground.add(caption("N", new THREE.Vector3(slot.x, -GROUND + mark, slot.z - half), mark * 1.2));
+  scene.add(ground);
+
+  // ---- the case switch and the dogleg filter -------------------------------------------------------
+  var current = 0;
+  var switcher = document.getElementById("cases");
+  var figures = document.getElementById("figures");
+  var note = document.getElementById("note");
+  var limit = document.getElementById("limit");
+  var limitValue = document.getElementById("limitValue");
+
+  function figure(label, value, hint, state) {
+    return '<div class="figure' + (state ? " " + state : "") + '"><dt>' + label + "</dt><dd>"
+           + value + (hint ? "<small>" + hint + "</small>" : "") + "</dd></div>";
+  }
+
+  function applyFilter() {
+    var cap = Number(limit.value);
+    var all = cap >= Number(limit.max);
+    limitValue.textContent = all ? "all" : cap + " °/30 m";
+    var shown = 0;
+    var wanted = document.getElementById("showLines").checked;
+    pathGroups[current].children.forEach(function (line) {
+      var measurable = line.userData.worst > 0;
+      var keep = wanted && measurable && (all || line.userData.worst <= cap);
+      line.visible = keep;
+      if (keep) { shown++; }
+    });
+    var one = data.cases[current];
+    readout.textContent = shown + " of " + one.measurable + " paths shown · "
+      + data.wells.length + " volumes · " + one.unknowns.toLocaleString("en") + " cells · grid 200 m";
+  }
+
+  function show(index) {
+    current = index;
+    var one = data.cases[index];
+    pathGroups.forEach(function (group, k) { group.visible = k === index; });
+    goalGroups.forEach(function (group, k) {
+      group.visible = k === index && document.getElementById("showTarget").checked;
+    });
+    routes.visible = document.getElementById("showSpine").checked;
+    conduitGroups.forEach(function (group, k) {
+      group.visible = k === index && document.getElementById("showConduit").checked;
+    });
+    Array.prototype.forEach.call(switcher.children, function (button, k) {
+      button.setAttribute("aria-pressed", k === index ? "true" : "false");
+    });
+
+    var tilt = one.offNormal < 0.0005 ? "0.000°" : one.offNormal.toFixed(1) + "°";
+    var gentlest = isNaN(one.gentlest) ? "—" : one.gentlest.toFixed(1) + "&#8239;°/30&#8239;m";
+    figures.innerHTML =
+        figure("Gentlest path", gentlest,
+               (one.shaped ? "relaxed spine " : "ideal spine ") + one.spineDogleg.toFixed(1),
+               one.gentlest <= 1.3 * one.spineDogleg ? "clear" : "")
+      + figure("Within 10 °/30 m", one.withinTen + " / " + one.measurable,
+               "usable alternatives",
+               one.withinTen === 0 ? "flagged" : one.withinTen > 10 ? "clear" : "")
+      + figure("Arrival off normal", tilt, "worst of all arrivals",
+               one.offNormal > 1 ? "" : "clear")
+      + figure("Rise above ground", one.above + " / " + one.measurable,
+               one.ceiling ? "ceiling and floor on" : "box open above and below",
+               one.above > 0 ? "flagged" : "clear")
+      + figure("Departure held", Math.round(one.reach) + "&#8239;m",
+               "straight, vertical from the slot")
+      + figure("Landing held", one.landing > 0 ? Math.round(one.landing) + "&#8239;m" : "none",
+               one.landing > 0 ? "walled, on the normal"
+                               : one.shaped ? "channel, no walls" : "arrival unconstrained");
+
+    note.innerHTML = one.shaped
+      ? "Kick-off at <b>" + Math.round(one.reach) + "&#8239;m</b>, which on Ullrigg is a formation"
+        + " question rather than a numerical one — hard rock from surface needs only the bottom hole"
+        + " assembly in the hole. No walls anywhere. The medium is made <b>a hundred times easier</b>"
+        + " along the purple directive"
+        + " path, which has been pushed clear of every uncertainty volume and smoothed, and <b>twenty"
+        + " times easier along the way the conduit points</b> for the first 120&#8239;m past its mouth."
+        + " That second part is what stops the fan: a conduit gives out through one cell, so without it"
+        + " the flow leaves as a point source and the attitude 100&#8239;m on is 40 to 50° off the way"
+        + " the well was going. With it, 20°. This is the only case here with paths gentle enough to"
+        + " drill — drag the filter to 10&#8239;°/30&#8239;m."
+      : one.landing > 0
+      ? "The last " + Math.round(one.landing) + "&#8239;m are walled into straight tubes on the target"
+        + " normal, so the arrival is exact to 0.000° — and they stand over the target as chimneys."
+        + " A wall is a step, and the turn into it has to happen at the tube's mouth. Drag the filter"
+        + " to <b>10&#8239;°/30&#8239;m</b> and compare how many alternatives survive here against the"
+        + " bounded case."
+      : "The ground is shut overhead and a floor sits under the target, which is all it takes to keep"
+        + " every path underground. The arrival is left free and the medium is uniform, so this is the"
+        + " plain problem: its best member turns at " + one.gentlest.toFixed(1)
+        + "&#8239;°/30&#8239;m. The purple curve is the directive path: the plain curve between the"
+        + " two ends, pushed clear of every uncertainty volume and smoothed.";
+    applyFilter();
+  }
+
+  var routelist = document.getElementById("routelist");
+  var many = (data.routes || []).length > 1;
+  var heading = document.createElement("span");
+  heading.className = "grouplabel";
+  heading.textContent = many ? "Distinct routes round the wells" : "Directive path";
+  routelist.appendChild(heading);
+  (data.routes || []).forEach(function (route, index) {
+    var swatch = new THREE.Color(css("--spine"))
+      .offsetHSL(index / Math.max(1, data.routes.length) * 0.55, 0, 0);
+    var line = document.createElement("span");
+    line.className = "routeline";
+    line.innerHTML = '<span class="swatch" style="background:#' + swatch.getHexString() + '"></span>'
+      + "<b>" + (many ? (index === 0 ? "best" : "alt " + index) : "relaxed clear of the wells")
+      + "</b> "
+      + Math.round(route.length) + "&#8239;m · " + route.dogleg.toFixed(0) + "&#8239;°/30&#8239;m";
+    routelist.appendChild(line);
+  });
+
+  data.cases.forEach(function (one, index) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.textContent = one.name;
+    button.setAttribute("aria-pressed", "false");
+    button.addEventListener("click", function () { show(index); });
+    switcher.appendChild(button);
+  });
+  limit.addEventListener("input", applyFilter);
+
+  // ---- a small orbit control -----------------------------------------------------------------------
+  var yaw = 0.72, pitch = 0.42, distance = reach * 1.12;
+  var panning = false, dragging = false, lastX = 0, lastY = 0;
+  var target = focus.clone();
+  var spin = document.getElementById("spin");
+
+  function place() {
+    var cp = Math.cos(pitch), sp = Math.sin(pitch);
+    camera.position.set(
+      target.x + distance * cp * Math.sin(yaw),
+      target.y + distance * sp,
+      target.z + distance * cp * Math.cos(yaw)
+    );
+    camera.lookAt(target);
+  }
+
+  canvas.addEventListener("pointerdown", function (e) {
+    dragging = true;
+    panning = e.button === 2 || e.shiftKey;
+    lastX = e.clientX; lastY = e.clientY;
+    canvas.setPointerCapture(e.pointerId);
+    spin.checked = false;
+  });
+  canvas.addEventListener("pointermove", function (e) {
+    if (!dragging) { return; }
+    var dx = e.clientX - lastX, dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    if (panning) {
+      var right = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 0);
+      var up = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 1);
+      var scale = distance * 0.0013;
+      target.addScaledVector(right, -dx * scale).addScaledVector(up, dy * scale);
+    } else {
+      yaw -= dx * 0.006;
+      pitch = Math.max(-1.45, Math.min(1.45, pitch + dy * 0.006));
+    }
+    place();
+  });
+  canvas.addEventListener("pointerup", function (e) {
+    dragging = false;
+    canvas.releasePointerCapture(e.pointerId);
+  });
+  canvas.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  canvas.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    distance = Math.max(reach * 0.05,
+                        Math.min(reach * 3.2, distance * (1 + Math.sign(e.deltaY) * 0.12)));
+    place();
+  }, { passive: false });
+
+  var views = {
+    iso:   { yaw: 0.72, pitch: 0.42, distance: reach * 1.12 },
+    north: { yaw: Math.PI / 2, pitch: 0.02, distance: reach * 1.0 },
+    east:  { yaw: 0, pitch: 0.02, distance: reach * 1.0 },
+    plan:  { yaw: 0, pitch: 1.44, distance: reach * 1.0 }
+  };
+  Array.prototype.forEach.call(document.querySelectorAll("button.view"), function (button) {
+    button.addEventListener("click", function () {
+      var v = views[button.getAttribute("data-view")];
+      yaw = v.yaw; pitch = v.pitch; distance = v.distance;
+      target.copy(focus);
+      spin.checked = false;
+      place();
+    });
+  });
+
+  function bind(id, object) {
+    var input = document.getElementById(id);
+    input.addEventListener("change", function () {
+      if (object) { object.visible = input.checked; } else { show(current); }
+    });
+    if (object) { object.visible = input.checked; }
+  }
+  bind("showLines", null);
+  bind("showSpine", null);
+  bind("showConduit", null);
+  bind("showVolumes", volumes);
+  bind("showTarget", null);
+  bind("showGround", ground);
+
+  // the scene is built out of the CSS tokens, so a change of theme has to be carried into it
+  var scratch = new THREE.Color();
+  function retint() {
+    scene.background = colour("--scene");
+    stopGentle.set(css("--gentle"));
+    stopMiddle.set(css("--accent"));
+    stopSharp.set(css("--alert"));
+    tinted.forEach(function (entry) { entry.material.color.set(css(entry.token)); });
+    traces.forEach(function (trace) {
+      var attribute = trace.geometry.getAttribute("color");
+      var turns = trace.profile.atVertex;
+      for (var i = 0; i < turns.length; i++) {
+        ramp(turns[i], scratch);
+        attribute.setXYZ(i, scratch.r, scratch.g, scratch.b);
+      }
+      attribute.needsUpdate = true;
+    });
+    var base = new THREE.Color(css("--spine"));
+    routeTints.forEach(function (entry) {
+      entry.material.color.copy(base).offsetHSL(entry.shift * 0.55, 0, 0);
+    });
+    captions.forEach(function (draw) { draw(); });
+  }
+  retint();
+  if (window.matchMedia) {
+    var media = window.matchMedia("(prefers-color-scheme: dark)");
+    if (media.addEventListener) { media.addEventListener("change", retint); }
+  }
+  new MutationObserver(retint).observe(document.documentElement,
+                                       { attributes: true, attributeFilter: ["data-theme"] });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { captions.forEach(function (draw) { draw(); }); });
+  }
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    renderer.setSize(rect.width, rect.height, false);
+    camera.aspect = rect.width / Math.max(1, rect.height);
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener("resize", resize);
+
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    spin.checked = false;
+  }
+
+  function frame() {
+    if (spin.checked) { yaw += 0.0016; place(); }
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  show(0);
+  resize();
+  place();
+  frame();
+})();
+</script>

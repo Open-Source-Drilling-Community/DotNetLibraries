@@ -203,9 +203,12 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 (in OctreeCell cell) => ShouldRefine(in cell, obstacles, sources, target, options,
                                                      sourceRadius, landingMinimum, landingMaximum));
 
+            // Whether a cell is blocked depends on that cell and on the obstacles, which are indexed
+            // above and not written to here, so the leaves can be classified in any order and in
+            // parallel. It is worth doing: there is one obstacle query per leaf and the better part of
+            // a million leaves.
             CellState[] states = new CellState[tree.LeafCount];
-            int blocked = 0;
-            for (int leaf = 0; leaf < tree.LeafCount; leaf++)
+            System.Threading.Tasks.Parallel.For(0, tree.LeafCount, leaf =>
             {
                 OctreeCell cell = tree.GetCell(leaf);
                 // wholly above the ceiling or wholly below the floor, so no part of a planned well
@@ -216,14 +219,19 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                         && cell.MinimumVertical >= options.FloorVertical.Value))
                 {
                     states[leaf] = CellState.Blocked;
-                    blocked++;
-                    continue;
+                    return;
                 }
                 if (obstacles.IsBlocked(in cell))
                 {
                     states[leaf] = CellState.Blocked;
-                    blocked++;
                 }
+            });
+            // counted afterwards rather than under a lock, which is both cheaper and free of any
+            // question about the order things were added in
+            int blocked = 0;
+            for (int leaf = 0; leaf < states.Length; leaf++)
+            {
+                if (states[leaf] == CellState.Blocked) { blocked++; }
             }
 
             StreamlineGrid grid = new StreamlineGrid(tree, states)

@@ -31,6 +31,42 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
         public int SplitCount { get; internal set; } = 0;
 
         /// <summary>
+        /// How many rounds the build took. A round rebuilds every pending bundle and lays every region
+        /// again, so this multiplies both of the costs below.
+        /// </summary>
+        public int RoundCount { get; internal set; } = 0;
+
+        /// <summary>
+        /// how many factory fits were run, counting a bundle refitted in a later round again
+        /// </summary>
+        public int FitCount { get; internal set; } = 0;
+
+        /// <summary>
+        /// how many fits were answered from the ones already done rather than run again
+        /// </summary>
+        public int ReusedFitCount { get; internal set; } = 0;
+
+        /// <summary>
+        /// how long those fits took in total, ms
+        /// </summary>
+        public double FitMilliseconds { get; internal set; } = 0;
+
+        /// <summary>
+        /// how long laying the tolerance regions took in total, ms
+        /// </summary>
+        public double ToleranceMilliseconds { get; internal set; } = 0;
+
+        /// <summary>
+        /// the marches and march steps of every region pass added together
+        /// </summary>
+        public long MarchCount { get; internal set; } = 0;
+
+        /// <summary>
+        /// how many steps those marches took
+        /// </summary>
+        public long MarchStepCount { get; internal set; } = 0;
+
+        /// <summary>
         /// The routes: the corridors grouped by which of them nothing forbidden separates. This is what a
         /// caller asks for realizations from, with the limits it is willing to accept.
         /// </summary>
@@ -123,6 +159,16 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
             }
 
             StreamlineFactorySet set = new StreamlineFactorySet();
+            // What a bundle fits to depends on nothing but the source and its own members, so a bundle
+            // carried unchanged into a later round fits to exactly what it fitted to before. A split
+            // changes one bundle and leaves the rest alone, yet every round used to refit all of them;
+            // on Ullrigg's flat case that was 67 fits where 24 bundles were ever distinct.
+            // The key is the member list in the order it is held, not as a set: the provisional median
+            // is a sum over the members, and a sum in a different order is not bit for bit the same.
+            Dictionary<string, StreamlineBundleFactory> alreadyFitted
+                = new Dictionary<string, StreamlineBundleFactory>(StringComparer.Ordinal);
+            Dictionary<string, StreamlineFactoryFailureReason> alreadyRefused
+                = new Dictionary<string, StreamlineFactoryFailureReason>(StringComparer.Ordinal);
             List<List<int>> pending = new List<List<int>>();
             foreach (IReadOnlyList<int> bundle in bundles)
             {
@@ -136,14 +182,36 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
                 set.Refused.Clear();
                 StreamlineBundleFactoryBuilder builder = new StreamlineBundleFactoryBuilder(Factory);
                 List<List<int>> kept = new List<List<int>>();
+                set.RoundCount = round + 1;
+                System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
                 foreach (List<int> members in pending)
                 {
-                    StreamlineBundleFactory? factory = builder.Build(
-                        source, members, out StreamlineFactoryFailureReason reason);
-                    if (factory == null)
+                    string signature = GetSignature(members);
+                    if (alreadyRefused.TryGetValue(signature,
+                                                   out StreamlineFactoryFailureReason refusedBefore))
                     {
-                        set.Refused.Add((members.Count, reason));
+                        set.Refused.Add((members.Count, refusedBefore));
                         continue;
+                    }
+                    if (!alreadyFitted.TryGetValue(signature,
+                                                   out StreamlineBundleFactory? factory))
+                    {
+                        watch.Restart();
+                        factory = builder.Build(source, members,
+                                                out StreamlineFactoryFailureReason reason);
+                        set.FitMilliseconds += watch.Elapsed.TotalMilliseconds;
+                        set.FitCount++;
+                        if (factory == null)
+                        {
+                            alreadyRefused[signature] = reason;
+                            set.Refused.Add((members.Count, reason));
+                            continue;
+                        }
+                        alreadyFitted[signature] = factory;
+                    }
+                    else
+                    {
+                        set.ReusedFitCount++;
                     }
                     set.Factories.Add(factory);
                     kept.Add(members);
@@ -203,7 +271,11 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
                 }
 
                 // every region laid with every median present, so that no two of them claim one place
+                System.Diagnostics.Stopwatch laying = System.Diagnostics.Stopwatch.StartNew();
                 set.Tolerance = ToleranceRegionBuilder.Build(set.Factories, zones, Tolerance);
+                set.ToleranceMilliseconds += laying.Elapsed.TotalMilliseconds;
+                set.MarchCount += set.Tolerance.MarchCount;
+                set.MarchStepCount += set.Tolerance.MarchStepCount;
 
                 // and then the members re-expressed in the regions that were actually laid, rather than
                 // in the provisional outlines each factory fitted on its own
@@ -244,6 +316,19 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
         /// The cross-section where the median is furthest inside a forbidden zone, or -1 when it stays
         /// clear all the way.
         /// </summary>
+        /// <summary>
+        /// What names a bundle for the purpose of reusing its fit: its members, in order.
+        /// </summary>
+        private static string GetSignature(IReadOnlyList<int> members)
+        {
+            System.Text.StringBuilder text = new System.Text.StringBuilder(8 * members.Count);
+            foreach (int member in members)
+            {
+                text.Append(member).Append(',');
+            }
+            return text.ToString();
+        }
+
         private int GetStationInsideZone(StreamlineBundleFactory factory, IForbiddenZoneField zones)
         {
             int worst = -1;

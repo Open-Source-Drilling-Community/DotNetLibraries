@@ -203,6 +203,12 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         public StreamlineGrid? Grid { get; internal set; } = null;
 
         /// <summary>
+        /// what was put to the solver: the rates, the conduits and the shut faces. Kept so that a refusal
+        /// can be looked into rather than only reported.
+        /// </summary>
+        public FlowProblem? Problem { get; internal set; } = null;
+
+        /// <summary>
         /// the field they follow, or null when none was solved
         /// </summary>
         public FlowField? Field { get; internal set; } = null;
@@ -258,6 +264,29 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         /// or NaN when only one pass was run
         /// </summary>
         public double ScoutDogleg { get; internal set; } = double.NaN;
+
+        /// <summary>
+        /// How long each phase took, in milliseconds, by name.
+        /// <para>
+        /// A two pass run records the scout's phases under their own names, because the passes are not
+        /// alike: the scout builds its own octree and solves its own field, so the cost of a grid and of
+        /// a solve is paid twice and neither figure means anything on its own.
+        /// </para>
+        /// <para>
+        /// This is a measurement and not a budget: nothing in the chain reads it.
+        /// </para>
+        /// </summary>
+        public Dictionary<string, double> Timings { get; }
+            = new Dictionary<string, double>(StringComparer.Ordinal);
+
+        /// <summary>
+        /// adds to the time recorded against a phase, so a phase entered more than once accumulates
+        /// </summary>
+        internal void AddTiming(string phase, double milliseconds)
+        {
+            Timings[phase] = Timings.TryGetValue(phase, out double already)
+                             ? already + milliseconds : milliseconds;
+        }
 
         /// <summary>
         /// the curves a channel was built on, one per way round the obstacles that the scout found
@@ -377,7 +406,9 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                                                     int maximumSpines = 4)
         {
             options ??= new StreamlineGeneratorOptions();
+            System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
             StreamlineGenerationResult scout = Scout(obstacles, sources, target, options);
+            double scoutMilliseconds = watch.Elapsed.TotalMilliseconds;
             if (scout.Status != StreamlineGridStatus.Connected || scout.Streamlines.Count == 0)
             {
                 return scout;
@@ -411,6 +442,7 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
             }
             pick.Sort((a, b) => a.Dogleg.CompareTo(b.Dogleg));
 
+            watch.Restart();
             target.GetArrivalUnit(out double an, out double ae, out double av);
             Vector3D arrival = new Vector3D(an, ae, av);
             SpineRelaxerOptions relaxing = options.Relaxer;
@@ -442,6 +474,8 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 return scout;
             }
 
+            double relaxMilliseconds = watch.Elapsed.TotalMilliseconds;
+
             options.ChannelSpines = spines;
             if (!(options.ChannelContrast > 1.0))
             {
@@ -451,6 +485,14 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
             final.Spines = result.Spines;
             final.SpineQuality = result.SpineQuality;
             final.ScoutDogleg = pick.Count > 0 ? pick[0].Dogleg : double.NaN;
+            // the scout's own phases, kept apart from the final pass's: both build an octree and both
+            // solve a field, so adding them together would hide that each is paid twice
+            foreach (KeyValuePair<string, double> phase in scout.Timings)
+            {
+                final.AddTiming("scout " + phase.Key, phase.Value);
+            }
+            final.AddTiming("scout total", scoutMilliseconds);
+            final.AddTiming("relax", relaxMilliseconds);
             return final;
         }
 
@@ -589,7 +631,9 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 throw new ArgumentException(reason, nameof(target));
             }
 
+            System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
             StreamlineGrid grid = StreamlineGrid.Build(obstacles, sources, target, options.Grid);
+            result.AddTiming("grid", watch.Elapsed.TotalMilliseconds);
             result.Grid = grid;
             result.Status = grid.Status;
             if (grid.Status != StreamlineGridStatus.Connected)
@@ -626,7 +670,9 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 }
             }
 
+            watch.Restart();
             problem.Mobility = BuildMedium(sources, target, options, grid, conduits);
+            result.AddTiming("medium", watch.Elapsed.TotalMilliseconds);
 
             IReadOnlyList<Point3D>? spine = options.ShapeLandingToSpine && sources.Count > 0
                 ? GetSpine(sources[0], target, options) : null;
@@ -668,6 +714,7 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
             }
 
             // the conduits and the shut faces can cut a way through that the grid alone thought was open
+            result.Problem = problem;
             grid.Reassess(problem);
             result.Status = grid.Status;
             if (grid.Status != StreamlineGridStatus.Connected)
@@ -675,7 +722,9 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 return result;
             }
 
+            watch.Restart();
             FlowField field = FlowField.Solve(problem, options.Flow);
+            result.AddTiming("solve", watch.Elapsed.TotalMilliseconds);
             result.Field = field;
             // Streamlines traced through a field that has not converged are not conservative and not
             // non-crossing, so they are not corridors at all. Measured once, with a conduit reaching
@@ -686,6 +735,7 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 return result;
             }
 
+            watch.Restart();
             StreamlineTracer tracer = new StreamlineTracer(options.Tracer);
             foreach ((int from, double[] start) in GetLaunchPositions(grid, conduits, sources,
                                                                       options.StreamlineCount, options))
@@ -694,10 +744,16 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 result.Outcomes[(int)tracer.Outcome]++;
                 if (line.Count > 1)
                 {
-                    result.Streamlines.Add(WithConduit(grid, conduits[from], sources[from], line));
+                    // the stretch beyond the target is a construction, not a well: it exists so the flow
+                    // is on the right heading where it crosses the target, and it is cut off here so that
+                    // nothing downstream ever sees it
+                    Streamline kept = target.Incidence == TargetIncidence.Through
+                                      ? TrimAtTarget(line, target) : line;
+                    result.Streamlines.Add(WithConduit(grid, conduits[from], sources[from], kept));
                     result.StreamlineOutcomes.Add(tracer.Outcome);
                 }
             }
+            result.AddTiming("trace", watch.Elapsed.TotalMilliseconds);
             result.MeasureCurvature();
             return result;
         }
@@ -853,11 +909,16 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
             // a guided arrival puts nothing in the way: the medium does the work, and the only walls
             // left are the ones that shut a face the caller did not admit
             bool walled = target.Incidence == TargetIncidence.Perpendicular;
-            if (!walled && target.Sides == TargetSides.Both)
+            bool through = target.Incidence == TargetIncidence.Through;
+            if (!walled && !through && target.Sides == TargetSides.Both)
             {
                 return new List<int>(grid.SinkLeaves);
             }
             target.GetArrivalUnit(out double dn, out double de, out double dv);
+            if (through)
+            {
+                return BuildThroughConduits(grid, problem, target, dn, de, dv);
+            }
             if (!walled)
             {
                 return AdmitOneFace(grid, problem, dn, de, dv);
@@ -906,6 +967,103 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 }
             }
             return new List<int>(grid.SinkLeaves);
+        }
+
+        /// <summary>
+        /// Cuts a streamline where it first reaches the plane of the target, so that what is returned
+        /// ends at the target rather than at the sink laid beyond it.
+        /// <para>
+        /// The cut is made on the plane and not at the last position before it, so the path ends exactly
+        /// where it penetrates rather than a sample short of it.
+        /// </para>
+        /// </summary>
+        private static Streamline TrimAtTarget(Streamline line, TargetPolygon target)
+        {
+            List<Point3D> positions = line.Positions!;
+            target.GetArrivalUnit(out double dn, out double de, out double dv);
+            Point3D centre = target.GetCentre();
+            List<Point3D> kept = new List<Point3D>();
+            double previous = 0;
+            for (int i = 0; i < positions.Count; i++)
+            {
+                double along = (positions[i].X!.Value - centre.X!.Value) * dn
+                               + (positions[i].Y!.Value - centre.Y!.Value) * de
+                               + (positions[i].Z!.Value - centre.Z!.Value) * dv;
+                if (i > 0 && previous < 0 && along >= 0)
+                {
+                    double share = along != previous ? -previous / (along - previous) : 0;
+                    kept.Add(new Point3D(
+                        positions[i - 1].X!.Value
+                            + share * (positions[i].X!.Value - positions[i - 1].X!.Value),
+                        positions[i - 1].Y!.Value
+                            + share * (positions[i].Y!.Value - positions[i - 1].Y!.Value),
+                        positions[i - 1].Z!.Value
+                            + share * (positions[i].Z!.Value - positions[i - 1].Z!.Value)));
+                    return new Streamline(kept);
+                }
+                kept.Add(positions[i]);
+                previous = along;
+            }
+            return line;
+        }
+
+        /// <summary>
+        /// One conduit per column of target cells, laid from the target <em>outward</em> along the normal,
+        /// with the rate drawn at its far end.
+        /// <para>
+        /// The flow can only reach a sink by travelling the length of a tube, and a tube can only be
+        /// entered at the target, so the direction through the target is the tube's and the target is
+        /// crossed rather than skirted. What makes this different from a walled landing is not the tube
+        /// but the sink: with the rate drawn beyond the target, the flow is already going the wanted way
+        /// before it meets the tube, so the mouth has little left to turn.
+        /// </para>
+        /// </summary>
+        private static List<int> BuildThroughConduits(StreamlineGrid grid, FlowProblem problem,
+                                                      TargetPolygon target,
+                                                      double dn, double de, double dv)
+        {
+            HashSet<int> sinks = new HashSet<int>(grid.SinkLeaves);
+            HashSet<int> claimed = new HashSet<int>();
+            List<int> served = new List<int>();
+
+            foreach (int leaf in grid.SinkLeaves)
+            {
+                // only the cell furthest upstream of its column seeds a tube, so a column is walked once
+                // rather than once per cell in it
+                if (StepTo(grid, leaf, -dn, -de, -dv, out int behind) && sinks.Contains(behind))
+                {
+                    continue;
+                }
+                // The mouth is one cell before the target, not at it. A conduit's head keeps its other
+                // faces so the flow can get in, so the direction is imposed only from the second cell
+                // on: start the chain at the target and the target plane is crossed at the one place
+                // nothing is imposed, and the trim then throws away the whole of the constrained part.
+                if (!StepTo(grid, leaf, -dn, -de, -dv, out int mouth)
+                    || grid.States[mouth] != CellState.Open || claimed.Contains(mouth))
+                {
+                    continue;
+                }
+                List<int> beyond = Walk(grid, mouth, dn, de, dv, target.ThroughLength, sinks, claimed);
+                if (beyond.Count < 1)
+                {
+                    // nothing behind this part of the target to draw through: an obstruction, the floor,
+                    // or the edge of the domain. That column simply does not serve.
+                    continue;
+                }
+                List<int> chain = new List<int> { mouth };
+                chain.AddRange(beyond);
+                foreach (int cell in chain)
+                {
+                    claimed.Add(cell);
+                }
+                // open at the head so the flow can enter at the target, sealed the rest of the way so it
+                // has nowhere to go but along
+                problem.AddConduit(chain, true);
+                // the rate is drawn at the far end, which is what puts the flow on the right heading
+                // before it ever reaches the target
+                served.Add(chain[chain.Count - 1]);
+            }
+            return served;
         }
 
         /// <summary>
@@ -965,13 +1123,76 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         }
 
         /// <summary>
+        /// Fills the gap between two cells that a ray stepped between without sharing a face, with cells
+        /// that do share one, moving along whichever axis is furthest from the destination each time.
+        /// </summary>
+        /// <returns>false when the gap cannot be bridged through open, unclaimed ground</returns>
+        private static bool Bridge(StreamlineGrid grid, int from, int to, HashSet<int> claimed,
+                                  List<int> walked)
+        {
+            OctreeCell destination = grid.Tree.GetCell(to);
+            int at = from;
+            // a bridge of more than a few cells means the ray jumped further than a neighbourhood, which
+            // is not a gap to fill but a sign that the walk itself has gone wrong
+            for (int guard = 0; guard < 8; guard++)
+            {
+                List<int> neighbours = new List<int>();
+                for (int axis = 0; axis < 3; axis++)
+                {
+                    for (int step = -1; step <= 1; step += 2)
+                    {
+                        neighbours.Clear();
+                        grid.Tree.GetFaceNeighbours(at, axis, step, neighbours);
+                        if (neighbours.Contains(to))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                OctreeCell here = grid.Tree.GetCell(at);
+                double[] apart =
+                {
+                    destination.CentreNorth - here.CentreNorth,
+                    destination.CentreEast - here.CentreEast,
+                    destination.CentreVertical - here.CentreVertical
+                };
+                int worst = 0;
+                for (int axis = 1; axis < 3; axis++)
+                {
+                    if (System.Math.Abs(apart[axis]) > System.Math.Abs(apart[worst])) { worst = axis; }
+                }
+                if (!(System.Math.Abs(apart[worst]) > 0))
+                {
+                    return false;
+                }
+                double[] towards = new double[3];
+                towards[worst] = apart[worst] > 0 ? 1.0 : -1.0;
+                if (!StepTo(grid, at, towards[0], towards[1], towards[2], out int next)
+                    || next == at || grid.States[next] != CellState.Open || claimed.Contains(next)
+                    || walked.Contains(next))
+                {
+                    return false;
+                }
+                walked.Add(next);
+                at = next;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// the leaf immediately across the face the given direction leaves the cell by
         /// </summary>
         private static bool StepTo(StreamlineGrid grid, int leaf, double dn, double de, double dv,
                                    out int next)
         {
             OctreeCell cell = grid.Tree.GetCell(leaf);
-            double reach = 0.6 * cell.Size;
+            // The distance from the centre to the face is half the cell along an axis, but half divided
+            // by the largest component of the direction along anything else: at 85 degrees off an axis
+            // that is 0.71 of the cell, so a fixed 0.6 never leaves the cell and the step silently
+            // returns the cell it started in. Every target that is not axis aligned depended on this.
+            double largest = System.Math.Max(System.Math.Abs(dn),
+                                             System.Math.Max(System.Math.Abs(de), System.Math.Abs(dv)));
+            double reach = largest > 1.0e-9 ? 0.6 * cell.Size / largest : 0.6 * cell.Size;
             next = grid.Tree.FindLeaf(cell.CentreNorth + dn * reach, cell.CentreEast + de * reach,
                                       cell.CentreVertical + dv * reach);
             return next >= 0;
@@ -1008,6 +1229,16 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 }
                 if (found != at)
                 {
+                    // A ray crossing a diagonal leaves one cell for another that shares only an edge or a
+                    // corner. The connectivity flood passes through shared faces alone, so a chain built
+                    // straight from the ray is severed at every such step: measured on a target standing
+                    // at eighty five degrees, 476 of 516 links, and 119 of 120 chains. The gap is filled
+                    // with cells that do share faces, which leaves an axis-aligned walk untouched because
+                    // it never has one.
+                    if (!Bridge(grid, at, found, claimed, walked))
+                    {
+                        break;
+                    }
                     at = found;
                     walked.Add(found);
                 }
@@ -1070,12 +1301,37 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         private static Streamline WithConduit(StreamlineGrid grid, int[] chain, StreamlineSource source,
                                               Streamline traced)
         {
-            List<Point3D> positions = new List<Point3D> { source.Position! };
-            // up to the cell before the one the launch sits in, which the trace itself then covers
+            source.GetUnitDirection(out double dn, out double de, out double dv);
+            double pn = source.Position!.X!.Value;
+            double pe = source.Position.Y!.Value;
+            double pv = source.Position.Z!.Value;
+            List<Point3D> positions = new List<Point3D> { source.Position };
+            // Each cell of the chain taken at its own station along the ray the conduit was built
+            // along, rather than at its centre.
+            // A chain is face connected, so it can only step along an axis, and its centres therefore
+            // wobble about that ray by up to half a cell diagonal: on Ullrigg a sidetrack leaving at
+            // thirteen degrees gave a head of twenty right angled corners at one metre spacing, 2.2 m
+            // off the ray at worst, whose own end to end attitude was seven degrees of azimuth away
+            // from the direction the conduit exists to impose. The cells are a discretisation of the
+            // ray; the centres are samples of the cells, not of the ray, and reporting them states the
+            // constraint less exactly than the constraint is held.
+            // It is also the safer of the two. BuildConduit walked this ray and stopped where it left
+            // an open cell, so every point of it up to the end of the chain is inside one by
+            // construction, which a cell centre half a diagonal away from it is not.
+            // A conduit along an axis is unaffected beyond a half cell at its first step: there the
+            // centres already lie on the ray.
+            double reached = 0;
             for (int i = 0; i + 2 < chain.Length; i++)
             {
                 OctreeCell cell = grid.Tree.GetCell(chain[i]);
-                positions.Add(new Point3D(cell.CentreNorth, cell.CentreEast, cell.CentreVertical));
+                double along = (cell.CentreNorth - pn) * dn + (cell.CentreEast - pe) * de
+                               + (cell.CentreVertical - pv) * dv;
+                if (along <= reached)
+                {
+                    continue;
+                }
+                reached = along;
+                positions.Add(new Point3D(pn + dn * along, pe + de * along, pv + dv * along));
             }
             positions.AddRange(traced.Positions!);
             for (int i = positions.Count - 1; i > 0; i--)
@@ -1405,22 +1661,34 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         /// <summary>
         /// the chain of cells from the source along the direction it leaves in
         /// </summary>
+        /// <summary>
+        /// The chain of cells a conduit is laid along, leaving the source in the direction it leaves in.
+        /// <para>
+        /// The walk crosses one cell boundary at a time, stepping to the nearest face rather than by a
+        /// fixed distance. That is not a refinement, it is what makes the chain usable: a chain cell is
+        /// closed on every face but the two that continue it, and both the solve and
+        /// <see cref="StreamlineGrid.Reassess"/> let it reach its neighbour in the chain only across a
+        /// shared <em>face</em>. A fixed step can cross two boundaries at once and hand back a cell that
+        /// is only diagonally adjacent, which has no shared face, and the conduit is then sealed at that
+        /// step \u2014 the source is walled in and the target is unreachable however open the cells are.
+        /// </para>
+        /// <para>
+        /// A slot leaving vertically never met this, every step of an axis aligned walk being a face. A
+        /// sidetrack leaves along its parent's attitude at the window, which is nobody's axis, and on
+        /// Ullrigg it sealed itself two cells out.
+        /// </para>
+        /// </summary>
         private static int[] BuildConduit(StreamlineGrid grid, StreamlineSource source, double length)
         {
             source.GetUnitDirection(out double dn, out double de, out double dv);
-            double n = source.Position!.X!.Value;
-            double e = source.Position.Y!.Value;
-            double v = source.Position.Z!.Value;
+            double[] direction = { dn, de, dv };
+            double[] at = { source.Position!.X!.Value, source.Position.Y!.Value,
+                            source.Position.Z!.Value };
             List<int> chain = new List<int>();
             double travelled = 0;
-            double step = 0.25 * grid.Tree.Frame.GetCellSize(grid.Tree.DeepestDepth);
-            if (!(step > 0))
-            {
-                return Array.Empty<int>();
-            }
             while (travelled <= length)
             {
-                int leaf = grid.Tree.FindLeaf(n, e, v);
+                int leaf = grid.Tree.FindLeaf(at[0], at[1], at[2]);
                 if (leaf < 0 || grid.States[leaf] != CellState.Open)
                 {
                     break;
@@ -1429,10 +1697,36 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 {
                     chain.Add(leaf);
                 }
-                n += dn * step;
-                e += de * step;
-                v += dv * step;
-                travelled += step;
+                // how far along the direction each face of this cell lies, and the nearest of them: the
+                // one face the walk is about to cross
+                OctreeCell cell = grid.Tree.GetCell(leaf);
+                double[] low = { cell.MinimumNorth, cell.MinimumEast, cell.MinimumVertical };
+                double nearest = double.MaxValue;
+                for (int a = 0; a < 3; a++)
+                {
+                    if (System.Math.Abs(direction[a]) < 1.0e-12)
+                    {
+                        continue;
+                    }
+                    double face = direction[a] > 0 ? low[a] + cell.Size : low[a];
+                    double reach = (face - at[a]) / direction[a];
+                    if (reach < nearest)
+                    {
+                        nearest = reach;
+                    }
+                }
+                if (nearest == double.MaxValue)
+                {
+                    break;
+                }
+                // just past that face, so the next lookup lands in the next cell rather than on the
+                // boundary between the two
+                double stride = System.Math.Max(0, nearest) + 1.0e-6 * cell.Size;
+                for (int a = 0; a < 3; a++)
+                {
+                    at[a] += direction[a] * stride;
+                }
+                travelled += stride;
             }
             return chain.Count >= 2 ? chain.ToArray() : Array.Empty<int>();
         }

@@ -318,6 +318,21 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         }
 
         /// <summary>
+        /// The direction of the trajectory at one sample, as a unit vector.
+        /// <para>
+        /// This is what a sidetrack leaves along: the departure direction of a tie-in is the parent's own
+        /// direction at the window, there being no way to turn at a point.
+        /// </para>
+        /// </summary>
+        public void GetTangent(int sample, out double north, out double east, out double vertical)
+        {
+            int at = 9 * sample;
+            north = frame_[at];
+            east = frame_[at + 1];
+            vertical = frame_[at + 2];
+        }
+
+        /// <summary>
         /// the measured depth of one sample
         /// </summary>
         public double GetMeasuredDepth(int sample)
