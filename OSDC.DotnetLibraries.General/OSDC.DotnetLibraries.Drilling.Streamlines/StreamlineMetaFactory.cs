@@ -28,7 +28,20 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
         public double MaximumCurvature { get; set; } = double.PositiveInfinity;
 
         /// <summary>
-        /// whether the given corridor passes both limits
+        /// Corridors ruled out on grounds the library knows nothing about, whatever their room and turn,
+        /// or null for none.
+        /// <para>
+        /// This is how a judgement that can only be made across a whole route reaches the draw. Whether a
+        /// corridor should be given up to avoid something depends on what the other corridors of its
+        /// route do — a fault one corridor crosses and the rest pass by is avoidable, and one they all
+        /// cross is not — so it cannot be a property of the corridor, and the caller that made it says
+        /// which corridors it came to.
+        /// </para>
+        /// </summary>
+        public ISet<StreamlineBundleFactory>? Excluded { get; set; } = null;
+
+        /// <summary>
+        /// whether the given corridor passes both limits and is not excluded
         /// </summary>
         /// <param name="factory"></param>
         /// <returns></returns>
@@ -40,7 +53,8 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines
             }
             return factory.LeastRoom >= MinimumRoom
                    && (double.IsPositiveInfinity(MaximumCurvature)
-                       || (factory.MedianCurvature > 0 && factory.MedianCurvature <= MaximumCurvature));
+                       || (factory.MedianCurvature > 0 && factory.MedianCurvature <= MaximumCurvature))
+                   && (Excluded == null || !Excluded.Contains(factory));
         }
     }
 

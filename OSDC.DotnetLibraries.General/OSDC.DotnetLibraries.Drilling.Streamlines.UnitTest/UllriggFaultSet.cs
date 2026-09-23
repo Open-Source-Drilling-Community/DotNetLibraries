@@ -526,9 +526,222 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                             obliquity, station.Abscissa));
                     }
                 }
+                // and between the cross-sections, where the planes cannot see: one crossing per interval,
+                // the deepest, so that a fault met over a long stretch is not reported a thousand times
+                Dictionary<int, SweptSample> deepestIn = new Dictionary<int, SweptSample>();
+                foreach (SweptSample sample in SampleInside(factory, fault))
+                {
+                    double depth = sample.Boundary - sample.Radius;
+                    if (depth <= CrossingTolerance) { continue; }
+                    if (!deepestIn.TryGetValue(sample.Station, out SweptSample kept)
+                        || depth > kept.Boundary - kept.Radius)
+                    {
+                        deepestIn[sample.Station] = sample;
+                    }
+                }
+                foreach (SweptSample sample in deepestIn.Values)
+                {
+                    double depth = sample.Boundary - sample.Radius;
+                    if (depth > deepest) { deepest = depth; }
+                    CrossSectionStation from = factory.Stations[sample.Station];
+                    CrossSectionStation to = factory.Stations[sample.Station + 1];
+                    found.Add(new FaultCrossing(fault.Name ?? "?", sample.At, sample.Obliquity,
+                                                (1 - sample.Share) * from.Abscissa
+                                                + sample.Share * to.Abscissa));
+                }
                 LastDepths[fault.Name ?? "?"] = deepest;
             }
             return found;
+        }
+
+        /// <summary>
+        /// how finely a fault is sampled when it is looked for between cross-sections, m
+        /// </summary>
+        public const double SweepSpacing = 0.5;
+
+        /// <summary>
+        /// one point of a fault found inside the corridor between two cross-sections
+        /// </summary>
+        public readonly struct SweptSample
+        {
+            /// <summary>the cross-section the point lies after</summary>
+            public int Station { get; }
+            /// <summary>how far towards the next cross-section, 0 to 1</summary>
+            public double Share { get; }
+            /// <summary>how far off the median, m, in the frame interpolated between the two</summary>
+            public double Radius { get; }
+            /// <summary>in which direction, in the untwisted frame the outlines are held in</summary>
+            public double Angle { get; }
+            /// <summary>where the interpolated boundary is in that direction, m</summary>
+            public double Boundary { get; }
+            /// <summary>where the point is</summary>
+            public Point3D At { get; }
+            /// <summary>how far off square the fault is there, degrees</summary>
+            public double Obliquity { get; }
+
+            /// <summary>constructor with initialization</summary>
+            public SweptSample(int station, double share, double radius, double angle, double boundary,
+                               Point3D at, double obliquity)
+            {
+                Station = station;
+                Share = share;
+                Radius = radius;
+                Angle = angle;
+                Boundary = boundary;
+                At = at;
+                Obliquity = obliquity;
+            }
+        }
+
+        /// <summary>
+        /// The points of a fault that lie inside the corridor anywhere along it, and not only where a
+        /// cross-section happens to be.
+        /// <para>
+        /// Cutting the fault with the plane of each cross-section is exact at the plane and blind
+        /// between planes, and blindest of all to the fault a plan most wants to meet: one square
+        /// across the path lies nearly parallel to the planes, so a plane a couple of metres away meets
+        /// it several metres off to the side, and near the edge of a fault not at all. A fault tip
+        /// can then reach well inside a corridor between two cross-sections and be seen by neither.
+        /// Measured on the 85 degree slot case: a trim reported a fault given up, the plane test agreed,
+        /// and three draws in twelve went through it between two cross-sections 4.2 m apart.
+        /// </para>
+        /// <para>
+        /// So the fault itself is sampled, every <paramref name="spacing"/> metres over each triangle
+        /// that comes within reach, and each point is placed between the two cross-sections it falls
+        /// between. A realization is a straight line from its position at one cross-section to its
+        /// position at the next, so the corridor between them is what the two outlines sweep, and the
+        /// boundary there is interpolated the same way.
+        /// </para>
+        /// </summary>
+        public static List<SweptSample> SampleInside(StreamlineBundleFactory factory, FaultSurface fault,
+                                                     double spacing = SweepSpacing)
+        {
+            List<SweptSample> found = new List<SweptSample>();
+            int count = factory.Stations.Count;
+            double[][] centre = new double[count][];
+            double[][] along = new double[count][];
+            double[][] first = new double[count][];
+            double[][] second = new double[count][];
+            double[] reachOf = new double[count];
+            bool[] usable = new bool[count];
+            for (int k = 0; k < count; k++)
+            {
+                CrossSectionStation station = factory.Stations[k];
+                if (station.Position == null || station.Tangent == null || station.FirstNormal == null
+                    || station.SecondNormal == null || station.Polygon == null)
+                {
+                    continue;
+                }
+                usable[k] = true;
+                centre[k] = new[] { station.Position.X!.Value, station.Position.Y!.Value,
+                                    station.Position.Z!.Value };
+                along[k] = new[] { station.Tangent.X!.Value, station.Tangent.Y!.Value,
+                                   station.Tangent.Z!.Value };
+                first[k] = new[] { station.FirstNormal.X!.Value, station.FirstNormal.Y!.Value,
+                                   station.FirstNormal.Z!.Value };
+                second[k] = new[] { station.SecondNormal.X!.Value, station.SecondNormal.Y!.Value,
+                                    station.SecondNormal.Z!.Value };
+                reachOf[k] = station.Polygon.OuterRadius;
+            }
+
+            double[] triangles = fault.GetTriangles(PillarSamples);
+            List<int> near = new List<int>();
+            for (int t = 0; t + 8 < triangles.Length; t += 9)
+            {
+                double[] low = { double.MaxValue, double.MaxValue, double.MaxValue };
+                double[] high = { double.MinValue, double.MinValue, double.MinValue };
+                for (int corner = 0; corner < 3; corner++)
+                {
+                    for (int a = 0; a < 3; a++)
+                    {
+                        double x = triangles[t + 3 * corner + a];
+                        if (x < low[a]) { low[a] = x; }
+                        if (x > high[a]) { high[a] = x; }
+                    }
+                }
+                // the intervals whose swept outline could reach this triangle at all
+                near.Clear();
+                for (int k = 0; k + 1 < count; k++)
+                {
+                    if (!usable[k] || !usable[k + 1]) { continue; }
+                    double reach = System.Math.Max(reachOf[k], reachOf[k + 1]) + spacing;
+                    bool apart = false;
+                    for (int a = 0; a < 3 && !apart; a++)
+                    {
+                        double from = System.Math.Min(centre[k][a], centre[k + 1][a]) - reach;
+                        double to = System.Math.Max(centre[k][a], centre[k + 1][a]) + reach;
+                        if (high[a] < from || low[a] > to) { apart = true; }
+                    }
+                    if (!apart) { near.Add(k); }
+                }
+                if (near.Count == 0) { continue; }
+
+                double[] p0 = { triangles[t], triangles[t + 1], triangles[t + 2] };
+                double[] e1 = { triangles[t + 3] - p0[0], triangles[t + 4] - p0[1], triangles[t + 5] - p0[2] };
+                double[] e2 = { triangles[t + 6] - p0[0], triangles[t + 7] - p0[1], triangles[t + 8] - p0[2] };
+                double[] normal = { e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2],
+                                    e1[0] * e2[1] - e1[1] * e2[0] };
+                double normalLength = System.Math.Sqrt(normal[0] * normal[0] + normal[1] * normal[1]
+                                                       + normal[2] * normal[2]);
+                if (!(normalLength > 0)) { continue; }
+                double longest = System.Math.Max(Length(e1), System.Math.Max(Length(e2),
+                                 Length(new[] { e2[0] - e1[0], e2[1] - e1[1], e2[2] - e1[2] })));
+                int steps = System.Math.Max(1, (int)System.Math.Ceiling(longest / spacing));
+
+                double[] p = new double[3];
+                for (int i = 0; i <= steps; i++)
+                {
+                    for (int j = 0; i + j <= steps; j++)
+                    {
+                        double a1 = (double)i / steps, a2 = (double)j / steps;
+                        for (int a = 0; a < 3; a++) { p[a] = p0[a] + a1 * e1[a] + a2 * e2[a]; }
+                        foreach (int k in near)
+                        {
+                            double before = Dot(p, centre[k], along[k]);
+                            double after = Dot(p, centre[k + 1], along[k + 1]);
+                            if (before < 0 || after > 0 || before == after) { continue; }
+                            double share = before / (before - after);
+                            double[] c = new double[3], n1 = new double[3], n2 = new double[3],
+                                     tangent = new double[3];
+                            for (int a = 0; a < 3; a++)
+                            {
+                                c[a] = (1 - share) * centre[k][a] + share * centre[k + 1][a];
+                                n1[a] = (1 - share) * first[k][a] + share * first[k + 1][a];
+                                n2[a] = (1 - share) * second[k][a] + share * second[k + 1][a];
+                                tangent[a] = (1 - share) * along[k][a] + share * along[k + 1][a];
+                            }
+                            double u = Dot(p, c, n1);
+                            double v = Dot(p, c, n2);
+                            double radius = System.Math.Sqrt(u * u + v * v);
+                            double twist = (1 - share) * factory.Stations[k].Twist
+                                           + share * factory.Stations[k + 1].Twist;
+                            double angle = System.Math.Atan2(v, u) - twist;
+                            double boundary = (1 - share) * factory.Stations[k].Polygon!.GetBoundaryRadius(angle)
+                                              + share * factory.Stations[k + 1].Polygon!.GetBoundaryRadius(angle);
+                            if (!(radius < boundary)) { continue; }
+                            double cosine = System.Math.Abs(tangent[0] * normal[0] + tangent[1] * normal[1]
+                                                            + tangent[2] * normal[2])
+                                            / (normalLength * System.Math.Max(1e-12, Length(tangent)));
+                            if (cosine > 1) { cosine = 1; }
+                            found.Add(new SweptSample(k, share, radius, angle, boundary,
+                                                      new Point3D(p[0], p[1], p[2]),
+                                                      System.Math.Acos(cosine) * 180.0 / System.Math.PI));
+                        }
+                    }
+                }
+            }
+            return found;
+        }
+
+        private static double Length(double[] x)
+        {
+            return System.Math.Sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
+        }
+
+        private static double Dot(double[] p, double[] origin, double[] direction)
+        {
+            return (p[0] - origin[0]) * direction[0] + (p[1] - origin[1]) * direction[1]
+                   + (p[2] - origin[2]) * direction[2];
         }
 
         /// <summary>

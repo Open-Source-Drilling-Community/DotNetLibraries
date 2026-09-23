@@ -102,6 +102,14 @@ body = """<style>
         </span>
       </div>
       <div class="group">
+        <span class="grouplabel">Most of a route given up to avoid faults</span>
+        <span class="filter">
+          <input type="range" id="routeShare" min="0" max="50" step="1" value="25"
+                 aria-label="Most of a route's paths that may be given up to pass faults by, per cent">
+          <output id="routeShareValue">25%</output>
+        </span>
+      </div>
+      <div class="group">
         <span class="grouplabel">Ground around the case to look for faults in</span>
         <span class="filter">
           <input type="range" id="faultReach" min="0" max="3000" step="50" value="200"
@@ -492,6 +500,56 @@ body = """<style>
   var faultReachValue = document.getElementById("faultReachValue");
   var obliquity = document.getElementById("obliquity");
   var obliquityValue = document.getElementById("obliquityValue");
+  var routeShare = document.getElementById("routeShare");
+  var routeShareValue = document.getElementById("routeShareValue");
+  // the scene says what the run used, and the slider starts there
+  if (cases.length > 0 && cases[0].routeShareLimit !== undefined) {
+    routeShare.value = String(Math.round(100 * cases[0].routeShareLimit));
+  }
+
+  // The same choice FaultRouteAvoidance.Choose makes, so that the view and the run cannot disagree:
+  // a fault some corridors of a route go through and the rest pass by is avoided by giving those
+  // corridors up, cheapest fault first, while all the faults together cost no more than the limit of
+  // the route's paths. A fault every corridor goes through is kept whatever it costs.
+  function chooseAvoided(corridors, limit) {
+    var total = 0;
+    corridors.forEach(function (c) { total += c.weight; });
+    var byFault = {};
+    corridors.forEach(function (c, index) {
+      c.faults.forEach(function (name) {
+        if (!byFault[name]) { byFault[name] = []; }
+        if (byFault[name].indexOf(index) < 0) { byFault[name].push(index); }
+      });
+    });
+    var faults = Object.keys(byFault).map(function (name) {
+      var share = 0;
+      byFault[name].forEach(function (index) { share += corridors[index].weight; });
+      return { name: name, by: byFault[name], share: total > 0 ? share / total : 0 };
+    });
+    faults.sort(function (a, b) {
+      return a.share !== b.share ? a.share - b.share : (a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+    });
+    var excluded = {}, given = 0, avoided = [], kept = [];
+    faults.forEach(function (fault) {
+      var more = 0;
+      fault.by.forEach(function (index) { if (!excluded[index]) { more += corridors[index].weight; } });
+      if (fault.by.length === corridors.length || !(total > 0) || (given + more) / total > limit) {
+        kept.push(fault);
+        return;
+      }
+      fault.by.forEach(function (index) { excluded[index] = true; });
+      given += more;
+      avoided.push(fault);
+    });
+    return { excluded: excluded, avoided: avoided, kept: kept, share: total > 0 ? given / total : 0 };
+  }
+  function tubeFaults(bundle) {
+    var names = [];
+    (bundle.faultHits || []).forEach(function (hit) {
+      if (names.indexOf(hit.fault) < 0) { names.push(hit.fault); }
+    });
+    return names;
+  }
 
   function figure(label, value, sub, tone) {
     return '<div class="figure' + (tone ? " " + tone : "") + '"><dt>' + label + "</dt><dd>" + value
@@ -512,6 +570,40 @@ body = """<style>
     var kept = 0, keptMembers = 0, best = 0, gentlest = Infinity, nearestParent = Infinity;
     var worstSquare = 0;
     var trimmedCorridors = 0, worstTrimLoss = 0, trimDropped = 0;
+    var shareLimit = parseFloat(routeShare.value) / 100;
+    routeShareValue.textContent = routeShare.value + "%";
+    // the route step, worked out afresh for whatever room and turn are asked for: which corridors
+    // qualify decides which faults a route can pass by
+    var avoidedNames = [], givenUpShare = 0;
+    groups.forEach(function (entry) { entry.givenUpFor = null; });
+    picked.forEach(function (index) {
+      var byRoute = {};
+      groups.forEach(function (entry) {
+        if (entry.caseIndex !== index) { return; }
+        var b = entry.bundle;
+        if (!(b.leastInradius >= limit && (anyTurn || (b.dogleg || 0) <= turn))) { return; }
+        var key = String(b.group || 0);
+        if (!byRoute[key]) { byRoute[key] = []; }
+        byRoute[key].push(entry);
+      });
+      Object.keys(byRoute).forEach(function (key) {
+        var entries = byRoute[key];
+        var chosen = chooseAvoided(entries.map(function (entry) {
+          return { weight: entry.bundle.weight || entry.bundle.members, faults: tubeFaults(entry.bundle) };
+        }), shareLimit);
+        if (chosen.share > givenUpShare) { givenUpShare = chosen.share; }
+        chosen.avoided.forEach(function (fault) {
+          if (avoidedNames.indexOf(fault.name) < 0) { avoidedNames.push(fault.name); }
+        });
+        entries.forEach(function (entry, k) {
+          if (!chosen.excluded[k]) { return; }
+          var crossed = tubeFaults(entry.bundle);
+          entry.givenUpFor = chosen.avoided.filter(function (fault) {
+            return crossed.indexOf(fault.name) >= 0;
+          }).map(function (fault) { return fault.name; });
+        });
+      });
+    });
     var many = picked.length > 1;
     var shown = [];
     var dropped = [];
@@ -538,6 +630,7 @@ body = """<style>
       entry.materials.forEach(function (material) { material.color.copy(tone); });
       var pass = entry.bundle.leastInradius >= limit
                  && (anyTurn || (entry.bundle.dogleg || 0) <= turn)
+                 && !entry.givenUpFor
                  && (anySquare || (entry.bundle.faultObliquity || 0) <= square);
       entry.group.visible = pass;
       entry.median.visible = document.getElementById("showMedian").checked;
@@ -616,10 +709,9 @@ body = """<style>
                function (sum, b) { return sum + b.members; }, 0) + " in factories")
       + figure("Rule in force", limit.toFixed(1) + "&#8239;m",
                "room a driller can hold around a line")
-      + figure("Routes apart", String(new Set(shown.filter(function (b) {
-                 return b.leastInradius >= limit && (anyTurn || (b.dogleg || 0) <= turn)
-                     && (anySquare || (b.faultObliquity || 0) <= square);
-               }).map(function (b) { return b.group || 0; })).size),
+      + figure("Routes apart", String(new Set(groups.filter(function (entry) {
+                 return picked.indexOf(entry.caseIndex) >= 0 && entry.group.visible;
+               }).map(function (entry) { return entry.caseIndex + "/" + (entry.bundle.group || 0); })).size),
                "separated by forbidden ground")
       + figure("Gentlest plan", (gentlest === Infinity ? "—" : gentlest.toFixed(1))
                + "&#8239;°/30 m", "hardest turn on the easiest median",
@@ -627,6 +719,10 @@ body = """<style>
       + ((data.faults || []).length > 0 && trimmedCorridors > 0
          ? figure("Pulled back from a fault", trimmedCorridors + " / " + kept,
                   "corridors, giving up " + worstTrimLoss.toFixed(0) + "% at worst")
+         : "")
+      + ((data.faults || []).length > 0 && avoidedNames.length > 0
+         ? figure("Passed by", avoidedNames.length + (avoidedNames.length === 1 ? " fault" : " faults"),
+                  "by giving up " + (100 * givenUpShare).toFixed(0) + "% of the route at most")
          : "")
       + ((data.faults || []).length > 0
          ? figure("Worst fault crossing", (kept === 0 ? "\u2014" : worstSquare.toFixed(0) + "\u00b0"),
@@ -643,7 +739,7 @@ body = """<style>
       + groups.filter(function (entry) {
           return picked.indexOf(entry.caseIndex) >= 0;
         }).map(function (entry) {
-          var pass = entry.bundle.leastInradius >= limit;
+          var pass = entry.bundle.leastInradius >= limit && !entry.givenUpFor;
           return '<span class="routeline" style="opacity:' + (pass ? 1 : 0.35) + '">'
                + '<span class="swatch" style="background:#' + entry.colour.getHexString()
                + '"></span>'
@@ -656,6 +752,11 @@ body = """<style>
                + ((entry.bundle.faultsTrimmed || 0) > 0
                   ? " &middot; trimmed&#8239;<b>" + (entry.bundle.trimLoss || 0).toFixed(0)
                     + "</b>%" : "")
+               + (entry.givenUpFor
+                  ? " &middot; given up for " + entry.givenUpFor.map(function (name) {
+                      return name.replace(/^Case[0-9]+_/, "").replace(/_[A-Z]+$/, "");
+                    }).join(", ")
+                  : "")
                + "</span>";
         }).join("");
 
@@ -715,9 +816,15 @@ body = """<style>
            + " A corridor that only <b>grazed</b> a fault has been pulled back from it instead, and"
            + " the outlines drawn are the pulled-back ones: the limit is per direction and applies"
            + " the whole way along, because a realization holds one normalised position from end to"
-           + " end. A fault is only given up while the corridor keeps three quarters of its"
+           + " end. A fault is only given up while the corridor keeps half of its"
            + " cross-section; past that the fault is genuinely in the way and is left to the crossing"
-           + " rule. The streamlines that no longer fit were dropped and the density rebuilt."
+           + " rule. The streamlines the pull-back pushed out were dropped and the density rebuilt."
+           + " What a corridor cannot do alone a <b>route</b> sometimes can: a fault whose tip reaches"
+           + " into the outermost corridors of a route, while the rest pass it by, is avoided by"
+           + " giving those corridors up, but only while all the faults passed by that way cost no"
+           + " more than the share of the route's paths the slider allows, cheapest fault first. A"
+           + " fault every corridor goes through is kept whatever the setting, and left to the"
+           + " crossing rule."
          : "");
   }
 
@@ -760,6 +867,7 @@ body = """<style>
   dogleg.addEventListener("input", apply);
   faultReach.addEventListener("input", apply);
   obliquity.addEventListener("input", apply);
+  routeShare.addEventListener("input", apply);
 
   // ---- orbit ------------------------------------------------------------------------------------
   var yaw = 0.72, pitch = 0.42, distance = reach * 1.15;

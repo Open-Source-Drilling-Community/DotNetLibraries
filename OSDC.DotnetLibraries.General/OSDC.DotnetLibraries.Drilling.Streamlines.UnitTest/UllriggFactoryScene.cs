@@ -50,6 +50,14 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
         private const double FaultOverlapLimit = 0.50;
 
         /// <summary>
+        /// The most of a route's qualifying paths that may be given up to avoid the faults the rest of
+        /// the route passes by. Its own number, not <see cref="FaultOverlapLimit"/>: that one bounds how
+        /// much of a cross-section a corridor gives up, this one how much of a route gives up whole
+        /// corridors, and conflating two limits like these was a bug once already.
+        /// </summary>
+        private const double RouteShareLimit = FaultRouteAvoidance.DefaultRouteShareLimit;
+
+        /// <summary>
         /// how far either side of a fault the medium is affected, m
         /// </summary>
         private const double FaultBandWidth = 50.0;
@@ -257,14 +265,24 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
             AppendWells(json, whole, origin);
             AppendFaults(json, faults, origin);
             json.Append(",\"cases\":[");
+            // ULLRIGG_CASES="1,3" runs only those cases, into a scene of its own so that the full one
+            // is not overwritten by a partial run
+            string? only = Environment.GetEnvironmentVariable("ULLRIGG_CASES");
+            HashSet<int>? wanted = string.IsNullOrWhiteSpace(only) ? null
+                : new HashSet<int>(only.Split(',').Select(x => int.Parse(x.Trim(), Invariant)));
+            bool firstCase = true;
             for (int c = 0; c < Cases.Length; c++)
             {
-                if (c > 0) { json.Append(','); }
+                if (wanted != null && !wanted.Contains(c)) { continue; }
+                if (!firstCase) { json.Append(','); }
+                firstCase = false;
                 AppendCase(json, Cases[c], faults);
             }
             json.Append("]}");
 
-            string output = Path.Combine(Path.GetTempPath(), "ullrigg-factory-scene.json");
+            string output = Path.Combine(Path.GetTempPath(),
+                                         wanted == null ? "ullrigg-factory-scene.json"
+                                                        : "ullrigg-factory-scene-partial.json");
             File.WriteAllText(output, json.ToString());
             TestContext.Progress.WriteLine($"wrote {new FileInfo(output).Length / 1024} kB to {output}");
         }
@@ -990,6 +1008,8 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
             json.Append(']');
             json.Append(",\"bundles\":[");
             Random random = new Random(20260920);
+            Dictionary<StreamlineBundleFactory, IReadOnlyCollection<string>> tubeFaultsOf
+                = new Dictionary<StreamlineBundleFactory, IReadOnlyCollection<string>>();
             bool firstBundle = true;
             for (int b = 0; b < set.Factories.Count; b++)
             {
@@ -1070,6 +1090,7 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                 double medianObliquity = FaultCrossings.GetWorstObliquity(alongMedian);
                 HashSet<string> tubeFaults = new HashSet<string>(StringComparer.Ordinal);
                 foreach (FaultCrossing crossing in crossings) { tubeFaults.Add(crossing.Fault); }
+                tubeFaultsOf[factory] = tubeFaults;
                 HashSet<string> medianFaults = new HashSet<string>(StringComparer.Ordinal);
                 foreach (FaultCrossing crossing in alongMedian) { medianFaults.Add(crossing.Fault); }
 
@@ -1111,6 +1132,9 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                     .Append(set.Tolerance != null && b < set.Tolerance.Group.Length
                             ? set.Tolerance.Group[b] : 0);
                 json.Append(",\"members\":").Append(memberCount);
+                // what a corridor is weighed by when a route is drawn from, and when the route decides
+                // which corridors to give up for a fault
+                json.Append(",\"weight\":").Append(System.Math.Max(1, factory.SourceStreamlineCount));
                 json.Append(",\"leastInradius\":")
                     .Append(leastInradius.ToString("0.###", Invariant));
                 json.Append(",\"residual\":")
@@ -1194,11 +1218,26 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
 
                 // and what the factory is for: streamlines drawn from it, holding none of the originals
                 json.Append(",\"draws\":[");
+                // which faults the draws themselves go through, against which the tube test says the
+                // corridor goes through: a draw lies inside the region by construction, so a fault a
+                // draw crosses and the tube does not is one the tube test missed
+                Dictionary<string, int> drawnThrough = new Dictionary<string, int>(StringComparer.Ordinal);
+                int drawnCount = 0;
                 for (int d = 0; d < DrawsPerBundle; d++)
                 {
                     Streamline? drawn = factory.Draw(random);
                     if (drawn == null || drawn.Count < 2) { continue; }
-                    if (d > 0) { json.Append(','); }
+                    drawnCount++;
+                    List<FaultCrossing> drawnCrossings = FaultCrossings.Find(drawn.Positions!, faults);
+                    foreach (string name in drawnCrossings.Select(x => x.Fault).Distinct())
+                    {
+                        drawnThrough[name] = drawnThrough.TryGetValue(name, out int n) ? n + 1 : 1;
+                    }
+                    foreach (FaultCrossing miss in drawnCrossings.Where(x => !tubeFaults.Contains(x.Fault)))
+                    {
+                        ReportMissedCrossing(factory, faults.First(f => f.Name == miss.Fault), miss, b);
+                    }
+                    if (drawnCount > 1) { json.Append(','); }
                     List<Point3D> positions = drawn.Positions!;
                     int drawStride = System.Math.Max(1, positions.Count / 140);
                     json.Append('[');
@@ -1213,8 +1252,147 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                     json.Append(']');
                 }
                 json.Append("]}");
+                StringBuilder missed = new StringBuilder();
+                foreach (KeyValuePair<string, int> entry in drawnThrough)
+                {
+                    missed.Append($" {entry.Key} {entry.Value}/{drawnCount}"
+                                  + (tubeFaults.Contains(entry.Key) ? "" : " NOT IN TUBE") + ",");
+                }
+                TestContext.Progress.WriteLine(
+                    $"  corridor {b,2} draws: {drawnCount} of {DrawsPerBundle} drawn,"
+                    + (missed.Length > 0 ? " through" + missed.ToString().TrimEnd(',') : " through no fault"));
             }
             json.Append(']');
+            json.Append(",\"routeShareLimit\":")
+                .Append(RouteShareLimit.ToString("0.###", Invariant));
+            ReportRouteAvoidance(set, tubeFaultsOf, faults);
+        }
+
+        /// <summary>
+        /// What giving up corridors for a fault does to each route, measured on realizations drawn
+        /// from it rather than on the corridors: how many go through each fault with the route step and
+        /// without it, at no room rule and at the view's default one.
+        /// </summary>
+        private static void ReportRouteAvoidance(StreamlineFactorySet set,
+                                                 Dictionary<StreamlineBundleFactory, IReadOnlyCollection<string>> tubeFaultsOf,
+                                                 IReadOnlyList<FaultSurface> faults)
+        {
+            const int draws = 400;
+            foreach (double room in new[] { 0.0, 5.0 })
+            {
+                foreach (StreamlineMetaFactory route in set.GetRoutes())
+                {
+                    RealizationFilter plain = new RealizationFilter { MinimumRoom = room };
+                    if (route.GetQualifying(plain).Count == 0) { continue; }
+                    RealizationFilter avoiding = FaultRouteAvoidance.Apply(route, plain, tubeFaultsOf,
+                                                                           RouteShareLimit,
+                                                                           out FaultRouteOutcome outcome);
+                    string without = DescribeRealizations(route, plain, faults, draws);
+                    string with = DescribeRealizations(route, avoiding, faults, draws);
+                    TestContext.Progress.WriteLine(
+                        $"route {route.Route}, room {room:0} m: {route.GetQualifying(plain).Count} corridors"
+                        + $" qualify, {outcome.Excluded.Count} given up"
+                        + $" ({100.0 * outcome.ShareGivenUp:0.0}% of the paths),"
+                        + " avoids" + (outcome.Avoided.Count == 0 ? " nothing" : string.Join(",",
+                              outcome.Avoided.Select(f => $" {f.Fault} ({100.0 * f.Share:0.0}%)")))
+                        + ", keeps" + (outcome.Kept.Count == 0 ? " nothing" : string.Join(",",
+                              outcome.Kept.Select(f => $" {f.Fault} ({100.0 * f.Share:0.0}%)"))));
+                    TestContext.Progress.WriteLine($"    realizations without the route step: {without}");
+                    TestContext.Progress.WriteLine($"    realizations with it:                {with}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// which faults realizations drawn under a filter go through, as a share of them, and how far off
+        /// square, median and ninetieth percentile over every crossing
+        /// </summary>
+        private static string DescribeRealizations(StreamlineMetaFactory route, RealizationFilter filter,
+                                                   IReadOnlyList<FaultSurface> faults, int count)
+        {
+            List<Streamline> drawn = route.GetRealizations(count, filter, new Random(20260923));
+            if (drawn.Count == 0) { return "none drawn"; }
+            Dictionary<string, int> through = new Dictionary<string, int>(StringComparer.Ordinal);
+            List<double> angles = new List<double>();
+            foreach (Streamline one in drawn)
+            {
+                List<FaultCrossing> crossings = FaultCrossings.Find(one.Positions!, faults);
+                foreach (string name in crossings.Select(c => c.Fault).Distinct())
+                {
+                    through[name] = through.TryGetValue(name, out int n) ? n + 1 : 1;
+                }
+                angles.AddRange(crossings.Select(c => c.Obliquity));
+            }
+            angles.Sort();
+            return $"{drawn.Count} drawn, through"
+                   + (through.Count == 0 ? " no fault" : string.Join(",", through.OrderBy(e => e.Key)
+                          .Select(e => $" {e.Key} {100.0 * e.Value / drawn.Count:0.0}%")))
+                   + (angles.Count == 0 ? "" : $"; off square median {angles[angles.Count / 2]:0}"
+                                              + $" p90 {angles[(int)(0.9 * (angles.Count - 1))]:0} deg");
+        }
+
+        /// <summary>
+        /// Where a draw goes through a fault the tube test did not find: how far that is from the
+        /// cross-sections either side, and how deep the fault reaches into each of them. A fault
+        /// found at neither neighbour slipped between them.
+        /// </summary>
+        private static void ReportMissedCrossing(StreamlineBundleFactory factory, FaultSurface fault,
+                                                 FaultCrossing miss, int corridor)
+        {
+            double[] p = { miss.At.X!.Value, miss.At.Y!.Value, miss.At.Z!.Value };
+            double[] triangles = fault.GetTriangles(FaultCrossings.PillarSamples);
+            int nearest = -1;
+            double nearestDistance = double.MaxValue;
+            for (int k = 0; k < factory.Stations.Count; k++)
+            {
+                Point3D? at = factory.Stations[k].Position;
+                if (at == null) { continue; }
+                double dx = p[0] - at.X!.Value, dy = p[1] - at.Y!.Value, dz = p[2] - at.Z!.Value;
+                double distance = dx * dx + dy * dy + dz * dz;
+                if (distance < nearestDistance) { nearestDistance = distance; nearest = k; }
+            }
+            StringBuilder line = new StringBuilder(
+                $"  corridor {corridor,2} missed {miss.Fault} at vertical {p[2]:0.0},"
+                + $" {miss.Obliquity:0} deg off square:");
+            for (int k = System.Math.Max(0, nearest - 2);
+                 k <= System.Math.Min(factory.Stations.Count - 1, nearest + 2); k++)
+            {
+                CrossSectionStation station = factory.Stations[k];
+                if (station.Position == null || station.Tangent == null || station.FirstNormal == null
+                    || station.SecondNormal == null || station.Polygon == null) { continue; }
+                double[] centre = { station.Position.X!.Value, station.Position.Y!.Value,
+                                    station.Position.Z!.Value };
+                double[] along = { station.Tangent.X!.Value, station.Tangent.Y!.Value,
+                                   station.Tangent.Z!.Value };
+                double[] first = { station.FirstNormal.X!.Value, station.FirstNormal.Y!.Value,
+                                   station.FirstNormal.Z!.Value };
+                double[] second = { station.SecondNormal.X!.Value, station.SecondNormal.Y!.Value,
+                                    station.SecondNormal.Z!.Value };
+                double offset = (p[0] - centre[0]) * along[0] + (p[1] - centre[1]) * along[1]
+                                + (p[2] - centre[2]) * along[2];
+                // the deepest any point of the fault's cut reaches inside the boundary, m; negative is
+                // the nearest it comes from outside
+                double deepest = double.NegativeInfinity;
+                int cuts = 0;
+                for (int t = 0; t + 8 < triangles.Length; t += 9)
+                {
+                    if (!FaultCrossings.GetSectionCut(triangles, t, centre, along, first, second,
+                                                      out double[] cutU, out double[] cutV)) { continue; }
+                    cuts++;
+                    for (int s = 0; s <= 40; s++)
+                    {
+                        double u = cutU[0] + s / 40.0 * (cutU[1] - cutU[0]);
+                        double v = cutV[0] + s / 40.0 * (cutV[1] - cutV[0]);
+                        double reach = System.Math.Sqrt(u * u + v * v);
+                        double boundary = station.Polygon.GetBoundaryRadius(System.Math.Atan2(v, u)
+                                                                            - station.Twist);
+                        if (boundary - reach > deepest) { deepest = boundary - reach; }
+                    }
+                }
+                line.Append($" [station {k}, {offset:+0.00;-0.00} m, {cuts} cuts,"
+                            + (cuts > 0 ? $" depth {deepest:0.00} m]" : "]"));
+            }
+            TestContext.Progress.WriteLine(line.ToString());
         }
 
         /// <summary>

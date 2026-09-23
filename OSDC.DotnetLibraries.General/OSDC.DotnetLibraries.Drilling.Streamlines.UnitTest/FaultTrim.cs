@@ -102,13 +102,25 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
         public const double Standoff = 0.5;
 
         /// <summary>
+        /// The share of its cross-sections a member may fall outside the region and still count as
+        /// represented by it. The same rule, and the same number, as
+        /// <see cref="StreamlineFactorySetBuilder.OutsideFractionLimit"/>: the regions are laid about
+        /// the median against the obstacles and the other corridors, not around the members, so members
+        /// routinely stick out of them at a few cross-sections, and the builder keeps them. A refill that
+        /// dropped a member for sticking out anywhere at all would drop members the builder kept, and
+        /// did: a trim costing under one per cent emptied a corridor of all twenty-two.
+        /// </summary>
+        public const double DefaultOutsideFractionLimit = 0.25;
+
+        /// <summary>
         /// Pulls the corridor back from every fault it grazes, drops the streamlines that no longer fit,
         /// and rebuilds the density over what is left.
         /// </summary>
         public static FaultTrimOutcome Apply(StreamlineBundleFactory factory,
                                              IReadOnlyList<FaultSurface> faults,
                                              IReadOnlyList<Streamline> members,
-                                             double maximumOverlap)
+                                             double maximumOverlap,
+                                             double outsideFractionLimit = DefaultOutsideFractionLimit)
         {
             FaultTrimOutcome outcome = new FaultTrimOutcome();
             outcome.KeptMembers = members?.Count ?? 0;
@@ -196,6 +208,13 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                 return outcome;
             }
 
+            // who was outside before anything was pulled in, so that the refill drops only the members
+            // the trim itself pushed out, and not the ones the builder already knew about and kept
+            bool[] outsideBefore = new bool[members?.Count ?? 0];
+            for (int m = 0; m < outsideBefore.Length; m++)
+            {
+                outsideBefore[m] = IsOutside(factory, members![m], outsideFractionLimit);
+            }
             outcome.AreaFractionLost = Shrink(factory, limit, directions);
 
             // Did the pull-back actually remove what it claimed to? Asked of the trimmed corridor, so
@@ -209,7 +228,7 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                 double left = GetLimits(factory, fault, after);
                 outcome.Residual.Add((fault.Name ?? "?", alone, left));
             }
-            Refill(factory, members, ref outcome);
+            Refill(factory, members, outsideBefore, outsideFractionLimit, ref outcome);
             return outcome;
         }
 
@@ -238,9 +257,11 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
         {
             int directions = limit.Length;
             double[] triangles = fault.GetTriangles(FaultCrossings.PillarSamples);
-            double worstLoss = 0;
-            foreach (CrossSectionStation station in factory.Stations)
+            // what each cross-section allows, filled only where the fault reaches in
+            double[]?[] allowed = new double[factory.Stations.Count][];
+            for (int k = 0; k < factory.Stations.Count; k++)
             {
+                CrossSectionStation station = factory.Stations[k];
                 if (station.Position == null || station.Tangent == null
                     || station.FirstNormal == null || station.SecondNormal == null
                     || station.Polygon == null)
@@ -267,8 +288,41 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                     }
                     met |= Bite(station.Polygon, cutU, cutV, here);
                 }
-                if (!met) { continue; }
-                double loss = GetAreaLoss(station.Polygon, here);
+                if (met) { allowed[k] = here; }
+            }
+
+            // Between the cross-sections. A point of the fault at radius rho in direction theta, a
+            // share s of the way to the next cross-section, is excluded by capping the direction
+            // nearest theta: the capped half-plane bounds the outline at theta by its support over
+            // cos(theta - theta_d), and a realization between two cross-sections is the straight line
+            // between its two positions, so it reaches at most the interpolated boundary there. The
+            // point is charged to the cross-section before it, which is where its loss is counted.
+            foreach (FaultCrossings.SweptSample sample in FaultCrossings.SampleInside(factory, fault))
+            {
+                CrossSectionPolygon from = factory.Stations[sample.Station].Polygon!;
+                CrossSectionPolygon to = factory.Stations[sample.Station + 1].Polygon!;
+                if (from.DirectionCount != directions || to.DirectionCount != directions) { continue; }
+                double step = 2.0 * System.Math.PI / directions;
+                double wrapped = sample.Angle - 2.0 * System.Math.PI * System.Math.Floor(sample.Angle
+                                 / (2.0 * System.Math.PI));
+                int d = (int)System.Math.Round(wrapped / step) % directions;
+                double direction = from.GetDirection(d);
+                double boundary = (1 - sample.Share) * from.GetBoundaryRadius(direction)
+                                  + sample.Share * to.GetBoundaryRadius(direction);
+                if (!(boundary > 0)) { continue; }
+                double share = (sample.Radius - Standoff) * System.Math.Cos(sample.Angle - direction)
+                               / boundary;
+                if (share < 0) { share = 0; }
+                double[] here = allowed[sample.Station] ??= Enumerable.Repeat(1.0, directions).ToArray();
+                if (share < here[d]) { here[d] = share; }
+            }
+
+            double worstLoss = 0;
+            for (int k = 0; k < allowed.Length; k++)
+            {
+                double[]? here = allowed[k];
+                if (here == null) { continue; }
+                double loss = GetAreaLoss(factory.Stations[k].Polygon!, here);
                 if (loss > worstLoss) { worstLoss = loss; }
                 for (int d = 0; d < directions; d++)
                 {
@@ -368,49 +422,51 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
         }
 
         /// <summary>
-        /// Drops the streamlines that no longer fit inside the corridor and rebuilds the density from
-        /// those that do, in the same way the builder did: every cross-section of every surviving
-        /// streamline, at the normalized position the trimmed boundary gives it.
+        /// whether a streamline falls outside the corridor at more than the given share of the
+        /// cross-sections it crosses, which is the builder's test for a member the corridor does not
+        /// represent
+        /// </summary>
+        private static bool IsOutside(StreamlineBundleFactory factory, Streamline member, double share)
+        {
+            int seen = 0, beyond = 0;
+            foreach ((int station, double radius, double angle) in Measure(factory, member))
+            {
+                CrossSectionPolygon? region = factory.Stations[station].Polygon;
+                if (region == null) { continue; }
+                double boundary = region.GetBoundaryRadius(angle);
+                if (!(boundary > 0)) { continue; }
+                seen++;
+                if (radius > boundary * (1.0 + 1.0e-9)) { beyond++; }
+            }
+            return seen > 0 && (double)beyond / seen > share;
+        }
+
+        /// <summary>
+        /// Drops the streamlines the trim pushed out of the corridor and rebuilds the density from the
+        /// rest, in the same way the builder did: every cross-section of every member kept, at the
+        /// normalized position the trimmed boundary gives it, clamped to the boundary. A member the
+        /// builder already counted as outside is kept as the builder kept it; only the ones that were
+        /// represented before the trim and are not after it go.
         /// </summary>
         private static void Refill(StreamlineBundleFactory factory,
-                                   IReadOnlyList<Streamline>? members,
-                                   ref FaultTrimOutcome outcome)
+                                   IReadOnlyList<Streamline>? members, bool[] outsideBefore,
+                                   double outsideFractionLimit, ref FaultTrimOutcome outcome)
         {
             if (members == null || factory.Density == null)
             {
                 return;
             }
-            List<(int Station, double Radius, double Angle)> samples
-                = new List<(int, double, double)>();
-            List<List<(int, double, double)>> perMember = new List<List<(int, double, double)>>();
-            List<bool> fits = new List<bool>();
-            foreach (Streamline member in members)
-            {
-                samples = Measure(factory, member);
-                bool inside = true;
-                foreach ((int station, double radius, double angle) in samples)
-                {
-                    CrossSectionPolygon? region = factory.Stations[station].Polygon;
-                    if (region == null) { continue; }
-                    double boundary = region.GetBoundaryRadius(angle);
-                    if (boundary > 0 && radius > boundary * (1.0 + 1.0e-9))
-                    {
-                        inside = false;
-                        break;
-                    }
-                }
-                fits.Add(inside);
-                perMember.Add(samples);
-            }
-
             double[] counts = factory.Density.CellCounts;
             Array.Clear(counts, 0, counts.Length);
             int kept = 0;
-            for (int m = 0; m < perMember.Count; m++)
+            for (int m = 0; m < members.Count; m++)
             {
-                if (!fits[m]) { continue; }
+                if (!outsideBefore[m] && IsOutside(factory, members[m], outsideFractionLimit))
+                {
+                    continue;
+                }
                 kept++;
-                foreach ((int station, double radius, double angle) in perMember[m])
+                foreach ((int station, double radius, double angle) in Measure(factory, members[m]))
                 {
                     CrossSectionPolygon? region = factory.Stations[station].Polygon;
                     if (region == null) { continue; }
@@ -421,7 +477,7 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
             }
             factory.Density.Prepare();
             outcome.KeptMembers = kept;
-            outcome.DroppedMembers = perMember.Count - kept;
+            outcome.DroppedMembers = members.Count - kept;
         }
 
         /// <summary>
