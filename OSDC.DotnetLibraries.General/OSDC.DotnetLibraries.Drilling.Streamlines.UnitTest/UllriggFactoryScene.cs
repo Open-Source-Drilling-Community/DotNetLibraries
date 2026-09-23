@@ -23,6 +23,43 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
         private const int OutlineStride = 16;
 
         /// <summary>
+        /// How far outside the two corners the box reaches for the count this run reports, m.
+        /// <para>
+        /// The view has a slider of its own and does not read this. It is here so that what the run
+        /// prints is a definite number rather than whatever the slider was last left at.
+        /// </para>
+        /// </summary>
+        private const double ReportedFaultExpansion = 200.0;
+
+        /// <summary>
+        /// Whether the flow is made to feel the faults, rather than only being measured against them
+        /// afterwards.
+        /// <para>
+        /// A switch and not a setting, because what it is for is the comparison: the same four cases
+        /// with it and without, and the crossings measured both times. Imposing a direction locally has
+        /// cost more than it bought every other time it has been tried on this problem, so it is not
+        /// assumed to help here either.
+        /// </para>
+        /// </summary>
+        private const bool UseFaultMobility = true;
+
+        /// <summary>
+        /// How much of a cross-section a corridor may give up to avoid a fault before the fault is taken
+        /// to be genuinely in the way instead, and left for the crossing rule to judge.
+        /// </summary>
+        private const double FaultOverlapLimit = 0.50;
+
+        /// <summary>
+        /// how far either side of a fault the medium is affected, m
+        /// </summary>
+        private const double FaultBandWidth = 50.0;
+
+        /// <summary>
+        /// how much harder it is to travel in the plane of a fault than across it, at the surface
+        /// </summary>
+        private const double FaultContrast = 20.0;
+
+        /// <summary>
         /// The cluster as one case sees it: the volumes that constrain that case, and separately every
         /// well that was read, whether it constrains anything or not.
         /// <para>
@@ -205,6 +242,10 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
             // every well, whatever any one case makes of it, so that the view can draw the whole
             // cluster once and grey out what a case does not treat as a constraint
             Cluster whole = LoadUllrigg();
+            List<FaultSurface> faults = FaultSet.ReadAll(
+                Path.Combine(TestContext.CurrentContext.TestDirectory, "UllriggFaults"));
+            TestContext.Progress.WriteLine(
+                $"{faults.Count} faults read, {faults.Sum(f => f.PointCount)} points");
             double[] origin = whole.Wellhead;
             double[] slotAt = { origin[0] + 1.2, origin[1] + 1.2, origin[2] };
 
@@ -214,11 +255,12 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
             json.Append("\"ground\":").Append(Num(Ground)).Append(',');
             json.Append("\"slot\":").Append(Point(slotAt, origin));
             AppendWells(json, whole, origin);
+            AppendFaults(json, faults, origin);
             json.Append(",\"cases\":[");
             for (int c = 0; c < Cases.Length; c++)
             {
                 if (c > 0) { json.Append(','); }
-                AppendCase(json, Cases[c]);
+                AppendCase(json, Cases[c], faults);
             }
             json.Append("]}");
 
@@ -717,7 +759,8 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
             return tieIn;
         }
 
-        private void AppendCase(StringBuilder json, SceneCase one)
+        private void AppendCase(StringBuilder json, SceneCase one,
+                                IReadOnlyList<FaultSurface> faults)
         {
             // one field per case, so that what a case treats as a constraint, and any muting it applies,
             // cannot reach the next one
@@ -755,12 +798,13 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                 json.Append('"').Append(one.ParentWell).Append('"');
             }
             json.Append(']');
-            WriteScene(json, cluster, one, start, corners, floorVertical);
+            WriteScene(json, cluster, one, start, corners, floorVertical, faults);
             json.Append('}');
         }
 
         private void WriteScene(StringBuilder json, Cluster cluster, SceneCase one,
-                                StreamlineSource start, List<Point3D> corners, double floorVertical)
+                                StreamlineSource start, List<Point3D> corners, double floorVertical,
+                                IReadOnlyList<FaultSurface> faults)
         {
             ObstacleField field = cluster.Field;
             double[] origin = cluster.Wellhead;
@@ -774,8 +818,32 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                 ThroughLength = 60.0
             };
             System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+            // The two points a box is built from, rather than a box: how far outside them to reach
+            // is a slider in the view, so what it needs is the corners and not one answer. The count
+            // at the default reach is still worked out here, because that is the number this run
+            // reports and it has to come from the same test the view applies.
+            double[] boxMinimum = new double[3];
+            double[] boxMaximum = new double[3];
+            Point3D middle = target.GetCentre();
+            FaultSet.GetBox(start.Position!, middle, ReportedFaultExpansion, boxMinimum, boxMaximum);
+            List<FaultSurface> chosen = FaultSet.Select(faults, boxMinimum, boxMaximum);
+            TestContext.Progress.WriteLine(
+                $"faults: {chosen.Count} of {faults.Count} within {ReportedFaultExpansion:0} m of the box"
+                + $" north {boxMinimum[0] - origin[0]:0} to {boxMaximum[0] - origin[0]:0},"
+                + $" east {boxMinimum[1] - origin[1]:0} to {boxMaximum[1] - origin[1]:0},"
+                + $" vertical {boxMinimum[2]:0} to {boxMaximum[2]:0}");
+            StreamlineGeneratorOptions options = BuildOptions(floorVertical);
+            if (UseFaultMobility && chosen.Count > 0)
+            {
+                FaultMobilityField medium = new FaultMobilityField(chosen, FaultBandWidth,
+                                                                   FaultContrast);
+                options.SuppliedMobility = medium;
+                TestContext.Progress.WriteLine(
+                    $"fault medium: {chosen.Count} faults, {medium.TriangleCount} triangles,"
+                    + $" band {FaultBandWidth:0} m, contrast {FaultContrast:0}");
+            }
             StreamlineGenerationResult got = StreamlineGenerator.GenerateChannelled(
-                field, new[] { start }, target, BuildOptions(floorVertical), 1);
+                field, new[] { start }, target, options, 1);
             double generateSeconds = watch.Elapsed.TotalSeconds;
             TestContext.Progress.WriteLine("generation: " + got.Describe());
 
@@ -835,6 +903,45 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
             }
             watch.Restart();
             StreamlineFactorySet set = new StreamlineFactorySetBuilder().Build(source, asIndices, field);
+
+            // Pulled back from the faults each corridor only grazes, once the regions are laid. A fault
+            // square across a corridor is left alone and reported; one clipping its edge costs a sliver
+            // of the tube and is given up. The streamlines that no longer fit go with it, and the
+            // density is rebuilt from what is left.
+            List<FaultTrimOutcome> trims = new List<FaultTrimOutcome>();
+            for (int b = 0; b < set.Factories.Count; b++)
+            {
+                List<Streamline> held = new List<Streamline>();
+                foreach (int member in set.Members[b]) { held.Add(arrived[member]); }
+                trims.Add(FaultTrim.Apply(set.Factories[b], chosen, held, FaultOverlapLimit));
+            }
+            int trimmedCount = 0, droppedAll = 0;
+            foreach (FaultTrimOutcome outcome in trims)
+            {
+                if (outcome.Changed) { trimmedCount++; }
+                droppedAll += outcome.DroppedMembers;
+            }
+            for (int b = 0; b < trims.Count; b++)
+            {
+                if (trims[b].Costed.Count == 0) { continue; }
+                StringBuilder costs = new StringBuilder($"  corridor {b,2} fault costs:");
+                foreach ((string name, double cost, bool given) in trims[b].Costed)
+                {
+                    costs.Append($" {name} {100.0 * cost:0}%{(given ? " given" : " kept")},");
+                }
+                foreach ((string name, double before, double after) in trims[b].Residual)
+                {
+                    costs.Append($" [{name} {100.0 * before:0}%->{100.0 * after:0}%]");
+                }
+                foreach (string name in trims[b].Unavoidable)
+                {
+                    costs.Append($" {name} unavoidable,");
+                }
+                TestContext.Progress.WriteLine(costs.ToString().TrimEnd(','));
+            }
+            TestContext.Progress.WriteLine(
+                $"fault trim: {trimmedCount} of {set.Factories.Count} corridors pulled back,"
+                + $" {droppedAll} streamlines dropped, overlap {100.0 * FaultOverlapLimit:0}%");
             double factorySeconds = watch.Elapsed.TotalSeconds;
             TestContext.Progress.WriteLine(
                 $"{bundling.Bundles.Count} bundles from {arrived.Count}, {set.Factories.Count} corridors,"
@@ -864,6 +971,14 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                 + $" {(got.Timings.TryGetValue("scout total", out double scoutTotal) ? scoutTotal / 1000.0 : 0):0.0}),"
                 + $" bundle {bundleSeconds:0.0}, factory set {factorySeconds:0.0},"
                 + $" case total {total:0.0} ({total / 60.0:0.0} min)");
+
+            json.Append(",\"boxFrom\":")
+                .Append(Point(new[] { start.Position!.X!.Value, start.Position.Y!.Value,
+                                      start.Position.Z!.Value }, origin));
+            json.Append(",\"boxTo\":")
+                .Append(Point(new[] { middle.X!.Value, middle.Y!.Value, middle.Z!.Value }, origin));
+            json.Append(",\"faultsAtDefault\":").Append(chosen.Count);
+            json.Append(",\"faultExpansion\":").Append(ReportedFaultExpansion.ToString("0", Invariant));
 
             json.Append(",\"target\":[");
             for (int c = 0; c < corners.Count; c++)
@@ -932,6 +1047,32 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                     }
                 }
 
+                // Where this corridor's median goes through a fault, and how squarely.
+                // Measured against every fault read, not against the ones the box happens to pick:
+                // the box is how much ground the view shows, while a crossing is a fact about the
+                // path. Nothing in the flow knew the faults were there, so this is read off the
+                // result in the same way the separation from a parent is.
+                List<Point3D> spine = new List<Point3D>(factory.SharedHead);
+                spine.AddRange(factory.GetMedianCurve().Positions!);
+                // The corridor and not its median: the tolerance region can be tens of metres across,
+                // so a fault that misses the middle of a corridor by ten metres is still one a well
+                // drilled inside it would go through. The median's own crossings are kept beside it,
+                // because the difference between the two is the thing worth knowing.
+                FaultCrossings.LastDepths.Clear();
+                List<FaultCrossing> crossings = FaultCrossings.FindThroughTube(factory, faults);
+                StringBuilder depths = new StringBuilder();
+                foreach (KeyValuePair<string, double> entry in FaultCrossings.LastDepths)
+                {
+                    if (entry.Value > 0) { depths.Append($" {entry.Key} {entry.Value:0.00} m,"); }
+                }
+                double obliquity = FaultCrossings.GetWorstObliquity(crossings);
+                List<FaultCrossing> alongMedian = FaultCrossings.Find(spine, faults);
+                double medianObliquity = FaultCrossings.GetWorstObliquity(alongMedian);
+                HashSet<string> tubeFaults = new HashSet<string>(StringComparer.Ordinal);
+                foreach (FaultCrossing crossing in crossings) { tubeFaults.Add(crossing.Fault); }
+                HashSet<string> medianFaults = new HashSet<string>(StringComparer.Ordinal);
+                foreach (FaultCrossing crossing in alongMedian) { medianFaults.Add(crossing.Fault); }
+
                 // The factory holds the median's curvature in rad/m, as everything in the library does.
                 // A view is read by people who think in degrees per thirty metres, so the conversion
                 // happens here, at the boundary, and nowhere inside.
@@ -953,7 +1094,15 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                     + $", median turns {dogleg:0.0} deg/30 m ({doglegLong:0.0} over 120 m,"
                     + $" {doglegBare:0.0} without the head)"
                     + (double.IsNaN(leastFromParent) ? ""
-                       : $", closest to {one.ParentWell} {leastFromParent:0.0} m"));
+                       : $", closest to {one.ParentWell} {leastFromParent:0.0} m")
+                    + (trims[b].Changed
+                       ? $", trimmed back from {trims[b].Trimmed.Count} faults"
+                         + $" costing {100.0 * trims[b].AreaFractionLost:0}% and"
+                         + $" {trims[b].DroppedMembers} streamlines" : "")
+                    + (depths.Length > 0 ? ", chord inside:" + depths.ToString().TrimEnd(',') : "")
+                    + (tubeFaults.Count == 0 ? ", the tube crosses no fault"
+                       : $", tube crosses {tubeFaults.Count} faults, worst {obliquity:0} deg off"
+                         + $" square (median {medianFaults.Count}, {medianObliquity:0} deg)"));
 
                 if (!firstBundle) { json.Append(','); }
                 firstBundle = false;
@@ -980,10 +1129,33 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                         .Append(leastFromParent.ToString("0.##", Invariant));
                 }
 
+                json.Append(",\"faultCrossings\":").Append(tubeFaults.Count);
+                json.Append(",\"faultObliquity\":")
+                    .Append(obliquity.ToString("0.#", Invariant));
+                FaultTrimOutcome trim = trims[b];
+                json.Append(",\"faultsTrimmed\":").Append(trim.Trimmed.Count);
+                json.Append(",\"faultsKept\":").Append(trim.Kept.Count);
+                json.Append(",\"trimLoss\":")
+                    .Append((100.0 * trim.AreaFractionLost).ToString("0.#", Invariant));
+                json.Append(",\"trimDropped\":").Append(trim.DroppedMembers);
+                json.Append(",\"faultsOnMedian\":").Append(medianFaults.Count);
+                json.Append(",\"faultObliquityMedian\":")
+                    .Append(medianObliquity.ToString("0.#", Invariant));
+                json.Append(",\"faultHits\":[");
+                for (int c = 0; c < crossings.Count; c++)
+                {
+                    if (c > 0) { json.Append(','); }
+                    json.Append("{\"at\":")
+                        .Append(Point(new[] { crossings[c].At.X!.Value, crossings[c].At.Y!.Value,
+                                              crossings[c].At.Z!.Value }, origin))
+                        .Append(",\"obliquity\":")
+                        .Append(crossings[c].Obliquity.ToString("0.#", Invariant))
+                        .Append(",\"fault\":\"").Append(crossings[c].Fault).Append("\"}");
+                }
+                json.Append(']');
+
                 // the median path, with the shared head in front of it so it starts at the slot
                 json.Append(",\"median\":[");
-                List<Point3D> spine = new List<Point3D>(factory.SharedHead);
-                spine.AddRange(factory.GetMedianCurve().Positions!);
                 int stride = System.Math.Max(1, spine.Count / 160);
                 bool firstPoint = true;
                 for (int i = 0; i < spine.Count; i += stride)
@@ -1072,6 +1244,49 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.UnitTest
                 // its last stretch, so the cheap corridor points the right way where it matters
                 Relaxer = new SpineRelaxerOptions { HoldLength = 40.0 }
             };
+        }
+
+        /// <summary>
+        /// Every fault read, written once rather than once per case.
+        /// <para>
+        /// The view chooses which of them to show, because the reach of the box is a slider there and
+        /// a selection made here would be one answer to a question the reader is still asking. Writing
+        /// them once also costs less than writing each case's own selection: the four cases between
+        /// them were carrying the same faults four times over.
+        /// </para>
+        /// <para>
+        /// The pillars go out as they are, not resampled. The view needs the points to test a fault
+        /// against the box the same way <see cref="FaultSurface.Intersects"/> does, and a resampled
+        /// stick would give it a different answer from the one reported here.
+        /// </para>
+        /// </summary>
+        private static void AppendFaults(StringBuilder json, IReadOnlyList<FaultSurface> faults,
+                                         double[] origin)
+        {
+            json.Append(",\"faults\":[");
+            for (int f = 0; f < faults.Count; f++)
+            {
+                FaultSurface fault = faults[f];
+                if (f > 0) { json.Append(','); }
+                json.Append("{\"name\":\"").Append(fault.Name).Append("\",\"pillars\":[");
+                bool firstPillar = true;
+                foreach (List<Point3D> pillar in fault.Pillars)
+                {
+                    if (pillar.Count < 2) { continue; }
+                    if (!firstPillar) { json.Append(','); }
+                    firstPillar = false;
+                    json.Append('[');
+                    for (int k = 0; k < pillar.Count; k++)
+                    {
+                        if (k > 0) { json.Append(','); }
+                        json.Append(Point(new[] { pillar[k].X!.Value, pillar[k].Y!.Value,
+                                                  pillar[k].Z!.Value }, origin));
+                    }
+                    json.Append(']');
+                }
+                json.Append("]}");
+            }
+            json.Append(']');
         }
 
         private static void AppendWells(StringBuilder json, Cluster cluster, double[] origin)

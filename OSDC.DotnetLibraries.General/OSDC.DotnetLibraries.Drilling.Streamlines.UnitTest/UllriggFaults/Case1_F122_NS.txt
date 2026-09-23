@@ -1,0 +1,26 @@
+# Case1_F122_NS, moved under the Ullrigg cluster
+# Source: FaultExamples, pillar based fault sticks, one rigid translation applied to
+# Case1 and Case2 together so they keep their positions relative to one another.
+# Depth converted from feet at 0.3048 m/ft; the eastings and northings were already metres.
+# Shift applied: north +285565.492 m, east -186540.162 m, vertical -2244.968 m.
+# A pillar is one fault stick, its points ordered from the top down. Consecutive pillars
+# run along strike, so the fault surface is the ruled surface between them.
+# Pillar	North(m)	East(m)	Vertical(m, positive down)
+1	6532697.9920	330046.1197	391.0728
+1	6532689.4920	330035.3072	447.0555
+1	6532678.4920	330021.0260	500.1763
+2	6532756.9920	330020.7447	359.2090
+2	6532743.4920	330002.7760	440.2067
+2	6532732.4920	329988.4947	503.9467
+3	6532806.4920	329982.7760	359.2090
+3	6532795.9920	329969.0885	435.2841
+3	6532787.4920	329957.9635	487.3014
+3	6532779.4920	329947.0572	548.0451
+4	6532857.9920	329947.0885	351.4821
+4	6532843.4920	329928.1197	430.9895
+4	6532835.4920	329917.8072	511.3866
+4	6532826.9920	329906.1822	589.4644
+5	6532899.4920	329898.5885	365.3749
+5	6532892.9920	329890.1510	430.9895
+5	6532885.4920	329879.8385	511.3866
+5	6532876.9920	329868.8072	581.2348

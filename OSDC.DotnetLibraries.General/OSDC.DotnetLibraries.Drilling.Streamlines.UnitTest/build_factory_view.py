@@ -93,6 +93,22 @@ body = """<style>
           <output id="doglegValue">any</output>
         </span>
       </div>
+      <div class="group">
+        <span class="grouplabel">Furthest from square a fault crossing may be</span>
+        <span class="filter">
+          <input type="range" id="obliquity" min="0" max="90" step="1" value="90"
+                 aria-label="Worst angle between the plan and a fault normal, degrees">
+          <output id="obliquityValue">any</output>
+        </span>
+      </div>
+      <div class="group">
+        <span class="grouplabel">Ground around the case to look for faults in</span>
+        <span class="filter">
+          <input type="range" id="faultReach" min="0" max="3000" step="50" value="200"
+                 aria-label="How far outside the start and the target to reach, metres">
+          <output id="faultReachValue">200 m</output>
+        </span>
+      </div>
       <div class="group" id="bundlelist"></div>
       <div class="group">
         <span class="grouplabel">Layers</span>
@@ -101,6 +117,7 @@ body = """<style>
         <label class="toggle"><input type="checkbox" id="showDraws" checked><span class="long">Drawn streamlines</span><span class="short">Draws</span></label>
         <label class="toggle"><input type="checkbox" id="showVolumes" checked><span class="swatch" style="background:var(--volume)"></span><span class="long">Uncertainty volumes</span><span class="short">Volumes</span></label>
         <label class="toggle"><input type="checkbox" id="showTarget" checked><span class="swatch" style="background:var(--goal)"></span><span class="long">Target</span><span class="short">Target</span></label>
+        <label class="toggle"><input type="checkbox" id="showFaults" checked><span class="swatch" style="background:var(--fault)"></span><span class="long">Faults</span><span class="short">Faults</span></label>
         <label class="toggle"><input type="checkbox" id="showGround" checked><span class="swatch" style="background:var(--grid)"></span><span class="long">Grid &amp; scale</span><span class="short">Grid</span></label>
       </div>
       <div class="group">
@@ -256,6 +273,165 @@ body = """<style>
   });
   scene.add(volumes);
 
+  // ---- the faults ----------------------------------------------------------------------------
+  // Every fault is built once. Which of them to show is decided on each draw, against the box the
+  // slider sets, so the reader can widen the question rather than only narrow an answer already
+  // taken. A fault is given as pillars, each a stick of points from the top down, and the surface
+  // is the ruled surface between consecutive sticks; the sticks arrive at full resolution and are
+  // resampled to a common count here, because two sticks with different point counts cannot be
+  // joined.
+  var PILLAR_SAMPLES = 6;
+  function resample(stick, count) {
+    if (stick.length < 2) { return null; }
+    var along = [0];
+    for (var k = 1; k < stick.length; k++) {
+      var dn = stick[k][0] - stick[k-1][0], de = stick[k][1] - stick[k-1][1],
+          dv = stick[k][2] - stick[k-1][2];
+      along.push(along[k-1] + Math.sqrt(dn*dn + de*de + dv*dv));
+    }
+    var total = along[along.length - 1];
+    if (!(total > 0)) { return null; }
+    var out = [], at = 0;
+    for (var j = 0; j < count; j++) {
+      var wanted = total * j / (count - 1);
+      while (at < stick.length - 2 && along[at + 1] < wanted) { at++; }
+      var span = along[at + 1] - along[at];
+      var share = span > 0 ? (wanted - along[at]) / span : 0;
+      out.push([stick[at][0] + share * (stick[at+1][0] - stick[at][0]),
+                stick[at][1] + share * (stick[at+1][1] - stick[at][1]),
+                stick[at][2] + share * (stick[at+1][2] - stick[at][2])]);
+    }
+    return out;
+  }
+  // the same test the run applies: reject on the fault's own box, then each point, then each
+  // along-pillar segment by the slab method
+  function inBox(p, lo, hi) {
+    return p[0] >= lo[0] && p[0] <= hi[0] && p[1] >= lo[1] && p[1] <= hi[1]
+        && p[2] >= lo[2] && p[2] <= hi[2];
+  }
+  function segmentCrosses(from, to, lo, hi) {
+    var entering = 0, leaving = 1;
+    for (var a = 0; a < 3; a++) {
+      var d = to[a] - from[a];
+      if (Math.abs(d) < 1e-12) {
+        if (from[a] < lo[a] || from[a] > hi[a]) { return false; }
+        continue;
+      }
+      var first = (lo[a] - from[a]) / d, second = (hi[a] - from[a]) / d;
+      if (first > second) { var swap = first; first = second; second = swap; }
+      if (first > entering) { entering = first; }
+      if (second < leaving) { leaving = second; }
+      if (entering > leaving) { return false; }
+    }
+    return true;
+  }
+
+  var faultEntries = [];
+  var faultRoot = new THREE.Group();
+  var faintFaceMaterial = null, solidFaceMaterial = null;
+  var faintEdgeMaterial = null, solidEdgeMaterial = null;
+  (function () {
+    var all = data.faults || [];
+    if (all.length === 0) { return; }
+    // A fault the corridors on show actually go through is drawn solid; one merely inside the box
+    // stays a hint. The distinction is the useful one: the box says what is nearby, the crossings
+    // say what is in the way.
+    var face = new THREE.MeshBasicMaterial({
+      color: colour("--fault"), transparent: true, opacity: 0.16, side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    var solidFace = new THREE.MeshBasicMaterial({
+      color: colour("--fault"), transparent: true, opacity: 0.8, side: THREE.DoubleSide
+    });
+    var edge = new THREE.LineBasicMaterial({
+      color: colour("--fault"), transparent: true, opacity: 0.55
+    });
+    var solidEdge = new THREE.LineBasicMaterial({ color: colour("--fault") });
+    tinted.push({ material: face, token: "--fault" }, { material: edge, token: "--fault" },
+                { material: solidFace, token: "--fault" },
+                { material: solidEdge, token: "--fault" });
+    faintFaceMaterial = face; solidFaceMaterial = solidFace;
+    faintEdgeMaterial = edge; solidEdgeMaterial = solidEdge;
+    all.forEach(function (fault) {
+      var group = new THREE.Group();
+      var sticks = fault.pillars || [];
+      var lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+      var grid = [];
+      var lines = [];
+      var mesh = null;
+      sticks.forEach(function (stick) {
+        stick.forEach(function (p) {
+          for (var a = 0; a < 3; a++) {
+            if (p[a] < lo[a]) { lo[a] = p[a]; }
+            if (p[a] > hi[a]) { hi[a] = p[a]; }
+          }
+        });
+        var line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(stick.map(toScene)),
+                                  edge);
+        lines.push(line);
+        group.add(line);
+        var even = resample(stick, PILLAR_SAMPLES);
+        if (even) { grid.push(even); }
+      });
+      var corners = [];
+      for (var k = 0; k + 1 < grid.length; k++) {
+        for (var j = 0; j + 1 < PILLAR_SAMPLES; j++) {
+          var a1 = toScene(grid[k][j]), b1 = toScene(grid[k+1][j]);
+          var c1 = toScene(grid[k+1][j+1]), d1 = toScene(grid[k][j+1]);
+          corners.push(a1, b1, c1, a1, c1, d1);
+        }
+      }
+      if (corners.length > 0) {
+        mesh = new THREE.Mesh(new THREE.BufferGeometry().setFromPoints(corners), face);
+        group.add(mesh);
+      }
+      faultRoot.add(group);
+      faultEntries.push({ group: group, sticks: sticks, low: lo, high: hi,
+                          name: fault.name, mesh: mesh, lines: lines });
+    });
+    scene.add(faultRoot);
+  })();
+
+  // solid or a hint, decided on each draw
+  function dressFault(entry, crossed) {
+    if (entry.mesh) { entry.mesh.material = crossed ? solidFaceMaterial : faintFaceMaterial; }
+    entry.lines.forEach(function (line) {
+      line.material = crossed ? solidEdgeMaterial : faintEdgeMaterial;
+    });
+  }
+
+  function faultInBox(entry, lo, hi) {
+    for (var a = 0; a < 3; a++) {
+      if (entry.high[a] < lo[a] || entry.low[a] > hi[a]) { return false; }
+    }
+    for (var s = 0; s < entry.sticks.length; s++) {
+      var stick = entry.sticks[s];
+      for (var k = 0; k < stick.length; k++) {
+        if (inBox(stick[k], lo, hi)) { return true; }
+        if (k > 0 && segmentCrosses(stick[k-1], stick[k], lo, hi)) { return true; }
+      }
+    }
+    return false;
+  }
+
+  // the box itself, redrawn as the slider moves, so what the number means is visible
+  var boxLines = new THREE.LineSegments(new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({ color: colour("--fault"), transparent: true, opacity: 0.5 }));
+  tinted.push({ material: boxLines.material, token: "--fault" });
+  scene.add(boxLines);
+  function drawBox(lo, hi) {
+    var c = [];
+    for (var i = 0; i < 2; i++) { for (var j = 0; j < 2; j++) {
+      var x = i ? hi[0] : lo[0], y = j ? hi[1] : lo[1];
+      c.push(toScene([x, y, lo[2]]), toScene([x, y, hi[2]]));
+      var z = i ? hi[2] : lo[2];
+      c.push(toScene([lo[0], j ? hi[1] : lo[1], z]), toScene([hi[0], j ? hi[1] : lo[1], z]));
+      c.push(toScene([j ? hi[0] : lo[0], lo[1], z]), toScene([j ? hi[0] : lo[0], hi[1], z]));
+    } }
+    boxLines.geometry.dispose();
+    boxLines.geometry = new THREE.BufferGeometry().setFromPoints(c);
+  }
+
   // ---- where each case starts -------------------------------------------------------------------
   var startMarks = [];
   cases.forEach(function (one) {
@@ -312,6 +488,10 @@ body = """<style>
   var dogleg = document.getElementById("dogleg");
   var doglegValue = document.getElementById("doglegValue");
   var bundlelist = document.getElementById("bundlelist");
+  var faultReach = document.getElementById("faultReach");
+  var faultReachValue = document.getElementById("faultReachValue");
+  var obliquity = document.getElementById("obliquity");
+  var obliquityValue = document.getElementById("obliquityValue");
 
   function figure(label, value, sub, tone) {
     return '<div class="figure' + (tone ? " " + tone : "") + '"><dt>' + label + "</dt><dd>" + value
@@ -324,7 +504,14 @@ body = """<style>
     var turn = parseFloat(dogleg.value);
     var anyTurn = turn >= 60;
     doglegValue.textContent = anyTurn ? "any" : turn.toFixed(1) + " °/30 m";
+    // How far off square a crossing may be. Ninety is every crossing there is, a plan running
+    // along inside a fault included, so it reads as no rule rather than as a hard one.
+    var square = parseFloat(obliquity.value);
+    var anySquare = square >= 90;
+    obliquityValue.textContent = anySquare ? "any" : square.toFixed(0) + "°";
     var kept = 0, keptMembers = 0, best = 0, gentlest = Infinity, nearestParent = Infinity;
+    var worstSquare = 0;
+    var trimmedCorridors = 0, worstTrimLoss = 0, trimDropped = 0;
     var many = picked.length > 1;
     var shown = [];
     var dropped = [];
@@ -350,7 +537,8 @@ body = """<style>
       entry.colour.copy(tone);
       entry.materials.forEach(function (material) { material.color.copy(tone); });
       var pass = entry.bundle.leastInradius >= limit
-                 && (anyTurn || (entry.bundle.dogleg || 0) <= turn);
+                 && (anyTurn || (entry.bundle.dogleg || 0) <= turn)
+                 && (anySquare || (entry.bundle.faultObliquity || 0) <= square);
       entry.group.visible = pass;
       entry.median.visible = document.getElementById("showMedian").checked;
       entry.outlines.visible = document.getElementById("showOutline").checked;
@@ -363,6 +551,16 @@ body = """<style>
         if (entry.bundle.fromParent !== undefined && entry.bundle.fromParent < nearestParent) {
           nearestParent = entry.bundle.fromParent;
         }
+        if ((entry.bundle.faultObliquity || 0) > worstSquare) {
+          worstSquare = entry.bundle.faultObliquity || 0;
+        }
+        if ((entry.bundle.faultsTrimmed || 0) > 0) {
+          trimmedCorridors++;
+          trimDropped += entry.bundle.trimDropped || 0;
+          if ((entry.bundle.trimLoss || 0) > worstTrimLoss) {
+            worstTrimLoss = entry.bundle.trimLoss || 0;
+          }
+        }
       }
     });
     volumes.visible = document.getElementById("showVolumes").checked;
@@ -373,6 +571,36 @@ body = """<style>
     startMarks.forEach(function (mark, index) {
       mark.visible = picked.indexOf(index) >= 0;
     });
+    var wantFaults = document.getElementById("showFaults").checked;
+    // the faults the corridors that survived the rules actually go through, by name
+    var crossed = {};
+    var crossedCount = 0;
+    groups.forEach(function (entry) {
+      if (!entry.group.visible) { return; }
+      (entry.bundle.faultHits || []).forEach(function (hit) {
+        if (crossed[hit.fault] !== true) { crossed[hit.fault] = true; crossedCount++; }
+      });
+    });
+    var reach = parseFloat(faultReach.value);
+    faultReachValue.textContent = reach.toFixed(0) + " m";
+    var here = cases[picked[0]];
+    var faultCount = 0;
+    if (here.boxFrom && here.boxTo) {
+      var lo = [], hi = [];
+      for (var a = 0; a < 3; a++) {
+        lo.push(Math.min(here.boxFrom[a], here.boxTo[a]) - reach);
+        hi.push(Math.max(here.boxFrom[a], here.boxTo[a]) + reach);
+      }
+      drawBox(lo, hi);
+      faultEntries.forEach(function (entry) {
+        var inside = faultInBox(entry, lo, hi);
+        if (inside) { faultCount++; }
+        entry.group.visible = wantFaults && inside;
+        dressFault(entry, crossed[entry.name] === true);
+      });
+    }
+    faultRoot.visible = wantFaults;
+    boxLines.visible = wantFaults;
     // the cases on show share one target, so it is drawn once rather than once per case
     goals.forEach(function (one, index) {
       one.visible = index === picked[0] && document.getElementById("showTarget").checked;
@@ -389,12 +617,22 @@ body = """<style>
       + figure("Rule in force", limit.toFixed(1) + "&#8239;m",
                "room a driller can hold around a line")
       + figure("Routes apart", String(new Set(shown.filter(function (b) {
-                 return b.leastInradius >= limit && (anyTurn || (b.dogleg || 0) <= turn);
+                 return b.leastInradius >= limit && (anyTurn || (b.dogleg || 0) <= turn)
+                     && (anySquare || (b.faultObliquity || 0) <= square);
                }).map(function (b) { return b.group || 0; })).size),
                "separated by forbidden ground")
       + figure("Gentlest plan", (gentlest === Infinity ? "—" : gentlest.toFixed(1))
                + "&#8239;°/30 m", "hardest turn on the easiest median",
                gentlest <= 10 ? "clear" : "")
+      + ((data.faults || []).length > 0 && trimmedCorridors > 0
+         ? figure("Pulled back from a fault", trimmedCorridors + " / " + kept,
+                  "corridors, giving up " + worstTrimLoss.toFixed(0) + "% at worst")
+         : "")
+      + ((data.faults || []).length > 0
+         ? figure("Worst fault crossing", (kept === 0 ? "\u2014" : worstSquare.toFixed(0) + "\u00b0"),
+                  "off square, on the corridors kept", worstSquare <= 30 ? "clear"
+                  : worstSquare >= 60 ? "flagged" : "")
+         : "")
       + (parents.length > 0
          ? figure(parents.length === 1 ? "Closest to " + parents[0] : "Closest to a parent",
                   (nearestParent === Infinity ? "\u2014" : nearestParent.toFixed(1)) + "&#8239;m",
@@ -414,7 +652,11 @@ body = """<style>
                + entry.bundle.members + "&#8239;paths &middot; <b>"
                + entry.bundle.leastInradius.toFixed(2) + "</b>&#8239;m &middot; <b>"
                + (entry.bundle.dogleg || 0).toFixed(1) + "</b>/"
-               + (entry.bundle.doglegLong || 0).toFixed(1) + "&#8239;°</span>";
+               + (entry.bundle.doglegLong || 0).toFixed(1) + "&#8239;°"
+               + ((entry.bundle.faultsTrimmed || 0) > 0
+                  ? " &middot; trimmed&#8239;<b>" + (entry.bundle.trimLoss || 0).toFixed(0)
+                    + "</b>%" : "")
+               + "</span>";
         }).join("");
 
     readout.textContent = kept + " of " + shown.length + " corridors shown · "
@@ -422,6 +664,9 @@ body = """<style>
                 + " together · " : "")
       + (data.wells.length - dropped.length) + " of " + data.wells.length
       + " volumes a constraint"
+      + ((data.faults || []).length > 0
+         ? " \u00b7 " + faultCount + " of " + data.faults.length + " faults in the box, "
+           + crossedCount + " gone through" : "")
       + (many ? "" : cases[current].parent
          ? " · window on " + cases[current].parent + " at "
            + cases[current].departure.toFixed(0) + "° and "
@@ -450,6 +695,29 @@ body = """<style>
            + " constraint here \\u2014 the old hole is being left behind. Every other volume still is,"
            + " and how close the plan comes to its parent is read off afterwards rather than asked"
            + " for."
+         : "")
+      + ((data.faults || []).length > 0
+         ? " The <b>faults</b> are those with any part of them inside the box holding this case's"
+           + " start and the middle of its target, opened out by whatever the slider is set to \u2014"
+           + " the box is drawn, so what the setting means is visible. Each is"
+           + " a set of pillars — sticks of points running down the fault — and what is"
+           + " drawn is the ruled surface between consecutive sticks. They are shown and nothing"
+           + " more: no corridor here avoids a fault, and no room reported above accounts for"
+           + " one. Where a corridor <b>goes through</b> one is measured though, and can be ruled"
+           + " on: a crossing is scored by the angle between the plan and the fault's own normal,"
+           + " nought going straight through at right angles and ninety running along inside it. A"
+           + " well taken obliquely is a long way in the damaged rock for every metre of fault it"
+           + " gets past, which is why the rule is on the angle rather than on whether a fault is"
+           + " crossed at all. It is read off the finished path, like the room and the turn, and"
+           + " like them it selects rather than steers. A fault the corridors on show go through is"
+           + " drawn <b>solid</b>; one that is merely inside the box stays a hint, so what is in the"
+           + " way is told apart from what is nearby."
+           + " A corridor that only <b>grazed</b> a fault has been pulled back from it instead, and"
+           + " the outlines drawn are the pulled-back ones: the limit is per direction and applies"
+           + " the whole way along, because a realization holds one normalised position from end to"
+           + " end. A fault is only given up while the corridor keeps three quarters of its"
+           + " cross-section; past that the fault is genuinely in the way and is left to the crossing"
+           + " rule. The streamlines that no longer fit were dropped and the density rebuilt."
          : "");
   }
 
@@ -485,10 +753,13 @@ body = """<style>
     other.classList.toggle("othertarget", !comparable(k));
   }); }
 
-  ["showMedian", "showOutline", "showDraws", "showVolumes", "showTarget", "showGround"]
+  ["showMedian", "showOutline", "showDraws", "showVolumes", "showTarget", "showFaults",
+   "showGround"]
     .forEach(function (id) { document.getElementById(id).addEventListener("change", apply); });
   clearance.addEventListener("input", apply);
   dogleg.addEventListener("input", apply);
+  faultReach.addEventListener("input", apply);
+  obliquity.addEventListener("input", apply);
 
   // ---- orbit ------------------------------------------------------------------------------------
   var yaw = 0.72, pitch = 0.42, distance = reach * 1.15;

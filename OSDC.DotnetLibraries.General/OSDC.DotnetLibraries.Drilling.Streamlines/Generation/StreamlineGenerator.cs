@@ -144,6 +144,17 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
         public IReadOnlyList<IReadOnlyList<Point3D>>? ChannelSpines { get; set; } = null;
 
         /// <summary>
+        /// A medium the caller supplies, combined with the ones the generation builds for itself, or
+        /// null for none.
+        /// <para>
+        /// The library knows about wells and targets and nothing else. A caller that knows about a
+        /// fault, a geobody or a lease boundary, and wants the flow to feel it rather than merely be
+        /// measured against it afterwards, can say so here.
+        /// </para>
+        /// </summary>
+        public IFaceMobility? SuppliedMobility { get; set; } = null;
+
+        /// <summary>
         /// how the spines are pushed clear of the obstacles before a channel is built on them
         /// </summary>
         public SpineRelaxerOptions Relaxer { get; set; } = new SpineRelaxerOptions();
@@ -808,6 +819,11 @@ namespace OSDC.DotnetLibraries.Drilling.Streamlines.Generation
                 }
             }
             layers.Add(BuildRoute(sources, target, options));
+            // Whatever the caller wants the medium to know that the generation does not. The library
+            // has no notion of a fault, a geobody or a lease; a caller that has one can express it as
+            // a mobility and hand it in here, and it is combined with the rest rather than replacing
+            // any of it.
+            layers.Add(options.SuppliedMobility);
             List<IFaceMobility?> real = layers.FindAll(one => one != null);
             if (real.Count == 0)
             {
