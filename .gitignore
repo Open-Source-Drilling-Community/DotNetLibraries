@@ -10,3 +10,6 @@
 .vs/
 docs/
 UpgradeLog*.htm
+
+# Local scratch input, never committed
+/temp/
