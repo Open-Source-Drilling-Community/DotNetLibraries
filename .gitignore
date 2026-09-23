@@ -13,3 +13,6 @@ UpgradeLog*.htm
 
 # Local scratch input, never committed
 /temp/
+
+# Local Claude Code settings (launch configs and the like)
+/.claude/
