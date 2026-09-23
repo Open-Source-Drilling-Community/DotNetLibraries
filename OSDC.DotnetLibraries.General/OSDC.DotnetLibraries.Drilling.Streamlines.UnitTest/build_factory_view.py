@@ -15,6 +15,11 @@ src = io.open(os.path.join(here, "factory-view-source.html"), encoding="utf-8").
 head = src[:src.index("<div class=\"shell\">")]
 
 body = """<style>
+  /* the uncertainty volumes, drawn as solid shaded tubes in a neutral grey so that they read as
+     things in the way without competing with the route colours */
+  :root { --wellbore: #8f949b; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wellbore: #7b8088; } }
+  :root[data-theme="dark"] { --wellbore: #7b8088; }
   /* the controls move out of the picture and become a column beside it, so the view is not looked at
      through a gap between panels */
   .stage { display: flex; flex-direction: row; align-items: stretch; min-height: 520px; }
@@ -121,9 +126,10 @@ body = """<style>
       <div class="group">
         <span class="grouplabel">Layers</span>
         <label class="toggle"><input type="checkbox" id="showMedian" checked><span class="long">Median paths</span><span class="short">Medians</span></label>
-        <label class="toggle"><input type="checkbox" id="showOutline" checked><span class="long">Cross-section outlines</span><span class="short">Outlines</span></label>
+        <label class="toggle"><input type="checkbox" id="showEnvelope" checked><span class="long">Corridor envelopes</span><span class="short">Envelopes</span></label>
+        <label class="toggle"><input type="checkbox" id="showOutline"><span class="long">Cross-section outlines</span><span class="short">Outlines</span></label>
         <label class="toggle"><input type="checkbox" id="showDraws" checked><span class="long">Drawn streamlines</span><span class="short">Draws</span></label>
-        <label class="toggle"><input type="checkbox" id="showVolumes" checked><span class="swatch" style="background:var(--volume)"></span><span class="long">Uncertainty volumes</span><span class="short">Volumes</span></label>
+        <label class="toggle"><input type="checkbox" id="showVolumes" checked><span class="swatch" style="background:var(--wellbore)"></span><span class="long">Uncertainty volumes</span><span class="short">Volumes</span></label>
         <label class="toggle"><input type="checkbox" id="showTarget" checked><span class="swatch" style="background:var(--goal)"></span><span class="long">Target</span><span class="short">Target</span></label>
         <label class="toggle"><input type="checkbox" id="showFaults" checked><span class="swatch" style="background:var(--fault)"></span><span class="long">Faults</span><span class="short">Faults</span></label>
         <label class="toggle"><input type="checkbox" id="showGround" checked><span class="swatch" style="background:var(--grid)"></span><span class="long">Grid &amp; scale</span><span class="short">Grid</span></label>
@@ -188,6 +194,14 @@ body = """<style>
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(42, 1, 1, 60000);
+  // Light for the corridor envelopes, the only shaded surfaces: a soft fill from everywhere and a
+  // lamp carried with the camera, so the side of a tube facing the viewer is always the lit one and
+  // its shape reads from any angle. Everything else is drawn unlit and does not notice.
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.55));
+  var headlamp = new THREE.DirectionalLight(0xffffff, 0.6);
+  headlamp.position.set(0.3, 0.6, 1);
+  camera.add(headlamp);
+  scene.add(camera);
   var tinted = [];
 
   // a hue off the golden angle, so neighbouring bundles never get neighbouring colours
@@ -233,6 +247,59 @@ body = """<style>
     });
     group.add(outlines);
 
+    // The envelope: the outlines joined into one skin. Every ring holds the same directions in the
+    // same order, and a realization at a given normalised position runs straight from its point on one
+    // cross-section to the matching point on the next, so the skin laid between matching points of
+    // consecutive rings is the boundary the corridor actually has, not a picture of one. A few of those
+    // lines are drawn along it, and the two end rings close it, so its edge reads without the stack of
+    // rings in between.
+    var envelope = new THREE.Group();
+    // solid and shaded, so that the tube reads as a body with a near side and a far side rather than
+    // as a haze; what is inside it is seen by switching the envelopes off
+    var skinMaterial = new THREE.MeshLambertMaterial({
+      color: swatch.clone(), side: THREE.DoubleSide
+    });
+    var edgeMaterial = new THREE.LineBasicMaterial({
+      color: swatch.clone(), transparent: true, opacity: 0.35
+    });
+    var rings = bundle.outlines.filter(function (one) {
+      return one.ring.length > 2 && !one.ring.some(function (p) {
+        return p[0] === 0 && p[1] === 0 && p[2] === 0;
+      });
+    }).map(function (one) { return one.ring.map(toScene); });
+    if (rings.length > 1) {
+      var sectors = rings[0].length;
+      var positions = [];
+      rings.forEach(function (ring) {
+        ring.forEach(function (p) { positions.push(p.x, p.y, p.z); });
+      });
+      var indices = [];
+      for (var k = 0; k + 1 < rings.length; k++) {
+        if (rings[k].length !== sectors || rings[k + 1].length !== sectors) { continue; }
+        for (var s = 0; s < sectors; s++) {
+          var a = k * sectors + s, b = k * sectors + (s + 1) % sectors;
+          var c = (k + 1) * sectors + s, d = (k + 1) * sectors + (s + 1) % sectors;
+          indices.push(a, c, b, b, c, d);
+        }
+      }
+      var skinGeometry = new THREE.BufferGeometry();
+      skinGeometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      skinGeometry.setIndex(indices);
+      skinGeometry.computeVertexNormals();
+      envelope.add(new THREE.Mesh(skinGeometry, skinMaterial));
+      var along = Math.max(1, Math.round(sectors / 6));
+      for (var s2 = 0; s2 < sectors; s2 += along) {
+        envelope.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(
+          rings.map(function (ring) { return ring[Math.min(s2, ring.length - 1)]; })), edgeMaterial));
+      }
+      [rings[0], rings[rings.length - 1]].forEach(function (ring) {
+        var closed = ring.slice();
+        closed.push(ring[0]);
+        envelope.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(closed), edgeMaterial));
+      });
+    }
+    group.add(envelope);
+
     var draws = new THREE.Group();
     var drawMaterial = new THREE.LineBasicMaterial({
       color: swatch.clone(), transparent: true, opacity: 0.4
@@ -244,9 +311,10 @@ body = """<style>
     group.add(draws);
 
     scene.add(group);
-    var entry = { group: group, median: median, outlines: outlines, draws: draws,
+    var entry = { group: group, median: median, outlines: outlines, envelope: envelope, draws: draws,
                   bundle: bundle, colour: swatch.clone(), caseIndex: caseIndex,
-                  materials: [medianMaterial, outlineMaterial, drawMaterial] };
+                  materials: [medianMaterial, outlineMaterial, skinMaterial, edgeMaterial,
+                              drawMaterial] };
     forCase.push(entry);
     groups.push(entry);
   });
@@ -265,19 +333,88 @@ body = """<style>
     color: colour("--volume"), transparent: true, opacity: 0.1
   });
   tinted.push({ material: droppedMaterial, token: "--volume" });
+  // A well that is a constraint is drawn as a solid tube, the rings of its volume joined into one
+  // shaded surface the way a corridor's outlines are; one a case does not count as a constraint
+  // keeps its faint rings, so what is being avoided and what is not stay told apart.
+  var wellboreMaterial = new THREE.MeshLambertMaterial({
+    color: colour("--wellbore"), side: THREE.DoubleSide
+  });
+  tinted.push({ material: wellboreMaterial, token: "--wellbore" });
+  // The rings of a volume do not start at the same place round the ellipse from one to the next:
+  // the frame they are laid out in flips where the well is near vertical and drifts elsewhere, so
+  // the first point jumps by half a turn, or creeps by a point or two. Joined point to point as they
+  // come, the skin twists and pinches. So each ring is turned, and if need be reversed, to whichever
+  // of its orders best matches the ring before it, compared about their own centres so that the
+  // well moving on between them does not count.
+  function alignRing(previous, ring) {
+    var n = ring.length;
+    if (!previous || previous.length !== n) { return ring; }
+    function centred(points) {
+      var c = new THREE.Vector3();
+      points.forEach(function (p) { c.add(p); });
+      c.multiplyScalar(1 / points.length);
+      return points.map(function (p) { return p.clone().sub(c); });
+    }
+    var a = centred(previous), b = centred(ring);
+    var best = Infinity, bestShift = 0, bestFlip = false;
+    [false, true].forEach(function (flip) {
+      for (var shift = 0; shift < n; shift++) {
+        var error = 0;
+        for (var i = 0; i < n; i++) {
+          var j = flip ? (shift - i + n) % n : (i + shift) % n;
+          error += a[i].distanceToSquared(b[j]);
+        }
+        if (error < best) { best = error; bestShift = shift; bestFlip = flip; }
+      }
+    });
+    var turned = [];
+    for (var i = 0; i < n; i++) {
+      turned.push(ring[bestFlip ? (bestShift - i + n) % n : (i + bestShift) % n]);
+    }
+    return turned;
+  }
   var wellGroups = [];
   data.wells.forEach(function (well) {
     var group = new THREE.Group();
     var lines = [];
+    var rings = [];
     well.rings.forEach(function (ring) {
       var points = ring.map(toScene);
+      if (points.length > 2) {
+        rings.push(alignRing(rings.length > 0 ? rings[rings.length - 1] : null, points.slice()));
+      }
       if (points.length > 0) { points.push(points[0]); }
       var line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), volumeMaterial);
       lines.push(line);
       group.add(line);
     });
+    var mesh = null;
+    if (rings.length > 1) {
+      var sectors = rings[0].length;
+      var positions = [];
+      var indices = [];
+      var kept = 0;
+      rings.forEach(function (ring) {
+        if (ring.length !== sectors) { return; }
+        ring.forEach(function (p) { positions.push(p.x, p.y, p.z); });
+        if (kept > 0) {
+          for (var s = 0; s < sectors; s++) {
+            var a = (kept - 1) * sectors + s, b = (kept - 1) * sectors + (s + 1) % sectors;
+            var c = kept * sectors + s, d = kept * sectors + (s + 1) % sectors;
+            indices.push(a, c, b, b, c, d);
+          }
+        }
+        kept++;
+      });
+      var geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      mesh = new THREE.Mesh(geometry, wellboreMaterial);
+      group.add(mesh);
+    }
     volumes.add(group);
-    wellGroups.push({ name: well.name, group: group, lines: lines });
+    wellGroups.push({ name: well.name, group: group, lines: lines, mesh: mesh });
   });
   scene.add(volumes);
 
@@ -635,6 +772,7 @@ body = """<style>
       entry.group.visible = pass;
       entry.median.visible = document.getElementById("showMedian").checked;
       entry.outlines.visible = document.getElementById("showOutline").checked;
+      entry.envelope.visible = document.getElementById("showEnvelope").checked;
       entry.draws.visible = document.getElementById("showDraws").checked;
       if (pass) {
         kept++;
@@ -659,7 +797,12 @@ body = """<style>
     volumes.visible = document.getElementById("showVolumes").checked;
     wellGroups.forEach(function (one) {
       var out = dropped.indexOf(one.name) >= 0;
-      one.lines.forEach(function (line) { line.material = out ? droppedMaterial : volumeMaterial; });
+      // solid while it is a constraint, faint rings once it is not
+      if (one.mesh) { one.mesh.visible = !out; }
+      one.lines.forEach(function (line) {
+        line.material = out ? droppedMaterial : volumeMaterial;
+        line.visible = out || !one.mesh;
+      });
     });
     startMarks.forEach(function (mark, index) {
       mark.visible = picked.indexOf(index) >= 0;
@@ -776,9 +919,13 @@ body = """<style>
     note.innerHTML =
         "Each corridor is drawn as its factory rather than as the paths it came from: the <b>median"
       + "</b> path, the <b>outlines</b> of the cross-sections perpendicular to it, and twelve"
-      + " <b>streamlines drawn</b> from the one density it holds. The outlines contain every crossing"
-      + " of every original path by construction, so a draw of radius one lands on the boundary and"
-      + " anything less lands inside. The rule is applied to the <b>least</b> room along a corridor,"
+      + " <b>streamlines drawn</b> from the one density it holds. The outlines are laid about the"
+      + " median against the volumes and the other corridors, so a draw of radius one lands on the"
+      + " boundary and anything less lands inside. The <b>envelope</b> is those outlines joined into"
+      + " one solid skin: a draw runs straight from its point on one cross-section to the matching point on"
+      + " the next, so the skin between consecutive outlines is the boundary the corridor has along"
+      + " its whole length. It hides what is inside it, so switch it off to see the median and"
+      + " the draws, and switch the outlines on to see where the cross-sections are. The rule is applied to the <b>least</b> room along a corridor,"
       + " not the average: a corridor thirty metres wide that is throttled to two somewhere is"
       + " undrillable where it is throttled. The ends are left out of that, being pinched by"
       + " construction \\u2014 the paths start together at the slot or the window and converge on"
@@ -860,7 +1007,7 @@ body = """<style>
     other.classList.toggle("othertarget", !comparable(k));
   }); }
 
-  ["showMedian", "showOutline", "showDraws", "showVolumes", "showTarget", "showFaults",
+  ["showMedian", "showOutline", "showEnvelope", "showDraws", "showVolumes", "showTarget", "showFaults",
    "showGround"]
     .forEach(function (id) { document.getElementById(id).addEventListener("change", apply); });
   clearance.addEventListener("input", apply);
