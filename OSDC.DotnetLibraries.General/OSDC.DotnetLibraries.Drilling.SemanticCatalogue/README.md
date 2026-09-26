@@ -1,12 +1,12 @@
 # OSDC Drilling Semantic Catalogue
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. The initial version is `0.1.0`; it starts with Earth Gravity's published models and UI quantity choices. Publication is a separate release operation.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.2.0` is the next unpublished curation increment; it starts with Earth Gravity's published models and UI quantity choices. Publication is a separate release operation.
 
-See [the Earth Gravity curation table](CURATION.md) for the 34 initial entries and unresolved decisions.
+See [the Earth Gravity curation table](CURATION.md) for the 36 entries and remaining decisions.
 
 ## Ownership and curation
 
-`catalogue.json` is the authoritative language-neutral vocabulary, embedded in the assembly and packed alongside `catalogue.schema.json`. `Concepts.cs` exposes stable URN constants; tests ensure these refer to actual entries. Definitions currently have **Proposed** status for review. Provider annotations are explicit assertions about their own fields, not a claim that the shared vocabulary has completed curation.
+`catalogue.json` is the authoritative language-neutral vocabulary, embedded in the assembly and packed alongside `catalogue.schema.json`. `Concepts.cs` exposes stable URN constants; tests ensure these refer to actual entries. The 36 EarthGravity definitions have **Reviewed** status following Eric Cayeux’s approval on 2026-09-26. Provider annotations remain assertions about their own fields; future concepts start as Proposed.
 
 Each definition has an immutable semantic ID, label, definition, kind, curation status, aliases, parents, quantity name, SI representation, required context, constraints, source evidence, typed HasPart/LocatedAt/EvaluatedUsing relationships and optional supersession. Nouns, roles and reference conventions are distinct kinds. Only `parents` expresses specialization. Physical quantity and field role are not parent relationships. Aliases are discovery hints and can return multiple concepts.
 
@@ -16,7 +16,7 @@ The catalogue owns reusable meanings. Microservices own bindings to concrete dat
 
 ## Physical quantities
 
-Both `OSDC.UnitConversion.Conversion` and `OSDC.UnitConversion.Conversion.DrillingEngineering` use version 3.3.28. Sibling UnitConversion source projects are used when available; set `UseLocalUnitConversionProjects=false` to use the NuGet dependencies instead. Quantity identities and SI unit names are resolved through those libraries, not duplicated UUID definitions. Earth Gravity's choices are PlaneAngleGeodesic, DepthDrilling and AccelerationDrilling. Quantities and units do not establish reference frames or additive meaning.
+The library references `OSDC.UnitConversion.Conversion.DrillingEngineering` 3.4.2 and obtains the general Conversion library transitively. Quantity identities and SI unit names are resolved through those libraries, not duplicated UUID definitions. Earth Gravity's choices are PlaneAngleGeodesic, DepthDrilling and AccelerationDrilling. Quantities and units do not establish reference frames or additive meaning.
 
 Total gravitational plus centrifugal potential binds to `EarthGravityPotential`, a specialization of the general `GravityPotential` quantity in UnitConversion. Its SI representation is m²/s² (equivalently J/kg); ft²/s² and ft·lbf/lbm are available. The Earth specialization defines a meaningful display precision of 0.01 m²/s², without asserting model accuracy or rounding stored values. Energy density is not a substitute.
 
@@ -41,3 +41,7 @@ dotnet pack OSDC.DotnetLibraries.Drilling.SemanticCatalogue/OSDC.DotnetLibraries
 ```
 
 This does not publish the package. Inspect the NuGet dependency manifest and catalogue contents before a separately authorized release.
+
+## Approved structural directions
+
+See [the decision record](CURATION-DECISIONS.md) for D1-D3 and migration from 0.1.0. A gravity evaluation result contains the vector and scalar potential. The original position ID remains the ellipsoidal-depth representation, specializing a new generic geodetic position. Provider execution and representation guarantees remain in provider contracts. The directions and all 36 individual concepts are approved and recorded as Reviewed.

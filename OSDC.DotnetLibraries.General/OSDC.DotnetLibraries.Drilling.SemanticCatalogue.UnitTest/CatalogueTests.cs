@@ -9,6 +9,23 @@ namespace OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest;
 public class CatalogueTests
 {
     [Test]
+    public void ResultSeparatesPotentialFromVectorAndPreservesDepthPositionMeaning()
+    {
+        var catalogue = Catalogue.Default;
+        Assert.That(catalogue.Get(Concepts.GravityResult).Relations.Select(r => r.Target),
+            Is.EquivalentTo(new[] { Concepts.GravityVector, Concepts.TotalPotential }));
+        Assert.That(catalogue.Get(Concepts.GravityVector).Relations.Select(r => r.Target), Does.Not.Contain(Concepts.TotalPotential));
+        Assert.That(catalogue.Get(Concepts.Sample).Relations.Select(r => r.Target), Does.Contain(Concepts.GravityResult));
+        Assert.That(catalogue.IsA(Concepts.Position, Concepts.GenericGeodeticPosition), Is.True);
+        Assert.That(catalogue.Get(Concepts.Position).Relations.Select(r => r.Target), Does.Contain(Concepts.EllipsoidalDepth));
+        Assert.That(catalogue.Get(Concepts.GenericGeodeticPosition).Relations.Select(r => r.Target), Does.Not.Contain(Concepts.EllipsoidalDepth));
+        Assert.That(catalogue.Get(Concepts.Request).Constraints, Is.Empty);
+        Assert.That(catalogue.Get(Concepts.Response).Constraints, Is.Empty);
+        Assert.That(catalogue.Document.Concepts.All(c => c.Status == CurationStatus.Reviewed), Is.True,
+            "Eric Cayeux approved the complete EarthGravity vocabulary on 2026-09-26.");
+    }
+
+    [Test]
     public void EarthGravityQuantitiesComeFromAuthoritativeLibraries()
     {
         Assert.Multiple(() =>

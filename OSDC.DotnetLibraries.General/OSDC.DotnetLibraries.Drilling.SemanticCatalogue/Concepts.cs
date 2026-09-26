@@ -10,6 +10,8 @@ public static class Concepts
     public const string Depth = "urn:osdc:semantic:depth-coordinate";
     public const string EllipsoidalDepth = "urn:osdc:semantic:ellipsoidal-depth";
     public const string Position = "urn:osdc:semantic:geodetic-position";
+    public const string GenericGeodeticPosition = "urn:osdc:semantic:generic-geodetic-position";
+    public const string GravityResult = "urn:osdc:semantic:gravity-evaluation-result";
     public const string GravityVector = "urn:osdc:semantic:total-gravity-vector";
     public const string GravityAcceleration = "urn:osdc:semantic:total-gravity-acceleration";
     public const string TotalPotential = "urn:osdc:semantic:total-gravity-potential";

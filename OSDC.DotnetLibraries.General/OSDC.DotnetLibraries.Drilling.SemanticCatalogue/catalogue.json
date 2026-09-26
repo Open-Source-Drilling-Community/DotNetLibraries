@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "schemaVersion": 1,
   "concepts": [
     {
@@ -8,7 +8,7 @@
       "label": "Coordinate",
       "definition": "Position coordinate in an explicitly specified frame.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -30,7 +30,7 @@
       "label": "Geodetic angular coordinate",
       "definition": "Angular position on a specified geodetic reference ellipsoid.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [
         "urn:osdc:semantic:coordinate"
       ],
@@ -49,7 +49,7 @@
       "label": "Geodetic latitude",
       "definition": "Angle between the ellipsoid normal and the equatorial plane; north positive.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [
         "urn:osdc:semantic:geodetic-angle"
       ],
@@ -59,9 +59,7 @@
       "quantityName": null,
       "siUnit": null,
       "requiredContext": [],
-      "constraints": [
-        "Earth Gravity accepts radians in [-pi/2, pi/2]."
-      ],
+      "constraints": [],
       "evidence": [
         "EarthGravity/Model; EarthGravity/Service/Mcp/Tools; EarthGravity/WebPages/EarthGravityCalculation.razor"
       ],
@@ -72,7 +70,7 @@
       "label": "Geodetic longitude",
       "definition": "Angular position eastward from the reference meridian.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [
         "urn:osdc:semantic:geodetic-angle"
       ],
@@ -82,9 +80,7 @@
       "quantityName": null,
       "siUnit": null,
       "requiredContext": [],
-      "constraints": [
-        "Earth Gravity accepts radians in [-pi, pi]."
-      ],
+      "constraints": [],
       "evidence": [
         "EarthGravity/Model; EarthGravity/Service/Mcp/Tools; EarthGravity/WebPages/EarthGravityCalculation.razor"
       ],
@@ -95,7 +91,7 @@
       "label": "Depth coordinate",
       "definition": "Depth position relative to an established reference, with a declared direction.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [
         "urn:osdc:semantic:coordinate"
       ],
@@ -116,9 +112,9 @@
     {
       "id": "urn:osdc:semantic:ellipsoidal-depth",
       "label": "Ellipsoidal depth",
-      "definition": "Negative ellipsoidal height: positive downward from the reference ellipsoid.",
+      "definition": "Negative ellipsoidal height measured along the ellipsoid normal: positive inward from the reference ellipsoid.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [
         "urn:osdc:semantic:depth-coordinate"
       ],
@@ -136,11 +132,13 @@
     },
     {
       "id": "urn:osdc:semantic:geodetic-position",
-      "label": "Geodetic position",
+      "label": "Geodetic position with ellipsoidal depth",
       "definition": "Position specified by geodetic latitude, longitude and ellipsoidal depth.",
       "kind": "Noun",
-      "status": "Proposed",
-      "parents": [],
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:generic-geodetic-position"
+      ],
       "aliases": [],
       "quantityName": null,
       "siUnit": null,
@@ -149,9 +147,7 @@
         "angular units",
         "vertical sign"
       ],
-      "constraints": [
-        "Earth Gravity uses WGS84 and SI; negative depth is above the ellipsoid."
-      ],
+      "constraints": [],
       "evidence": [
         "EarthGravity/Model; EarthGravity/Service/Mcp/Tools; EarthGravity/WebPages/EarthGravityCalculation.razor"
       ],
@@ -175,7 +171,7 @@
       "label": "Total gravity vector",
       "definition": "Local acceleration vector including gravitational and centrifugal contributions.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -186,19 +182,24 @@
         "model provenance"
       ],
       "constraints": [
-        "Earth Gravity uses local North-East-Down, not East-North-Up."
+        "Contains acceleration components; scalar gravity potential is a separate result, not a vector component."
       ],
       "evidence": [
         "EarthGravity/Model; EarthGravity/Service/Mcp/Tools; EarthGravity/WebPages/EarthGravityCalculation.razor"
       ],
-      "relations": []
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:total-gravity-acceleration"
+        }
+      ]
     },
     {
       "id": "urn:osdc:semantic:total-gravity-acceleration",
       "label": "Total gravity acceleration",
       "definition": "Component or magnitude of total gravity acceleration, including centrifugal acceleration.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": "AccelerationDrilling",
@@ -221,7 +222,7 @@
       "label": "Total gravity potential",
       "definition": "Total gravitational plus centrifugal potential returned by the gravity model.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": "EarthGravityPotential",
@@ -243,17 +244,15 @@
     {
       "id": "urn:osdc:semantic:gravity-evaluation-request",
       "label": "Gravity evaluation request",
-      "definition": "Ordered batch of positions for a stateless synchronous gravity evaluation.",
+      "definition": "Request to evaluate gravity at supplied positions.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
       "siUnit": null,
       "requiredContext": [],
-      "constraints": [
-        "One invalid item rejects the entire batch; there is no calculation-order resource."
-      ],
+      "constraints": [],
       "evidence": [
         "EarthGravity/Model; EarthGravity/Service/Mcp/Tools; EarthGravity/WebPages/EarthGravityCalculation.razor"
       ],
@@ -267,17 +266,15 @@
     {
       "id": "urn:osdc:semantic:gravity-evaluation-response",
       "label": "Gravity evaluation response",
-      "definition": "Model provenance and ordered evaluated samples.",
+      "definition": "Gravity evaluation samples with the model provenance used to calculate them.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
       "siUnit": null,
       "requiredContext": [],
-      "constraints": [
-        "Samples correspond one-for-one to request Positions in the same order."
-      ],
+      "constraints": [],
       "evidence": [
         "EarthGravity/Model; EarthGravity/Service/Mcp/Tools; EarthGravity/WebPages/EarthGravityCalculation.razor"
       ],
@@ -295,9 +292,9 @@
     {
       "id": "urn:osdc:semantic:gravity-sample",
       "label": "Gravity sample",
-      "definition": "An evaluated position paired with its total-gravity vector.",
+      "definition": "An evaluated position paired with its gravity evaluation result, including total acceleration and scalar total potential.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -314,7 +311,7 @@
         },
         {
           "kind": "HasPart",
-          "target": "urn:osdc:semantic:total-gravity-vector"
+          "target": "urn:osdc:semantic:gravity-evaluation-result"
         }
       ]
     },
@@ -323,7 +320,7 @@
       "label": "Gravity model provenance",
       "definition": "Identity and reproducibility information for an installed gravity model.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -338,9 +335,9 @@
     {
       "id": "urn:osdc:semantic:model-name",
       "label": "Model name",
-      "definition": "Human-readable name used to select the gravity model.",
+      "definition": "Human-readable name used to select a scientific model.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -357,7 +354,7 @@
       "label": "Model identifier",
       "definition": "Published model identifier; not necessarily a UUID.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -374,7 +371,7 @@
       "label": "Model publisher",
       "definition": "Organization publishing the scientific model.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -389,9 +386,9 @@
     {
       "id": "urn:osdc:semantic:model-release-date",
       "label": "Model release date",
-      "definition": "Publication calendar date represented as YYYY-MM-DD.",
+      "definition": "Publication calendar date of a scientific model.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -408,7 +405,7 @@
       "label": "Coefficient data version",
       "definition": "Version of the installed coefficient dataset.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -425,7 +422,7 @@
       "label": "Spherical-harmonic degree",
       "definition": "Maximum spherical-harmonic degree represented by a model; a nonnegative integer, not an angle.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -442,7 +439,7 @@
       "label": "Spherical-harmonic order",
       "definition": "Maximum spherical-harmonic order represented by a model; a nonnegative integer.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -459,7 +456,7 @@
       "label": "Calculation runtime version",
       "definition": "Version of the calculation implementation used for reproducibility.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -476,7 +473,7 @@
       "label": "Reference ellipsoid",
       "definition": "Identifier of the ellipsoid used for geographic coordinates.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -493,7 +490,7 @@
       "label": "Includes centrifugal acceleration",
       "definition": "Boolean declaration that total gravity includes centrifugal acceleration.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -510,7 +507,7 @@
       "label": "Coefficient SHA-256",
       "definition": "Hexadecimal SHA-256 digest of the installed coefficient file.",
       "kind": "Noun",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -527,7 +524,7 @@
       "label": "North component",
       "definition": "Signed vector component positive along the local north axis.",
       "kind": "Role",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -544,7 +541,7 @@
       "label": "East component",
       "definition": "Signed vector component positive along the local east axis.",
       "kind": "Role",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -561,7 +558,7 @@
       "label": "Down component",
       "definition": "Signed vector component positive downward along the local vertical.",
       "kind": "Role",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -578,7 +575,7 @@
       "label": "Vector magnitude",
       "definition": "Nonnegative Euclidean norm of a vector.",
       "kind": "Role",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -593,9 +590,9 @@
     {
       "id": "urn:osdc:semantic:input-positions",
       "label": "Input positions",
-      "definition": "Ordered input positions; completeness means the supplied request batch.",
+      "definition": "Positions supplied as inputs to an operation.",
       "kind": "Role",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -610,9 +607,9 @@
     {
       "id": "urn:osdc:semantic:output-samples",
       "label": "Output samples",
-      "definition": "Output samples in one-to-one input order.",
+      "definition": "Evaluated samples returned by an operation.",
       "kind": "Role",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -629,7 +626,7 @@
       "label": "Model provenance role",
       "definition": "Scientific model information supporting a result.",
       "kind": "Role",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -646,7 +643,7 @@
       "label": "WGS84 ellipsoid convention",
       "definition": "WGS84 geodetic latitude/longitude with Greenwich origin and ellipsoidal depth positive downward; not a fully specified terrestrial frame realization or epoch.",
       "kind": "Reference",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -663,7 +660,7 @@
       "label": "Local North-East-Down",
       "definition": "Local north, east and downward axes at the evaluation position on WGS84; downward is opposite ellipsoidal up.",
       "kind": "Reference",
-      "status": "Proposed",
+      "status": "Reviewed",
       "parents": [],
       "aliases": [],
       "quantityName": null,
@@ -674,6 +671,65 @@
         "EarthGravity/Model; EarthGravity/Service/Mcp/Tools; EarthGravity/WebPages/EarthGravityCalculation.razor"
       ],
       "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:gravity-evaluation-result",
+      "label": "Gravity evaluation result",
+      "definition": "Evaluated total gravity acceleration vector and scalar total gravity potential at a position, using a declared gravity model.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "position",
+        "gravity model"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-DECISIONS.md: D1-D3, approved direction 2026-09-26"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:total-gravity-vector"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:total-gravity-potential"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:generic-geodetic-position",
+      "label": "Geodetic position",
+      "definition": "Position specified by geodetic latitude, longitude and an ellipsoid-relative vertical coordinate with a declared representation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "reference ellipsoid",
+        "reference meridian",
+        "vertical representation and sign"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-DECISIONS.md: D1-D3, approved direction 2026-09-26"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-latitude"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-longitude"
+        }
+      ]
     }
   ]
 }
