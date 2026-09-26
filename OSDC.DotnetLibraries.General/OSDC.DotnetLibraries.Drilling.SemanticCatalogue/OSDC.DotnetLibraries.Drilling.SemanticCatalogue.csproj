@@ -13,12 +13,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <UseLocalUnitConversionProjects Condition="'$(UseLocalUnitConversionProjects)' == '' and Exists('../../../UnitConversion/Conversion/Conversion.csproj')">true</UseLocalUnitConversionProjects>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Condition="'$(UseLocalUnitConversionProjects)' == 'true'" Include="../../../UnitConversion/Conversion/Conversion.csproj" />
-    <ProjectReference Condition="'$(UseLocalUnitConversionProjects)' == 'true'" Include="../../../UnitConversion/Conversion.DrillingEngineering/Conversion.DrillingEngineering.csproj" />
     <PackageReference Condition="'$(UseLocalUnitConversionProjects)' != 'true'" Include="OSDC.UnitConversion.Conversion" Version="3.3.28" />
     <PackageReference Condition="'$(UseLocalUnitConversionProjects)' != 'true'" Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="3.3.28" />
+    <PackageReference Include="OSDC.UnitConversion.Conversion.DrillingEngineering" Version="3.4.2" />
     <EmbeddedResource Include="catalogue.json" />
     <None Update="catalogue.json;catalogue.schema.json" Pack="true" PackagePath="catalogue/" />
     <None Update="CURATION.md" Pack="true" PackagePath="/" />
