@@ -23,3 +23,7 @@ It contains the following standard libraries implemented in .NET, relevant for t
 
 ## Deployment
 Most of these libraries have been packaged as .NET NuGets and published to [nuget.org](https://www.nuget.org/packages?q=OSDC.Dotnetlibraries).
+
+## Shared semantic catalogue
+
+[Drilling.SemanticCatalogue](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/README.md) provides a versioned, language-neutral semantic vocabulary, .NET model annotations and bindings to the existing unit-conversion catalogues. The first increment covers Earth Gravity and remains proposed for curation.
