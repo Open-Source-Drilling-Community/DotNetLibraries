@@ -1,8 +1,8 @@
 # OSDC Drilling Semantic Catalogue
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.2.0` is the next unpublished curation increment; it starts with Earth Gravity's published models and UI quantity choices. Publication is a separate release operation.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.3.0` is the next unpublished curation increment; it starts with Earth Gravity's published models and UI quantity choices. Publication is a separate release operation.
 
-See [the Earth Gravity curation table](CURATION.md) for the 36 entries and remaining decisions.
+See [the Earth Gravity curation table](CURATION.md) for the 58 reviewed entries and decision history.
 
 ## Ownership and curation
 
@@ -45,3 +45,21 @@ This does not publish the package. Inspect the NuGet dependency manifest and cat
 ## Approved structural directions
 
 See [the decision record](CURATION-DECISIONS.md) for D1-D3 and migration from 0.1.0. A gravity evaluation result contains the vector and scalar potential. The original position ID remains the ellipsoidal-depth representation, specializing a new generic geodetic position. Provider execution and representation guarantees remain in provider contracts. The directions and all 36 individual concepts are approved and recorded as Reviewed.
+
+The [EarthMagneticField curation review](CURATION-EARTHMAGNETICFIELD-2026-09-26.md) prepares the next increment: reused concepts, 18 approved magnetic-field additions and the four approved digest entries and a field-by-field binding map. These are implemented in unpublished 0.3.0; published 0.2.0 remains unchanged. Provider annotation integration is still to implement.
+
+## File digests
+
+`FileContentDigest` is specialized by `Sha256FileDigest`. Source-file purpose is expressed separately:
+
+```csharp
+[Semantic(Concepts.Sha256FileDigest, Role = Concepts.CoefficientFile)]
+public string CoefficientSHA256 { get; set; } = string.Empty;
+
+[Semantic(Concepts.Sha256FileDigest, Role = Concepts.ModelMetadataFile)]
+public string MetadataSHA256 { get; set; } = string.Empty;
+```
+
+The provider declares the exact file bytes and representation (64 hexadecimal characters in these services). These values have no physical units. The published `CoefficientHash` concept remains available as a narrower SHA-256 file digest specialization. Catalogue 0.3.0 adds four Reviewed entries without changing existing provider property names.
+
+All 58 concepts in the 0.3.0 source catalogue are Reviewed following the vocabulary approval of 2026-09-27. New concepts discovered in future increments still require curation.

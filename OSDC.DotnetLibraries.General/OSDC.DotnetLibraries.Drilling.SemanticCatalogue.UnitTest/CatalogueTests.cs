@@ -22,7 +22,28 @@ public class CatalogueTests
         Assert.That(catalogue.Get(Concepts.Request).Constraints, Is.Empty);
         Assert.That(catalogue.Get(Concepts.Response).Constraints, Is.Empty);
         Assert.That(catalogue.Document.Concepts.All(c => c.Status == CurationStatus.Reviewed), Is.True,
-            "Eric Cayeux approved the complete EarthGravity vocabulary on 2026-09-26.");
+            "EarthGravity entries were approved on 2026-09-26; digest and EarthMagneticField entries on 2026-09-27.");
+    }
+
+    [Test]
+    public void CuratedMagneticVocabularyPreservesScientificDistinctions()
+    {
+        var catalogue = Catalogue.Default;
+        Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(58));
+        Assert.That(catalogue.Document.Concepts.All(c => c.Status == CurationStatus.Reviewed), Is.True);
+        Assert.That(catalogue.IsA(Concepts.MagneticDip, Concepts.Dip), Is.True);
+        Assert.That(catalogue.Quantity(Concepts.MagneticDip)!.Id, Is.EqualTo(PlaneAngleDrillingQuantity.Instance.ID));
+        Assert.That(catalogue.Quantity(Concepts.MagneticDeclination)!.Id, Is.EqualTo(PlaneAngleDrillingQuantity.Instance.ID));
+        Assert.That(catalogue.Quantity(Concepts.EarthMagneticFluxDensity)!.Id, Is.EqualTo(EarthMagneticFluxDensityQuantity.Instance.ID));
+        Assert.That(catalogue.Quantity(Concepts.Instant), Is.Null, "An instant is not an elapsed duration.");
+        Assert.That(catalogue.IsA(Concepts.ModelInfo, Concepts.ScientificModelProvenance), Is.True);
+        Assert.That(catalogue.IsA(Concepts.GeomagneticModelProvenance, Concepts.ScientificModelProvenance), Is.True);
+        Assert.That(catalogue.Get(Concepts.GeodeticEvaluationPoint).Relations.Select(r => r.Target),
+            Is.EquivalentTo(new[] { Concepts.GenericGeodeticPosition, Concepts.Instant }));
+        Assert.That(catalogue.IsA(Concepts.GeodeticEvaluationPoint, Concepts.GenericGeodeticPosition), Is.False);
+        Assert.That(catalogue.Get(Concepts.LowerBound).Kind, Is.EqualTo(SemanticKind.Role));
+        Assert.That(catalogue.Get(Concepts.Utc).Kind, Is.EqualTo(SemanticKind.Reference));
+        Assert.That(catalogue.Find("inclination"), Is.Empty);
     }
 
     [Test]
@@ -91,6 +112,34 @@ public class CatalogueTests
         [Semantic(Concepts.GravityAcceleration, Role = Concepts.North, Reference = Concepts.Ned)]
         public double Value { get; set; }
     }
+    private sealed class DigestBindings
+    {
+        [Semantic(Concepts.Sha256FileDigest, Role = Concepts.CoefficientFile)]
+        public string Coefficients { get; set; } = string.Empty;
+        [Semantic(Concepts.Sha256FileDigest, Role = Concepts.ModelMetadataFile)]
+        public string Metadata { get; set; } = string.Empty;
+    }
+
+    [Test]
+    public void DigestsSeparateAlgorithmFromFilePurposeAndPreservePublishedIdentity()
+    {
+        var catalogue = Catalogue.Default;
+        Assert.That(catalogue.IsA(Concepts.Sha256FileDigest, Concepts.FileContentDigest), Is.True);
+        Assert.That(catalogue.IsA(Concepts.CoefficientHash, Concepts.Sha256FileDigest), Is.True);
+        Assert.That(catalogue.Get(Concepts.CoefficientHash).Definition,
+            Is.EqualTo("Hexadecimal SHA-256 digest of the installed coefficient file."));
+        Assert.That(catalogue.Get(Concepts.CoefficientHash).Status, Is.EqualTo(CurationStatus.Reviewed));
+        var coefficients = SemanticMetadata.For(typeof(DigestBindings).GetProperty("Coefficients")!)!;
+        var metadata = SemanticMetadata.For(typeof(DigestBindings).GetProperty("Metadata")!)!;
+        Assert.That(coefficients["concept"]!.GetValue<string>(), Is.EqualTo(metadata["concept"]!.GetValue<string>()));
+        Assert.That(coefficients["role"]!.GetValue<string>(), Is.EqualTo(Concepts.CoefficientFile));
+        Assert.That(metadata["role"]!.GetValue<string>(), Is.EqualTo(Concepts.ModelMetadataFile));
+        Assert.That(coefficients.ContainsKey("physicalQuantity"), Is.False);
+        Assert.That(coefficients.ContainsKey("siUnit"), Is.False);
+        Assert.That(catalogue.RequiredContext(Concepts.Sha256FileDigest), Does.Contain("source file and its purpose"));
+        Assert.That(catalogue.Quantity(Concepts.CoefficientHash), Is.Null);
+    }
+
     private sealed class InvalidBinding
     {
         [Semantic(Concepts.Latitude, Role = Concepts.Longitude)]

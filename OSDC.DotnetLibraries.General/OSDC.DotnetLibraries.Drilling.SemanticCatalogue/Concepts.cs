@@ -1,6 +1,6 @@
 namespace OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 
-/// <summary>Stable identifiers for the initial Earth Gravity vocabulary.</summary>
+/// <summary>Stable identifiers for the shared semantic vocabulary.</summary>
 public static class Concepts
 {
     public const string Coordinate = "urn:osdc:semantic:coordinate";
@@ -29,6 +29,10 @@ public static class Concepts
     public const string RuntimeVersion = "urn:osdc:semantic:calculation-runtime-version";
     public const string ReferenceEllipsoid = "urn:osdc:semantic:reference-ellipsoid";
     public const string IncludesCentrifugal = "urn:osdc:semantic:includes-centrifugal-acceleration";
+    public const string FileContentDigest = "urn:osdc:semantic:file-content-digest";
+    public const string Sha256FileDigest = "urn:osdc:semantic:sha256-file-digest";
+    public const string CoefficientFile = "urn:osdc:semantic:coefficient-file";
+    public const string ModelMetadataFile = "urn:osdc:semantic:model-metadata-file";
     public const string CoefficientHash = "urn:osdc:semantic:coefficient-sha256";
     public const string North = "urn:osdc:semantic:north-component";
     public const string East = "urn:osdc:semantic:east-component";
@@ -39,4 +43,22 @@ public static class Concepts
     public const string Provenance = "urn:osdc:semantic:model-provenance";
     public const string Wgs84 = "urn:osdc:semantic:wgs84";
     public const string Ned = "urn:osdc:semantic:local-north-east-down";
+    public const string Dip = "urn:osdc:semantic:dip";
+    public const string MagneticDip = "urn:osdc:semantic:magnetic-dip";
+    public const string MagneticDeclination = "urn:osdc:semantic:magnetic-declination";
+    public const string EarthMagneticFluxDensity = "urn:osdc:semantic:earth-magnetic-flux-density";
+    public const string GeomagneticVector = "urn:osdc:semantic:geomagnetic-vector";
+    public const string Instant = "urn:osdc:semantic:instant";
+    public const string GeodeticEvaluationPoint = "urn:osdc:semantic:geodetic-evaluation-point";
+    public const string GeomagneticSample = "urn:osdc:semantic:geomagnetic-sample";
+    public const string GeomagneticRequest = "urn:osdc:semantic:geomagnetic-evaluation-request";
+    public const string GeomagneticResponse = "urn:osdc:semantic:geomagnetic-evaluation-response";
+    public const string ScientificModelProvenance = "urn:osdc:semantic:scientific-model-provenance";
+    public const string GeomagneticModelProvenance = "urn:osdc:semantic:geomagnetic-model-provenance";
+    public const string ModelSelectionToken = "urn:osdc:semantic:model-selection-token";
+    public const string HorizontalMagnitude = "urn:osdc:semantic:horizontal-magnitude";
+    public const string LowerBound = "urn:osdc:semantic:lower-bound";
+    public const string UpperBound = "urn:osdc:semantic:upper-bound";
+    public const string InputEvaluationPoints = "urn:osdc:semantic:input-evaluation-points";
+    public const string Utc = "urn:osdc:semantic:utc";
 }

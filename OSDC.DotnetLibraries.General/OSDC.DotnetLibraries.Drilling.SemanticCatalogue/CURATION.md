@@ -44,3 +44,20 @@ Catalogue 0.2.0 contains 36 Reviewed entries. Eric Cayeux approved structural di
 Physical quantities on parents are inherited. A dash in this table means no directly declared quantity, not necessarily an unresolved quantity.
 
 Next: extract additions from EarthMagneticField and review them against this approved baseline. New concepts remain Proposed until separately approved. Preserve stable IDs and retain evidence; aliases do not authorize substitution.
+
+## Digest increment — 0.3.0 (unpublished)
+
+The 36-entry EarthGravity baseline above is retained. Eric Cayeux approved the following four additions on 2026-09-27; the source catalogue now contains 40 Reviewed entries.
+
+| Label | Kind | Specializes | Declared physical quantity |
+| --- | --- | --- | --- |
+| File content digest | Noun | — | — |
+| SHA-256 file digest | Noun | File content digest | — |
+| Coefficient file | Role | — | — |
+| Model metadata file | Role | — | — |
+
+The existing Coefficient SHA-256 noun now specializes SHA-256 file digest while preserving its narrower meaning. See CURATION-DECISIONS.md for the migration to noun/role bindings.
+
+## EarthMagneticField increment — 0.3.0 (unpublished)
+
+All 18 entries in [the approved EarthMagneticField vocabulary](CURATION-EARTHMAGNETICFIELD-2026-09-26.md) were approved on 2026-09-27 and added as Reviewed. Together with the EarthGravity baseline and digest increment, the catalogue now contains **58 Reviewed entries**. Gravity model provenance now specializes Scientific model provenance; its ID and definition are retained.

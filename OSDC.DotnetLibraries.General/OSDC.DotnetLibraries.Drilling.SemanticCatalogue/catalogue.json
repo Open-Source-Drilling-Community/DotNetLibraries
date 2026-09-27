@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "schemaVersion": 1,
   "concepts": [
     {
@@ -321,7 +321,9 @@
       "definition": "Identity and reproducibility information for an installed gravity model.",
       "kind": "Noun",
       "status": "Reviewed",
-      "parents": [],
+      "parents": [
+        "urn:osdc:semantic:scientific-model-provenance"
+      ],
       "aliases": [],
       "quantityName": null,
       "siUnit": null,
@@ -508,7 +510,9 @@
       "definition": "Hexadecimal SHA-256 digest of the installed coefficient file.",
       "kind": "Noun",
       "status": "Reviewed",
-      "parents": [],
+      "parents": [
+        "urn:osdc:semantic:sha256-file-digest"
+      ],
       "aliases": [],
       "quantityName": null,
       "siUnit": null,
@@ -730,6 +734,509 @@
           "target": "urn:osdc:semantic:geodetic-longitude"
         }
       ]
+    },
+    {
+      "id": "urn:osdc:semantic:file-content-digest",
+      "label": "File content digest",
+      "definition": "A digest computed from the byte content of a file using a specified digest algorithm.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "digest algorithm",
+        "source file and its purpose",
+        "digest representation"
+      ],
+      "constraints": [
+        "A digest is not a model version or proof of authenticity.",
+        "Compare digests only with compatible algorithms, input-byte scope and representations."
+      ],
+      "evidence": [
+        "Eric Cayeux approval of digest hierarchy and file roles, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:sha256-file-digest",
+      "label": "SHA-256 file digest",
+      "definition": "A 256-bit digest computed from the complete byte content of a file using SHA-256.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:file-content-digest"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "SHA-256 is the digest algorithm; the provider declares the encoding of its 256-bit output."
+      ],
+      "evidence": [
+        "Eric Cayeux approval of digest hierarchy and file roles, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coefficient-file",
+      "label": "Coefficient file",
+      "definition": "Identifies the source file of a digest as a scientific model coefficient file.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Eric Cayeux approval of digest hierarchy and file roles, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:model-metadata-file",
+      "label": "Model metadata file",
+      "definition": "Identifies the source file of a digest as a scientific model metadata file.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Eric Cayeux approval of digest hierarchy and file roles, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:dip",
+      "label": "Dip",
+      "definition": "Angular departure of a specified geometric object from a declared horizontal plane, measured in a specified vertical section. The specialization supplies object type, section, sign and range. No universal sign/range is imposed here.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "PlaneAngleDrilling",
+      "siUnit": "rad",
+      "requiredContext": [
+        "geometric object",
+        "horizontal plane",
+        "measurement section",
+        "sign and range"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:magnetic-dip",
+      "label": "Magnetic dip",
+      "definition": "Signed angle of a magnetic flux-density vector from its horizontal projection, positive toward the declared downward axis. Requires position, instant, model and local frame. Undefined for the zero vector.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:dip"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "position",
+        "instant",
+        "geomagnetic model",
+        "local frame"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:magnetic-declination",
+      "label": "Magnetic declination",
+      "definition": "Signed horizontal angle from geodetic north to the magnetic vector's horizontal projection, positive east. Requires position, instant, model and frame. Undefined when the horizontal projection is zero.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "PlaneAngleDrilling",
+      "siUnit": "rad",
+      "requiredContext": [
+        "position",
+        "instant",
+        "geomagnetic model",
+        "local frame"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:earth-magnetic-flux-density",
+      "label": "Earth magnetic flux density",
+      "definition": "Component or magnitude of Earth's magnetic flux-density vector. A component or magnitude role specifies which scalar is represented. Requires position, instant and geomagnetic model; components require a frame.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "EarthMagneticFluxDensity",
+      "siUnit": "T",
+      "requiredContext": [
+        "position",
+        "instant",
+        "geomagnetic model",
+        "component or magnitude role",
+        "frame for components"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geomagnetic-vector",
+      "label": "Geomagnetic vector",
+      "definition": "Earth's magnetic flux-density vector at a position and instant, expressed in a declared frame and evaluated with a declared model.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "position",
+        "instant",
+        "geomagnetic model",
+        "local frame"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:earth-magnetic-flux-density"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:instant",
+      "label": "Instant",
+      "definition": "A position on a time axis identified using a declared time scale and representation. Neither elapsed duration nor a calendar date alone.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "time scale",
+        "timestamp representation"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-evaluation-point",
+      "label": "Geodetic evaluation point",
+      "definition": "A geodetic position paired with an evaluation instant. HasPart position and instant; is not a subtype of position merely because its JSON flattens coordinates and timestamp.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:generic-geodetic-position"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:instant"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:geomagnetic-sample",
+      "label": "Geomagnetic sample",
+      "definition": "An evaluation point paired with a geomagnetic vector and derived magnitudes and orientation angles. HasPart evaluation point, vector, magnetic dip and declination; EvaluatedUsing geomagnetic model provenance. Derived undefined angles are optional values.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-evaluation-point"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geomagnetic-vector"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:earth-magnetic-flux-density"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:magnetic-dip"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:magnetic-declination"
+        },
+        {
+          "kind": "EvaluatedUsing",
+          "target": "urn:osdc:semantic:geomagnetic-model-provenance"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:geomagnetic-evaluation-request",
+      "label": "Geomagnetic evaluation request",
+      "definition": "A request to evaluate a selected geomagnetic model at supplied evaluation points. Execution and batching policies belong to the provider.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-evaluation-point"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:model-selection-token"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:geomagnetic-evaluation-response",
+      "label": "Geomagnetic evaluation response",
+      "definition": "Evaluated geomagnetic samples with the model provenance supporting them. Ordering belongs to the provider.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geomagnetic-sample"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geomagnetic-model-provenance"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:scientific-model-provenance",
+      "label": "Scientific model provenance",
+      "definition": "Identity and reproducibility information for a scientific model and the implementation/data used to evaluate it.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geomagnetic-model-provenance",
+      "label": "Geomagnetic model provenance",
+      "definition": "Identity, applicability and reproducibility information for a geomagnetic reference model.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:scientific-model-provenance"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:model-selection-token",
+      "label": "Model selection token",
+      "definition": "Provider-defined token selecting an installed model; its value set and mapping to model identity belong to that provider.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "provider model selection vocabulary"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:horizontal-magnitude",
+      "label": "Horizontal magnitude",
+      "definition": "Nonnegative Euclidean norm of a vector's projection onto the declared horizontal plane. Requires the projection plane. Not equivalent to the full-vector magnitude role.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection plane"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:lower-bound",
+      "label": "Lower bound",
+      "definition": "Lower endpoint of a declared ordered domain or interval. The binding identifies the bounded domain and whether the endpoint is included.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "bounded domain",
+        "endpoint inclusion"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:upper-bound",
+      "label": "Upper bound",
+      "definition": "Upper endpoint of a declared ordered domain or interval. The binding identifies the bounded domain and whether the endpoint is included.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "bounded domain",
+        "endpoint inclusion"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:input-evaluation-points",
+      "label": "Input evaluation points",
+      "definition": "Evaluation points supplied to an operation. Does not imply ordering, completeness or atomicity.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:utc",
+      "label": "Coordinated Universal Time",
+      "definition": "UTC time-scale reference for a timestamp. Accepted serialization and representable precision are provider concerns.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
+        "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
     }
   ]
 }
