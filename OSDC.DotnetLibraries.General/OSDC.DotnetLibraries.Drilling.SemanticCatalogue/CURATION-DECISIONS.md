@@ -43,3 +43,11 @@ Approver: Eric Cayeux. Evidence: “You can consider the vocabulary as currated.
 Implemented Dip → Magnetic dip and Scientific model provenance → Gravity/Geomagnetic model provenance, compound sample/evaluation-point relationships, UTC instants, bound roles and authoritative quantity bindings. Geodetic evaluation point contains a generic geodetic position and instant; it does not impose Earth's provider-specific ellipsoidal-depth representation on every future provider. HasPart relations describe conceptual constituents, not mandatory non-null JSON properties; undefined orientation angles remain nullable under the provider contract.
 
 Approval is limited to this vocabulary increment. Future discoveries still require curation. EarthMagneticField provider semantic attributes and REST/MCP annotation integration remain subsequent implementation work; publication and deployment have not occurred.
+
+## 2026-09-27 — Complete EarthVerticalDatum vocabulary approval
+
+Approver: Eric Cayeux. Evidence: “Otherwise I accept your proposed additions. Consider the new vocabulary as curated,” with the explicit correction to use LengthStandard for Geoid undulation. All 14 entries in CURATION-EARTHVERTICALDATUM-2026-09-27.md change from Proposed to Reviewed in unpublished 0.4.0. The 58 published 0.3.0 entries remain unchanged.
+
+Geoid undulation resolves to UnitConversion LengthStandard with SI metres and meaningful display precision 0.001 m (1 mm). This precision is owned by UnitConversion, not duplicated as model accuracy or a wire-rounding rule. Geoid representation error retains Length. The approved direction replaces provider GridResolutionMinutes with AngularGridSpacing in radians when integrating the provider. No provider code, NuGet publication or deployment is performed by this approval step.
+
+The catalogue now contains 72 Reviewed entries. New vocabulary discovered later still starts as Proposed.

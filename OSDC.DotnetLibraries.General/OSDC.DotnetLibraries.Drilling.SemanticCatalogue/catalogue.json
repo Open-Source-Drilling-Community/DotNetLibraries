@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "schemaVersion": 1,
   "concepts": [
     {
@@ -1235,6 +1235,363 @@
       "evidence": [
         "EarthMagneticField/Model; EarthMagneticField/Service/Mcp/Tools/EarthMagneticFieldMcpSchemas.cs; EarthMagneticField/WebPages/EarthMagneticFieldCalculation.razor",
         "Eric Cayeux vocabulary approval, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geoid-referenced-depth",
+      "label": "Geoid-referenced depth",
+      "definition": "Depth coordinate positive downward from a specified model geoid; the negative of the corresponding geoid-referenced height.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:depth-coordinate"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "geoid model",
+        "vertical convention"
+      ],
+      "constraints": [
+        "Not interchangeable with a local tidal datum, instantaneous sea surface or unspecified mean sea level."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geoid-undulation",
+      "label": "Geoid undulation",
+      "definition": "Signed height of a specified model geoid relative to a specified reference ellipsoid at a horizontal position, positive when the geoid is above the ellipsoid.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "geoid model",
+        "reference ellipsoid",
+        "horizontal position",
+        "positive-up convention"
+      ],
+      "constraints": [
+        "A separation between reference surfaces, not a point depth coordinate."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geoid-depth-position",
+      "label": "Position with geoid-referenced depth",
+      "definition": "Position represented by geodetic latitude and longitude with a depth relative to a specified model geoid.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "horizontal geodetic reference",
+        "geoid model"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-latitude"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-longitude"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geoid-referenced-depth"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:geoid-model-provenance",
+      "label": "Geoid model provenance",
+      "definition": "Identity and reproducibility information for a geoid model, its sampled data and evaluation method.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:scientific-model-provenance"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:angular-grid-spacing",
+      "label": "Angular grid spacing",
+      "definition": "Angular separation between adjacent grid nodes along a declared coordinate axis.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "PlaneAngleGeodesic",
+      "siUnit": "rad",
+      "requiredContext": [
+        "grid axis",
+        "angular encoding"
+      ],
+      "constraints": [
+        "Angular spacing is not a spatial distance or a model accuracy."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geoid-approximation-error",
+      "label": "Geoid representation error",
+      "definition": "Magnitude statistic of errors from a sampled geoid representation and its interpolation relative to the reference geoid model.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "Length",
+      "siUnit": "m",
+      "requiredContext": [
+        "reference geoid model",
+        "grid",
+        "interpolation method",
+        "error statistic"
+      ],
+      "constraints": [
+        "Not the geoid model error relative to the real Earth, nor the uncertainty of an input depth."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-absolute-error",
+      "label": "Maximum absolute error",
+      "definition": "Role identifying a reported maximum absolute error over the stated evaluation domain.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "evaluation domain",
+        "estimation method"
+      ],
+      "constraints": [
+        "A reported estimate is not automatically a rigorous bound."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:root-mean-square-error",
+      "label": "Root mean square error",
+      "definition": "Role identifying the square root of the mean squared errors over the stated sample population.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "sample population",
+        "weighting"
+      ],
+      "constraints": [
+        "RMS error is not generally a standard deviation."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:interpolation-method",
+      "label": "Interpolation method",
+      "definition": "Named method used to estimate values between sampled data points.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "provider method definition"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:dataset-timestamp",
+      "label": "Dataset timestamp",
+      "definition": "Role identifying an instant supplied as a timestamp of a dataset; the provider declares the event represented.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "dataset",
+        "timestamp event meaning"
+      ],
+      "constraints": [
+        "Do not infer publication, creation or evaluation time from an unspecified dataset timestamp."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:vertical-datum-conversion-request",
+      "label": "Vertical datum conversion request",
+      "definition": "Request to express supplied vertical coordinates relative to another declared vertical reference.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source vertical reference",
+        "target vertical reference",
+        "conversion model"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:vertical-datum-conversion-response",
+      "label": "Vertical datum conversion response",
+      "definition": "Converted vertical-coordinate samples with the model provenance used for their conversion.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:vertical-datum-conversion-sample"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geoid-model-provenance"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:vertical-datum-conversion-sample",
+      "label": "Vertical datum conversion sample",
+      "definition": "An input position paired with a converted vertical coordinate and the reference-surface separation used in the conversion.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source vertical reference",
+        "target vertical reference",
+        "horizontal position"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geoid-undulation"
+        },
+        {
+          "kind": "EvaluatedUsing",
+          "target": "urn:osdc:semantic:geoid-model-provenance"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:egm84-geoid",
+      "label": "EGM84 model geoid",
+      "definition": "The geoid represented by the EGM84 model, used by this provider as its mean-sea-level reference surface.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "model data realization and evaluation method"
+      ],
+      "constraints": [
+        "Not a local tidal datum or instantaneous sea surface."
+      ],
+      "evidence": [
+        "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
+        "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
+        "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
       ],
       "relations": []
     }

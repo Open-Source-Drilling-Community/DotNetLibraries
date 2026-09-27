@@ -61,4 +61,19 @@ public static class Concepts
     public const string UpperBound = "urn:osdc:semantic:upper-bound";
     public const string InputEvaluationPoints = "urn:osdc:semantic:input-evaluation-points";
     public const string Utc = "urn:osdc:semantic:utc";
+    // EarthVerticalDatum increment: curated on 2026-09-27.
+    public const string GeoidReferencedDepth = "urn:osdc:semantic:geoid-referenced-depth";
+    public const string GeoidUndulation = "urn:osdc:semantic:geoid-undulation";
+    public const string GeoidDepthPosition = "urn:osdc:semantic:geoid-depth-position";
+    public const string GeoidModelProvenance = "urn:osdc:semantic:geoid-model-provenance";
+    public const string AngularGridSpacing = "urn:osdc:semantic:angular-grid-spacing";
+    public const string GeoidApproximationError = "urn:osdc:semantic:geoid-approximation-error";
+    public const string MaximumAbsoluteError = "urn:osdc:semantic:maximum-absolute-error";
+    public const string RootMeanSquareError = "urn:osdc:semantic:root-mean-square-error";
+    public const string InterpolationMethod = "urn:osdc:semantic:interpolation-method";
+    public const string DatasetTimestamp = "urn:osdc:semantic:dataset-timestamp";
+    public const string VerticalDatumRequest = "urn:osdc:semantic:vertical-datum-conversion-request";
+    public const string VerticalDatumResponse = "urn:osdc:semantic:vertical-datum-conversion-response";
+    public const string VerticalDatumSample = "urn:osdc:semantic:vertical-datum-conversion-sample";
+    public const string Egm84Geoid = "urn:osdc:semantic:egm84-geoid";
 }

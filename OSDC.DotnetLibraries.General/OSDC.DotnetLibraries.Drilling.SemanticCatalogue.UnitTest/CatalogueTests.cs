@@ -21,16 +21,16 @@ public class CatalogueTests
         Assert.That(catalogue.Get(Concepts.GenericGeodeticPosition).Relations.Select(r => r.Target), Does.Not.Contain(Concepts.EllipsoidalDepth));
         Assert.That(catalogue.Get(Concepts.Request).Constraints, Is.Empty);
         Assert.That(catalogue.Get(Concepts.Response).Constraints, Is.Empty);
-        Assert.That(catalogue.Document.Concepts.All(c => c.Status == CurationStatus.Reviewed), Is.True,
-            "EarthGravity entries were approved on 2026-09-26; digest and EarthMagneticField entries on 2026-09-27.");
+        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Reviewed), Is.EqualTo(72),
+            "EarthGravity entries were approved on 2026-09-26; digest, EarthMagneticField and EarthVerticalDatum entries on 2026-09-27.");
     }
 
     [Test]
     public void CuratedMagneticVocabularyPreservesScientificDistinctions()
     {
         var catalogue = Catalogue.Default;
-        Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(58));
-        Assert.That(catalogue.Document.Concepts.All(c => c.Status == CurationStatus.Reviewed), Is.True);
+        Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(72));
+        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Reviewed), Is.EqualTo(72));
         Assert.That(catalogue.IsA(Concepts.MagneticDip, Concepts.Dip), Is.True);
         Assert.That(catalogue.Quantity(Concepts.MagneticDip)!.Id, Is.EqualTo(PlaneAngleDrillingQuantity.Instance.ID));
         Assert.That(catalogue.Quantity(Concepts.MagneticDeclination)!.Id, Is.EqualTo(PlaneAngleDrillingQuantity.Instance.ID));
@@ -44,6 +44,28 @@ public class CatalogueTests
         Assert.That(catalogue.Get(Concepts.LowerBound).Kind, Is.EqualTo(SemanticKind.Role));
         Assert.That(catalogue.Get(Concepts.Utc).Kind, Is.EqualTo(SemanticKind.Reference));
         Assert.That(catalogue.Find("inclination"), Is.Empty);
+    }
+
+    [Test]
+    public void CuratedVerticalDatumVocabularyKeepsDepthSeparationAngleAndErrorDistinct()
+    {
+        var catalogue = Catalogue.Default;
+        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Proposed), Is.Zero);
+        Assert.That(catalogue.Get(Concepts.GeoidUndulation).Status, Is.EqualTo(CurationStatus.Reviewed));
+        Assert.That(catalogue.IsA(Concepts.GeoidReferencedDepth, Concepts.Depth), Is.True);
+        Assert.That(catalogue.IsA(Concepts.GeoidReferencedDepth, Concepts.EllipsoidalDepth), Is.False);
+        Assert.That(catalogue.Quantity(Concepts.GeoidReferencedDepth)!.Id, Is.EqualTo(DepthDrillingQuantity.Instance.ID));
+        Assert.That(catalogue.Quantity(Concepts.GeoidUndulation)!.Id, Is.EqualTo(LengthStandardQuantity.Instance.ID));
+        Assert.That(LengthStandardQuantity.Instance.MeaningfulPrecisionInSI, Is.EqualTo(0.001));
+        Assert.That(catalogue.SiUnit(Concepts.GeoidUndulation), Is.EqualTo("m"));
+        Assert.That(catalogue.Quantity(Concepts.GeoidApproximationError)!.Id, Is.EqualTo(LengthQuantity.Instance.ID));
+        Assert.That(catalogue.Quantity(Concepts.AngularGridSpacing)!.Id, Is.EqualTo(PlaneAngleGeodesicQuantity.Instance.ID));
+        Assert.That(catalogue.SiUnit(Concepts.AngularGridSpacing), Is.EqualTo("rad"));
+        Assert.That(catalogue.IsA(Concepts.GeoidModelProvenance, Concepts.ScientificModelProvenance), Is.True);
+        Assert.That(catalogue.Get(Concepts.GeoidDepthPosition).Relations.Select(r => r.Target), Does.Contain(Concepts.GeoidReferencedDepth));
+        Assert.That(catalogue.Get(Concepts.GeoidDepthPosition).Relations.Select(r => r.Target), Does.Not.Contain(Concepts.EllipsoidalDepth));
+        Assert.That(catalogue.Get(Concepts.DatasetTimestamp).Kind, Is.EqualTo(SemanticKind.Role));
+        Assert.That(catalogue.Get(Concepts.Egm84Geoid).Kind, Is.EqualTo(SemanticKind.Reference));
     }
 
     [Test]

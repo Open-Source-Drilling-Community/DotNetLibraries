@@ -1,6 +1,6 @@
 # OSDC Drilling Semantic Catalogue
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.3.0` is the next unpublished curation increment; it starts with Earth Gravity's published models and UI quantity choices. Publication is a separate release operation.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.4.0` is the next unpublished curation increment; it starts with Earth Gravity's published models and UI quantity choices. Publication is a separate release operation.
 
 See [the Earth Gravity curation table](CURATION.md) for the 58 reviewed entries and decision history.
 
@@ -63,3 +63,7 @@ public string MetadataSHA256 { get; set; } = string.Empty;
 The provider declares the exact file bytes and representation (64 hexadecimal characters in these services). These values have no physical units. The published `CoefficientHash` concept remains available as a narrower SHA-256 file digest specialization. Catalogue 0.3.0 adds four Reviewed entries without changing existing provider property names.
 
 All 58 concepts in the 0.3.0 source catalogue are Reviewed following the vocabulary approval of 2026-09-27. New concepts discovered in future increments still require curation.
+
+## EarthVerticalDatum curation
+
+The [EarthVerticalDatum review](CURATION-EARTHVERTICALDATUM-2026-09-27.md) adds 14 approved entries to the 58 unchanged Reviewed entries from published 0.3.0. Source 0.4.0 contains 72 Reviewed entries. Geoid undulation uses LengthStandard (SI metres, 1 mm meaningful display precision). Geoid/MSL terminology, signed separation, the move to a radians-valued grid-spacing field and interpolation-error scope are curated; provider integration remains outstanding. No package has been published by this update.

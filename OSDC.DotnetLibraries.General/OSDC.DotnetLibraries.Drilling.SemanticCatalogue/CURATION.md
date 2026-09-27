@@ -61,3 +61,7 @@ The existing Coefficient SHA-256 noun now specializes SHA-256 file digest while 
 ## EarthMagneticField increment — 0.3.0 (unpublished)
 
 All 18 entries in [the approved EarthMagneticField vocabulary](CURATION-EARTHMAGNETICFIELD-2026-09-26.md) were approved on 2026-09-27 and added as Reviewed. Together with the EarthGravity baseline and digest increment, the catalogue now contains **58 Reviewed entries**. Gravity model provenance now specializes Scientific model provenance; its ID and definition are retained.
+
+## EarthVerticalDatum increment — 0.4.0 (unpublished)
+
+See [the EarthVerticalDatum proposal and complete binding map](CURATION-EARTHVERTICALDATUM-2026-09-27.md). Fourteen EarthVerticalDatum entries were approved on 2026-09-27, extending the 58 existing Reviewed entries without changing them. All 72 entries are Reviewed. Geoid undulation uses LengthStandard with 1 mm meaningful display precision.
