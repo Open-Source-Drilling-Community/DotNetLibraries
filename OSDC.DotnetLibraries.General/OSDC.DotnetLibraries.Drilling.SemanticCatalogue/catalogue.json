@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "schemaVersion": 1,
   "concepts": [
     {
@@ -1592,6 +1592,1229 @@
         "EarthVerticalDatum/Model/EarthVerticalDatumEvaluator.cs; EarthVerticalDatum/Model/EarthVerticalDatumModelInfo.cs; EarthVerticalDatum/Service/Mcp/Tools",
         "CURATION-EARTHVERTICALDATUM-2026-09-27.md",
         "Eric Cayeux approval of EarthVerticalDatum vocabulary with LengthStandard for geoid undulation, 2026-09-27; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:authority-identifier",
+      "label": "Authority identifier",
+      "definition": "Identifier consisting of an authority namespace and an object code, optionally qualified by registry version and URI.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "authority namespace",
+        "object category"
+      ],
+      "constraints": [
+        "A code alone is not globally unique. A provider UUID is not an authority code."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:catalog-entry-provenance",
+      "label": "Catalogue entry provenance",
+      "definition": "Source, source version and identity-matching evidence for a catalogue definition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source catalogue",
+        "matching method"
+      ],
+      "constraints": [
+        "A matching status is not the semantic curation status. Source authority does not imply local executability."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:ellipsoid-axis-length",
+      "label": "Ellipsoid axis length",
+      "definition": "Length of a principal semi-axis of a reference ellipsoid.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "ellipsoid definition",
+        "semi-axis role"
+      ],
+      "constraints": [
+        "A semi-axis length is not a radius at an arbitrary latitude."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "EarthGeodesy/WebPages/ReferenceEllipsoidEdit.razor",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:semi-major-axis",
+      "label": "Semi-major axis",
+      "definition": "Role identifying the equatorial semi-major axis a of an oblate ellipsoid of revolution.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:semi-minor-axis",
+      "label": "Semi-minor axis",
+      "definition": "Role identifying the polar semi-minor axis b of an oblate ellipsoid of revolution.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:inverse-flattening",
+      "label": "Inverse flattening",
+      "definition": "Reciprocal of ellipsoidal flattening f=(a-b)/a for a non-spherical ellipsoid.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [
+        "InverseFlattening",
+        "1/f"
+      ],
+      "quantityName": "InverseFlattening",
+      "siUnit": "1",
+      "requiredContext": [
+        "ellipsoid definition",
+        "spherical representation"
+      ],
+      "constraints": [
+        "For a sphere f=0 and its reciprocal is not finite; a finite sentinel must be explicitly documented. EarthGeodesy uses zero as that sentinel.",
+        "Meaningful display precision is owned by the InverseFlattening quantity; it does not round stored values or establish ellipsoid accuracy."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:reference-ellipsoid-definition",
+      "label": "Reference ellipsoid definition",
+      "definition": "Definition of an ellipsoid of revolution used as a geometric reference surface, including its dimensions and shape.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "ellipsoid identity"
+      ],
+      "constraints": [
+        "An ellipsoid definition is neither its identifier nor a geodetic reference frame."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:ellipsoid-axis-length"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:inverse-flattening"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:prime-meridian",
+      "label": "Prime meridian",
+      "definition": "Meridian defining the origin from which geodetic longitudes are measured.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "reference body",
+        "meridian identity"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:prime-meridian-longitude",
+      "label": "Prime-meridian longitude",
+      "definition": "Angular position of a selected prime meridian measured east from a declared comparison meridian.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-longitude"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "comparison meridian"
+      ],
+      "constraints": [
+        "EarthGeodesy expresses this offset east of Greenwich; position longitude is instead measured from the selected datum prime meridian."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-reference-object",
+      "label": "Geodetic reference object",
+      "definition": "A terrestrial geodetic reference frame or datum ensemble used to reference coordinates.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "reference-object identity",
+        "reference-object type"
+      ],
+      "constraints": [
+        "An ellipsoid alone does not specify a reference frame."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-reference-frame",
+      "label": "Geodetic reference frame",
+      "definition": "Realization of a terrestrial reference system that establishes the origin, scale and orientation of coordinates.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-reference-object"
+      ],
+      "aliases": [
+        "geodetic datum"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "reference system",
+        "realization"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:static-geodetic-reference-frame",
+      "label": "Static geodetic reference frame",
+      "definition": "Geodetic reference frame in which defining station coordinates are treated as invariant with time.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-reference-frame"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "This convention does not imply that the physical Earth is motionless."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:dynamic-geodetic-reference-frame",
+      "label": "Dynamic geodetic reference frame",
+      "definition": "Geodetic reference frame whose defining coordinates evolve with time, referenced to a stated frame epoch.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-reference-frame"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "frame reference epoch",
+        "coordinate evolution model"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-datum-ensemble",
+      "label": "Geodetic datum ensemble",
+      "definition": "Collection of reference-frame realizations considered equivalent for applications within a stated ensemble accuracy.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-reference-object"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "member frames",
+        "ensemble accuracy"
+      ],
+      "constraints": [
+        "An ensemble is not an individual frame realization."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:datum-ensemble-accuracy",
+      "label": "Datum ensemble accuracy",
+      "definition": "Stated positional difference tolerance associated with treating ensemble members as equivalent.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "ensemble members",
+        "accuracy definition"
+      ],
+      "constraints": [
+        "Not an operation accuracy, observation uncertainty or guaranteed standard deviation."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "EarthGeodesy/WebPages/GeodeticDatumEdit.razor",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-reference-system",
+      "label": "Coordinate reference system",
+      "definition": "Coordinate system related to the Earth through a datum, reference frame or datum ensemble.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "coordinate system axes and units",
+        "datum or ensemble identity"
+      ],
+      "constraints": [
+        "A datum identifier alone is not a complete CRS definition."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-operation-domain",
+      "label": "Coordinate operation domain",
+      "definition": "Coordinate representation and dimensionality expected by an operation, such as geographic 2D, geographic 3D or geocentric 3D.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "operation",
+        "CRS axes"
+      ],
+      "constraints": [
+        "Geographic 2D does not define a height transformation."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-epoch",
+      "label": "Geodetic epoch",
+      "definition": "Time position at which a geodetic frame, coordinates or realization is defined or evaluated.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:instant"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "epoch purpose",
+        "calendar and decimal-year convention"
+      ],
+      "constraints": [
+        "An epoch is not an elapsed duration. Decimal years are a representation, not an SI duration unit."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-epoch",
+      "label": "Coordinate epoch",
+      "definition": "Epoch to which the coordinates of a position refer.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-epoch"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "coordinate set"
+      ],
+      "constraints": [
+        "Not the frame reference epoch or request execution time."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:frame-reference-epoch",
+      "label": "Frame reference epoch",
+      "definition": "Epoch at which the defining coordinates of a dynamic reference frame are specified.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-epoch"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "dynamic reference frame"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:anchor-epoch",
+      "label": "Anchor epoch",
+      "definition": "Epoch associated with the anchor definition of a reference frame.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-epoch"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "anchor definition"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:realization-epoch",
+      "label": "Realization epoch",
+      "definition": "Epoch associated with realization of a geodetic reference frame as documented by the defining authority.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:geodetic-epoch"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "authority realization description"
+      ],
+      "constraints": [
+        "An unparsed provider string is not automatically a UTC timestamp."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geographic-bounding-box",
+      "label": "Geographic bounding box",
+      "definition": "Geographic extent bounded by southern and northern latitudes and western and eastern longitudes.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "geographic reference",
+        "antimeridian convention"
+      ],
+      "constraints": [
+        "West may exceed east for an antimeridian-crossing extent. Longitude boundaries are not always numeric lower and upper bounds."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-latitude"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-longitude"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:southern-boundary",
+      "label": "Southern boundary",
+      "definition": "Southern latitude boundary of a geographic extent.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "bounded geographic extent"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:northern-boundary",
+      "label": "Northern boundary",
+      "definition": "Northern latitude boundary of a geographic extent.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "bounded geographic extent"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:western-boundary",
+      "label": "Western boundary",
+      "definition": "Western longitude boundary of a geographic extent, respecting its wrap convention.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "bounded geographic extent"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:eastern-boundary",
+      "label": "Eastern boundary",
+      "definition": "Eastern longitude boundary of a geographic extent, respecting its wrap convention.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "bounded geographic extent"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-usage",
+      "label": "Geodetic usage",
+      "definition": "Purpose and spatial extent for which a geodetic definition is intended to be used.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "geodetic definition"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-operation",
+      "label": "Coordinate operation",
+      "definition": "Specified operation that maps coordinates from a source CRS to a target CRS.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source CRS",
+        "target CRS",
+        "operation method and direction",
+        "area of use"
+      ],
+      "constraints": [
+        "Catalogue availability does not imply that an operation can execute in a particular runtime."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-transformation",
+      "label": "Geodetic transformation",
+      "definition": "Coordinate operation relating coordinates referenced to different geodetic frames or ensembles.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-operation"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source reference object",
+        "target reference object"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-operation-method",
+      "label": "Coordinate operation method",
+      "definition": "Identified mathematical method specifying how coordinate-operation parameters are applied.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "method identity",
+        "parameter definitions",
+        "sign and axis conventions"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-operation-parameter",
+      "label": "Coordinate operation parameter",
+      "definition": "Method-defined numeric or file-valued parameter of a coordinate operation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "parameter authority identifier",
+        "operation method",
+        "value representation",
+        "declared parameter unit or file reference"
+      ],
+      "constraints": [
+        "No universal physical quantity or SI unit applies to every operation parameter.",
+        "EarthGeodesy imported EPSG parameter values retain their source units; resolve Unit before conversion or arithmetic."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "EarthGeodesy/tools/EpsgCatalogGenerator/Program.cs: Parameters",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geocentric-translation",
+      "label": "Geocentric translation",
+      "definition": "Signed translation component between geocentric Cartesian coordinate frames.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "source and target frames",
+        "Cartesian axis",
+        "operation direction"
+      ],
+      "constraints": [
+        "Not a geodetic depth coordinate or a local north-east-down component."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:helmert-rotation",
+      "label": "Helmert rotation",
+      "definition": "Signed rotation parameter about a geocentric Cartesian axis in a Helmert transformation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "PlaneAngleGeodesic",
+      "siUnit": "rad",
+      "requiredContext": [
+        "Cartesian axis",
+        "rotation convention",
+        "operation direction"
+      ],
+      "constraints": [
+        "Position-vector and coordinate-frame conventions have opposite rotation signs; identify the method before use."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:cartesian-x",
+      "label": "Cartesian X component",
+      "definition": "Role identifying the X axis component in a declared Cartesian frame.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "Cartesian frame and axis definition"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:cartesian-y",
+      "label": "Cartesian Y component",
+      "definition": "Role identifying the Y axis component in a declared Cartesian frame.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "Cartesian frame and axis definition"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:cartesian-z",
+      "label": "Cartesian Z component",
+      "definition": "Role identifying the Z axis component in a declared Cartesian frame.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "Cartesian frame and axis definition"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:helmert-scale-difference",
+      "label": "Helmert scale difference",
+      "definition": "Dimensionless increment s of the multiplicative scale factor 1+s in a Helmert transformation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "HelmertScaleDifference",
+      "siUnit": "1",
+      "requiredContext": [
+        "operation direction"
+      ],
+      "constraints": [
+        "Scale difference is not the full scale factor. SI value 1e-6 corresponds to one part per million.",
+        "Do not apply 0.001 meaningful display precision: it would conceal common geodetic scale differences.",
+        "Meaningful display precision is owned by the HelmertScaleDifference quantity; it is not transformation accuracy."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "EarthGeodesy/Model/GeodeticTransformer.cs",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-operation-accuracy",
+      "label": "Coordinate operation accuracy",
+      "definition": "Stated estimate of positional accuracy attributable to a coordinate operation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "Length",
+      "siUnit": "m",
+      "requiredContext": [
+        "operation",
+        "accuracy definition and estimation basis"
+      ],
+      "constraints": [
+        "Null means unknown, not zero. No standard-deviation or confidence-level interpretation is implied."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:transformation-path",
+      "label": "Transformation path",
+      "definition": "Ordered sequence of directed coordinate operations connecting a source CRS or datum to a target.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source and target",
+        "operation order and direction"
+      ],
+      "constraints": [
+        "Operation order and direction are significant."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:coordinate-operation"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:transformation-path-accuracy",
+      "label": "Transformation path accuracy",
+      "definition": "Provider-derived accuracy estimate for a selected sequence of coordinate operations.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "Length",
+      "siUnit": "m",
+      "requiredContext": [
+        "path",
+        "aggregation rule",
+        "operation accuracy definitions"
+      ],
+      "constraints": [
+        "EarthGeodesy uses root-sum-square of known operation accuracies and returns null if any is unknown.",
+        "Root-sum-square aggregation is a provider convention, not proof of independence or a rigorous error bound."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "EarthGeodesy/Service/CatalogViewFactory.cs",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:ellipsoidal-depth-change",
+      "label": "Ellipsoidal depth change",
+      "definition": "Signed difference of output and input ellipsoidal depths for corresponding transformed positions.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "source ellipsoid",
+        "target ellipsoid",
+        "depth sign convention",
+        "depth transformation policy"
+      ],
+      "constraints": [
+        "Not geoid undulation, physical vertical displacement or a vertical-datum correction.",
+        "A zero numeric change under a 2D carry-through policy does not establish a transformed height."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "EarthGeodesy/Service/TransformationSafety.cs",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-absolute-value",
+      "label": "Maximum absolute value",
+      "definition": "Role identifying the largest absolute value over a stated collection or domain.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "collection or domain"
+      ],
+      "constraints": [
+        "A maximum absolute change is not automatically an error."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:source-reference",
+      "label": "Source reference",
+      "definition": "Role identifying the reference object or CRS in which operation input coordinates are expressed.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:target-reference",
+      "label": "Target reference",
+      "definition": "Role identifying the reference object or CRS in which operation output coordinates are expressed.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:output-positions",
+      "label": "Output positions",
+      "definition": "Role identifying the positions returned by an operation.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "output ordering and association"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-transformation-request",
+      "label": "Coordinate transformation request",
+      "definition": "Request to transform positions between specified coordinate references.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source and target references",
+        "coordinate epochs when required",
+        "selection and depth policies"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-position"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-transformation-response",
+      "label": "Coordinate transformation response",
+      "definition": "Result of transforming positions, including the applied path and interpretation of returned depths.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source and target references",
+        "depth policy",
+        "warnings and applicability"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-position"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:transformation-path"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:ellipsoidal-depth-change"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:transformation-path-candidate",
+      "label": "Transformation path candidate",
+      "definition": "Proposed transformation path with applicability, executability and selection evidence.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "input positions and epochs",
+        "runtime resources",
+        "catalogue revision"
+      ],
+      "constraints": [
+        "A candidate can be discovered without being executable."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:transformation-path"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:transformation-selection-token",
+      "label": "Transformation selection token",
+      "definition": "Opaque provider-issued token identifying a checked transformation selection in its bound request context.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "issuing provider",
+        "bound request",
+        "expiry and catalogue revisions"
+      ],
+      "constraints": [
+        "Not a reusable operation identifier, authority identifier or authentication credential. Re-resolve after expiry or bound-input changes."
+      ],
+      "evidence": [
+        "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
+        "CURATION-EARTHGEODESY-2026-09-27.md",
+        "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
       ],
       "relations": []
     }

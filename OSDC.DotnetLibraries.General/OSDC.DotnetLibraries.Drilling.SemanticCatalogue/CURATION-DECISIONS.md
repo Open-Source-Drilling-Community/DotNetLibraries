@@ -51,3 +51,11 @@ Approver: Eric Cayeux. Evidence: “Otherwise I accept your proposed additions. 
 Geoid undulation resolves to UnitConversion LengthStandard with SI metres and meaningful display precision 0.001 m (1 mm). This precision is owned by UnitConversion, not duplicated as model accuracy or a wire-rounding rule. Geoid representation error retains Length. The approved direction replaces provider GridResolutionMinutes with AngularGridSpacing in radians when integrating the provider. No provider code, NuGet publication or deployment is performed by this approval step.
 
 The catalogue now contains 72 Reviewed entries. New vocabulary discovered later still starts as Proposed.
+
+## 2026-09-28 — Complete EarthGeodesy vocabulary approval
+
+Approver: Eric Cayeux. Evidence: “You can upgrade the Semantic Catalogue to use the new unit definitions. Otherwise I agree with your proposed decisions.” This approves the 50 EarthGeodesy entries and decisions in CURATION-EARTHGEODESY-2026-09-27.md with the requested specialized quantity bindings. All 122 entries in source 0.5.0 are now Reviewed; the 72 published 0.4.0 definitions remain unchanged.
+
+The package references published Conversion.DrillingEngineering 3.4.3, which brings Conversion 3.4.3 transitively. InverseFlattening binds to InverseFlattening (meaningful precision 1e-9); HelmertScaleDifference binds to HelmertScaleDifference (1e-12). Both remain dimensionless. UnitConversion owns precision, not the semantic schema. The accepted frame/ensemble, epoch, original-unit parameter, depth-change and geographic-boundary distinctions remain in place.
+
+Provider integration is subsequent work. This approval neither publishes a NuGet nor deploys a service. Future concepts still require separate curation.

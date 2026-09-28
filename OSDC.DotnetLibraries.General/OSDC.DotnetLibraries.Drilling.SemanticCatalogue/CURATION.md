@@ -65,3 +65,7 @@ All 18 entries in [the approved EarthMagneticField vocabulary](CURATION-EARTHMAG
 ## EarthVerticalDatum increment — 0.4.0 (unpublished)
 
 See [the EarthVerticalDatum proposal and complete binding map](CURATION-EARTHVERTICALDATUM-2026-09-27.md). Fourteen EarthVerticalDatum entries were approved on 2026-09-27, extending the 58 existing Reviewed entries without changing them. All 72 entries are Reviewed. Geoid undulation uses LengthStandard with 1 mm meaningful display precision.
+
+## EarthGeodesy increment — 0.5.0 (unpublished)
+
+The [approved EarthGeodesy vocabulary](CURATION-EARTHGEODESY-2026-09-27.md) adds 50 Reviewed entries to the unchanged 72 Reviewed entries in published 0.4.0. Eric Cayeux approved the decisions on 2026-09-28, with InverseFlattening and HelmertScaleDifference bound to their new UnitConversion 3.4.3 quantities. All 122 entries are Reviewed. The review includes quantity choices, representation exceptions, a binding map and provider contract issues for the next integration step.
