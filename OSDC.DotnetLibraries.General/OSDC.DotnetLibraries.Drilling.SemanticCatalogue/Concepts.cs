@@ -232,4 +232,14 @@ public static class Concepts
     public const string TieInMeasuredDepth = "urn:osdc:semantic:tie-in-measured-depth";
     public const string DrillFloorDepth = "urn:osdc:semantic:drill-floor-depth";
     public const string DrillFloorDepthSource = "urn:osdc:semantic:drill-floor-depth-source";
+    // Canonical drilling terminology and reference conventions, 0.9.0.
+    public const string AlongHoleDepth = "urn:osdc:semantic:along-hole-depth";
+    public const string TieInAlongHoleDepth = "urn:osdc:semantic:tie-in-along-hole-depth";
+    public const string WellboreAzimuth = "urn:osdc:semantic:wellbore-azimuth";
+    public const string WellboreInclination = "urn:osdc:semantic:wellbore-inclination";
+    public const string AbsolutePressure = "urn:osdc:semantic:absolute-pressure";
+    public const string TrueNorthClockwise = "urn:osdc:semantic:true-north-clockwise";
+    public const string Wgs84DownwardNormal = "urn:osdc:semantic:wgs84-downward-normal";
+    public const string Vacuum = "urn:osdc:semantic:vacuum";
+    public const string Wgs84AlongHoleOrigin = "urn:osdc:semantic:wgs84-along-hole-origin";
 }

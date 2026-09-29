@@ -18,7 +18,10 @@
       "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
     "schemaVersion": {
-      "const": 1
+      "enum": [
+        1,
+        2
+      ]
     },
     "concepts": {
       "type": "array",
@@ -135,6 +138,48 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "referenceProfiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "bindings"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "bindings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "concept",
+                "reference"
+              ],
+              "properties": {
+                "concept": {
+                  "type": "string"
+                },
+                "reference": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "scope": {
+            "const": "canonical-storage-and-api"
           }
         }
       }

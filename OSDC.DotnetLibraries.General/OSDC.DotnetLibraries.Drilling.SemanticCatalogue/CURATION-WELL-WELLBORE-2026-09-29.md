@@ -1,3 +1,5 @@
+> Superseded clarification: see [canonical references](CURATION-CANONICAL-REFERENCES-2026-09-29.md). Along-hole zero is the parent path intersection/extension to WGS84. No new per-record reference field is to be added; the earlier missing-origin recommendation below is historical.
+
 # Well and WellBore vocabulary — 2026-09-29
 
 Status: **Reviewed**, approved by Eric Cayeux on 2026-09-29. The tie-in interpretation was also explicitly confirmed: parent-wellbore measured depth with an explicit MD origin/reference, without automatic WGS84 vertical-depth conversion.

@@ -31,11 +31,22 @@ public sealed record SemanticDefinition
     public string? SupersededBy { get; init; }
 }
 
+public sealed record CanonicalReferenceBinding(string Concept, string Reference);
+
+public sealed record ReferenceProfile
+{
+    public string Scope { get; init; } = "canonical-storage-and-api";
+    public required string Id { get; init; }
+    public required string Version { get; init; }
+    public IReadOnlyList<CanonicalReferenceBinding> Bindings { get; init; } = Array.Empty<CanonicalReferenceBinding>();
+}
+
 public sealed record CatalogueDocument
 {
     public required string Id { get; init; }
     public required string Version { get; init; }
     public int SchemaVersion { get; init; } = 1;
+    public IReadOnlyList<ReferenceProfile> ReferenceProfiles { get; init; } = Array.Empty<ReferenceProfile>();
     public required IReadOnlyList<SemanticDefinition> Concepts { get; init; }
 }
 

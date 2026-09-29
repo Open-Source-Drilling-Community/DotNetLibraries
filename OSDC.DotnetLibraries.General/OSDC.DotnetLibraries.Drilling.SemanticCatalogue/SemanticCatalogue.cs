@@ -22,10 +22,12 @@ public sealed class SemanticCatalogue
 
     public SemanticCatalogue(CatalogueDocument document)
     {
-        if (document.SchemaVersion != 1 || string.IsNullOrWhiteSpace(document.Id) || !Version.TryParse(document.Version, out _))
+        if (document.SchemaVersion is not (1 or 2) || string.IsNullOrWhiteSpace(document.Id) || !Version.TryParse(document.Version, out _))
             throw new InvalidDataException("Invalid catalogue identity or version.");
         // Own a detached snapshot so mutation of caller-owned arrays cannot alter validation results.
-        Document = document with { Concepts = Array.AsReadOnly(document.Concepts.Select(c => c with
+        Document = document with {
+            ReferenceProfiles = Array.AsReadOnly(document.ReferenceProfiles.Select(p => p with
+            { Bindings = Array.AsReadOnly(p.Bindings.ToArray()) }).ToArray()), Concepts = Array.AsReadOnly(document.Concepts.Select(c => c with
         {
             Parents = Array.AsReadOnly(c.Parents.ToArray()), Aliases = Array.AsReadOnly(c.Aliases.ToArray()),
             RequiredContext = Array.AsReadOnly(c.RequiredContext.ToArray()), Constraints = Array.AsReadOnly(c.Constraints.ToArray()),
@@ -57,6 +59,46 @@ public sealed class SemanticCatalogue
                 throw new InvalidDataException($"Conflicting inherited quantity/unit: {concept.Id}");
             foreach (string quantity in quantities) _ = ResolveQuantity(quantity);
         }
+        if (Document.SchemaVersion == 1 && Document.ReferenceProfiles.Count != 0)
+            throw new InvalidDataException("Reference profiles require schema version 2.");
+        var profileIds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var profile in Document.ReferenceProfiles)
+        {
+            if (profile.Scope != "canonical-storage-and-api" || !Uri.TryCreate(profile.Id, UriKind.Absolute, out _) || !Version.TryParse(profile.Version, out _) || !profileIds.Add(profile.Id))
+                throw new InvalidDataException("Invalid or duplicate reference profile.");
+            var bound = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var binding in profile.Bindings)
+                if (Get(binding.Concept).Kind != SemanticKind.Noun || Get(binding.Reference).Kind != SemanticKind.Reference || !bound.Add(binding.Concept))
+                    throw new InvalidDataException("Invalid or duplicate canonical reference binding.");
+            foreach (var concept in Document.Concepts.Where(c => c.Kind == SemanticKind.Noun))
+                _ = CanonicalReference(concept.Id, profile.Id);
+        }
+    }
+
+    public const string OsdcCanonicalDrilling = "urn:osdc:reference-profile:canonical-drilling";
+
+    public ReferenceProfile GetReferenceProfile(string id) => Document.ReferenceProfiles.SingleOrDefault(p => p.Id == id)
+        ?? throw new KeyNotFoundException(id);
+
+    /// <summary>Resolve a profile convention through concept inheritance; conflicting ancestors fail closed.</summary>
+    public string? CanonicalReference(string concept, string profile = OsdcCanonicalDrilling)
+    {
+        _ = Get(concept);
+        string[] references = GetReferenceProfile(profile).Bindings.Where(b => IsA(concept, b.Concept))
+            .Select(b => b.Reference).Distinct(StringComparer.Ordinal).ToArray();
+        if (references.Length > 1) throw new InvalidDataException($"Conflicting canonical references for {concept}.");
+        return references.SingleOrDefault();
+    }
+
+    public string? ResolveReference(string concept, string? declaredReference, string? profile = null)
+    {
+        _ = Get(concept);
+        if (declaredReference is not null && Get(declaredReference).Kind != SemanticKind.Reference)
+            throw new InvalidDataException("Reference binding must refer to a reference convention.");
+        string? canonical = profile is null ? null : CanonicalReference(concept, profile);
+        if (canonical is not null && declaredReference is not null && canonical != declaredReference)
+            throw new InvalidDataException($"Reference {declaredReference} contradicts {profile} for {concept}; expected {canonical}.");
+        return canonical ?? declaredReference;
     }
 
     public SemanticDefinition Get(string id) => concepts.TryGetValue(id, out var concept) ? concept : throw new KeyNotFoundException(id);

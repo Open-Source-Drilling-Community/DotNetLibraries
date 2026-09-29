@@ -1,12 +1,24 @@
 # OSDC Drilling Semantic Catalogue
 
-Source **0.8.0** adds **15 Reviewed Well/WellBore concepts**, approved by Eric Cayeux on 2026-09-29. The 208 published 0.7.0 definitions remain unchanged; all 223 entries are Reviewed. See the [approved vocabulary and provider binding map](CURATION-WELL-WELLBORE-2026-09-29.md).
+Source **0.9.0** defines preferred along-hole terminology and a versioned OSDC canonical reference profile. It contains **232 concepts: 230 Reviewed and two Deprecated legacy names**. The 208 definitions from 0.7.0 remain unchanged. See [the decisions and provider audit](CURATION-CANONICAL-REFERENCES-2026-09-29.md).
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.8.0 is prepared for packaging; publication and provider adoption are separate operations.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.9.0 is prepared for packaging; publication and provider adoption are separate operations.
+
+## Canonical drilling references
+
+```csharp
+[Semantic(Concepts.TieInAlongHoleDepth,
+    ReferenceProfile = SemanticCatalogue.OsdcCanonicalDrilling)]
+public double TieInPointAlongHoleDepth { get; set; }
+```
+
+This resolves the WGS84 path-intersection along-hole reference automatically. Along-hole zero is the intersection of the parent path (or its defined extension) with the WGS84 ellipsoid, not a vertical elevation offset. MeasuredDepth and TieInMeasuredDepth IDs remain resolvable but are deprecated in favour of AlongHoleDepth and TieInAlongHoleDepth; acquisition provenance is separate.
+
+`SemanticMetadata.Create` supplies the same mechanism for inherited/provider-owned bindings. Metadata emits resolved references, profile identity/version, reference definitions/context and inherited constraints. Contradictory explicit references fail. Metadata explicitly identifies its scope as canonical storage/API, with presentation references allowed. User-selected MSL, ground/mud-line, rotary-table and other supported display references are converted at the presentation boundary; they do not redefine persisted or transmitted values. The profile applies only when the provider selects it; generic geodesy conversions retain their source/target datum. A scalar uncertainty does not inherit its mean's origin. Schema version 2 carries portable referenceProfiles; schema version 1 remains readable without profiles.
 
 ## Ownership and curation
 
-`catalogue.json` is the authoritative language-neutral vocabulary, embedded in the assembly and packed alongside `catalogue.schema.json`. `Concepts.cs` exposes stable URN constants; tests ensure these refer to actual entries. The 36 EarthGravity definitions have **Reviewed** status following Eric Cayeux’s approval on 2026-09-26. Provider annotations remain assertions about their own fields; future concepts start as Proposed.
+`catalogue.json` is the authoritative language-neutral vocabulary, embedded in the assembly and packed alongside `catalogue.schema.json`. `Concepts.cs` exposes stable URN constants; tests ensure these refer to actual entries. The 36 EarthGravity definitions have **Reviewed** status following Eric Cayeuxâ€™s approval on 2026-09-26. Provider annotations remain assertions about their own fields; future concepts start as Proposed.
 
 Each definition has an immutable semantic ID, label, definition, kind, curation status, aliases, parents, quantity name, SI representation, required context, constraints, source evidence, typed HasPart/LocatedAt/EvaluatedUsing relationships and optional supersession. Nouns, roles and reference conventions are distinct kinds. Only `parents` expresses specialization. Physical quantity and field role are not parent relationships. Aliases are discovery hints and can return multiple concepts.
 
@@ -18,7 +30,7 @@ The catalogue owns reusable meanings. Microservices own bindings to concrete dat
 
 The library references `OSDC.UnitConversion.Conversion.DrillingEngineering` 3.4.5 and obtains the general Conversion library transitively. Quantity identities and SI unit names are resolved through those libraries, not duplicated UUID definitions. Earth Gravity's choices are PlaneAngleGeodesic, DepthDrilling and AccelerationDrilling. Quantities and units do not establish reference frames or additive meaning.
 
-Total gravitational plus centrifugal potential binds to `EarthGravityPotential`, a specialization of the general `GravityPotential` quantity in UnitConversion. Its SI representation is m²/s² (equivalently J/kg); ft²/s² and ft·lbf/lbm are available. The Earth specialization defines a meaningful display precision of 0.01 m²/s², without asserting model accuracy or rounding stored values. Energy density is not a substitute.
+Total gravitational plus centrifugal potential binds to `EarthGravityPotential`, a specialization of the general `GravityPotential` quantity in UnitConversion. Its SI representation is mÂ²/sÂ² (equivalently J/kg); ftÂ²/sÂ² and ftÂ·lbf/lbm are available. The Earth specialization defines a meaningful display precision of 0.01 mÂ²/sÂ², without asserting model accuracy or rounding stored values. Energy density is not a substitute.
 
 ## Provider usage
 

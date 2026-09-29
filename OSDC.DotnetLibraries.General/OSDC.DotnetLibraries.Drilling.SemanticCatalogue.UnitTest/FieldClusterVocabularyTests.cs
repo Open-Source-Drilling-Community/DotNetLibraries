@@ -15,11 +15,11 @@ public class FieldClusterVocabularyTests
     public void PublishedDefinitionsAreUnchangedAndFieldClusterVocabularyIsCurated()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.8.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(223));
-        Assert.That(c.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(223));
-        Assert.That(c.Document.Concepts.Skip(156).All(x => x.Status == CurationStatus.Reviewed), Is.True);
-        Assert.That(c.Document.Concepts.Skip(156).All(x => x.Evidence.Count > 0), Is.True);
+        Assert.That(c.Document.Version, Is.EqualTo("0.9.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(232));
+        Assert.That(c.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(230));
+        Assert.That(c.Document.Concepts.Skip(156).Take(52).All(x => x.Status == CurationStatus.Reviewed), Is.True);
+        Assert.That(c.Document.Concepts.Skip(156).Take(52).All(x => x.Evidence.Count > 0), Is.True);
 
         var assembly = typeof(Catalogue).Assembly;
         using var stream = assembly.GetManifestResourceStream(
@@ -124,7 +124,7 @@ public class FieldClusterVocabularyTests
     public void ProviderMetadataResolvesReviewedQuantitiesAndKeepsRolesSeparate()
     {
         var margin = SemanticMetadata.For(typeof(ReviewedBindings).GetProperty("Margin")!)!;
-        Assert.That(margin["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.8.0"));
+        Assert.That(margin["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.9.0"));
         Assert.That(margin["curationStatus"]!.GetValue<string>(), Is.EqualTo("Reviewed"));
         Assert.That(margin["physicalQuantity"]!["name"]!.GetValue<string>(), Is.EqualTo("LengthStandard"));
         var mean = SemanticMetadata.For(typeof(ReviewedBindings).GetProperty("Mean")!)!;

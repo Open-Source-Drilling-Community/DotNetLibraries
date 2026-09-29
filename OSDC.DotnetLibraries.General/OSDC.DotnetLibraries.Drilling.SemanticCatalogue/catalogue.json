@@ -1,7 +1,7 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.8.0",
-  "schemaVersion": 1,
+  "version": "0.9.0",
+  "schemaVersion": 2,
   "concepts": [
     {
       "id": "urn:osdc:semantic:coordinate",
@@ -5139,7 +5139,7 @@
       "label": "Measured depth",
       "definition": "Curvilinear abscissa along a wellbore path, measured from its declared measured-depth origin in the declared increasing direction.",
       "kind": "Noun",
-      "status": "Reviewed",
+      "status": "Deprecated",
       "parents": [
         "urn:osdc:semantic:curvilinear-abscissa",
         "urn:osdc:semantic:depth-coordinate"
@@ -5163,14 +5163,15 @@
         "WellBore/Model/WellBoreTopologyUpdate.cs",
         "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
       ],
-      "relations": []
+      "relations": [],
+      "supersededBy": "urn:osdc:semantic:along-hole-depth"
     },
     {
       "id": "urn:osdc:semantic:tie-in-measured-depth",
       "label": "Tie-in measured depth",
       "definition": "Measured-depth coordinate of a sidetrack tie-in on the parent wellbore path, expressed using that parent path's MD origin.",
       "kind": "Noun",
-      "status": "Reviewed",
+      "status": "Deprecated",
       "parents": [
         "urn:osdc:semantic:measured-depth"
       ],
@@ -5192,7 +5193,8 @@
         "WellBore/Service/Managers/WellBoreReferenceIntegrityValidator.cs: ValidateTopology",
         "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
       ],
-      "relations": []
+      "relations": [],
+      "supersededBy": "urn:osdc:semantic:tie-in-along-hole-depth"
     },
     {
       "id": "urn:osdc:semantic:drill-floor-depth",
@@ -5249,6 +5251,262 @@
         "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
       ],
       "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:along-hole-depth",
+      "label": "Along-hole depth",
+      "definition": "Curvilinear abscissa along an oriented wellbore path, expressed as accumulated arc length from the origin established by the applicable reference convention. It may be planned, calculated, interpolated or measured.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:curvilinear-abscissa",
+        "urn:osdc:semantic:depth-coordinate"
+      ],
+      "aliases": [
+        "Along hole depth",
+        "AlongHoleDepth",
+        "AHD",
+        "Measured depth",
+        "MD"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "wellbore path and applicable realization"
+      ],
+      "constraints": [
+        "Not a vertical depth or an additive segment length.",
+        "Acquisition provenance is independent of the coordinate concept.",
+        "OSDC canonical storage and API values use the WGS84 reference convention; display/import references require explicit conversion."
+      ],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:tie-in-along-hole-depth",
+      "label": "Tie-in along-hole depth",
+      "definition": "Along-hole coordinate of a sidetrack tie-in on the parent wellbore path, using the applicable reference convention.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:along-hole-depth"
+      ],
+      "aliases": [
+        "TieInPointAlongHoleDepth",
+        "TieInAlongHoleDepth",
+        "Tie-in measured depth"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "sidetrack wellbore",
+        "parent wellbore"
+      ],
+      "constraints": [
+        "Use the parent path, not the child path or a vertical depth."
+      ],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wellbore-azimuth",
+      "label": "Wellbore azimuth",
+      "definition": "Azimuth of the wellbore tangent projected onto the local horizontal plane.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate"
+      ],
+      "aliases": [],
+      "quantityName": "PlaneAngleDrilling",
+      "siUnit": "rad",
+      "requiredContext": [
+        "evaluation position"
+      ],
+      "constraints": [
+        "Undefined where the tangent has no horizontal component."
+      ],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wellbore-inclination",
+      "label": "Wellbore inclination",
+      "definition": "Angle between the oriented wellbore tangent and the downward normal to the WGS84 ellipsoid; zero points downward, pi/2 is horizontal and pi points upward.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate"
+      ],
+      "aliases": [
+        "Internal wellbore inclination"
+      ],
+      "quantityName": "PlaneAngleDrilling",
+      "siUnit": "rad",
+      "requiredContext": [
+        "evaluation position"
+      ],
+      "constraints": [
+        "Not magnetic dip or an inclination referenced to the local gravity vector."
+      ],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:absolute-pressure",
+      "label": "Absolute pressure",
+      "definition": "Pressure with zero referenced to vacuum; measurement or calculation provenance does not alter the reference.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "PressureDrilling",
+      "siUnit": "Pa",
+      "requiredContext": [],
+      "constraints": [
+        "Not gauge pressure or a pressure difference.",
+        "Pressure uncertainty has no vacuum or atmospheric origin."
+      ],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:true-north-clockwise",
+      "label": "True-north clockwise azimuth convention",
+      "definition": "Zero is local true/geodetic north; angles increase clockwise toward east about the downward local normal. Canonical azimuth is in [0, 2*pi) radians; magnetic north and grid north are different references.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wgs84-downward-normal",
+      "label": "WGS84 downward ellipsoid normal",
+      "definition": "Downward normal to the WGS84 ellipsoid at the evaluation position. It is distinct from geocentric radial direction and the local gravity/plumb-line direction.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:vacuum",
+      "label": "Vacuum pressure reference",
+      "definition": "Zero absolute pressure is referenced to vacuum, not local atmospheric pressure.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-CANONICAL-REFERENCES-2026-09-29.md; approved direction by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wgs84-along-hole-origin",
+      "label": "WGS84 path-intersection along-hole reference",
+      "definition": "Zero along-hole depth is the intersection of the oriented wellbore path, or its defined extension, with the WGS84 ellipsoid. The coordinate is signed accumulated arc length from that intersection along the declared path orientation. It is not obtained by adding or subtracting a vertical elevation offset.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "wellbore path and extension model",
+        "selected intersection when multiple intersections exist",
+        "increasing path direction"
+      ],
+      "constraints": [
+        "Do not infer an intersection or extrapolation model from a scalar depth.",
+        "When the path/reference intersection cannot be established, reference conversion is unavailable."
+      ],
+      "evidence": [
+        "Eric Cayeux clarification on 2026-09-29: intersection/extension to WGS84 ellipsoid."
+      ],
+      "relations": []
+    }
+  ],
+  "referenceProfiles": [
+    {
+      "id": "urn:osdc:reference-profile:canonical-drilling",
+      "version": "1.0.0",
+      "bindings": [
+        {
+          "concept": "urn:osdc:semantic:ellipsoidal-depth",
+          "reference": "urn:osdc:semantic:wgs84"
+        },
+        {
+          "concept": "urn:osdc:semantic:along-hole-depth",
+          "reference": "urn:osdc:semantic:wgs84-along-hole-origin"
+        },
+        {
+          "concept": "urn:osdc:semantic:measured-depth",
+          "reference": "urn:osdc:semantic:wgs84-along-hole-origin"
+        },
+        {
+          "concept": "urn:osdc:semantic:geodetic-latitude",
+          "reference": "urn:osdc:semantic:wgs84"
+        },
+        {
+          "concept": "urn:osdc:semantic:geodetic-longitude",
+          "reference": "urn:osdc:semantic:wgs84"
+        },
+        {
+          "concept": "urn:osdc:semantic:riemannian-north",
+          "reference": "urn:osdc:semantic:wgs84-riemannian-coordinates"
+        },
+        {
+          "concept": "urn:osdc:semantic:riemannian-east",
+          "reference": "urn:osdc:semantic:wgs84-riemannian-coordinates"
+        },
+        {
+          "concept": "urn:osdc:semantic:wellbore-azimuth",
+          "reference": "urn:osdc:semantic:true-north-clockwise"
+        },
+        {
+          "concept": "urn:osdc:semantic:wellbore-inclination",
+          "reference": "urn:osdc:semantic:wgs84-downward-normal"
+        },
+        {
+          "concept": "urn:osdc:semantic:absolute-pressure",
+          "reference": "urn:osdc:semantic:vacuum"
+        },
+        {
+          "concept": "urn:osdc:semantic:drill-floor-depth",
+          "reference": "urn:osdc:semantic:wgs84"
+        }
+      ],
+      "scope": "canonical-storage-and-api"
     }
   ]
 }
