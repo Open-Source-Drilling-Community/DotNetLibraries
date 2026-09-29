@@ -98,12 +98,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest", "OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest\OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest.csproj", "{AE0F2A7B-9B2F-45CC-85EB-081D9561920D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.ResourceClassification", "OSDC.DotnetLibraries.General.ResourceClassification\OSDC.DotnetLibraries.General.ResourceClassification.csproj", "{28097297-600F-4DD4-86F2-B76C50D4BD78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSDC.DotnetLibraries.General.ResourceClassification.UnitTest", "OSDC.DotnetLibraries.General.ResourceClassification.UnitTest\OSDC.DotnetLibraries.General.ResourceClassification.UnitTest.csproj", "{9853B672-1D96-45D9-8281-2891D8A289E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28097297-600F-4DD4-86F2-B76C50D4BD78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28097297-600F-4DD4-86F2-B76C50D4BD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28097297-600F-4DD4-86F2-B76C50D4BD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28097297-600F-4DD4-86F2-B76C50D4BD78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9853B672-1D96-45D9-8281-2891D8A289E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9853B672-1D96-45D9-8281-2891D8A289E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9853B672-1D96-45D9-8281-2891D8A289E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9853B672-1D96-45D9-8281-2891D8A289E6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{51EE11E1-26B1-4422-B49F-2EE6E1E8EE61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{51EE11E1-26B1-4422-B49F-2EE6E1E8EE61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51EE11E1-26B1-4422-B49F-2EE6E1E8EE61}.Release|Any CPU.ActiveCfg = Release|Any CPU

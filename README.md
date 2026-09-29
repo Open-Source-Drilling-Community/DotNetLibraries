@@ -27,3 +27,11 @@ Most of these libraries have been packaged as .NET NuGets and published to [nuge
 ## Shared semantic catalogue
 
 [Drilling.SemanticCatalogue](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/README.md) provides a versioned, language-neutral semantic vocabulary, .NET model annotations and bindings to the existing unit-conversion catalogues. Published 0.4.0 covers the curated EarthGravity, EarthMagneticField and EarthVerticalDatum vocabulary. Source 0.5.0 adds the curated EarthGeodesy vocabulary, including the InverseFlattening and HelmertScaleDifference quantities from UnitConversion 3.4.3.
+
+## Shared resource classification
+
+[General.ResourceClassification](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/README.md)
+provides common identity, feature and membership models and pure validation
+helpers. Version 0.1.0 targets .NET 8 and references DataManagement 2.2.0.
+Field and Cluster are the initial consumer migrations. The package README
+documents ownership, contract preservation, validation policies and publication order.
