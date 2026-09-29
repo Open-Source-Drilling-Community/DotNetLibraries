@@ -21,7 +21,7 @@ public class CatalogueTests
         Assert.That(catalogue.Get(Concepts.GenericGeodeticPosition).Relations.Select(r => r.Target), Does.Not.Contain(Concepts.EllipsoidalDepth));
         Assert.That(catalogue.Get(Concepts.Request).Constraints, Is.Empty);
         Assert.That(catalogue.Get(Concepts.Response).Constraints, Is.Empty);
-        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Reviewed), Is.EqualTo(156),
+        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Reviewed), Is.EqualTo(208),
             "EarthGravity approved on 2026-09-26; digest, EarthMagneticField and EarthVerticalDatum on 2026-09-27; EarthGeodesy and EarthCartographicProjection on 2026-09-28.");
     }
 
@@ -29,8 +29,8 @@ public class CatalogueTests
     public void CuratedMagneticVocabularyPreservesScientificDistinctions()
     {
         var catalogue = Catalogue.Default;
-        Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(156));
-        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Reviewed), Is.EqualTo(156));
+        Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(208));
+        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Reviewed), Is.EqualTo(208));
         Assert.That(catalogue.IsA(Concepts.MagneticDip, Concepts.Dip), Is.True);
         Assert.That(catalogue.Quantity(Concepts.MagneticDip)!.Id, Is.EqualTo(PlaneAngleDrillingQuantity.Instance.ID));
         Assert.That(catalogue.Quantity(Concepts.MagneticDeclination)!.Id, Is.EqualTo(PlaneAngleDrillingQuantity.Instance.ID));
@@ -50,7 +50,7 @@ public class CatalogueTests
     public void CuratedVerticalDatumVocabularyKeepsDepthSeparationAngleAndErrorDistinct()
     {
         var catalogue = Catalogue.Default;
-        Assert.That(catalogue.Document.Concepts.Count(c => c.Status == CurationStatus.Proposed), Is.Zero);
+        Assert.That(catalogue.Document.Concepts.Take(156).Count(c => c.Status == CurationStatus.Proposed), Is.Zero);
         Assert.That(catalogue.Get(Concepts.GeoidUndulation).Status, Is.EqualTo(CurationStatus.Reviewed));
         Assert.That(catalogue.IsA(Concepts.GeoidReferencedDepth, Concepts.Depth), Is.True);
         Assert.That(catalogue.IsA(Concepts.GeoidReferencedDepth, Concepts.EllipsoidalDepth), Is.False);

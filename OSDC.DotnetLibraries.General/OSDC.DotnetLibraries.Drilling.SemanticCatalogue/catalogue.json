@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "schemaVersion": 1,
   "concepts": [
     {
@@ -3645,6 +3645,1216 @@
         "EarthCartographicProjection/Model/DomainModels.cs",
         "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
         "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:managed-resource",
+      "label": "Managed resource",
+      "definition": "An individually managed domain object or catalogue definition with identity in an owning service; distinct from its serialized representation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "owning service",
+        "resource type"
+      ],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/Field.cs",
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:resource-identifier",
+      "label": "Resource identifier",
+      "definition": "A UUID identifying a resource, nested object, catalogue definition, option or assignment in a declared ownership and type scope.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [
+        "UUID"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "identified object type",
+        "owning service or containing resource"
+      ],
+      "constraints": [
+        "A display name or assigned external identity value is not this UUID.",
+        "Null means absent where permitted by the provider; an empty UUID does not identify a resource."
+      ],
+      "evidence": [
+        "Field/Model/FieldDelineationLine.cs",
+        "Cluster/Model/Slot.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityAssignment.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:resource-metadata",
+      "label": "Resource metadata",
+      "definition": "Identity and service-location metadata accompanying a managed resource; a locator is not the semantic identity.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.DataManagement/MetaInfo.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:resource-identifier"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:resource-name",
+      "label": "Resource name",
+      "definition": "Human-readable name of a resource, definition or option; not necessarily unique or stable.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/Field.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureOption.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:resource-description",
+      "label": "Resource description",
+      "definition": "Human-readable descriptive text about a resource.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/Field.cs",
+        "Cluster/Model/Slot.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:resource-identity-definition",
+      "label": "Resource identity definition",
+      "definition": "Definition of an identification scheme whose values may be assigned to resources, for example an operator naming scheme.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Not an authentication identity or the resource UUID."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityDefinition.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:resource-identity-value",
+      "label": "Resource identity value",
+      "definition": "Value identifying a resource within a selected identification scheme; its interpretation and uniqueness depend on that scheme.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "identity definition",
+        "identified resource"
+      ],
+      "constraints": [
+        "Do not infer global uniqueness or UUID syntax from this value."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityAssignment.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:resource-identity-assignment",
+      "label": "Resource identity assignment",
+      "definition": "Association of one resource with an identification scheme and a value in that scheme.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "assigned resource",
+        "identity definition"
+      ],
+      "constraints": [
+        "The assignment UUID is distinct from the definition UUID and the identified resource UUID."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityAssignment.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:resource-identity-value"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:classification-category",
+      "label": "Classification category",
+      "definition": "A service-owned catalogue definition grouping selectable options and their assignment rules for resources.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureCategory.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/MembershipCategory.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:classification-option"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:classification-option",
+      "label": "Classification option",
+      "definition": "A named selectable alternative owned by a classification category.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "owning category"
+      ],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureOption.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/MembershipOption.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:classification-assignment",
+      "label": "Classification assignment",
+      "definition": "Association of a resource with one option of a selected category, optionally qualified by validity bounds.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "assigned resource",
+        "category",
+        "option belonging to category"
+      ],
+      "constraints": [
+        "The assignment, category and option have distinct identity roles.",
+        "Null references describe an unlinked draft only when permitted by the provider."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureAssignment.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/MembershipAssignment.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:feature-category",
+      "label": "Feature category",
+      "definition": "Classification category describing a descriptive characteristic of an assigned resource.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:classification-category"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureCategory.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:feature-option"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:feature-option",
+      "label": "Feature option",
+      "definition": "Selectable option representing a descriptive characteristic.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:classification-option"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureOption.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:feature-assignment",
+      "label": "Feature assignment",
+      "definition": "Assignment of a descriptive characteristic option to a resource.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:classification-assignment"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureAssignment.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:membership-category",
+      "label": "Membership category",
+      "definition": "Classification category describing a membership in a category-defined grouping of an assigned resource.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:classification-category"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Membership does not imply access rights, ownership or a remotely addressable group."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/MembershipCategory.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:membership-option"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:membership-option",
+      "label": "Membership option",
+      "definition": "Selectable option representing a membership in a category-defined grouping.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:classification-option"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Membership does not imply access rights, ownership or a remotely addressable group."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/MembershipOption.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:membership-assignment",
+      "label": "Membership assignment",
+      "definition": "Assignment of a membership in a category-defined grouping option to a resource.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:classification-assignment"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Membership does not imply access rights, ownership or a remotely addressable group."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/MembershipAssignment.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:category-exclusivity",
+      "label": "Category exclusivity",
+      "definition": "Boolean rule declaring that at most one category assignment may be active on a resource at the same instant.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "category",
+        "validity interpretation"
+      ],
+      "constraints": [
+        "For undated categories, exclusivity permits at most one assignment.",
+        "Repeated assignments of the same option also count as multiple assignments."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/ClassificationValidation.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:category-validity-period-enabled",
+      "label": "Category validity-period support",
+      "definition": "Boolean rule indicating whether assignments in a category may carry validity bounds.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Support for validity bounds does not imply that both bounds must be supplied."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/FeatureCategory.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/MembershipCategory.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:assignment-validity-period",
+      "label": "Assignment validity period",
+      "definition": "Time interval during which an assignment is effective, including the declared start and end instants.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "assignment",
+        "time scale"
+      ],
+      "constraints": [
+        "Bounds are inclusive; null lower or upper bounds are unbounded.",
+        "Start must not be later than end.",
+        "Two periods touching at an endpoint overlap."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/ClassificationValidation.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:instant"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:creation-time",
+      "label": "Creation time",
+      "definition": "Instant at which a resource or definition was created. Not the time a physical quantity was measured.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityDefinition.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/ClassificationValidation.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:last-modification-time",
+      "label": "Last modification time",
+      "definition": "Instant of the last resource or definition update. A provider may additionally use its serialized value as an opaque concurrency token.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityDefinition.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/ClassificationValidation.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:validity-start",
+      "label": "Validity start",
+      "definition": "Inclusive lower time bound of assignment validity.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:lower-bound"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityDefinition.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/ClassificationValidation.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:validity-end",
+      "label": "Validity end",
+      "definition": "Inclusive upper time bound of assignment validity.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:upper-bound"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/IdentityDefinition.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.ResourceClassification/ClassificationValidation.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:drilling-field",
+      "label": "Drilling field",
+      "definition": "Named field resource organizing drilling context, classification and user-defined spatial delineations. Its catalogue identity does not assert a particular reservoir or legal boundary.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [
+        "Field"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/Field.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:resource-identity-assignment"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:feature-assignment"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:membership-assignment"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:field-delineation-line"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:well-cluster",
+      "label": "Well cluster",
+      "definition": "Managed grouping of well slots and their shared drilling-site context, optionally linked to a field and rig. May represent a single-well site.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [
+        "Cluster"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "A single-well flag does not change the resource into a Well entity."
+      ],
+      "evidence": [
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:resource-identity-assignment"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:feature-assignment"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:well-slot"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:well-slot",
+      "label": "Well slot",
+      "definition": "Identified position or provision for a well within a cluster; distinct from the well, wellbore and trajectory that may use it.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [
+        "Slot"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "containing cluster"
+      ],
+      "constraints": [],
+      "evidence": [
+        "Cluster/Model/Slot.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:feature-assignment"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:single-well-cluster-flag",
+      "label": "Single-well cluster flag",
+      "definition": "Boolean declaration that a cluster represents a single-well site rather than a multi-well grouping.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:fixed-platform-flag",
+      "label": "Fixed-platform flag",
+      "definition": "Boolean declaration that a cluster is associated with a fixed platform rather than a floating or moveable rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "This flag alone does not determine whether the site is onshore, offshore, occupied or operational."
+      ],
+      "evidence": [
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:reference-location",
+      "label": "Reference location",
+      "definition": "Role of a position used as the contextual reference point of a field or cluster; not necessarily a centroid, slot or local coordinate origin.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/Field.cs",
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:delineation-line-type",
+      "label": "Delineation line type",
+      "definition": "User-maintained definition classifying the purpose of a field delineation line.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/FieldDelineationLineType.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:field-delineation-line",
+      "label": "Field delineation line",
+      "definition": "Ordered spatial line associated with a field and a user-defined line type, optionally carrying a margin and vertical limits.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "field",
+        "ordered vertices",
+        "coordinate convention"
+      ],
+      "constraints": [
+        "An open line is not a closed area; line type does not by itself establish a legal boundary."
+      ],
+      "evidence": [
+        "Field/Model/FieldDelineationLine.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:calculated-delineation-boundary",
+      "label": "Calculated delineation boundary",
+      "definition": "Ordered boundary line derived by the provider from a source delineation line and margin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source delineation line",
+        "margin",
+        "calculation method",
+        "coordinate convention"
+      ],
+      "constraints": [
+        "Derived geometry is distinct from user-supplied geometry."
+      ],
+      "evidence": [
+        "Field/Model/FieldDelineationBoundaryLine.cs",
+        "Field/Service/Managers/FieldDelineationCalculator.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:delineation-margin",
+      "label": "Delineation margin",
+      "definition": "Horizontal offset distance used to derive a boundary from a delineation line under a declared geometric algorithm.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "source geometry",
+        "offset algorithm and side convention"
+      ],
+      "constraints": [
+        "Not a positional coordinate or an uncertainty estimate.",
+        "The current Field provider calculates boundaries only for a positive margin; null or nonpositive values produce no boundary.",
+        "The provider uses planar operations on Riemannian coordinates; this does not establish a globally exact geodesic buffer."
+      ],
+      "evidence": [
+        "Field/Model/FieldDelineationLine.cs",
+        "Field/Service/Managers/FieldDelineationCalculator.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:closed-line-flag",
+      "label": "Closed-line flag",
+      "definition": "Boolean declaration that a line is geometrically closed according to the provider closure rule.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/FieldDelineationBoundaryLine.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:interior-boundary-flag",
+      "label": "Interior-boundary flag",
+      "definition": "Boolean declaration that a derived boundary represents the interior side of a closed source delineation line.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "False does not universally mean exterior: open-line offsets also use false."
+      ],
+      "evidence": [
+        "Field/Service/Managers/FieldDelineationCalculator.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:top-depth-boundary",
+      "label": "Top depth boundary",
+      "definition": "Role of the shallower vertical depth limit of a delineated domain; distinct from measured depth along a borehole.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:lower-bound"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/FieldDelineationLine.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:bottom-depth-boundary",
+      "label": "Bottom depth boundary",
+      "definition": "Role of the deeper vertical depth limit of a delineated domain; distinct from measured depth along a borehole.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:upper-bound"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/FieldDelineationLine.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:riemannian-north",
+      "label": "Riemannian north coordinate",
+      "definition": "Signed meridian arc length from the equator to a point latitude on the reference ellipsoid; north positive.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate"
+      ],
+      "aliases": [
+        "RiemannianNorth"
+      ],
+      "quantityName": "PositionDrilling",
+      "siUnit": "m",
+      "requiredContext": [
+        "reference ellipsoid"
+      ],
+      "constraints": [
+        "Not projected CRS northing, geocentric X or displacement from the resource reference point."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Math/Point3DGlobalCoordinates.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:riemannian-east",
+      "label": "Riemannian east coordinate",
+      "definition": "Signed arc length along the latitude parallel from the reference meridian to a point longitude; east positive.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate"
+      ],
+      "aliases": [
+        "RiemannianEast"
+      ],
+      "quantityName": "PositionDrilling",
+      "siUnit": "m",
+      "requiredContext": [
+        "reference ellipsoid",
+        "latitude",
+        "reference meridian",
+        "longitude wrap convention"
+      ],
+      "constraints": [
+        "Not projected CRS easting, geocentric Y or displacement from the resource reference point.",
+        "Conversion to longitude is singular at the poles."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Math/Point3DGlobalCoordinates.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wgs84-riemannian-coordinates",
+      "label": "WGS84 Riemannian coordinate convention",
+      "definition": "WGS84 meridian distance north from the equator and parallel arc distance east from Greenwich, expressed in metres; distinct from local NED and projected CRS grids.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Math/Point3DGlobalCoordinates.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:ground-mud-line-depth",
+      "label": "Ground or mud-line depth",
+      "definition": "Ellipsoidal depth of the ground surface or mud line at the cluster site, with the actual surface identified by site context.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:ellipsoidal-depth"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "site",
+        "surface identity: ground or mud line"
+      ],
+      "constraints": [
+        "Not measured depth or water-column thickness."
+      ],
+      "evidence": [
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:water-surface-depth",
+      "label": "Water-surface depth",
+      "definition": "Ellipsoidal depth of the upper water surface at a site; distinct from water-column thickness and the depth of the seabed.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:ellipsoidal-depth"
+      ],
+      "aliases": [
+        "TopWaterDepth"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "site",
+        "water-surface realization and applicable instant"
+      ],
+      "constraints": [],
+      "evidence": [
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:gaussian-uncertain-value",
+      "label": "Gaussian uncertain value",
+      "definition": "Representation of a scalar quantity by a Gaussian distribution with an expected value and standard deviation, optionally carrying provider-defined domain-limit metadata.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "underlying measurand concept",
+        "physical quantity and units",
+        "interpretation of optional bounds"
+      ],
+      "constraints": [
+        "The wrapper has no universal physical quantity; angle and depth instances share this representation.",
+        "A null standard deviation means unspecified, not zero.",
+        "Bounds do not imply a confidence interval or truncated-normal model without an explicit provider definition."
+      ],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties/GaussianDrillingProperty.cs",
+        "Cluster/Service/Mcp/Tools/McpToolArgumentHelpers.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Statistics/ContinuousDistribution.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:expected-value",
+      "label": "Expected value",
+      "definition": "Role of a scalar reported as the expectation or mean of its declared distribution.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.DrillingProperties/GaussianDrillingProperty.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:standard-uncertainty",
+      "label": "Standard uncertainty",
+      "definition": "Nonnegative uncertainty expressed as one standard deviation of the stated scalar distribution; not variance, confidence interval width or an absolute coordinate.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "underlying measurand",
+        "distribution",
+        "physical quantity and units"
+      ],
+      "constraints": [
+        "Uses the same unit dimension as the scalar measurand, not its squared unit.",
+        "A reference surface does not offset a standard deviation."
+      ],
+      "evidence": [
+        "Cluster/Service/Mcp/Tools/McpToolArgumentHelpers.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:angular-standard-uncertainty",
+      "label": "Angular standard uncertainty",
+      "definition": "Standard uncertainty of a geodetic angular coordinate, expressed as an angular dispersion rather than a location.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "PlaneAngleGeodesic",
+      "siUnit": "rad",
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Cluster/Model/Slot.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:linear-standard-uncertainty",
+      "label": "Linear standard uncertainty",
+      "definition": "Standard uncertainty of a linear position or depth, expressed as a length dispersion rather than a position.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Cluster/Model/Cluster.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:distribution-lower-bound",
+      "label": "Distribution lower bound",
+      "definition": "Role of a declared lower domain limit associated with a distribution; does not imply truncation of the probability density or generated samples.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:lower-bound"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Cluster/Service/Mcp/Tools/McpToolArgumentHelpers.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Statistics/ContinuousDistribution.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:distribution-upper-bound",
+      "label": "Distribution upper bound",
+      "definition": "Role of a declared upper domain limit associated with a distribution; does not imply truncation of the probability density or generated samples.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:upper-bound"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "Cluster/Service/Mcp/Tools/McpToolArgumentHelpers.cs",
+        "DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Statistics/ContinuousDistribution.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:field-coordinate-conversion-request",
+      "label": "Field coordinate conversion request",
+      "definition": "Request to convert positions using a field-selected projection definition and, when requested, geodetic transformations; reference and depth policies are explicit.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "field",
+        "projection definition",
+        "direction",
+        "source and target references",
+        "transformation and depth policies"
+      ],
+      "constraints": [],
+      "evidence": [
+        "Field/Model/FieldCoordinateConversion.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:field-coordinate-conversion-result",
+      "label": "Field coordinate conversion result",
+      "definition": "Result of a field-context coordinate conversion, including matched coordinate representations, selected reference definitions and warnings.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "field",
+        "projection definition",
+        "source and target references",
+        "transformation and depth policies"
+      ],
+      "constraints": [
+        "Projection-datum and WGS84 depths cannot be equated unless the transformation policy and actual operation justify it.",
+        "A retained untransformed depth is not evidence of a successful vertical datum transformation."
+      ],
+      "evidence": [
+        "Field/Model/FieldCoordinateConversion.cs",
+        "Field/Service/FieldCoordinateConversionService.cs",
+        "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
       ],
       "relations": []
     }

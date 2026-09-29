@@ -1,10 +1,8 @@
 # OSDC Drilling Semantic Catalogue
 
-The [approved EarthCartographicProjection vocabulary](CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md) adds 34 Reviewed entries, including ProjectionScaleFactor bound to the published UnitConversion 3.4.5 quantity. Version 0.6.0 contains 156 Reviewed entries; the 122 published 0.5.0 definitions are unchanged.
+Source **0.7.0** extends published 0.6.0 with **52 Reviewed Field/Cluster entries**, approved by Eric Cayeux on 2026-09-29. The 156 Reviewed definitions from 0.6.0 are unchanged; all 208 entries are Reviewed. See the [approved vocabulary and provider binding map](CURATION-FIELD-CLUSTER-2026-09-29.md), including provider issues to address during later integration.
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.6.0` is the next unpublished curation increment, adding EarthCartographicProjection vocabulary to published 0.5.0. Publication is a separate release operation.
-
-See [the Earth Gravity curation table](CURATION.md) for the initial vocabulary and decision history. Published 0.5.0 contains 122 Reviewed entries; source 0.6.0 adds 34 Reviewed EarthCartographicProjection entries, approved on 2026-09-28.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.7.0 is an unpublished curation increment. Publication and provider adoption are separate operations.
 
 ## Ownership and curation
 
@@ -92,3 +90,20 @@ The 34 approved additions distinguish geographic/projected 2D positions, project
 ProjectionScaleFactor uses the full dimensionless factor (SI 1), with UnitConversion-owned meaningful display precision 1e-9. It is distinct from the Helmert scale increment. Projected coordinates inherit PositionDrilling; linear parameters use LengthSmall and angular parameters use PlaneAngleGeodesic. Generic parameters and linear-unit conversion factors require explicit context and do not assert a universal physical quantity.
 
 The curation review retains the provider/importer defects that must be addressed during EarthCartographicProjection integration. Vocabulary approval does not certify the current provider calculations or contracts.
+
+## Field and Cluster vocabulary
+
+The 52 approved entries cover shared identities/classifications, Field/WellCluster/WellSlot,
+record and validity-time roles, delineation geometry, WGS84 Riemannian coordinates,
+ground/mud-line and water-surface depth, and Gaussian uncertainty. Existing latitude,
+longitude, ellipsoidal depth, projected positions and geodetic conversion concepts are
+reused. No additional UnitConversion quantity or package dependency is required.
+
+The catalogue does not reference ResourceClassification; providers can reference both
+packages without circular dependencies. The shared models and service-owned catalogue
+values remain distinct from curated semantic definitions. Semantic annotations for
+these models will be introduced during provider integration after publication of 0.7.0.
+
+All 208 concepts are Reviewed. Future additions still begin as Proposed.
+Tests cover the frozen published definitions, curation status, coordinate and
+uncertainty distinctions, quantity resolution and provider metadata generation.
