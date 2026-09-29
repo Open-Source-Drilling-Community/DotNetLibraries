@@ -127,4 +127,40 @@ public static class Concepts
     public const string CoordinateTransformationResponse = "urn:osdc:semantic:coordinate-transformation-response";
     public const string TransformationPathCandidate = "urn:osdc:semantic:transformation-path-candidate";
     public const string TransformationSelectionToken = "urn:osdc:semantic:transformation-selection-token";
+
+    // EarthCartographicProjection vocabulary, curated 2026-09-28.
+    public const string GeographicPosition2D = "urn:osdc:semantic:geographic-position-2d";
+    public const string ProjectedPosition2D = "urn:osdc:semantic:projected-position-2d";
+    public const string ProjectedCoordinate = "urn:osdc:semantic:projected-coordinate";
+    public const string Easting = "urn:osdc:semantic:easting";
+    public const string Northing = "urn:osdc:semantic:northing";
+    public const string GeographicCoordinateReferenceSystem = "urn:osdc:semantic:geographic-coordinate-reference-system";
+    public const string ProjectedCoordinateReferenceSystem = "urn:osdc:semantic:projected-coordinate-reference-system";
+    public const string CoordinateConversion = "urn:osdc:semantic:coordinate-conversion";
+    public const string CartographicProjection = "urn:osdc:semantic:cartographic-projection";
+    public const string CartographicProjectionMethod = "urn:osdc:semantic:cartographic-projection-method";
+    public const string CartographicProjectionParameter = "urn:osdc:semantic:cartographic-projection-parameter";
+    public const string ProjectionParameterDefinition = "urn:osdc:semantic:projection-parameter-definition";
+    public const string CoordinateSystem = "urn:osdc:semantic:coordinate-system";
+    public const string ProjectedCoordinateSystem = "urn:osdc:semantic:projected-coordinate-system";
+    public const string CoordinateSystemAxis = "urn:osdc:semantic:coordinate-system-axis";
+    public const string CoordinateAxisDirection = "urn:osdc:semantic:coordinate-axis-direction";
+    public const string LinearUnitConversionFactor = "urn:osdc:semantic:linear-unit-conversion-factor";
+    public const string GridConvergence = "urn:osdc:semantic:grid-convergence";
+    public const string ProjectionScaleFactor = "urn:osdc:semantic:projection-scale-factor";
+    public const string ProjectionAngularParameter = "urn:osdc:semantic:projection-angular-parameter";
+    public const string ProjectionLinearParameter = "urn:osdc:semantic:projection-linear-parameter";
+    public const string ForwardProjectionRequest = "urn:osdc:semantic:forward-projection-request";
+    public const string InverseProjectionRequest = "urn:osdc:semantic:inverse-projection-request";
+    public const string ProjectionResult = "urn:osdc:semantic:projection-result";
+    public const string ProjectionPositionResult = "urn:osdc:semantic:projection-position-result";
+    public const string NaturalOrigin = "urn:osdc:semantic:natural-origin";
+    public const string FalseOrigin = "urn:osdc:semantic:false-origin";
+    public const string ProjectionCentre = "urn:osdc:semantic:projection-centre";
+    public const string StandardParallel = "urn:osdc:semantic:standard-parallel";
+    public const string FirstStandardParallel = "urn:osdc:semantic:first-standard-parallel";
+    public const string SecondStandardParallel = "urn:osdc:semantic:second-standard-parallel";
+    public const string PseudoStandardParallel = "urn:osdc:semantic:pseudo-standard-parallel";
+    public const string GridConvergenceTrueToGridClockwise = "urn:osdc:semantic:grid-convergence-true-to-grid-clockwise";
+    public const string ProjectedEastingNorthingSI = "urn:osdc:semantic:projected-easting-northing-si";
 }

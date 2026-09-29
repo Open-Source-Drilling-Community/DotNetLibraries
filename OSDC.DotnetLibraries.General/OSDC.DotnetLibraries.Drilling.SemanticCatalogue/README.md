@@ -1,8 +1,10 @@
 # OSDC Drilling Semantic Catalogue
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.5.0` is the next unpublished curation increment, adding EarthGeodesy vocabulary to published 0.4.0. Publication is a separate release operation.
+The [approved EarthCartographicProjection vocabulary](CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md) adds 34 Reviewed entries, including ProjectionScaleFactor bound to the published UnitConversion 3.4.5 quantity. Version 0.6.0 contains 156 Reviewed entries; the 122 published 0.5.0 definitions are unchanged.
 
-See [the Earth Gravity curation table](CURATION.md) for the initial vocabulary and decision history. Published 0.4.0 contains 72 Reviewed entries; source 0.5.0 adds 50 Reviewed EarthGeodesy entries, approved on 2026-09-28.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version `0.6.0` is the next unpublished curation increment, adding EarthCartographicProjection vocabulary to published 0.5.0. Publication is a separate release operation.
+
+See [the Earth Gravity curation table](CURATION.md) for the initial vocabulary and decision history. Published 0.5.0 contains 122 Reviewed entries; source 0.6.0 adds 34 Reviewed EarthCartographicProjection entries, approved on 2026-09-28.
 
 ## Ownership and curation
 
@@ -16,7 +18,7 @@ The catalogue owns reusable meanings. Microservices own bindings to concrete dat
 
 ## Physical quantities
 
-The library references `OSDC.UnitConversion.Conversion.DrillingEngineering` 3.4.3 and obtains the general Conversion library transitively. Quantity identities and SI unit names are resolved through those libraries, not duplicated UUID definitions. Earth Gravity's choices are PlaneAngleGeodesic, DepthDrilling and AccelerationDrilling. Quantities and units do not establish reference frames or additive meaning.
+The library references `OSDC.UnitConversion.Conversion.DrillingEngineering` 3.4.5 and obtains the general Conversion library transitively. Quantity identities and SI unit names are resolved through those libraries, not duplicated UUID definitions. Earth Gravity's choices are PlaneAngleGeodesic, DepthDrilling and AccelerationDrilling. Quantities and units do not establish reference frames or additive meaning.
 
 Total gravitational plus centrifugal potential binds to `EarthGravityPotential`, a specialization of the general `GravityPotential` quantity in UnitConversion. Its SI representation is m²/s² (equivalently J/kg); ft²/s² and ft·lbf/lbm are available. The Earth specialization defines a meaningful display precision of 0.01 m²/s², without asserting model accuracy or rounding stored values. Energy density is not a substitute.
 
@@ -41,6 +43,15 @@ dotnet pack OSDC.DotnetLibraries.Drilling.SemanticCatalogue/OSDC.DotnetLibraries
 ```
 
 This does not publish the package. Inspect the NuGet dependency manifest and catalogue contents before a separately authorized release.
+
+The repository-level `global.json` selects the .NET 8 SDK. On a machine with only SDK 9 installed, the following commands from `C:\OSDC` were verified for 0.6.0 (the library still targets .NET 8):
+
+```powershell
+dotnet test DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest.csproj -c Release -p:GeneratePackageOnBuild=false
+dotnet pack DotNetLibraries/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.csproj -c Release -p:GeneratePackageOnBuild=false
+```
+
+Building inside the repository or through Visual Studio requires an SDK compatible with its `global.json`.
 
 ## Approved structural directions
 
@@ -70,6 +81,14 @@ The [EarthVerticalDatum review](CURATION-EARTHVERTICALDATUM-2026-09-27.md) adds 
 
 ## EarthGeodesy curation
 
-See [the approved EarthGeodesy vocabulary and binding map](CURATION-EARTHGEODESY-2026-09-27.md) for 50 Reviewed additions in source 0.5.0. The 72 Reviewed entries are unchanged. The approved vocabulary distinguishes ellipsoid definitions from identifiers, frames from ensembles, epochs from durations, SI Helmert fields from original-unit EPSG parameters, and depth changes from geoid undulation. Eric Cayeux approved these additions on 2026-09-28. All 122 entries are Reviewed; future discoveries still start as Proposed. EarthGeodesy provider bindings and package publication are subsequent steps.
+See [the approved EarthGeodesy vocabulary and binding map](CURATION-EARTHGEODESY-2026-09-27.md) for 50 Reviewed additions in source 0.5.0. The 72 Reviewed entries are unchanged. The approved vocabulary distinguishes ellipsoid definitions from identifiers, frames from ensembles, epochs from durations, SI Helmert fields from original-unit EPSG parameters, and depth changes from geoid undulation. Eric Cayeux approved these additions on 2026-09-28. All 122 entries are Reviewed; future discoveries still start as Proposed. Catalogue 0.5.0 has been published and EarthGeodesy provider bindings have been deployed and verified.
 
 InverseFlattening and HelmertScaleDifference bind to the corresponding general UnitConversion 3.4.3 quantities, with meaningful display precisions 1e-9 and 1e-12 respectively. Their SI representation is dimensionless (1); precision is not scientific accuracy or stored-value rounding.
+
+## EarthCartographicProjection curation
+
+The 34 approved additions distinguish geographic/projected 2D positions, projected CRS, configured conversions, projection methods, parameter definitions, coordinate systems and axes. Origin and standard-parallel roles remain separate from physical quantities. Canonical SI easting/northing and clockwise true-to-grid convergence are explicit reference conventions.
+
+ProjectionScaleFactor uses the full dimensionless factor (SI 1), with UnitConversion-owned meaningful display precision 1e-9. It is distinct from the Helmert scale increment. Projected coordinates inherit PositionDrilling; linear parameters use LengthSmall and angular parameters use PlaneAngleGeodesic. Generic parameters and linear-unit conversion factors require explicit context and do not assert a universal physical quantity.
+
+The curation review retains the provider/importer defects that must be addressed during EarthCartographicProjection integration. Vocabulary approval does not certify the current provider calculations or contracts.

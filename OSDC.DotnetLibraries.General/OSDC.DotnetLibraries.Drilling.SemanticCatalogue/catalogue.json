@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "schemaVersion": 1,
   "concepts": [
     {
@@ -2815,6 +2815,836 @@
         "EarthGeodesy/Model/DomainModels.cs; EarthGeodesy/Service/Mcp/Tools/CatalogMcpTools.cs",
         "CURATION-EARTHGEODESY-2026-09-27.md",
         "Eric Cayeux approval of EarthGeodesy decisions and new UnitConversion quantity bindings, 2026-09-28; CURATION-DECISIONS.md"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geographic-position-2d",
+      "label": "Geographic position 2D",
+      "definition": "Latitude/longitude pair in a specified geographic CRS; datum, prime meridian, axis/sign and angular units required. No vertical value implied.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "geographic CRS",
+        "datum or reference frame",
+        "prime meridian",
+        "axis/sign convention"
+      ],
+      "constraints": [
+        "No vertical coordinate is implied."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-latitude"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geodetic-longitude"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:projected-position-2d",
+      "label": "Projected position 2D",
+      "definition": "Pair of map-plane coordinates in a specified projected CRS and serialization convention. No height/depth implied.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projected CRS",
+        "axis order and direction",
+        "coordinate origin",
+        "serialization units"
+      ],
+      "constraints": [
+        "No height or depth coordinate is implied."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:easting"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:northing"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:projected-coordinate",
+      "label": "Projected coordinate",
+      "definition": "Signed map-plane coordinate relative to the declared grid axes and origin; coordinate, not an additive length.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate"
+      ],
+      "aliases": [],
+      "quantityName": "PositionDrilling",
+      "siUnit": "m",
+      "requiredContext": [
+        "projected CRS",
+        "grid axis",
+        "coordinate origin"
+      ],
+      "constraints": [
+        "A coordinate is not an additive length."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:easting",
+      "label": "Easting",
+      "definition": "Projected coordinate positive in the declared grid-east direction, with CRS and origin explicit.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:projected-coordinate"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:northing",
+      "label": "Northing",
+      "definition": "Projected coordinate positive in the declared grid-north direction, with CRS and origin explicit.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:projected-coordinate"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:geographic-coordinate-reference-system",
+      "label": "Geographic coordinate reference system",
+      "definition": "CRS using ellipsoidal latitude/longitude and optionally a vertical coordinate; provider declares dimensionality.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-reference-system"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "datum or reference frame",
+        "prime meridian",
+        "dimensionality"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projected-coordinate-reference-system",
+      "label": "Projected coordinate reference system",
+      "definition": "CRS derived by map projection from a base geographic CRS, including conversion and Cartesian coordinate system.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-reference-system"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "base geographic CRS",
+        "projection conversion",
+        "projected coordinate system"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-conversion",
+      "label": "Coordinate conversion",
+      "definition": "Coordinate operation changing representation while retaining the underlying datum/frame.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-operation"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source CRS",
+        "target CRS",
+        "unchanged datum"
+      ],
+      "constraints": [
+        "The underlying datum or reference frame is retained."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:cartographic-projection",
+      "label": "Cartographic projection",
+      "definition": "Conversion between ellipsoidal geographic coordinates and map-plane coordinates under a specified method and parameters.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-conversion"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection method",
+        "projection parameters",
+        "operation direction"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": [
+        {
+          "kind": "EvaluatedUsing",
+          "target": "urn:osdc:semantic:cartographic-projection-method"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:cartographic-projection-method",
+      "label": "Cartographic projection method",
+      "definition": "Mathematical projection method, distinct from a configured conversion or projected CRS instance.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-operation-method"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "method identity"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:cartographic-projection-parameter",
+      "label": "Cartographic projection parameter",
+      "definition": "Method-defined projection parameter whose identity determines meaning, representation, range and quantity. No universal physical quantity.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-operation-parameter"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection method",
+        "parameter identity",
+        "representation and unit"
+      ],
+      "constraints": [
+        "Parameter identity and method must be resolved before assigning a physical quantity; a generic Value has no universal unit.",
+        "Normalized Value and OriginalValue may have different representations."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projection-parameter-definition",
+      "label": "Projection parameter definition",
+      "definition": "Specification of a parameter's identity, permitted representation, requiredness and bounds; distinct from an assigned value.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection method",
+        "parameter identity",
+        "representation and range"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-system",
+      "label": "Coordinate system",
+      "definition": "Axes and mathematical rules defining coordinate measurement and ordering, distinct from a CRS tied to a datum.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "axis definitions",
+        "ordering rules"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projected-coordinate-system",
+      "label": "Projected coordinate system",
+      "definition": "Cartesian coordinate system of a projected CRS, with explicit axis directions, order and units.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate-system"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projected CRS"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:coordinate-system-axis"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-system-axis",
+      "label": "Coordinate system axis",
+      "definition": "One axis with name, abbreviation, direction, unit and serialization order.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "coordinate system",
+        "direction",
+        "unit",
+        "serialization order"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:coordinate-axis-direction",
+      "label": "Coordinate axis direction",
+      "definition": "Direction of an axis in its declared frame; an enum value is not an azimuth or a physical quantity. Polar axes require meridian/orientation context.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "coordinate frame",
+        "orientation or meridian where required"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:linear-unit-conversion-factor",
+      "label": "Linear unit conversion factor",
+      "definition": "Multiplicative conversion coefficient between explicitly identified source/target linear units. UnitToMetre means metres per source unit, not map scale.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "source linear unit",
+        "target linear unit",
+        "conversion direction"
+      ],
+      "constraints": [
+        "UnitToMetre denotes metres per explicitly identified source unit; it is not a projection scale factor."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:grid-convergence",
+      "label": "Grid convergence",
+      "definition": "Signed angular relation between geodetic north and grid north at a specified position in a specified projection; explicit sign convention required.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "PlaneAngleGeodesic",
+      "siUnit": "rad",
+      "requiredContext": [
+        "projected CRS",
+        "evaluation position",
+        "true/geodetic north",
+        "grid north",
+        "sign convention"
+      ],
+      "constraints": [
+        "Unavailable is represented separately from zero.",
+        "Display precision does not establish convergence calculation accuracy."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projection-scale-factor",
+      "label": "Projection scale factor",
+      "definition": "Full multiplicative scale factor at the method-defined origin/line/parallel; unity means no local scale change. Not Helmert's increment s or a universal pointwise distortion result.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:cartographic-projection-parameter"
+      ],
+      "aliases": [],
+      "quantityName": "ProjectionScaleFactor",
+      "siUnit": "1",
+      "requiredContext": [
+        "method-defined origin, line or parallel"
+      ],
+      "constraints": [
+        "Unity means no local scale change. This is a full factor, not a Helmert scale increment or a ppm value.",
+        "The factor applies at the method-defined location; it does not describe distortion at every point.",
+        "Meaningful precision is a display convention, not calculation accuracy or stored-value rounding."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projection-angular-parameter",
+      "label": "Projection angular parameter",
+      "definition": "Angular method parameter; parameter identity distinguishes latitude, longitude, azimuth, cone angle or grid rotation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:cartographic-projection-parameter"
+      ],
+      "aliases": [],
+      "quantityName": "PlaneAngleGeodesic",
+      "siUnit": "rad",
+      "requiredContext": [
+        "angular meaning and sign convention"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projection-linear-parameter",
+      "label": "Projection linear parameter",
+      "definition": "Linear method parameter, such as a false-origin offset or projection-plane height; not automatically a projected position.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:cartographic-projection-parameter"
+      ],
+      "aliases": [],
+      "quantityName": "LengthSmall",
+      "siUnit": "m",
+      "requiredContext": [
+        "linear parameter meaning and reference"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:forward-projection-request",
+      "label": "Forward projection request",
+      "definition": "Request to convert ordered geographic positions to projected positions using one definition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection definition",
+        "input geographic CRS"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:inverse-projection-request",
+      "label": "Inverse projection request",
+      "definition": "Request to convert ordered projected positions to geographic positions using one definition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection definition",
+        "input projected CRS"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projection-result",
+      "label": "Projection result",
+      "definition": "Projection evaluation result with definition/CRS identity, conventions, ordered corresponding positions and applicability. Shared by both directions.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection definition",
+        "operation direction",
+        "coordinate conventions"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projection-position-result",
+      "label": "Projection position result",
+      "definition": "One corresponding geographic/projected pair with position index and nullable convergence. Input/output roles depend on direction.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projection definition",
+        "operation direction",
+        "position correspondence"
+      ],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:geographic-position-2d"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:projected-position-2d"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:grid-convergence"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:natural-origin",
+      "label": "Natural origin",
+      "definition": "Method-defined natural origin; cannot be substituted for a false origin or projection centre.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:false-origin",
+      "label": "False origin",
+      "definition": "Method-defined false origin for assigned coordinate offsets.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projection-centre",
+      "label": "Projection centre",
+      "definition": "Method-defined projection centre.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:standard-parallel",
+      "label": "Standard parallel",
+      "definition": "Method-defined standard parallel; distinct from an arbitrary latitude or grid spacing.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:first-standard-parallel",
+      "label": "First standard parallel",
+      "definition": "First of the method's ordered standard parallels.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-parallel"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:second-standard-parallel",
+      "label": "Second standard parallel",
+      "definition": "Second of the method's ordered standard parallels.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-parallel"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:pseudo-standard-parallel",
+      "label": "Pseudo standard parallel",
+      "definition": "Method-defined pseudo standard parallel; not asserted to be a true standard parallel.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:grid-convergence-true-to-grid-clockwise",
+      "label": "Grid convergence true to grid clockwise",
+      "definition": "Positive clockwise from true/geodetic north to grid north at the evaluated position. Null represents unavailable, not zero.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projected CRS",
+        "evaluation position"
+      ],
+      "constraints": [
+        "Positive clockwise from true/geodetic north to grid north."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:projected-easting-northing-si",
+      "label": "Projected easting northing SI",
+      "definition": "Canonical grid easting then northing, positive grid east/north and in SI metres, independent of authority serialization and units. Must be enforced before annotation.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "projected CRS",
+        "authority-to-API axis and unit mapping"
+      ],
+      "constraints": [
+        "Authority axis reordering alone does not guarantee metre units or canonical direction signs."
+      ],
+      "evidence": [
+        "EarthCartographicProjection/Model/DomainModels.cs",
+        "EarthCartographicProjection/Service/Mcp/Tools/ProjectionMcpTools.cs",
+        "CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md; approved by Eric Cayeux on 2026-09-28"
       ],
       "relations": []
     }

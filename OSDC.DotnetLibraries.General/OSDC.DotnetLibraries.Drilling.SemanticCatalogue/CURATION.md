@@ -69,3 +69,11 @@ See [the EarthVerticalDatum proposal and complete binding map](CURATION-EARTHVER
 ## EarthGeodesy increment — 0.5.0 (unpublished)
 
 The [approved EarthGeodesy vocabulary](CURATION-EARTHGEODESY-2026-09-27.md) adds 50 Reviewed entries to the unchanged 72 Reviewed entries in published 0.4.0. Eric Cayeux approved the decisions on 2026-09-28, with InverseFlattening and HelmertScaleDifference bound to their new UnitConversion 3.4.3 quantities. All 122 entries are Reviewed. The review includes quantity choices, representation exceptions, a binding map and provider contract issues for the next integration step.
+
+## 2026-09-28 — EarthCartographicProjection vocabulary approval (0.6.0)
+
+Approver: Eric Cayeux. Evidence: “The proposed semantic catalogue can now refer to this new quantity and can be considered as curated. Prepare it for compilation and nugetification.” The 34 additions in CURATION-EARTHCARTOGRAPHICPROJECTION-2026-09-28.md are Reviewed, extending the unchanged 122 definitions in published 0.5.0 to 156.
+
+ProjectionScaleFactor binds to the published UnitConversion 3.4.5 quantity, with SI 1 and meaningful display precision 1e-9. Conversion.DrillingEngineering 3.4.5 supplies general Conversion transitively. The full projection factor remains distinct from HelmertScaleDifference. Two-dimensional positions, CRS/conversion/method distinctions, origin roles, reference conventions and generic parameter exceptions are accepted. UnitConversion owns display precision; it does not imply scientific accuracy or stored-value rounding.
+
+This increment prepares source and the NuGet package without publishing it. Provider/importer corrections and REST/MCP integration remain separate work; vocabulary approval does not certify current provider behavior. Future concepts still require curation.
