@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "schemaVersion": 1,
   "concepts": [
     {
@@ -4855,6 +4855,398 @@
         "Field/Model/FieldCoordinateConversion.cs",
         "Field/Service/FieldCoordinateConversionService.cs",
         "CURATION-FIELD-CLUSTER-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:well",
+      "label": "Well",
+      "definition": "Managed well resource associating wellbores with a well identity and surface slot/site context; distinct from an individual wellbore or trajectory.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "owning Well service",
+        "associated cluster and slot when known"
+      ],
+      "constraints": [],
+      "evidence": [
+        "Well/Model/Well.cs",
+        "Well/Service/WellExternalReferenceValidator.cs",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:wellbore"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:wellbore",
+      "label": "Wellbore",
+      "definition": "Managed bore-path resource belonging to a well, with optional parent-branch topology and rig-job history; distinct from the well and from a particular survey or trajectory representation.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "owning WellBore service",
+        "associated well when known"
+      ],
+      "constraints": [],
+      "evidence": [
+        "WellBore/Model/WellBore.cs",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:sidetrack-wellbore",
+      "label": "Sidetrack wellbore",
+      "definition": "Wellbore branching from a parent wellbore at a tie-in location expressed in the parent path coordinate system.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:wellbore"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "parent wellbore",
+        "parent-path tie-in coordinate"
+      ],
+      "constraints": [
+        "Parentage is an association, not semantic inheritance from the individual parent resource.",
+        "Provider topology must reject self-parentage and parent cycles."
+      ],
+      "evidence": [
+        "WellBore/Model/WellBore.cs",
+        "WellBore/Service/Managers/WellBoreReferenceIntegrityValidator.cs",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:sidetrack-flag",
+      "label": "Sidetrack flag",
+      "definition": "Boolean declaration that a wellbore is a branch of a parent wellbore.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "wellbore",
+        "parent wellbore when true"
+      ],
+      "constraints": [],
+      "evidence": [
+        "WellBore/Model/WellBore.cs: IsSidetrack",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:rig",
+      "label": "Rig",
+      "definition": "Managed drilling-rig resource identifying the installation or equipment system associated with drilling operations; distinct from a dated job performed by that rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "owning Rig service"
+      ],
+      "constraints": [],
+      "evidence": [
+        "Rig/Model/Rig.cs",
+        "WellBore/Model/RigJob.cs: RigID",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:rig-job",
+      "label": "Rig job",
+      "definition": "Identified historical association of a rig with work on one wellbore during a declared time interval, including the ownership of its drill-floor depth.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "containing wellbore",
+        "associated rig",
+        "job period"
+      ],
+      "constraints": [
+        "A rig job is not a rig and does not imply the rig exclusively served this wellbore globally."
+      ],
+      "evidence": [
+        "WellBore/Model/RigJob.cs",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:rig-job-period"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-job-period",
+      "label": "Rig-job period",
+      "definition": "Time interval of a rig job, including its start and excluding its end.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "rig job",
+        "time scale"
+      ],
+      "constraints": [
+        "The end, when present, must be strictly later than the start.",
+        "Null end denotes an open-ended interval; the WellBore provider permits it only on the last job.",
+        "Adjacent jobs may share an end/start instant without overlapping; gaps are allowed.",
+        "This is distinct from inclusive classification assignment validity."
+      ],
+      "evidence": [
+        "WellBore/Model/RigJob.cs",
+        "WellBore/Service/Managers/WellBoreReferenceIntegrityValidator.cs: ValidateRigJobs",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:instant"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-job-start",
+      "label": "Rig-job start",
+      "definition": "Inclusive starting instant of a rig job.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "WellBore/Model/RigJob.cs: StartDate",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:rig-job-end",
+      "label": "Rig-job end",
+      "definition": "Exclusive ending instant of a rig job.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "WellBore/Model/RigJob.cs: EndDate",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:spatial-abscissa",
+      "label": "Spatial abscissa",
+      "definition": "Length-valued coordinate locating a position along a specified axis or path from a declared origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate"
+      ],
+      "aliases": [
+        "Abscissa"
+      ],
+      "quantityName": null,
+      "siUnit": "m",
+      "requiredContext": [
+        "axis or path",
+        "coordinate origin",
+        "increasing direction",
+        "physical quantity specialization"
+      ],
+      "constraints": [
+        "This denotes a position coordinate, not an additive segment extent."
+      ],
+      "evidence": [
+        "WellBore/Model/WellBore.cs: TieInPointAlongHoleDepth",
+        "Well/WellBore vocabulary curation proposal: reusable coordinate abstraction",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:curvilinear-abscissa",
+      "label": "Curvilinear abscissa",
+      "definition": "Spatial abscissa measured by accumulated arc length along a specified oriented curve from a declared origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:spatial-abscissa"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Differences require the same path, origin and direction.",
+        "A curve coordinate does not imply a vertical datum."
+      ],
+      "evidence": [
+        "WellBore/Model/WellBore.cs: TieInPointAlongHoleDepth",
+        "Well/WellBore vocabulary curation proposal: reusable path-coordinate abstraction",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:measured-depth",
+      "label": "Measured depth",
+      "definition": "Curvilinear abscissa along a wellbore path, measured from its declared measured-depth origin in the declared increasing direction.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:curvilinear-abscissa",
+        "urn:osdc:semantic:depth-coordinate"
+      ],
+      "aliases": [
+        "MD",
+        "Along-hole depth"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "wellbore path and applicable realization",
+        "MD origin/reference"
+      ],
+      "constraints": [
+        "Measured depth is not true vertical depth or ellipsoidal depth.",
+        "A WGS84 vertical offset alone cannot convert a measured-depth coordinate."
+      ],
+      "evidence": [
+        "WellBore/Model/WellBore.cs: TieInPointAlongHoleDepth",
+        "WellBore/Model/WellBoreTopologyUpdate.cs",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:tie-in-measured-depth",
+      "label": "Tie-in measured depth",
+      "definition": "Measured-depth coordinate of a sidetrack tie-in on the parent wellbore path, expressed using that parent path's MD origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:measured-depth"
+      ],
+      "aliases": [
+        "TieInPointAlongHoleDepth"
+      ],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "sidetrack wellbore",
+        "parent wellbore"
+      ],
+      "constraints": [
+        "Do not substitute the child wellbore MD or a vertical depth.",
+        "No universal zero origin is inferred from an omitted reference."
+      ],
+      "evidence": [
+        "WellBore/Model/WellBore.cs: TieInPointAlongHoleDepth",
+        "WellBore/Service/Managers/WellBoreReferenceIntegrityValidator.cs: ValidateTopology",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:drill-floor-depth",
+      "label": "Drill-floor depth",
+      "definition": "Vertical depth coordinate locating the drill floor relative to the declared vertical reference.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:depth-coordinate"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "rig",
+        "applicable rig job or time",
+        "vertical reference",
+        "depth ownership source"
+      ],
+      "constraints": [
+        "The WellBore provider stores WGS84 ellipsoidal depth in metres, positive downward; another reference must be declared explicitly.",
+        "A depth position is distinct from its standard uncertainty."
+      ],
+      "evidence": [
+        "WellBore/Model/RigJob.cs: DrillFloorDepth",
+        "WellBore/Service/WellBoreExternalReferenceValidator.cs",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:drill-floor-depth-source",
+      "label": "Drill-floor depth source",
+      "definition": "Discriminator identifying whether the authoritative drill-floor depth belongs to the referenced rig or to the rig-job entry.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "rig job",
+        "associated rig and its type"
+      ],
+      "constraints": [
+        "Rig means resolve depth from the referenced fixed-platform rig; job-local depth is forbidden.",
+        "RigJob means the entry owns the depth; job-local depth is required.",
+        "Undefined is a transport default, not a valid resolved ownership state.",
+        "Ownership does not specify measurement provenance or coordinate reference."
+      ],
+      "evidence": [
+        "WellBore/Model/RigJob.cs: DrillFloorDepthSource",
+        "WellBore/Service/Managers/WellBoreReferenceIntegrityValidator.cs: ValidateRigJobDepth",
+        "CURATION-WELL-WELLBORE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
       ],
       "relations": []
     }

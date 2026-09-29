@@ -1,8 +1,8 @@
 # OSDC Drilling Semantic Catalogue
 
-Source **0.7.0** extends published 0.6.0 with **52 Reviewed Field/Cluster entries**, approved by Eric Cayeux on 2026-09-29. The 156 Reviewed definitions from 0.6.0 are unchanged; all 208 entries are Reviewed. See the [approved vocabulary and provider binding map](CURATION-FIELD-CLUSTER-2026-09-29.md), including provider issues to address during later integration.
+Source **0.8.0** adds **15 Reviewed Well/WellBore concepts**, approved by Eric Cayeux on 2026-09-29. The 208 published 0.7.0 definitions remain unchanged; all 223 entries are Reviewed. See the [approved vocabulary and provider binding map](CURATION-WELL-WELLBORE-2026-09-29.md).
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.7.0 is an unpublished curation increment. Publication and provider adoption are separate operations.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.8.0 is prepared for packaging; publication and provider adoption are separate operations.
 
 ## Ownership and curation
 
@@ -104,6 +104,12 @@ packages without circular dependencies. The shared models and service-owned cata
 values remain distinct from curated semantic definitions. Semantic annotations for
 these models will be introduced during provider integration after publication of 0.7.0.
 
-All 208 concepts are Reviewed. Future additions still begin as Proposed.
+All 208 concepts in the Field/Cluster increment were Reviewed. Future additions still begin as Proposed.
 Tests cover the frozen published definitions, curation status, coordinate and
 uncertainty distinctions, quantity resolution and provider metadata generation.
+
+## Well and WellBore vocabulary
+
+The [approved Well/WellBore review](CURATION-WELL-WELLBORE-2026-09-29.md) adds 15 concepts for well/wellbore topology, parent-path measured depth and rig-job history. The confirmed tie-in coordinate is parent-wellbore MD with an explicit origin, not WGS84 vertical depth. Rig-job ends are exclusive, unlike inclusive classification validity ends. Existing DepthDrilling and LengthStandard quantities suffice; package dependencies are unchanged.
+
+Source 0.8.0 embeds all 223 Reviewed definitions. Provider integration must still address the missing MD-origin representation and MCP/editor corrections identified in the review.

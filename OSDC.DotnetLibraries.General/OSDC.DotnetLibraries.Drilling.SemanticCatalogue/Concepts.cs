@@ -216,4 +216,20 @@ public static class Concepts
     public const string DistributionUpperBound = "urn:osdc:semantic:distribution-upper-bound";
     public const string FieldCoordinateConversionRequest = "urn:osdc:semantic:field-coordinate-conversion-request";
     public const string FieldCoordinateConversionResult = "urn:osdc:semantic:field-coordinate-conversion-result";
+    // Well/WellBore increment: curated on 2026-09-29.
+    public const string Well = "urn:osdc:semantic:well";
+    public const string WellBore = "urn:osdc:semantic:wellbore";
+    public const string SidetrackWellBore = "urn:osdc:semantic:sidetrack-wellbore";
+    public const string SidetrackFlag = "urn:osdc:semantic:sidetrack-flag";
+    public const string Rig = "urn:osdc:semantic:rig";
+    public const string RigJob = "urn:osdc:semantic:rig-job";
+    public const string RigJobPeriod = "urn:osdc:semantic:rig-job-period";
+    public const string RigJobStart = "urn:osdc:semantic:rig-job-start";
+    public const string RigJobEnd = "urn:osdc:semantic:rig-job-end";
+    public const string SpatialAbscissa = "urn:osdc:semantic:spatial-abscissa";
+    public const string CurvilinearAbscissa = "urn:osdc:semantic:curvilinear-abscissa";
+    public const string MeasuredDepth = "urn:osdc:semantic:measured-depth";
+    public const string TieInMeasuredDepth = "urn:osdc:semantic:tie-in-measured-depth";
+    public const string DrillFloorDepth = "urn:osdc:semantic:drill-floor-depth";
+    public const string DrillFloorDepthSource = "urn:osdc:semantic:drill-floor-depth-source";
 }
