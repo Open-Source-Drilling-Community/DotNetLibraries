@@ -34,7 +34,7 @@ public class CanonicalReferenceTests
         Assert.That(metadata["reference"]!.GetValue<string>(), Is.EqualTo(reference));
         Assert.That(metadata["referenceScope"]!.GetValue<string>(), Is.EqualTo("canonical-storage-and-api"));
         Assert.That(metadata["presentationReferencesAllowed"]!.GetValue<bool>(), Is.True);
-        Assert.That(metadata["referenceProfileVersion"]!.GetValue<string>(), Is.EqualTo("1.0.0"));
+        Assert.That(metadata["referenceProfileVersion"]!.GetValue<string>(), Is.EqualTo("1.1.0"));
         Assert.That(metadata["referenceDefinition"]!.GetValue<string>(), Is.Not.Empty);
     }
 

@@ -1,8 +1,8 @@
 # OSDC Drilling Semantic Catalogue
 
-Source **0.9.0** defines preferred along-hole terminology and a versioned OSDC canonical reference profile. It contains **232 concepts: 230 Reviewed and two Deprecated legacy names**. The 208 definitions from 0.7.0 remain unchanged. See [the decisions and provider audit](CURATION-CANONICAL-REFERENCES-2026-09-29.md).
+Source **0.10.0** adds the curated WellBoreArchitecture vocabulary. It contains **292 concepts: 290 Reviewed and two Deprecated legacy names**. All 232 definitions from 0.9.0 remain unchanged. See [the approved review](CURATION-WELLBOREARCHITECTURE-2026-09-29.md).
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.9.0 is prepared for packaging; publication and provider adoption are separate operations.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.10.0 is prepared for packaging; publication and provider adoption are separate operations.
 
 ## Canonical drilling references
 
@@ -125,3 +125,12 @@ uncertainty distinctions, quantity resolution and provider metadata generation.
 The [approved Well/WellBore review](CURATION-WELL-WELLBORE-2026-09-29.md) adds 15 concepts for well/wellbore topology, parent-path measured depth and rig-job history. The confirmed tie-in coordinate is parent-wellbore MD with an explicit origin, not WGS84 vertical depth. Rig-job ends are exclusive, unlike inclusive classification validity ends. Existing DepthDrilling and LengthStandard quantities suffice; package dependencies are unchanged.
 
 Source 0.8.0 embeds all 223 Reviewed definitions. Provider integration must still address the missing MD-origin representation and MCP/editor corrections identified in the review.
+
+
+## WellBoreArchitecture vocabulary
+
+The [approved WellBoreArchitecture review](CURATION-WELLBOREARCHITECTURE-2026-09-29.md) adds 60 reviewed concepts for construction, geometry, materials, capacities, connectivity and uncertainty. TensileStrength is stress; TensileCapacity uses ForceDrilling. Casing top and cement-top locations are along-hole coordinates; wellhead/hanger and fluid-top locations are vertical. HostComponentAbscissa uses a local host-top/downward origin.
+
+Canonical drilling reference profile **1.1.0** adds the host-relative binding; all existing bindings are retained. Canonical reference metadata applies to storage and APIs, while user-selected presentation references remain supported. Physical extents, diameters, stress, differential pressure and uncertainties have no reference-origin offset. LengthStandard supplies engineering precision for extents; dimensional-length uncertainty is separate from the published coordinate/depth uncertainty definition.
+
+The increment uses existing UnitConversion 3.4.5 quantities. NuGet publication and WellBoreArchitecture integration follow separately; this release adds no provider payload fields or runtime calculations.

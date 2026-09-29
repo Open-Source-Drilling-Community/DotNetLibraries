@@ -11,9 +11,9 @@ public class EarthGeodesyVocabularyTests
     public void CuratedGeodesyIncrementKeepsPublishedIdentityMeaning()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.9.0"));
+        Assert.That(c.Document.Version, Is.EqualTo("0.10.0"));
         Assert.That(c.Document.Concepts.Take(156).Count(x => x.Status == CurationStatus.Proposed), Is.Zero);
-        Assert.That(c.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(230));
+        Assert.That(c.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(290));
         Assert.That(c.Get(Concepts.ReferenceEllipsoid).Definition,
             Is.EqualTo("Identifier of the ellipsoid used for geographic coordinates."));
         Assert.That(c.IsA(Concepts.ReferenceEllipsoidDefinition, Concepts.ReferenceEllipsoid), Is.False);

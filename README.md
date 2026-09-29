@@ -26,7 +26,7 @@ Most of these libraries have been packaged as .NET NuGets and published to [nuge
 
 ## Shared semantic catalogue
 
-[Drilling.SemanticCatalogue](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/README.md) provides a versioned, language-neutral semantic vocabulary, .NET annotations and UnitConversion 3.4.5 bindings. Source 0.9.0 contains 232 concepts (230 Reviewed and two Deprecated legacy names), preferred along-hole terminology, and a versioned canonical drilling reference profile. The [reference decisions and provider audit](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/CURATION-CANONICAL-REFERENCES-2026-09-29.md) describe WGS84 path-intersection origins, true north, ellipsoid-normal inclination and vacuum pressure. Well/WellBore adoption is verified locally; publish 0.9.0 before downstream restores. No new physical quantity is required.
+[Drilling.SemanticCatalogue](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/README.md) source 0.10.0 contains 292 concepts (290 Reviewed and two Deprecated legacy names), including the curated WellBoreArchitecture increment. It uses UnitConversion 3.4.5 and canonical drilling reference profile 1.1.0, preserving earlier definitions and presentation-reference support. Publication and provider integration are separate steps.
 
 ## Shared resource classification
 

@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "schemaVersion": 2,
   "concepts": [
     {
@@ -5454,12 +5454,1266 @@
         "Eric Cayeux clarification on 2026-09-29: intersection/extension to WGS84 ellipsoid."
       ],
       "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wellbore-architecture",
+      "label": "Well Bore Architecture",
+      "definition": "Managed construction description or revision linked to a wellbore; a construction resource, not a subtype of wellbore.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:managed-resource"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "associated wellbore",
+        "architecture revision"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:wellhead"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:surface-construction-section"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:casing-section"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:open-hole-section"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:environmental-fluid-layer"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:architecture-component",
+      "label": "Architecture Component",
+      "definition": "Embedded construction component, not necessarily an independently managed resource.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "containing architecture",
+        "component identity within its ownership scope"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wellhead",
+      "label": "Wellhead",
+      "definition": "Wellhead component describing body dimensions and hanger locations.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:surface-construction-section",
+      "label": "Surface Construction Section",
+      "definition": "Construction section above the wellhead, optionally carrying side circuitry; not surface casing.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:side-connector"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:casing-section",
+      "label": "Casing Section",
+      "definition": "Casing construction section describing tubular specifications, placement and associated borehole geometry.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:casing-element-specification"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:borehole-size-interval"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:casing-element-specification",
+      "label": "Casing Element Specification",
+      "definition": "Tubular specification applicable over an interval; not necessarily one physical casing joint.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:open-hole-section",
+      "label": "Open Hole Section",
+      "definition": "Uncased section represented by borehole-diameter and interval-length rows.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:borehole-size-interval"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:borehole-size-interval",
+      "label": "Borehole Size Interval",
+      "definition": "Borehole diameter applicable over a specified interval extent; not a diameter scalar alone.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:borehole-diameter"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:physical-length-extent"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:side-connector",
+      "label": "Side Connector",
+      "definition": "Connection from a host surface construction section into a side-circuit network.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": [
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:side-circuit-element"
+        },
+        {
+          "kind": "HasPart",
+          "target": "urn:osdc:semantic:side-circuit-connectivity"
+        }
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:side-circuit-element",
+      "label": "Side Circuit Element",
+      "definition": "Pipe, hose, valve, choke or pump forming part of a side-circuit network.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:architecture-component"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:side-circuit-connectivity",
+      "label": "Side Circuit Connectivity",
+      "definition": "Directed connection between upstream and downstream side-circuit elements; embedded endpoints may repeat existing elements.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "network and endpoint component identities"
+      ],
+      "constraints": [
+        "Do not infer flow orientation from increasing vertical or along-hole depth.",
+        "Do not count repeated endpoint appearances as distinct components."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:environmental-fluid-layer",
+      "label": "Environmental Fluid Layer",
+      "definition": "Environmental air or water layer above ground or mud line, described by its top boundary; not drilling-fluid composition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "containing architecture",
+        "layer boundaries and applicable ordering"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:surface-section-kind",
+      "label": "Surface Section Kind",
+      "definition": "Finite classification of surface section kind.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Published classifications: Unknown, BOP, HighPressureRiser, LowPressureRiser, MarineRiser, ExpansionJoint, BellNipple, Diverter, RotatingControlDevice.",
+        "Unknown, where available, means unspecified; it is not a physical equipment type."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:side-circuit-element-kind",
+      "label": "Side Circuit Element Kind",
+      "definition": "Finite classification of side circuit element kind.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Published classifications: Unknown, Pipe, Hose, GateValve, Choke, Pump.",
+        "Unknown, where available, means unspecified; it is not a physical equipment type."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:environmental-fluid-kind",
+      "label": "Environmental Fluid Kind",
+      "definition": "Finite classification of environmental fluid kind.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [
+        "Published classifications: Air, Water.",
+        "Unknown, where available, means unspecified; it is not a physical equipment type."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:physical-length-extent",
+      "label": "Physical Length Extent",
+      "definition": "Additive geometric extent of a physical interval; distinct from a position coordinate.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "applicable interval and geometry"
+      ],
+      "constraints": [
+        "Aggregation requires non-overlapping coverage of the same interval.",
+        "Do not sum extents from overlapping construction descriptions or substitute coordinate positions.",
+        "Missing coverage is unknown unless an explicit domain rule states otherwise."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:pipe-diameter",
+      "label": "Pipe Diameter",
+      "definition": "Diameter of a tubular or component body with an explicit inner, outer or envelope role.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "DiameterPipeDrilling",
+      "siUnit": "m",
+      "requiredContext": [
+        "component",
+        "diameter role"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:borehole-diameter",
+      "label": "Borehole Diameter",
+      "definition": "Diameter of the borehole over the applicable interval.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "DiameterPipeDrilling",
+      "siUnit": "m",
+      "requiredContext": [
+        "borehole interval"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:host-component-abscissa",
+      "label": "Host Component Abscissa",
+      "definition": "Curvilinear position along the host component from its top, increasing downward along the host; not a global wellbore depth.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:curvilinear-abscissa"
+      ],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "host component and oriented path"
+      ],
+      "constraints": [
+        "The host top supplies the local origin; do not apply a WGS84 depth offset."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:host-top-downward",
+      "label": "Host Top Downward",
+      "definition": "Zero is the top of the identified host component; the coordinate increases downward along its path.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "host component",
+        "host path and top location"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:section-extent",
+      "label": "Section Extent",
+      "definition": "Extent of the specified construction section or component interval.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:joint-extent",
+      "label": "Joint Extent",
+      "definition": "Extent of a casing joint.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:borehole-interval-extent",
+      "label": "Borehole Interval Extent",
+      "definition": "Extent of the interval to which a borehole diameter applies.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:inner-diameter",
+      "label": "Inner Diameter",
+      "definition": "Diameter of the interior opening; SideElement.ID denotes this dimension, not an identifier.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:outer-diameter",
+      "label": "Outer Diameter",
+      "definition": "Diameter of the exterior body.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:collar-outer-diameter",
+      "label": "Collar Outer Diameter",
+      "definition": "Exterior diameter at the collar.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:outer-diameter"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:minimum-wellhead-outside-diameter",
+      "label": "Minimum Wellhead Outside Diameter",
+      "definition": "Minimum outside diameter of the wellhead geometric envelope, not a statistical lower bound.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-wellhead-outside-diameter",
+      "label": "Maximum Wellhead Outside Diameter",
+      "definition": "Maximum outside diameter of the wellhead geometric envelope, not a statistical upper bound.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:wellhead-location",
+      "label": "Wellhead Location",
+      "definition": "Vertical location of the wellhead; bind to EllipsoidalDepth under the canonical drilling profile.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:casing-hanger-location",
+      "label": "Casing Hanger Location",
+      "definition": "Vertical location of the casing hanger; bind to EllipsoidalDepth under the canonical drilling profile.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:tubing-hanger-location",
+      "label": "Tubing Hanger Location",
+      "definition": "Vertical location of the tubing hanger; bind to EllipsoidalDepth under the canonical drilling profile.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:casing-top-location",
+      "label": "Casing Top Location",
+      "definition": "Along-hole location of the casing top; bind to AlongHoleDepth under the canonical drilling profile.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:top-of-cement-location",
+      "label": "Top Of Cement Location",
+      "definition": "Along-hole location of the top of cement; bind to AlongHoleDepth under the canonical drilling profile.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:connector-location",
+      "label": "Connector Location",
+      "definition": "Vertical location of a side connector; bind to EllipsoidalDepth under the canonical drilling profile.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:fluid-layer-top-boundary",
+      "label": "Fluid Layer Top Boundary",
+      "definition": "Top boundary of an environmental fluid layer, represented by vertical EllipsoidalDepth.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:top-depth-boundary"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:upstream",
+      "label": "Upstream",
+      "definition": "Upstream endpoint of a directed side-circuit connection.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:downstream",
+      "label": "Downstream",
+      "definition": "Downstream endpoint of a directed side-circuit connection.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:material-density",
+      "label": "Material Density",
+      "definition": "Mass density of component material; not inferred from an environmental fluid classification.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "MassDensityDrilling",
+      "siUnit": "kg/m³",
+      "requiredContext": [
+        "applicable material, geometry or pressure pair"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:young-modulus",
+      "label": "Young Modulus",
+      "definition": "Young modulus describing elastic stiffness of material, not absolute pressure.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "ElasticModulus",
+      "siUnit": "Pa",
+      "requiredContext": [
+        "applicable material or component",
+        "loading conditions and criterion"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:linear-mass-density",
+      "label": "Linear Mass Density",
+      "definition": "Mass per unit length, including collars where specified; not force per length.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "MassGradientPerLengthDrilling",
+      "siUnit": "kg/m",
+      "requiredContext": [
+        "applicable material, geometry or pressure pair"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:tensile-strength",
+      "label": "Tensile Strength",
+      "definition": "Material tensile strength expressed as stress, distinct from component axial force capacity.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "DrillStemMaterialStrengthDrilling",
+      "siUnit": "Pa",
+      "requiredContext": [
+        "applicable material or component",
+        "loading conditions and criterion"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:tensile-capacity",
+      "label": "Tensile Capacity",
+      "definition": "Axial tensile force limit of a specified component or connection under stated conditions and a stated limit criterion.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "ForceDrilling",
+      "siUnit": "N",
+      "requiredContext": [
+        "applicable material or component",
+        "loading conditions and criterion"
+      ],
+      "constraints": [
+        "No reference-origin offset applies.",
+        "Stress-to-force calculation requires resisting geometry and mechanical assumptions; it is not unit conversion.",
+        "A connection can limit capacity independently of the body; do not assume a safety factor."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:torsional-capacity",
+      "label": "Torsional Capacity",
+      "definition": "Torque limit of a specified component or connection; not shear stress.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "TorqueDrilling",
+      "siUnit": "N·m",
+      "requiredContext": [
+        "applicable material or component",
+        "loading conditions and criterion"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:pressure-difference",
+      "label": "Pressure Difference",
+      "definition": "Signed difference between two stated pressures; not an absolute pressure referred to vacuum.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "PressureDrilling",
+      "siUnit": "Pa",
+      "requiredContext": [
+        "applicable material, geometry or pressure pair"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:yield-stress",
+      "label": "Yield Stress",
+      "definition": "Material stress at the stated yield criterion; distinct from ultimate tensile strength.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "DrillStemMaterialStrengthDrilling",
+      "siUnit": "Pa",
+      "requiredContext": [
+        "applicable material or component",
+        "loading conditions and criterion"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:recommended-make-up-torque",
+      "label": "Recommended Make Up Torque",
+      "definition": "Recommended assembly make-up torque for the specified connection; not torsional failure capacity.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "TorqueDrilling",
+      "siUnit": "N·m",
+      "requiredContext": [
+        "applicable material or component",
+        "loading conditions and criterion"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-permitted-dogleg-severity",
+      "label": "Maximum Permitted Dogleg Severity",
+      "definition": "Maximum allowable path curvature for the applicable component, not a survey angle or observed curvature.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": "CurvatureDrilling",
+      "siUnit": "rad/m",
+      "requiredContext": [
+        "applicable material or component",
+        "loading conditions and criterion"
+      ],
+      "constraints": [
+        "No reference-origin offset applies."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:material-grade",
+      "label": "Material Grade",
+      "definition": "Material grade designation interpreted within its material and applicable standard; text alone does not determine a strength value.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "material",
+        "grade standard"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:connection-thread-description",
+      "label": "Connection Thread Description",
+      "definition": "Textual connection or thread specification; distinct from network connectivity.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "component connection",
+        "applicable specification or standard"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:burst-pressure-capacity",
+      "label": "Burst Pressure Capacity",
+      "definition": "Limiting internal-minus-external pressure difference for the specified component and burst criterion.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:pressure-difference"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "component",
+        "loading conditions and burst criterion"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:collapse-pressure-capacity",
+      "label": "Collapse Pressure Capacity",
+      "definition": "Limiting external-minus-internal pressure difference for the specified component and collapse criterion.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:pressure-difference"
+      ],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "component",
+        "loading conditions and collapse criterion"
+      ],
+      "constraints": [],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:scalar-value-representation",
+      "label": "Scalar Value Representation",
+      "definition": "Single scalar represented by a Dirac wrapper; representation alone supplies no physical quantity or reference.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [],
+      "aliases": [],
+      "quantityName": null,
+      "siUnit": null,
+      "requiredContext": [
+        "underlying measurand",
+        "physical quantity and unit"
+      ],
+      "constraints": [
+        "Bind the domain quantity and reference at /DiracDistributionValue/Value in property context.",
+        "Do not assign a universal physical quantity to a shared scalar wrapper."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:dimensional-length-standard-uncertainty",
+      "label": "Dimensional Length Standard Uncertainty",
+      "definition": "Standard uncertainty of a physical extent or diameter, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:mass-density-standard-uncertainty",
+      "label": "Mass Density Standard Uncertainty",
+      "definition": "Standard uncertainty of material density, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "MassDensityDrilling",
+      "siUnit": "kg/m³",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:linear-mass-density-standard-uncertainty",
+      "label": "Linear Mass Density Standard Uncertainty",
+      "definition": "Standard uncertainty of linear mass density, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "MassGradientPerLengthDrilling",
+      "siUnit": "kg/m",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:elastic-modulus-standard-uncertainty",
+      "label": "Elastic Modulus Standard Uncertainty",
+      "definition": "Standard uncertainty of elastic modulus, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "ElasticModulus",
+      "siUnit": "Pa",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:material-strength-standard-uncertainty",
+      "label": "Material Strength Standard Uncertainty",
+      "definition": "Standard uncertainty of material strength or yield stress, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "DrillStemMaterialStrengthDrilling",
+      "siUnit": "Pa",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:pressure-difference-standard-uncertainty",
+      "label": "Pressure Difference Standard Uncertainty",
+      "definition": "Standard uncertainty of a pressure difference, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "PressureDrilling",
+      "siUnit": "Pa",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:torque-standard-uncertainty",
+      "label": "Torque Standard Uncertainty",
+      "definition": "Standard uncertainty of torque, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "TorqueDrilling",
+      "siUnit": "N·m",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:force-standard-uncertainty",
+      "label": "Force Standard Uncertainty",
+      "definition": "Standard uncertainty of force, expressed as a same-dimensional dispersion without a reference origin.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:standard-uncertainty"
+      ],
+      "aliases": [],
+      "quantityName": "ForceDrilling",
+      "siUnit": "N",
+      "requiredContext": [],
+      "constraints": [
+        "Null standard deviation means unspecified, not zero.",
+        "Combining uncertainties requires covariance information or an explicit independence assumption."
+      ],
+      "evidence": [
+        "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
+      ],
+      "relations": []
     }
   ],
   "referenceProfiles": [
     {
       "id": "urn:osdc:reference-profile:canonical-drilling",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "bindings": [
         {
           "concept": "urn:osdc:semantic:ellipsoidal-depth",
@@ -5504,6 +6758,10 @@
         {
           "concept": "urn:osdc:semantic:drill-floor-depth",
           "reference": "urn:osdc:semantic:wgs84"
+        },
+        {
+          "concept": "urn:osdc:semantic:host-component-abscissa",
+          "reference": "urn:osdc:semantic:host-top-downward"
         }
       ],
       "scope": "canonical-storage-and-api"
