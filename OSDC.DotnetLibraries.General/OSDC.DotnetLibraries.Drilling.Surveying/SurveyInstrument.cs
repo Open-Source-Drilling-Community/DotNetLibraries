@@ -1,5 +1,6 @@
 ﻿using OSDC.DotnetLibraries.General.DataManagement;
 using OSDC.DotnetLibraries.General.Common;
+using OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
@@ -43,6 +44,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// the type of SurveyInstrument model
         /// </summary>
+        [Semantic(Concepts.SurveyInstrumentModel)]
         public SurveyInstrumentModelType ModelType { get; set; }
 
         /// <summary>
@@ -87,16 +89,19 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// Earthc standard angular velocity
         /// </summary>
+        [Semantic(Concepts.EarthAngularVelocity)]
         public double EarthRotRate { get; set; } = DEFAULT_EARTH_ROT_RATE;
 
         /// <summary>
         /// Cant Angle
         /// </summary>
+        [Semantic(Concepts.SurveyInstrumentCantAngle, Reference = Concepts.OrthogonalBodyFrameCantConvention)]
         public double CantAngle { get; set; } = DEFAULT_CANT_ANGLE;
 
         /// <summary>
         /// Gyro Running Speed
         /// </summary>
+        [Semantic(Concepts.SurveyToolRunningSpeed)]
         public double? GyroRunningSpeed { get; set; }
 
         /// <summary>
@@ -107,16 +112,19 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <summary>
         /// Gyro Switching
         /// </summary>
+        [Semantic(Concepts.GyroSwitchingParameter)]
         public double? GyroSwitching { get; set; } = DEFAULT_GYRO_SWITCHING;
 
         /// <summary>
         /// Gyro Minimum Distance between initialization
         /// </summary>
+        [Semantic(Concepts.GyroReinitializationDistance)]
         public double? GyroMinDist { get; set; }
 
         /// <summary>
         /// Gyro Noise Reduction Factor at initialization
         /// </summary>
+        [Semantic(Concepts.GyroNoiseReductionFactor)]
         public double? GyroNoiseRed { get; set; }
 
         /// <summary>

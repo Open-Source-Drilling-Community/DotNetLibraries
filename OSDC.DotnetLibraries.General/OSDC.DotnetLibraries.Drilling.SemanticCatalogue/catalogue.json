@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.10.0",
+  "version": "0.12.0",
   "schemaVersion": 2,
   "concepts": [
     {
@@ -6708,6 +6708,1184 @@
         "CURATION-WELLBOREARCHITECTURE-2026-09-29.md; approved by Eric Cayeux on 2026-09-29"
       ],
       "relations": []
+    },
+    {
+      "id": "urn:osdc:semantic:elevation",
+      "label": "Elevation",
+      "definition": "Signed vertical coordinate relative to an explicitly stated local origin, positive upward.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:coordinate"
+      ],
+      "quantityName": "LengthStandard",
+      "siUnit": "m",
+      "requiredContext": [
+        "reference origin"
+      ],
+      "constraints": [
+        "Positive values are upward from the stated origin.",
+        "An elevation is a coordinate, not an additive physical extent."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:distance-to-bit",
+      "label": "Distance To Bit",
+      "definition": "Signed elevation relative to the front face of the identified bit, positive upward.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:elevation"
+      ],
+      "requiredContext": [
+        "bit identity"
+      ],
+      "constraints": [
+        "The reference origin is the bit front face."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:drill-floor-upward",
+      "label": "Drill Floor Upward",
+      "definition": "Local vertical reference whose origin is the drill floor and whose positive direction is upward.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "requiredContext": [
+        "rig and drill-floor identity"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:bit-front-face-upward",
+      "label": "Bit Front Face Upward",
+      "definition": "Local vertical reference whose origin is the front face of the identified bit and whose positive direction is upward.",
+      "kind": "Reference",
+      "status": "Reviewed",
+      "requiredContext": [
+        "bit identity"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-identification",
+      "label": "Rig Identification",
+      "definition": "Identity, naming and ownership information for a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-component",
+      "label": "Rig Component",
+      "definition": "Component contained by or configured for a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-equipment",
+      "label": "Rig Equipment",
+      "definition": "Physical equipment item contained by or configured for a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-mast",
+      "label": "Rig Mast",
+      "definition": "Mast or derrick configuration of a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:hoisting-system",
+      "label": "Hoisting System",
+      "definition": "Rig system that raises, lowers and suspends drilling loads.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-operating-envelope",
+      "label": "Rig Operating Envelope",
+      "definition": "Set of design and operating limits applicable to a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:marine-unit-profile",
+      "label": "Marine Unit Profile",
+      "definition": "Marine-unit properties of an offshore drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:jack-up-profile",
+      "label": "Jack Up Profile",
+      "definition": "Jack-up-specific properties of a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:marine-unit-profile"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:station-keeping-system",
+      "label": "Station Keeping System",
+      "definition": "System used to maintain the position of a marine drilling unit.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-storage-capacity",
+      "label": "Rig Storage Capacity",
+      "definition": "Storage-capacity configuration of a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:equipment-measurement-capability",
+      "label": "Equipment Measurement Capability",
+      "definition": "Declared measurement range, accuracy and update capability of an equipment item.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:mud-pump-liner-configuration",
+      "label": "Mud Pump Liner Configuration",
+      "definition": "Liner configuration and associated performance data for a mud pump.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-component"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-type",
+      "label": "Rig Type",
+      "definition": "Closed classification of the structural type of a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-operating-environment",
+      "label": "Rig Operating Environment",
+      "definition": "Closed classification of the environment in which a drilling rig operates.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rig-mobility-type",
+      "label": "Rig Mobility Type",
+      "definition": "Closed classification of the mobility of a drilling rig.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:equipment-lifecycle-status",
+      "label": "Equipment Lifecycle Status",
+      "definition": "Closed classification of the lifecycle or availability state of a rig equipment item.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:mud-pump",
+      "label": "Mud Pump",
+      "definition": "Mud Pump represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:cement-pump",
+      "label": "Cement Pump",
+      "definition": "Cement Pump represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:mud-tank",
+      "label": "Mud Tank",
+      "definition": "Mud Tank represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:shale-shaker",
+      "label": "Shale Shaker",
+      "definition": "Shale Shaker represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:generator",
+      "label": "Generator",
+      "definition": "Generator represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:top-drive",
+      "label": "Top Drive",
+      "definition": "Top Drive represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rotary-table",
+      "label": "Rotary Table",
+      "definition": "Rotary Table represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:drawworks",
+      "label": "Drawworks",
+      "definition": "Drawworks represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:blowout-preventer-stack",
+      "label": "Blowout Preventer Stack",
+      "definition": "Blowout Preventer Stack represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:managed-pressure-drilling-equipment",
+      "label": "Managed Pressure Drilling Equipment",
+      "definition": "Managed Pressure Drilling Equipment represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:drilling-marine-riser",
+      "label": "Drilling Marine Riser",
+      "definition": "Drilling Marine Riser represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:heave-compensator",
+      "label": "Heave Compensator",
+      "definition": "Heave Compensator represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:flow-routing-manifold",
+      "label": "Flow Routing Manifold",
+      "definition": "Flow Routing Manifold represented as an equipment item in a drilling rig configuration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:rig-equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:absolute-pressure-rating",
+      "label": "Absolute Pressure Rating",
+      "definition": "Rated absolute pressure referred to vacuum for the applicable equipment and rating condition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "parents": [
+        "urn:osdc:semantic:absolute-pressure"
+      ],
+      "requiredContext": [
+        "equipment and rating condition"
+      ],
+      "constraints": [
+        "This is a rating or capability, not an observed current pressure."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:equipment-mass",
+      "label": "Equipment Mass",
+      "definition": "Mass of the applicable rig equipment item.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "MassDrilling",
+      "siUnit": "kg",
+      "requiredContext": [
+        "equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:force-capacity",
+      "label": "Force Capacity",
+      "definition": "Limiting force capacity of the applicable equipment and load case.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "ForceDrilling",
+      "siUnit": "N",
+      "requiredContext": [
+        "equipment and load case"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:power-rating",
+      "label": "Power Rating",
+      "definition": "Rated power of the applicable equipment and duty condition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "PowerDrilling",
+      "siUnit": "W",
+      "requiredContext": [
+        "equipment and duty condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:volumetric-flow-capacity",
+      "label": "Volumetric Flow Capacity",
+      "definition": "Limiting volumetric flow rate of the applicable equipment and operating condition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "VolumetricFlowrateDrilling",
+      "siUnit": "m³/s",
+      "requiredContext": [
+        "equipment and operating condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:volume-capacity",
+      "label": "Volume Capacity",
+      "definition": "Volume that the applicable equipment or storage system can contain.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "VolumeDrilling",
+      "siUnit": "m³",
+      "requiredContext": [
+        "equipment or storage system"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:mass-capacity",
+      "label": "Mass Capacity",
+      "definition": "Mass that the applicable equipment or storage system can contain or support.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "MassDrilling",
+      "siUnit": "kg",
+      "requiredContext": [
+        "equipment or storage system"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rotational-angular-velocity",
+      "label": "Rotational Angular Velocity",
+      "definition": "Angular velocity of rotating rig equipment.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "AngularVelocityDrilling",
+      "siUnit": "rad/s",
+      "requiredContext": [
+        "rotating equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:linear-velocity",
+      "label": "Linear Velocity",
+      "definition": "Translational velocity of the applicable rig equipment or moving element.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "Velocity",
+      "siUnit": "m/s",
+      "requiredContext": [
+        "equipment or moving element"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:operating-temperature",
+      "label": "Operating Temperature",
+      "definition": "Thermodynamic temperature associated with an equipment operating or design condition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "TemperatureDrilling",
+      "siUnit": "K",
+      "requiredContext": [
+        "equipment and operating or design condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:electrical-potential",
+      "label": "Electrical Potential",
+      "definition": "Electrical potential difference applicable to rig electrical equipment.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "ElectricTension",
+      "siUnit": "V",
+      "requiredContext": [
+        "electrical equipment and terminals"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:signal-frequency",
+      "label": "Signal Frequency",
+      "definition": "Frequency at which a signal, measurement or update is produced.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "Frequency",
+      "siUnit": "Hz",
+      "requiredContext": [
+        "signal or measurement source"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:controller-gain",
+      "label": "Controller Gain",
+      "definition": "Dimensionless proportional gain used by a rig equipment controller.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "ProportionStandard",
+      "siUnit": "1",
+      "requiredContext": [
+        "controller and controlled variable"
+      ],
+      "constraints": [
+        "This concept is dimensionless."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:drilling-depth-capacity",
+      "label": "Drilling Depth Capacity",
+      "definition": "Maximum supported drilling depth as an additive capability or extent, not a coordinate.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "DepthDrilling",
+      "siUnit": "m",
+      "requiredContext": [
+        "rig and drilling basis"
+      ],
+      "constraints": [
+        "No vertical datum or coordinate reference applies."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:water-depth-capacity",
+      "label": "Water Depth Capacity",
+      "definition": "Maximum supported water depth as an additive capability or extent, not a coordinate.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "DepthDrilling",
+      "siUnit": "m",
+      "requiredContext": [
+        "rig and water-depth basis"
+      ],
+      "constraints": [
+        "No vertical datum or coordinate reference applies."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:measurement-range-value",
+      "label": "Measurement Range Value",
+      "definition": "Endpoint of an equipment measurement range whose physical quantity is supplied by the measurement capability context.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "requiredContext": [
+        "sibling PhysicalQuantity declaration"
+      ],
+      "constraints": [
+        "The unit and dimension are determined by the declared physical quantity."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:absolute-measurement-accuracy",
+      "label": "Absolute Measurement Accuracy",
+      "definition": "Absolute measurement accuracy expressed in the same physical quantity as the measurand.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "requiredContext": [
+        "sibling PhysicalQuantity declaration",
+        "measurand"
+      ],
+      "constraints": [
+        "No coordinate reference-origin offset applies to an accuracy."
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:relative-measurement-accuracy",
+      "label": "Relative Measurement Accuracy",
+      "definition": "Dimensionless measurement accuracy relative to the measurand.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "ProportionStandard",
+      "siUnit": "1",
+      "requiredContext": [
+        "measurand"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rate-of-penetration-limit",
+      "label": "Rate Of Penetration Limit",
+      "definition": "Operating limit on rate of penetration.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "RateOfPenetrationDrilling",
+      "siUnit": "m/s",
+      "requiredContext": [
+        "equipment and operating condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:weight-on-bit-limit",
+      "label": "Weight On Bit Limit",
+      "definition": "Operating limit on force applied as weight on bit.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "WeightOnBitDrilling",
+      "siUnit": "N",
+      "requiredContext": [
+        "equipment and operating condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:choke-opening-rate",
+      "label": "Choke Opening Rate",
+      "definition": "Rate of change of normalized choke opening.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "ChokeOpeningRateDrilling",
+      "siUnit": "1/s",
+      "requiredContext": [
+        "choke and operating condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:power-rate-of-change",
+      "label": "Power Rate Of Change",
+      "definition": "Rate of change of equipment power.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "PowerRateOfChangeDrilling",
+      "siUnit": "W/s",
+      "requiredContext": [
+        "equipment and operating condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rotational-frequency-rate-of-change",
+      "label": "Rotational Frequency Rate Of Change",
+      "definition": "Rate of change of rotational frequency.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "RotationalFrequencyRateOfChangeDrilling",
+      "siUnit": "Hz/s",
+      "requiredContext": [
+        "rotating equipment and operating condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:stroke-frequency",
+      "label": "Stroke Frequency",
+      "definition": "Frequency of recurring equipment strokes.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "StrokeFrequency",
+      "siUnit": "Hz",
+      "requiredContext": [
+        "stroking equipment"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:equipment-duration",
+      "label": "Equipment Duration",
+      "definition": "Elapsed time associated with an equipment operation or transition.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "DurationDrilling",
+      "siUnit": "s",
+      "requiredContext": [
+        "equipment operation or transition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:equipment-efficiency",
+      "label": "Equipment Efficiency",
+      "definition": "Dimensionless efficiency of equipment under stated conditions.",
+      "kind": "Noun",
+      "status": "Reviewed",
+      "quantityName": "ProportionStandard",
+      "siUnit": "1",
+      "requiredContext": [
+        "equipment and operating condition"
+      ],
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:rated-value",
+      "label": "Rated Value",
+      "definition": "Marks a value declared as an equipment rating.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:nominal-value",
+      "label": "Nominal Value",
+      "definition": "Marks a value declared as nominal.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-design-limit",
+      "label": "Maximum Design Limit",
+      "definition": "Marks the maximum value allowed by design.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-operating-limit",
+      "label": "Maximum Operating Limit",
+      "definition": "Marks the maximum value allowed during operation.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:minimum-operating-limit",
+      "label": "Minimum Operating Limit",
+      "definition": "Marks the minimum value allowed during operation.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-test-limit",
+      "label": "Maximum Test Limit",
+      "definition": "Marks the maximum value applicable during testing.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:continuous-rating",
+      "label": "Continuous Rating",
+      "definition": "Marks a rating applicable to continuous duty.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:intermittent-rating",
+      "label": "Intermittent Rating",
+      "definition": "Marks a rating applicable to intermittent duty.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:make-up-limit",
+      "label": "Make Up Limit",
+      "definition": "Marks a limit applicable while making up a connection.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:breakout-limit",
+      "label": "Breakout Limit",
+      "definition": "Marks a limit applicable while breaking out a connection.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:static-pressure-limit",
+      "label": "Static Pressure Limit",
+      "definition": "Marks a pressure limit under static conditions.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:dynamic-pressure-limit",
+      "label": "Dynamic Pressure Limit",
+      "definition": "Marks a pressure limit under dynamic conditions.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:activation-pressure-limit",
+      "label": "Activation Pressure Limit",
+      "definition": "Marks a pressure at which equipment activates.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:discharge-pressure-limit",
+      "label": "Discharge Pressure Limit",
+      "definition": "Marks a pressure applicable at discharge.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:survival-limit",
+      "label": "Survival Limit",
+      "definition": "Marks an environmental or operational value the equipment is designed to survive.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:measurement-range-minimum",
+      "label": "Measurement Range Minimum",
+      "definition": "Marks the lower endpoint of a measurement range.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:measurement-range-maximum",
+      "label": "Measurement Range Maximum",
+      "definition": "Marks the upper endpoint of a measurement range.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:cold-start-duration",
+      "label": "Cold Start Duration",
+      "definition": "Marks elapsed start duration from a cold condition.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:warm-start-duration",
+      "label": "Warm Start Duration",
+      "definition": "Marks elapsed start duration from a warm condition.",
+      "kind": "Role",
+      "status": "Reviewed",
+      "evidence": [
+        "CURATION-RIG-2026-09-30.md; approved by Eric Cayeux on 2026-09-30"
+      ]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-instrument", "label": "Survey instrument", "definition": "Managed definition of a directional-survey instrument and the error model used to propagate its measurement uncertainty.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "evidence": ["SurveyInstrument/Model and OSDC.DotnetLibraries.Drilling.Surveying; Eric Cayeux approval, 2026-09-30"], "relations": [{"kind": "HasPart", "target": "urn:osdc:semantic:survey-instrument-model"}, {"kind": "HasPart", "target": "urn:osdc:semantic:survey-error-source"}]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-instrument-model", "label": "Survey instrument model discriminator", "definition": "Provider discriminator combining the survey-tool family with the selected position-uncertainty-model formulation.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["tool family", "position uncertainty model"], "evidence": ["SurveyInstrumentModelType; ISCWSA Revision 5.13; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:position-uncertainty-model", "label": "Position uncertainty model", "definition": "Mathematical model that propagates survey error sources into wellbore positional uncertainty; it is distinct from the physical survey instrument and its sensor family.", "kind": "Noun", "status": "Reviewed", "aliases": ["PUM"], "evidence": ["ISCWSA Definition of the Error Model Revision 5.13"]
+    },
+    {
+      "id": "urn:osdc:semantic:mwd-survey-instrument-model", "label": "MWD survey instrument model", "definition": "Survey-instrument model whose tool family is measurement while drilling (MWD).", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-instrument-model"], "evidence": ["SurveyInstrumentModelType MWD variants; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:gyro-survey-instrument-model", "label": "Gyroscopic survey instrument model", "definition": "Survey-instrument model whose tool family is gyroscopic.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-instrument-model"], "evidence": ["SurveyInstrumentModelType Gyro variants; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:wolff-de-wardt-error-model", "label": "Wolff-de Wård survey error model", "definition": "Wolff-de Wård formulation for propagating directional-survey uncertainty.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:position-uncertainty-model"], "evidence": ["SurveyInstrumentModelType WolffDeWardt variants; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:iscwsa-error-model", "label": "ISCWSA position uncertainty model", "definition": "ISCWSA Revision 5 formulation for propagating directional-survey uncertainty from standardized error sources.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:position-uncertainty-model"], "requiredContext": ["ISCWSA model revision"], "evidence": ["ISCWSA Definition of the Error Model Revision 5.13; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-error-source", "label": "Survey error source", "definition": "A standardized contributor to directional-survey uncertainty, including its code, propagation and operating classifications, one-sigma magnitude and weighting behavior.", "kind": "Noun", "status": "Reviewed", "evidence": ["OSDC.DotnetLibraries.Drilling.Surveying ErrorSource; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-error-source-template", "label": "Survey error-source template", "definition": "Independently managed reusable template from which a survey instrument may take an error-source snapshot.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-source"], "evidence": ["SurveyInstrument ErrorSource API and batch contract; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:embedded-survey-error-source-snapshot", "label": "Embedded survey error-source snapshot", "definition": "Frozen error-source definition embedded in a survey instrument; later changes to a same-UUID template do not propagate into the snapshot.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-source"], "evidence": ["SurveyInstrument ErrorSource snapshot contract; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-error-source-code", "label": "Survey error-source code", "definition": "Exact finite ISCWSA or legacy survey-error identifier. The provider's closed enum tokens are preserved verbatim.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["error-model version"], "evidence": ["ErrorCode enum; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-error-magnitude", "label": "Survey error magnitude", "definition": "Nonnegative one-sigma standard uncertainty assigned to a survey error source.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:standard-uncertainty"], "requiredContext": ["error-source code", "magnitude physical quantity"], "constraints": ["The physical quantity is determined by the error-source definition.", "This is not a signed correction or coordinate."], "evidence": ["ErrorSource.Magnitude and ISCWSA sigma_i; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:error-magnitude-quantity-identifier", "label": "Error-magnitude quantity identifier", "definition": "Canonical UnitConversion physical-quantity name that determines the dimension and SI unit of a survey error magnitude.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["error-source code"], "constraints": ["The identifier must be compatible with the selected error-source code."], "evidence": ["ErrorSource.MagnitudeQuantity; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:error-propagation-mode", "label": "Survey error propagation mode", "definition": "ISCWSA correlation and propagation classification for a survey error source.", "kind": "Noun", "status": "Reviewed", "constraints": ["Random, Systematic, Global and Well-by-Well are distinct modes."], "evidence": ["ISCWSA propagation framework; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:random-propagation-mode", "label": "Random propagation mode", "definition": "ISCWSA propagation mode for an error contribution treated as random according to the selected error model.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:error-propagation-mode"], "evidence": ["ErrorSource.IsRandom; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:systematic-propagation-mode", "label": "Systematic propagation mode", "definition": "ISCWSA propagation mode for an error contribution treated as systematic according to the selected error model.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:error-propagation-mode"], "evidence": ["ErrorSource.IsSystematic; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:global-propagation-mode", "label": "Global propagation mode", "definition": "ISCWSA propagation mode fully correlated across all survey stations, all survey legs and all wells in the applicable project or field.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:error-propagation-mode"], "evidence": ["ErrorSource.IsGlobal and ISCWSA Global mode; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:well-by-well-propagation-mode", "label": "Well-by-Well propagation mode", "definition": "ISCWSA propagation mode whose correlation is shared within one well and independent between wells.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:error-propagation-mode"], "requiredContext": ["well identity"], "evidence": ["ISCWSA Well-by-Well mode; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:gyro-operating-mode", "label": "Gyro operating mode", "definition": "Mutually exclusive operating state controlling how a gyroscopic survey instrument acquires observations and propagates errors.", "kind": "Noun", "status": "Reviewed", "constraints": ["The instrument operates in either Stationary or Continuous mode at a given point.", "An error source may be applicable in Stationary mode, Continuous mode or both; applicability is not the operating state."], "evidence": ["ISCWSA Definition of the Error Model Revision 5.13 section 7.2; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:stationary-gyro-mode", "label": "Stationary gyro mode", "definition": "Gyro operating mode in which the tool remains still at a survey station and weighting functions are evaluated statically at that position.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:gyro-operating-mode"], "evidence": ["ISCWSA stationary gyro behavior; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:continuous-gyro-mode", "label": "Continuous gyro mode", "definition": "Gyro operating mode in which observations are recorded while moving and time/depth-dependent errors accumulate recursively from the previous survey station.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:gyro-operating-mode"], "evidence": ["ISCWSA continuous gyro behavior; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:earth-angular-velocity", "label": "Earth angular velocity", "definition": "Angular velocity of the Earth used by a gyroscopic survey error model.", "kind": "Noun", "status": "Reviewed", "quantityName": "AngularVelocityDrilling", "siUnit": "rad/s", "evidence": ["SurveyInstrument.EarthRotRate; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-instrument-cant-angle", "label": "Survey-instrument cant angle", "definition": "Rotation of the transverse axes of the orthogonal tool body frame about the along-hole tool axis.", "kind": "Noun", "status": "Reviewed", "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "requiredContext": ["tool body frame", "tool inclination", "K-operator treatment above 90 degrees"], "evidence": ["SurveyInstrument.CantAngle; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:orthogonal-body-frame-cant-convention", "label": "Orthogonal body-frame cant convention", "definition": "Cant is measured in the orthogonal tool body frame about the along-hole z axis; the declared positive convention applies for tool inclination less than or equal to 90 degrees.", "kind": "Reference", "status": "Reviewed", "requiredContext": ["K-operator treatment above 90 degrees"], "evidence": ["Eric Cayeux SurveyInstrument clarification, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-tool-running-speed", "label": "Survey-tool running speed", "definition": "Along-hole linear speed of a continuously recording survey tool.", "kind": "Noun", "status": "Reviewed", "quantityName": "Velocity", "siUnit": "m/s", "evidence": ["SurveyInstrument.GyroRunningSpeed and CovarianceCalculatorISCWSA; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:gyro-reinitialization-distance", "label": "Gyro reinitialization distance", "definition": "Minimum accumulated along-hole distance between gyro initializations.", "kind": "Noun", "status": "Reviewed", "quantityName": "LengthStandard", "siUnit": "m", "constraints": ["This is an interval extent, not a depth coordinate."], "evidence": ["SurveyInstrument.GyroMinDist and CovarianceCalculatorISCWSA; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:gyro-noise-reduction-factor", "label": "Gyro noise-reduction factor", "definition": "Dimensionless factor applied to selected stationary-gyro noise weighting functions.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "evidence": ["SurveyInstrument.GyroNoiseRed; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:gyro-switching-parameter", "label": "Gyro K switching operator", "definition": "Dimensionless logical K operator used to switch the cant convention of transverse accelerometers across 90-degree inclination.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "requiredContext": ["gyro model", "cant-angle convention"], "constraints": ["Permitted values are +1 and -1."], "evidence": ["ISCWSA Definition of the Error Model Revision 5.13; SurveyInstrument.GyroSwitching; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:relative-along-hole-depth-standard-uncertainty", "label": "Relative along-hole-depth standard uncertainty", "definition": "One-sigma uncertainty of along-hole depth expressed as a dimensionless proportion.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "ProportionSmall", "siUnit": "1", "evidence": ["SurveyInstrument.RelDepthError; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:instrument-misalignment-standard-uncertainty", "label": "Instrument misalignment standard uncertainty", "definition": "One-sigma angular uncertainty due to survey-instrument misalignment.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "evidence": ["SurveyInstrument.Misalignment; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:true-inclination-standard-uncertainty", "label": "True-inclination standard uncertainty", "definition": "One-sigma angular uncertainty assigned to the true-inclination term of a survey error model.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "evidence": ["SurveyInstrument.TrueInclination; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-reference-standard-uncertainty", "label": "Survey-reference standard uncertainty", "definition": "One-sigma angular uncertainty assigned to the reference term of a survey error model.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "evidence": ["SurveyInstrument.ReferenceError; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:drill-string-magnetic-interference-standard-uncertainty", "label": "Drill-string magnetic-interference standard uncertainty", "definition": "One-sigma uncertainty due to drill-string magnetic interference; its physical representation is determined by the selected legacy or current error-model term.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "evidence": ["SurveyInstrument.DrillStringMag, AMID and AMIL; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:gyro-compass-standard-uncertainty", "label": "Gyro-compass standard uncertainty", "definition": "One-sigma angular uncertainty of the gyro-compass term.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "evidence": ["SurveyInstrument.GyroCompassError; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:along-hole-depth-standard-uncertainty", "label": "Along-hole-depth standard uncertainty", "definition": "One-sigma linear uncertainty of an along-hole-depth observation; it is origin-free and is not a depth coordinate.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "DepthDrilling", "siUnit": "m", "evidence": ["ISCWSA DRFR, DRFS and XCL terms; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:acceleration-standard-uncertainty", "label": "Acceleration standard uncertainty", "definition": "One-sigma uncertainty of an accelerometer or gravity-related error term.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "AccelerationDrilling", "siUnit": "m/s^2", "evidence": ["ISCWSA accelerometer error terms; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:magnetic-flux-density-standard-uncertainty", "label": "Magnetic-flux-density standard uncertainty", "definition": "One-sigma uncertainty of a magnetic flux-density error term.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "EarthMagneticFluxDensity", "siUnit": "T", "evidence": ["ISCWSA magnetometer error terms and AMIL; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:scale-factor-standard-uncertainty", "label": "Scale-factor standard uncertainty", "definition": "One-sigma dimensionless uncertainty of an instrument or depth scale factor.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "ProportionSmall", "siUnit": "1", "evidence": ["ISCWSA scale-factor error terms; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:angular-velocity-standard-uncertainty", "label": "Angular-velocity standard uncertainty", "definition": "One-sigma uncertainty of a gyro bias, noise or drift rate.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "AngularVelocitySurveyInstrumentDrilling", "siUnit": "rad/s", "evidence": ["ISCWSA gyro bias, noise and drift terms; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:angular-random-walk-standard-uncertainty", "label": "Angular-random-walk standard uncertainty", "definition": "One-sigma angular random-walk coefficient used by a continuous gyro error model.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "RandomWalkDrilling", "siUnit": "rad/√s", "evidence": ["ISCWSA GXYZ_RW, GXY_RW and GZ_RW; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:reciprocal-length-standard-uncertainty", "label": "Reciprocal-length standard uncertainty", "definition": "One-sigma reciprocal-length coefficient used by a depth-stretch survey error term.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "ReciprocalLengthSurveyInstrumentDrilling", "siUnit": "1/m", "evidence": ["ISCWSA DSTG; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:angle-magnetic-flux-density-standard-uncertainty", "label": "Angle-magnetic-flux-density standard uncertainty", "definition": "One-sigma angle-times-magnetic-flux-density coefficient which is divided by the applicable magnetic-field component by DBH weighting functions to produce an angular contribution.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-error-magnitude"], "quantityName": "AngleMagneticFluxDensitySurveyInstrumentDrilling", "siUnit": "rad·T", "evidence": ["ISCWSA DBH terms and ErrorSourceFactory weighting functions; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:amid-axial-magnetic-interference-standard-uncertainty", "label": "AMID axial magnetic-interference standard uncertainty", "definition": "Legacy AMID representation of axial magnetic interference as a one-sigma planar angular uncertainty.", "kind": "Noun", "status": "Deprecated", "parents": ["urn:osdc:semantic:drill-string-magnetic-interference-standard-uncertainty"], "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "supersededBy": "urn:osdc:semantic:amil-axial-magnetic-interference-standard-uncertainty", "constraints": ["Do not interpret AMID as magnetic flux in webers."], "evidence": ["Legacy ErrorCode.AMID; Eric Cayeux clarification, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:amil-axial-magnetic-interference-standard-uncertainty", "label": "AMIL axial magnetic-interference standard uncertainty", "definition": "Current AMIL representation of axial magnetic interference as a one-sigma magnetic-flux-density uncertainty.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:drill-string-magnetic-interference-standard-uncertainty"], "quantityName": "EarthMagneticFluxDensity", "siUnit": "T", "evidence": ["AMIL replacement for AMID; Eric Cayeux clarification, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:error-applicability-start", "label": "Error applicability start", "definition": "Marks the inclusive lower inclination boundary at which a survey error source becomes applicable, subject to the selected implementation contract.", "kind": "Role", "status": "Reviewed", "evidence": ["ErrorSource.StartInclination; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:error-applicability-end", "label": "Error applicability end", "definition": "Marks the upper inclination boundary at which a survey error source ceases to be applicable; endpoint inclusion belongs to the selected implementation contract.", "kind": "Role", "status": "Reviewed", "evidence": ["ErrorSource.EndInclination; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:error-initialization-inclination", "label": "Error initialization inclination", "definition": "Marks the wellbore inclination used to initialize or reinitialize a survey error source.", "kind": "Role", "status": "Reviewed", "evidence": ["ErrorSource.InitInclination; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:error-applicability-interval", "label": "Error applicability interval", "definition": "Inclination interval over which a survey error source applies, defined by explicit start and end boundary roles.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["start inclination", "end inclination", "endpoint inclusion policy"], "evidence": ["ErrorSource.UseInclinationInterval, StartInclination and EndInclination; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:k-operator-imposed", "label": "K-operator imposed", "definition": "Opaque legacy ISCWSA flag indicating that a K-operator treatment is imposed. No stronger mathematical behavior is asserted.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["specific ISCWSA implementation"], "evidence": ["ErrorSource.KOperatorImposed; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:weighting-function-singularity-risk", "label": "Weighting-function singularity risk", "definition": "Indicator that evaluation of a survey error source's weighting functions may encounter a singular condition.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["weighting-function implementation"], "evidence": ["ErrorSource.SingularIssues; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:error-source-ordering-index", "label": "Error-source ordering index", "definition": "Provider-owned implementation ordering value for a survey error source; it is not an ISCWSA semantic identity.", "kind": "Noun", "status": "Reviewed", "constraints": ["Do not use this index as the error-source identity."], "evidence": ["ErrorSource.Index; Eric Cayeux approval, 2026-09-30"]
     }
   ],
   "referenceProfiles": [

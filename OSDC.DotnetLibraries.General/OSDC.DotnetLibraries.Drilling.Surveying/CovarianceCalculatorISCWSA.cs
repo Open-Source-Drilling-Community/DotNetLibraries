@@ -613,6 +613,36 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         errorSourcesAccumulator[i].IsInitialized = isInitialized;//New
                         #endregion
 
+                        // Ordinary MWD/common terms are neither continuous nor stationary gyro terms.
+                        // Their azimuth weighting function must still be evaluated with the complete
+                        // environmental context required by ISCWSA Revision 5.
+                        if (!eSource!.IsContinuous && !IsStationary(eSource))
+                        {
+                            args =
+                            [
+                                new KeyValuePair<ParameterType, double>(ParameterType.Inclination, inclination),
+                                new KeyValuePair<ParameterType, double>(ParameterType.Azimuth, azimuth),
+                                new KeyValuePair<ParameterType, double>(ParameterType.Declination, surveyTool.Declination),
+                                new KeyValuePair<ParameterType, double>(ParameterType.Dip, surveyTool.Dip),
+                                new KeyValuePair<ParameterType, double>(ParameterType.BField, surveyTool.BField),
+                                new KeyValuePair<ParameterType, double>(ParameterType.GField, surveyTool.Gravity),
+                                new KeyValuePair<ParameterType, double>(ParameterType.Convergence, surveyTool.Convergence),
+                            ];
+                            wf_azim = eSource!.WeightingFunctionAzim?.Invoke(args) ?? 0.0;
+                        }
+
+                        if (eSource.ErrorCode is ErrorCode.XYM3E or ErrorCode.XYM4E)
+                        {
+                            double courseLength = MD - MDPrev;
+                            const double minimumCourseLength = 10.0;
+                            if (courseLength > 0.1 && courseLength < minimumCourseLength)
+                            {
+                                double damping = Math.Max(1.0, Math.Sqrt(minimumCourseLength / courseLength));
+                                dpde[1] *= damping;
+                                wf_azim *= damping;
+                            }
+                        }
+
                         // Finalize
                         errorSourcesAccumulator[i].GyroH = wf_azim;
                         errorSourcesAccumulator[i].InitializationMD = initializationMD;
@@ -653,14 +683,11 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             {
                                 double azT = azimuth + surveyTool.Convergence;
                                 double azTPrev = azimPrev + surveyTool.Convergence;
-                                double mod = (azT - azTPrev + Math.PI) % (2 * Math.PI);
-                                double val1 = mod - Math.PI;
-                                double val2 = 0;
-                                if (inclPrev >= 0.0001 * Math.PI / 180.0)
-                                {
-                                    val2 = val1;
-                                }
-                                double val3 = Math.Abs(Math.Sin(inclination) * val2);
+                                double azimuthDifference = Math.Atan2(Math.Sin(azT - azTPrev), Math.Cos(azT - azTPrev));
+                                const double verticalTolerance = 0.0001 * Math.PI / 180.0;
+                                double val3 = inclPrev < verticalTolerance || inclination < verticalTolerance
+                                    ? 0.0
+                                    : Math.Abs(Math.Sin(inclination) * azimuthDifference);
                                 double defaultTortuosity = 0.000572615; //[rad/m]
                                 double val4 = Math.Max(val3, defaultTortuosity * (MD - MDPrev));
                                 double val5 = magnitude * (MD - MDPrev) * val4;
@@ -670,6 +697,19 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                 eStar[0] = e[0];
                                 eStar[1] = e[1];
                                 eStar[2] = e[2];
+                            }
+                            else if (eSource.ErrorCode is ErrorCode.XCLI1 or ErrorCode.XCLI2)
+                            {
+                                double defaultTortuosity = 0.000572615; // rad/m
+                                double courseLength = MD - MDPrev;
+                                double value = magnitude * courseLength *
+                                    Math.Max(Math.Abs(inclination - inclinationPrev), defaultTortuosity * courseLength);
+                                e[0] = eSource.ErrorCode == ErrorCode.XCLI1 ? value : 0.0;
+                                e[1] = eSource.ErrorCode == ErrorCode.XCLI2 ? value : 0.0;
+                                e[2] = 0.0;
+                                eStar[0] = e[0];
+                                eStar[1] = e[1];
+                                eStar[2] = 0.0;
                             }
                             else if (eSource.ErrorCode is ErrorCode.XCLH && surveyStationPrev.Azimuth is double azimPrev2 && surveyStationPrev.Inclination is double inclPrev2)
                             {
@@ -774,7 +814,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         /// Assembling the covariance matrix ///
                         ////////////////////////////////////////
                         double[,] CovarianceI = new double[3, 3];
-                        if (eSource.IsRandom && !allSystematic)
+                        if (eSource.EffectivePropagationMode == ErrorPropagationMode.Random && !allSystematic)
                         {
                             if (c == 0)
                             {

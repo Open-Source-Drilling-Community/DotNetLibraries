@@ -20,8 +20,8 @@ public class WellBoreArchitectureVocabularyTests
             new JsonSerializerOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
         Assert.That(Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant(),
             Is.EqualTo("54d11d4863e3afd27f065e6e7f212934d6cd14068e466fc19e1730b1073a5ae3"));
-        Assert.That(Catalogue.Default.Document.Concepts.Skip(232), Has.Count.EqualTo(60));
-        Assert.That(Catalogue.Default.Document.Concepts.Skip(232).All(x => x.Status == CurationStatus.Reviewed), Is.True);
+        Assert.That(Catalogue.Default.Document.Concepts.Skip(232).Take(60), Has.Count.EqualTo(60));
+        Assert.That(Catalogue.Default.Document.Concepts.Skip(232).Take(60).All(x => x.Status == CurationStatus.Reviewed), Is.True);
     }
 
     [Test]
@@ -75,7 +75,7 @@ public class WellBoreArchitectureVocabularyTests
     {
         var c = Catalogue.Default;
         Assert.That(c.Quantity(Concepts.ScalarValueRepresentation), Is.Null);
-        foreach (var definition in c.Document.Concepts.Skip(232).Where(x => c.IsA(x.Id, Concepts.StandardUncertainty)))
+        foreach (var definition in c.Document.Concepts.Skip(232).Take(60).Where(x => c.IsA(x.Id, Concepts.StandardUncertainty)))
         {
             Assert.That(c.Quantity(definition.Id), Is.Not.Null);
             Assert.That(SemanticMetadata.Create(definition.Id, referenceProfile: Catalogue.OsdcCanonicalDrilling)["reference"], Is.Null);

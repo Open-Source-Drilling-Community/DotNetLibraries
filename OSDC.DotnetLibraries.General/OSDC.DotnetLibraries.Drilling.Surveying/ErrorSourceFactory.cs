@@ -3,7 +3,7 @@ using static OSDC.DotnetLibraries.Drilling.Surveying.ErrorSource;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
-    public static class ErrorSourceFactory
+    public static partial class ErrorSourceFactory
     {
         public static ErrorSource Create_XYM1(double? startInclination = null, double? endInclination = null, double? initInclination = null, double? magnitude = null)
         {
@@ -1816,7 +1816,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 KOperatorImposed = false,
                 SingularIssues = false,
                 Magnitude = magnitude,
-                MagnitudeQuantity = "MagneticFlux",
+                MagnitudeQuantity = "PlaneAngleDrilling",
                 UseInclinationInterval = false,
                 StartInclination = startInclination,
                 EndInclination = endInclination,
@@ -1834,13 +1834,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     if (args.FirstOrDefault(p => p?.Key == ParameterType.Inclination)?.Value is double incl &&
                         args.FirstOrDefault(p => p?.Key == ParameterType.Azimuth)?.Value is double az)
                     {
-                        double dip = args.FirstOrDefault(p => p?.Key == ParameterType.Dip)?.Value ?? SurveyInstrument.DEFAULT_DIP;
-                        double bField = args.FirstOrDefault(p => p?.Key == ParameterType.BField)?.Value ?? SurveyInstrument.DEFAULT_BFIELD;
                         double declin = args.FirstOrDefault(p => p?.Key == ParameterType.Declination)?.Value ?? SurveyInstrument.DEFAULT_DECLINATION;
                         double sinI = System.Math.Sin(incl);
                         double sinAm = System.Math.Sin(az - declin);
-                        double cosDip = System.Math.Cos(dip);
-                        return sinI * sinAm / (bField * cosDip);
+                        return sinI * sinAm;
                     }
                     return 0.0;
                 },
@@ -4679,5 +4676,109 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             };
             return src;
         }
+
+        /// <summary>ISCWSA Revision 5 wireline depth-stretch term.</summary>
+        public static ErrorSource Create_DSTS(double? magnitude = null)
+        {
+            return new ErrorSource
+            {
+                MetaInfo = NewMetaInfo("d85a1285-f6a1-4c71-9cdf-11499708f36b"),
+                ErrorCode = ErrorCode.DSTS,
+                Description = "Depth stretch - wireline (ISCWSA Revision 5)",
+                Index = 10,
+                PropagationMode = ErrorPropagationMode.Systematic,
+                IsSystematic = true,
+                Magnitude = magnitude,
+                MagnitudeQuantity = "ReciprocalLengthSurveyInstrumentDrilling",
+                WeightingFunctionMD = args =>
+                {
+                    double md = Value(args, ParameterType.MD);
+                    double tvd = Value(args, ParameterType.TVD);
+                    return md * tvd;
+                },
+                WeightingFunctionDepthGyro = args =>
+                {
+                    double md = Value(args, ParameterType.MD);
+                    double mdPrev = Value(args, ParameterType.MDPrev);
+                    double tvd = Value(args, ParameterType.TVD);
+                    double inclination = Value(args, ParameterType.Inclination);
+                    return (md * Math.Cos(inclination) + tvd) * (md - mdPrev);
+                },
+                WeightingFunctionIncl = _ => 0.0,
+                WeightingFunctionAzim = _ => 0.0,
+                VerticalHoleWeightingFunctionNorth = _ => 0.0,
+                VerticalHoleWeightingFunctionEast = _ => 0.0,
+                VerticalHoleWeightingFunctionVertical = _ => 0.0
+            };
+        }
+
+        /// <summary>Current Revision 5 axial magnetic-interference term, replacing historic AMID.</summary>
+        public static ErrorSource Create_AMIL(double? magnitude = null)
+        {
+            return new ErrorSource
+            {
+                MetaInfo = NewMetaInfo("52846c6a-86ef-49b7-809a-a2cc828fc97a"),
+                ErrorCode = ErrorCode.AMIL,
+                Description = "Axial magnetic interference (ISCWSA Revision 5)",
+                Index = 32,
+                PropagationMode = ErrorPropagationMode.Systematic,
+                IsSystematic = true,
+                Magnitude = magnitude,
+                MagnitudeQuantity = "EarthMagneticFluxDensity",
+                WeightingFunctionMD = _ => 0.0,
+                WeightingFunctionIncl = _ => 0.0,
+                WeightingFunctionAzim = args =>
+                {
+                    double inclination = Value(args, ParameterType.Inclination);
+                    double azimuth = Value(args, ParameterType.Azimuth);
+                    double dip = OptionalValue(args, ParameterType.Dip, SurveyInstrument.DEFAULT_DIP);
+                    double field = OptionalValue(args, ParameterType.BField, SurveyInstrument.DEFAULT_BFIELD);
+                    double declination = OptionalValue(args, ParameterType.Declination, SurveyInstrument.DEFAULT_DECLINATION);
+                    return Math.Sin(inclination) * Math.Sin(azimuth - declination) /
+                           (field * Math.Cos(dip));
+                },
+                VerticalHoleWeightingFunctionNorth = _ => 0.0,
+                VerticalHoleWeightingFunctionEast = _ => 0.0,
+                VerticalHoleWeightingFunctionVertical = _ => 0.0
+            };
+        }
+
+        public static ErrorSource Create_XCLI1(double? magnitude = null) => CreateInclinationOnlyXcl(
+            ErrorCode.XCLI1, "10feb84c-69d7-46a7-962b-bbda95392c23", 16, magnitude);
+
+        public static ErrorSource Create_XCLI2(double? magnitude = null) => CreateInclinationOnlyXcl(
+            ErrorCode.XCLI2, "d34905f9-27a2-48ea-be1f-ddcd63d60d2e", 17, magnitude);
+
+        private static ErrorSource CreateInclinationOnlyXcl(ErrorCode code, string id, int index, double? magnitude) => new()
+        {
+            MetaInfo = NewMetaInfo(id),
+            ErrorCode = code,
+            Description = $"Long course length inclination-only term {(code == ErrorCode.XCLI1 ? 1 : 2)}",
+            Index = index,
+            PropagationMode = ErrorPropagationMode.Random,
+            IsRandom = true,
+            Magnitude = magnitude,
+            MagnitudeQuantity = "DepthDrilling",
+            WeightingFunctionMD = _ => 0.0,
+            WeightingFunctionIncl = _ => 0.0,
+            WeightingFunctionAzim = _ => 0.0,
+            VerticalHoleWeightingFunctionNorth = _ => 0.0,
+            VerticalHoleWeightingFunctionEast = _ => 0.0,
+            VerticalHoleWeightingFunctionVertical = _ => 0.0
+        };
+
+        private static MetaInfo NewMetaInfo(string id) => new()
+        {
+            HttpHostName = "https://app.digiwells.no/",
+            HttpHostBasePath = "SurveyInstrument/api/",
+            HttpEndPoint = "ErrorSource/",
+            ID = new Guid(id)
+        };
+
+        private static double Value(KeyValuePair<ParameterType, double>?[] args, ParameterType type) =>
+            args.FirstOrDefault(value => value?.Key == type)?.Value ?? 0.0;
+
+        private static double OptionalValue(KeyValuePair<ParameterType, double>?[] args, ParameterType type, double fallback) =>
+            args.FirstOrDefault(value => value?.Key == type)?.Value ?? fallback;
     }
 }

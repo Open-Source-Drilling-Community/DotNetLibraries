@@ -85,6 +85,35 @@
         GXY_GD,
         GXY_RW,
         GZ_GD,
-        GZ_RW
+        GZ_RW,
+        // ISCWSA Revision 5.13 terms added after the original OSDC implementation.
+        // Historic AMID remains above solely so persisted legacy records can be read.
+        DSTS,
+        XCLI1,
+        XCLI2,
+        AMIL,
+        ABIXY_TI1,
+        ABIXY_TI2,
+        ABIZ,
+        ASIXY_TI1,
+        ASIXY_TI2,
+        ASIXY_TI3,
+        ASIZ,
+        MBIXY_TI1,
+        MBIXY_TI2,
+        MSIXY_TI1,
+        MSIXY_TI2,
+        MSIXY_TI3,
+        MFI,
+        MDI,
+        CNA,
+        CNI,
+        ABXY_TI1,
+        ABXY_TI2,
+        ASXY_TI1,
+        ASXY_TI2,
+        ASXY_TI3,
+        DEC,
+        DBH
     }
 }

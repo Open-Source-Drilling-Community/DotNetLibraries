@@ -1,8 +1,8 @@
 # OSDC Drilling Semantic Catalogue
 
-Source **0.10.0** adds the curated WellBoreArchitecture vocabulary. It contains **292 concepts: 290 Reviewed and two Deprecated legacy names**. All 232 definitions from 0.9.0 remain unchanged. See [the approved review](CURATION-WELLBOREARCHITECTURE-2026-09-29.md).
+Source **0.12.0** adds the curated SurveyInstrument vocabulary. It contains **421 concepts: 418 Reviewed and three Deprecated legacy names**. All 370 definitions from 0.11.0 remain unchanged. See [the approved review](CURATION-SURVEYINSTRUMENT-2026-09-30.md).
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.10.0 is prepared for packaging; publication and provider adoption are separate operations.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.12.0 is prepared for packaging; publication and provider adoption are separate operations.
 
 ## Canonical drilling references
 
@@ -134,3 +134,17 @@ The [approved WellBoreArchitecture review](CURATION-WELLBOREARCHITECTURE-2026-09
 Canonical drilling reference profile **1.1.0** adds the host-relative binding; all existing bindings are retained. Canonical reference metadata applies to storage and APIs, while user-selected presentation references remain supported. Physical extents, diameters, stress, differential pressure and uncertainties have no reference-origin offset. LengthStandard supplies engineering precision for extents; dimensional-length uncertainty is separate from the published coordinate/depth uncertainty definition.
 
 The increment uses existing UnitConversion 3.4.5 quantities. NuGet publication and WellBoreArchitecture integration follow separately; this release adds no provider payload fields or runtime calculations.
+
+## Rig vocabulary
+
+The [approved Rig review](CURATION-RIG-2026-09-30.md) adds 78 reviewed concepts for Rig structures, equipment, engineering capabilities, measurement metadata and limit roles. Vertical depth remains WGS84-positive-downward where the depth concept applies. Elevation is instead positive upward from an explicit origin; standpipe elevations use the drill floor, and DistanceToBit uses the bit front face.
+
+## SurveyInstrument vocabulary
+
+The [approved SurveyInstrument review](CURATION-SURVEYINSTRUMENT-2026-09-30.md) adds 51 definitions for survey instruments, position uncertainty models, tool/model discriminators, error sources, ISCWSA propagation and gyro operating modes, environmental parameters and one-sigma error magnitudes. Fifty are Reviewed; legacy AMID is Deprecated in favour of AMIL. AMID remains a planar-angle uncertainty in radians and must not be interpreted as magnetic flux in webers; AMIL is a magnetic-flux-density uncertainty in tesla. The vocabulary distinguishes the physical tool family, the Position Uncertainty Model (PUM), actual gyro operating state and error-source applicability to one or both gyro modes.
+
+The catalogue preserves the current provider's exact ISCWSA flags and finite `ErrorCode` tokens. Provider integration must not infer new flag values from code names. `MagnitudeQuantity` remains provider data but is semantically constrained to the quantity permitted by the selected error code. Publication and SurveyInstrument provider integration are separate operations.
+
+Pressure ratings specialize AbsolutePressure and inherit the canonical vacuum reference. Equipment Weight fields are curated as mass, heave-compensator capacity as force, controller gains as dimensionless and rotational speeds as angular velocity in rad/s. Depth capacities are extents and deliberately have no datum binding. Measurement range and absolute accuracy retain a dynamic physical quantity declared by their sibling PhysicalQuantity field.
+
+The increment uses existing UnitConversion 3.4.5 quantities and leaves canonical drilling reference profile 1.1.0 unchanged. NuGet publication and Rig provider integration follow separately; no Rig payload, persistence or runtime behavior changes in this vocabulary release.
