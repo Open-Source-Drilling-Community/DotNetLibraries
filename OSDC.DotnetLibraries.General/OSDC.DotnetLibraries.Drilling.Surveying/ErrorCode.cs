@@ -114,6 +114,26 @@
         ASXY_TI2,
         ASXY_TI3,
         DEC,
-        DBH
+        DBH,
+        // Exact ISCWSA Revision 5 axial-correction codes.  Append-only preserves
+        // the numeric values used by previously serialized ErrorCode values.
+        ASIXY_TI1S,
+        ASIXY_TI2S,
+        ASIXY_TI3S,
+        MBIXY_TI1S,
+        MBIXY_TI2S,
+        MSIXY_TI1S,
+        MSIXY_TI2S,
+        MSIXY_TI3S,
+        MDIR,
+        MFIR,
+        MFI_U,
+        MFI_OS,
+        MFI_OH,
+        MFI_OI,
+        MDI_U,
+        MDI_OS,
+        MDI_OH,
+        MDI_OI
     }
 }

@@ -44,6 +44,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                 surveyStationList[startIdx].Covariance![j, k] = 0.0;
                             }
                         }
+                        AddInitialDepthReferenceCovariance(surveyStationList[startIdx]);
                         surveyStationList[startIdx].CalculateEigenProperties();
 
                     }
@@ -95,6 +96,34 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 return false;
             }
             return ok;
+        }
+
+        private static void AddInitialDepthReferenceCovariance(SurveyStation station)
+        {
+            if (station.Covariance is null || station.SurveyTool?.ErrorSourceList is null ||
+                station.Inclination is not double inclination || station.Azimuth is not double azimuth)
+            {
+                return;
+            }
+
+            double[] direction =
+            [
+                Math.Sin(inclination) * Math.Cos(azimuth),
+                Math.Sin(inclination) * Math.Sin(azimuth),
+                Math.Cos(inclination)
+            ];
+            foreach (ErrorSource source in station.SurveyTool.ErrorSourceList.Where(source =>
+                         (source.ErrorCode is ErrorCode.DRFR or ErrorCode.DRFS) && source.Magnitude is not null))
+            {
+                double variance = source.Magnitude!.Value * source.Magnitude.Value;
+                for (int row = 0; row < 3; row++)
+                {
+                    for (int column = 0; column < 3; column++)
+                    {
+                        station.Covariance[row, column] += variance * direction[row] * direction[column];
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -916,6 +945,14 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         errorSourcesAccumulator[i].Covariance = CovarianceI;
                     }
                 }
+                for (int row = 0; row < 3; row++)
+                {
+                    for (int column = 0; column < 3; column++)
+                    {
+                        surveyStation.Covariance![row, column] = covarianceSum[row, column];
+                    }
+                }
+                surveyStation.CalculateEigenProperties();
                 return true;
             }
             return false;

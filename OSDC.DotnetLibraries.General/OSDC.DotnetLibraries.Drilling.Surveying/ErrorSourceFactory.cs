@@ -678,7 +678,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 KOperatorImposed = false,
                 SingularIssues = false,
                 Magnitude = magnitude,
-                MagnitudeQuantity = "DepthDrilling",
+                MagnitudeQuantity = "ProportionSmall",
                 UseInclinationInterval = false,
                 StartInclination = startInclination,
                 EndInclination = endInclination,
@@ -776,7 +776,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 KOperatorImposed = false,
                 SingularIssues = false,
                 Magnitude = magnitude,
-                MagnitudeQuantity = "DepthDrilling",
+                MagnitudeQuantity = "ProportionSmall",
                 UseInclinationInterval = false,
                 StartInclination = startInclination,
                 EndInclination = endInclination,
@@ -957,99 +957,35 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
 
         public static ErrorSource Create_ABIXY_TI1S(double? startInclination = null, double? endInclination = null, double? initInclination = null, double? magnitude = null)
         {
-            var src = new ErrorSource
-            {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("de56cc32-cb33-4d36-a709-4ff41c238284") },
-                ErrorCode = ErrorCode.ABIXY_TI1S,
-                Description = "MWD TF Ind: X and Y Accelerometer Bias axial interference correction - term 1 [m/s2]",
-                Index = 4,
-                IsSystematic = true,
-                IsRandom = false,
-                IsGlobal = false,
-                IsContinuous = false,
-                IsStationary = false,
-                KOperatorImposed = false,
-                SingularIssues = false,
-                Magnitude = magnitude,
-                MagnitudeQuantity = "AccelerationDrilling",
-                UseInclinationInterval = false,
-                StartInclination = startInclination,
-                EndInclination = endInclination,
-                InitInclination = initInclination,
-                WeightingFunctionMD = args =>
-                {
-                    return 0.0;
-                },
-                WeightingFunctionIncl = args =>
-                    {
-                        return 0.0;
-                    },
-                WeightingFunctionAzim = args =>
-                {
-                    return 0.0;
-                },
-                VerticalHoleWeightingFunctionNorth = args =>
-                {
-                    return 0.0;
-                },
-                VerticalHoleWeightingFunctionEast = args =>
-                {
-                    return 0.0;
-                },
-                VerticalHoleWeightingFunctionVertical = args =>
-                {
-                    return 0.0;
-                },
-            };
+            ErrorSource src = CreateRevision5Mwd(
+                ErrorCode.ABIXY_TI1S,
+                "MWD TF Ind: X and Y accelerometer bias with Z-axis correction, term 1",
+                "AccelerationDrilling", ErrorPropagationMode.Systematic, false, magnitude,
+                args => -Math.Cos(I(args)) / G(args),
+                args => Math.Pow(Math.Cos(I(args)), 2) * Math.Sin(Am(args)) *
+                        (Math.Tan(Dip(args)) * Math.Cos(I(args)) + Math.Sin(I(args)) * Math.Cos(Am(args))) /
+                        (G(args) * Den(args)));
+            src.MetaInfo!.ID = new Guid("de56cc32-cb33-4d36-a709-4ff41c238284");
+            src.StartInclination = startInclination;
+            src.EndInclination = endInclination;
+            src.InitInclination = initInclination;
             return src;
         }
 
         public static ErrorSource Create_ABIXY_TI2S(double? startInclination = null, double? endInclination = null, double? initInclination = null, double? magnitude = null)
         {
-            var src = new ErrorSource
-            {
-                MetaInfo = new MetaInfo() { HttpHostName = "https://app.digiwells.no/", HttpHostBasePath = "SurveyInstrument/api/", HttpEndPoint = "ErrorSource/", ID = new Guid("e3f3f423-8bd7-473d-a6b3-395e44d094ec") },
-                ErrorCode = ErrorCode.ABIXY_TI2S,
-                Description = "MWD TF Ind: X and Y Accelerometer Bias - axial interference correction - term 2 [m/s2]",
-                Index = 5,
-                IsSystematic = true,
-                IsRandom = false,
-                IsGlobal = false,
-                IsContinuous = false,
-                IsStationary = false,
-                KOperatorImposed = false,
-                SingularIssues = true,
-                Magnitude = magnitude,
-                MagnitudeQuantity = "AccelerationDrilling",
-                UseInclinationInterval = false,
-                StartInclination = startInclination,
-                EndInclination = endInclination,
-                InitInclination = initInclination,
-                WeightingFunctionMD = args =>
-                {
-                    return 0.0;
-                },
-                WeightingFunctionIncl = args =>
-                    {
-                        return 0.0;
-                    },
-                WeightingFunctionAzim = args =>
-                {
-                    return 0.0;
-                },
-                VerticalHoleWeightingFunctionNorth = args =>
-                {
-                    return 0.0;
-                },
-                VerticalHoleWeightingFunctionEast = args =>
-                {
-                    return 0.0;
-                },
-                VerticalHoleWeightingFunctionVertical = args =>
-                {
-                    return 0.0;
-                },
-            };
+            ErrorSource src = CreateRevision5Mwd(
+                ErrorCode.ABIXY_TI2S,
+                "MWD TF Ind: X and Y accelerometer bias with Z-axis correction, term 2",
+                "AccelerationDrilling", ErrorPropagationMode.Systematic, true, magnitude,
+                _ => 0.0,
+                args => -(Math.Tan(Dip(args)) * Math.Cos(Am(args)) - Cot(I(args))) / (G(args) * Den(args)),
+                args => -Math.Sin(Value(args, ParameterType.Azimuth)) / G(args),
+                args => Math.Cos(Value(args, ParameterType.Azimuth)) / G(args));
+            src.MetaInfo!.ID = new Guid("e3f3f423-8bd7-473d-a6b3-395e44d094ec");
+            src.StartInclination = startInclination;
+            src.EndInclination = endInclination;
+            src.InitInclination = initInclination;
             return src;
         }
 
@@ -1865,9 +1801,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 ErrorCode = ErrorCode.DEC_U,
                 Description = "MWD: Declination - Uncorrelated error",
                 Index = 18,
-                IsSystematic = false,
+                PropagationMode = ErrorPropagationMode.WellByWell,
+                IsSystematic = true,
                 IsRandom = false,
-                IsGlobal = true,
+                IsGlobal = false,
                 IsContinuous = false,
                 IsStationary = false,
                 KOperatorImposed = false,
@@ -2110,9 +2047,10 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 ErrorCode = ErrorCode.DBH_U,
                 Description = "MWD: BH-Dependent Declination - Uncorrelated error",
                 Index = 23,
-                IsSystematic = false,
+                PropagationMode = ErrorPropagationMode.WellByWell,
+                IsSystematic = true,
                 IsRandom = false,
-                IsGlobal = true,
+                IsGlobal = false,
                 IsContinuous = false,
                 IsStationary = false,
                 KOperatorImposed = false,
