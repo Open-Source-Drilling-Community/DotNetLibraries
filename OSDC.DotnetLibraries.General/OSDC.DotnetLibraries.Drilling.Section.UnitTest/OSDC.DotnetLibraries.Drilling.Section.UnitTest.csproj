@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OSDC.DotnetLibraries.Drilling.Section\OSDC.DotnetLibraries.Drilling.SectionDebug.csproj" />
+    <ProjectReference Include="..\OSDC.DotnetLibraries.Drilling.Section\OSDC.DotnetLibraries.Drilling.Section.csproj" />
   </ItemGroup>
 
 </Project>

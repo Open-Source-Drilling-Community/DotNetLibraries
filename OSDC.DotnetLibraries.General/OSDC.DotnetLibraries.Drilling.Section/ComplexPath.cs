@@ -68,40 +68,57 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         public double Accuracy { get; set; } = 1.0e-6;
 
         /// <summary>
+        /// Additional diagnostic information for the last failed calculation. This identifies the
+        /// quantities involved when the short failure category alone is not enough to correct the input.
+        /// </summary>
+        public string FailureDetail { get; private set; } = string.Empty;
+
+        /// <summary>
         /// What went wrong, in a sentence.
         /// </summary>
         public string FailureDescription
         {
             get
             {
+                string summary;
                 switch (FailureReason)
                 {
                     case ComplexPathFailureReason.None:
-                        return "nothing went wrong";
+                        summary = "nothing went wrong";
+                        break;
                     case ComplexPathFailureReason.UndefinedStart:
-                        return "the station the path sets off from is not completely defined";
+                        summary = "the station the path sets off from is not completely defined";
+                        break;
                     case ComplexPathFailureReason.SectionWithoutParameters:
-                        return "section " + FailedSectionIndex + " imposes nothing, so where it hands over "
-                             + "to the next one could slide along the path without changing anything";
+                        summary = "section " + (FailedSectionIndex + 1) + " imposes nothing, so where it hands over "
+                                + "to the next one could slide along the path without changing anything";
+                        break;
                     case ComplexPathFailureReason.ParameterOfAnotherCurve:
-                        return "section " + FailedSectionIndex + " imposes a parameter belonging to another "
-                             + "kind of curve than the one it is drawn with";
+                        summary = "section " + (FailedSectionIndex + 1) + " imposes a parameter belonging to another "
+                                + "kind of curve than the one it is drawn with";
+                        break;
                     case ComplexPathFailureReason.WrongNumberOfParameters:
-                        return "the path imposes " + TotalParameterCount() + " quantities where a path of "
-                             + Sections.Count + " sections needs " + (3 * Sections.Count);
+                        summary = "the path imposes " + TotalParameterCount() + " quantities where a path of "
+                                + Sections.Count + " sections needs " + (3 * Sections.Count);
+                        break;
                     case ComplexPathFailureReason.OverDeterminedSections:
-                        return "the sections up to and including section " + FailedSectionIndex + " impose "
-                             + "more than the three degrees of freedom each of them has, and a surplus "
-                             + "cannot be answered by the sections that come after it";
+                        summary = "the sections up to and including section " + (FailedSectionIndex + 1) + " impose "
+                                + "more than the three degrees of freedom each of them has, and a surplus "
+                                + "cannot be answered by the sections that come after it";
+                        break;
                     case ComplexPathFailureReason.NotSolved:
-                        return "no path of these curves satisfying the quantities imposed was found, for the "
-                             + "run of sections ending at section " + FailedSectionIndex;
+                        summary = "no path of these curves satisfying the quantities imposed was found, for the "
+                                + "run of sections ending at section " + (FailedSectionIndex + 1);
+                        break;
                     case ComplexPathFailureReason.ParameterNotHonoured:
-                        return "a path was worked out but section " + FailedSectionIndex + " does not honour "
-                             + "one of the quantities imposed on it";
+                        summary = "a path was worked out but section " + (FailedSectionIndex + 1) + " does not honour "
+                                + "one of the quantities imposed on it";
+                        break;
                     default:
-                        return "unknown";
+                        summary = "unknown";
+                        break;
                 }
+                return string.IsNullOrWhiteSpace(FailureDetail) ? summary : summary + ". " + FailureDetail;
             }
         }
 
@@ -136,6 +153,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             SolvedSections.Clear();
             FailureReason = ComplexPathFailureReason.None;
             FailedSectionIndex = -1;
+            FailureDetail = string.Empty;
             // The answer is written back onto the sections, so what was asked for has to be kept aside
             // before that happens or the check afterwards would be comparing the answer with itself.
             RememberWhatWasImposed();
@@ -186,6 +204,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             }
             if (total != 3 * Sections.Count)
             {
+                FailureDetail = "Quantities imposed by section: " + SectionQuantityCounts(counts) + ".";
                 return Fail(ComplexPathFailureReason.WrongNumberOfParameters);
             }
 
@@ -199,6 +218,9 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 running += counts[i];
                 if (running > 3 * (i + 1))
                 {
+                    FailureDetail = "The first " + (i + 1) + " section(s) impose " + running
+                                  + " quantities but can accept at most " + (3 * (i + 1)) + ". Quantities imposed by section: "
+                                  + SectionQuantityCounts(counts) + ".";
                     return Fail(ComplexPathFailureReason.OverDeterminedSections, i);
                 }
                 if (running == 3 * (i + 1))
@@ -221,6 +243,16 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 from = to + 1;
             }
             return true;
+        }
+
+        private static string SectionQuantityCounts(int[] counts)
+        {
+            List<string> values = new List<string>();
+            for (int i = 0; i < counts.Length; i++)
+            {
+                values.Add("section " + (i + 1) + " = " + counts[i]);
+            }
+            return string.Join(", ", values);
         }
 
         private bool Fail(ComplexPathFailureReason reason, int sectionIndex = -1)
@@ -620,6 +652,135 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             return sum;
         }
 
+        private string DescribeUnknown(Unknown unknown)
+        {
+            string quantity;
+            switch (unknown.Which)
+            {
+                case Quantity.Length:
+                    quantity = "length";
+                    break;
+                case Quantity.FirstCurveParameter:
+                    quantity = Sections[unknown.Section].CurveType == SectionCurveType.ConstantBuildAndTurn
+                        ? "build rate" : "curvature";
+                    break;
+                default:
+                    quantity = Sections[unknown.Section].CurveType == SectionCurveType.ConstantBuildAndTurn
+                        ? "turn rate" : "toolface";
+                    break;
+            }
+            return quantity + " of section " + (unknown.Section + 1);
+        }
+
+        private static string DescribeConstraint(Constraint constraint)
+        {
+            string quantity;
+            switch (constraint.Which)
+            {
+                case Imposed.X:
+                    quantity = "end north position";
+                    break;
+                case Imposed.Y:
+                    quantity = "end east position";
+                    break;
+                case Imposed.Z:
+                    quantity = "end vertical depth";
+                    break;
+                case Imposed.Inclination:
+                    quantity = "end inclination";
+                    break;
+                case Imposed.Azimuth:
+                    quantity = "end azimuth";
+                    break;
+                default:
+                    quantity = "end measured depth";
+                    break;
+            }
+            return quantity + " of section " + (constraint.Section + 1);
+        }
+
+        private static double ConstraintValue(Constraint constraint, int first, ArcSection[] built)
+        {
+            TrajectoryPoint3D end = built[constraint.Section - first].End;
+            switch (constraint.Which)
+            {
+                case Imposed.X: return (double)end.X;
+                case Imposed.Y: return (double)end.Y;
+                case Imposed.Z: return (double)end.Z;
+                case Imposed.Inclination: return (double)end.Inclination;
+                case Imposed.Azimuth: return (double)end.Azimuth;
+                default: return (double)end.Abscissa;
+            }
+        }
+
+        private static string DescribeConstraintResidual(Constraint constraint, int first, ArcSection[] built)
+        {
+            double actual = ConstraintValue(constraint, first, built);
+            if (constraint.Which == Imposed.Inclination || constraint.Which == Imposed.Azimuth)
+            {
+                double difference = constraint.Which == Imposed.Azimuth
+                    ? TrajectoryPoint3D.WrapToPi(actual - constraint.Value)
+                    : actual - constraint.Value;
+                const double DegreesPerRadian = 180.0 / System.Math.PI;
+                return "requested " + (constraint.Value * DegreesPerRadian).ToString("G8", System.Globalization.CultureInfo.InvariantCulture) + " deg, calculated "
+                     + (actual * DegreesPerRadian).ToString("G8", System.Globalization.CultureInfo.InvariantCulture) + " deg, difference "
+                     + (difference * DegreesPerRadian).ToString("G6", System.Globalization.CultureInfo.InvariantCulture) + " deg";
+            }
+            return "requested " + constraint.Value.ToString("G10", System.Globalization.CultureInfo.InvariantCulture) + " m, calculated "
+                 + actual.ToString("G10", System.Globalization.CultureInfo.InvariantCulture) + " m, difference "
+                 + (actual - constraint.Value).ToString("G6", System.Globalization.CultureInfo.InvariantCulture) + " m";
+        }
+
+        private void RecordZeroSensitivityDetail(int first, Unknown[] unknowns, Constraint[] constraints,
+                                                 double[] residuals, double[][] jacobian,
+                                                 ArcSection[] built, double tolerance)
+        {
+            for (int c = 0; c < constraints.Length; c++)
+            {
+                if (System.Math.Abs(residuals[c]) <= tolerance)
+                {
+                    continue;
+                }
+                double largestDerivative = 0.0;
+                for (int i = 0; i < unknowns.Length; i++)
+                {
+                    largestDerivative = System.Math.Max(largestDerivative, System.Math.Abs(jacobian[c][i]));
+                }
+                if (largestDerivative <= 1.0e-12)
+                {
+                    List<string> names = new List<string>();
+                    for (int i = 0; i < unknowns.Length; i++)
+                    {
+                        names.Add(DescribeUnknown(unknowns[i]));
+                    }
+                    FailureDetail = "The imposed " + DescribeConstraint(constraints[c])
+                                  + " has no sensitivity to the remaining unknown(s): " + string.Join(", ", names)
+                                  + ". Changing those quantities cannot reduce this residual ("
+                                  + DescribeConstraintResidual(constraints[c], first, built) + ").";
+                    return;
+                }
+            }
+        }
+
+        private void RecordLargestResidualDetail(int first, Constraint[] constraints,
+                                                 double[] residuals, ArcSection[] built)
+        {
+            if (constraints.Length == 0 || built == null)
+            {
+                return;
+            }
+            int largest = 0;
+            for (int i = 1; i < residuals.Length; i++)
+            {
+                if (System.Math.Abs(residuals[i]) > System.Math.Abs(residuals[largest]))
+                {
+                    largest = i;
+                }
+            }
+            FailureDetail = "The largest unmet constraint is the " + DescribeConstraint(constraints[largest])
+                          + " (" + DescribeConstraintResidual(constraints[largest], first, built) + ").";
+        }
+
         /// <summary>
         /// Newton on the square system, with the step cut back when it fails to improve. The derivatives
         /// are taken by a central difference, which costs rate of convergence rather than final accuracy.
@@ -650,6 +811,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             {
                 if (norm <= target)
                 {
+                    FailureDetail = string.Empty;
                     return true;
                 }
                 double[][] jacobian = new double[constraints.Length][];
@@ -674,6 +836,11 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                     }
                 }
 
+                // Keep diagnostics tied to the current iterate. A constraint can have zero local
+                // sensitivity at an earlier guess and gain sensitivity as the other quantities move.
+                FailureDetail = string.Empty;
+                RecordZeroSensitivityDetail(first, unknowns, constraints, residuals, jacobian, built, tolerance);
+
                 double[] right = new double[n];
                 for (int c = 0; c < n; c++)
                 {
@@ -681,6 +848,16 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 }
                 if (!SolveLinear(jacobian, right, out double[] step))
                 {
+                    if (string.IsNullOrWhiteSpace(FailureDetail))
+                    {
+                        List<string> names = new List<string>();
+                        for (int i = 0; i < unknowns.Length; i++)
+                        {
+                            names.Add(DescribeUnknown(unknowns[i]));
+                        }
+                        FailureDetail = "The constraint-sensitivity matrix is singular for the remaining unknown(s): "
+                                      + string.Join(", ", names) + ". The imposed quantities do not independently determine them.";
+                    }
                     return false;
                 }
 
@@ -711,10 +888,23 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 }
                 if (!improved)
                 {
+                    if (string.IsNullOrWhiteSpace(FailureDetail))
+                    {
+                        RecordLargestResidualDetail(first, constraints, residuals, built);
+                    }
                     break;
                 }
             }
-            return norm <= target;
+            if (norm > target && string.IsNullOrWhiteSpace(FailureDetail))
+            {
+                RecordLargestResidualDetail(first, constraints, residuals, built);
+            }
+            bool solved = norm <= target;
+            if (solved)
+            {
+                FailureDetail = string.Empty;
+            }
+            return solved;
         }
 
         private const int SettleIterations = 60;

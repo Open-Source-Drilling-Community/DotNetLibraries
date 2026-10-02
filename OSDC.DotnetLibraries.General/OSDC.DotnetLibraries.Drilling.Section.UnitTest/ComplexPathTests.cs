@@ -389,6 +389,37 @@ namespace OSDC.DotnetLibraries.Drilling.Section.UnitTest
             path.AddSection(Arc).Length = 200.0;
             Assert.IsFalse(path.Calculate());
             Assert.AreEqual(ComplexPathFailureReason.WrongNumberOfParameters, path.FailureReason);
+            StringAssert.Contains("section 1 = 1", path.FailureDescription);
+            StringAssert.Contains("section 2 = 1", path.FailureDescription);
+        }
+
+        [Test]
+        public void AConstraintWithNoSensitivityNamesTheConstraintAndUnknown()
+        {
+            ComplexPath path = Path();
+
+            ComplexPathSection first = path.AddSection(Turn);
+            first.Length = 30.0;
+            first.BUR = 4.1 * System.Math.PI / 180.0 / 30.0;
+            first.TurnRate = -3.1 * System.Math.PI / 180.0 / 30.0;
+
+            ComplexPathSection straight = path.AddSection(Arc);
+            straight.Curvature = 0.0;
+            straight.Toolface = 0.0;
+
+            ComplexPathSection final = path.AddSection(Toolface);
+            final.Length = 30.0;
+            final.Curvature = 3.0 * System.Math.PI / 180.0 / 30.0;
+            final.Toolface = 25.0 * System.Math.PI / 180.0;
+            final.End.Inclination = 35.0 * System.Math.PI / 180.0;
+
+            Assert.IsFalse(path.Calculate());
+            Assert.AreEqual(ComplexPathFailureReason.NotSolved, path.FailureReason);
+            StringAssert.Contains("run of sections ending at section 3", path.FailureDescription);
+            StringAssert.Contains("end inclination of section 3", path.FailureDescription);
+            StringAssert.Contains("has no sensitivity", path.FailureDescription);
+            StringAssert.Contains("length of section 2", path.FailureDescription);
+            StringAssert.Contains("requested 35", path.FailureDescription);
         }
 
         [Test]
