@@ -39,6 +39,13 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         public SectionCurveType CurveType { get; set; } = SectionCurveType.CircularArc;
 
         /// <summary>
+        /// Optional peak-curvature limit, in radians per metre, for constant-build-and-turn sections to
+        /// position-only targets. When set, alternative exact roots are considered if the shortest root
+        /// exceeds the limit.
+        /// </summary>
+        public double? MaximumCurvature { get; set; }
+
+        /// <summary>
         /// The sections that make up the trajectory, in order, once Calculate has succeeded. A section
         /// keeps its own stations, as every section in this library does, so the station ending one and
         /// the station starting the next are two objects carrying the same values. Calculate checks that
@@ -333,7 +340,9 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 case SectionCurveType.ConstantBuildAndTurn:
                     {
                         BuildAndTurnArcSection section = new BuildAndTurnArcSection(from, to);
-                        if (!section.CalculateXYZ())
+                        if (!(MaximumCurvature.HasValue
+                            ? section.CalculateXYZ(MaximumCurvature.Value)
+                            : section.CalculateXYZ()))
                         {
                             return null;
                         }

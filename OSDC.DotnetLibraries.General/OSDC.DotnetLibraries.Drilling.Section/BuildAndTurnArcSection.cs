@@ -797,6 +797,25 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             }
         }
 
+        /// <summary>
+        /// Calculates the shortest exact constant-build-and-turn curve to the Cartesian end point whose
+        /// peak curvature does not exceed <paramref name="maximumCurvature"/>. Cartesian targets can have
+        /// several exact roots, so this overload considers alternatives when the conventional shortest
+        /// root violates the curvature constraint.
+        /// </summary>
+        public bool CalculateXYZ(double maximumCurvature)
+        {
+            if (Numeric.IsDefined(End.X) && Numeric.IsDefined(End.Y) && Numeric.IsDefined(End.Z) &&
+                Start.CompleteBTXYZ(End, maximumCurvature))
+            {
+                BuildAndTurn.BUR = End.BUR;
+                BuildAndTurn.TR = End.TUR;
+                BuildAndTurn.Length = End.Abscissa - Start.Abscissa;
+                return true;
+            }
+            return false;
+        }
+
         public bool CalculateID()
         {
             End.X = Start.X;

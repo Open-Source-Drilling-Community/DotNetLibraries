@@ -504,5 +504,47 @@ namespace OSDC.DotnetLibraries.Drilling.Section.UnitTest
             path.Targets.Add(new TargetAxis());
             Assert.IsFalse(path.Calculate());
         }
+
+        [Test]
+        public void BuildAndTurnPathUsesAnAlternativeExactRootWithinTheCurvatureLimit()
+        {
+            const double maximumCurvature = 0.004654211338651545;
+            TrajectoryPoint3D start = new TrajectoryPoint3D
+            {
+                X = 6534963.594500519,
+                Y = 328719.4050929201,
+                Z = 974.7544888700581,
+                Abscissa = 1026.78,
+                Inclination = 0.46355365128420706,
+                Azimuth = 2.8525680288655395
+            };
+
+            TargetAxisPath path = new TargetAxisPath
+            {
+                Start = start,
+                CurveType = SectionCurveType.ConstantBuildAndTurn,
+                MaximumCurvature = maximumCurvature
+            };
+            path.AddTarget(6534960.156788087, 328704.32592859754, 1703.6123210251205);
+
+            Assert.That(path.Calculate(), Is.True, path.FailureDescription);
+            Assert.That(path.Sections, Has.Count.EqualTo(1));
+            BuildAndTurnArcSection section = (BuildAndTurnArcSection)path.Sections[0];
+            double build = section.BuildAndTurn.BUR!.Value;
+            double turn = section.BuildAndTurn.TR!.Value;
+            double maximumSine = System.Math.Max(
+                System.Math.Abs(System.Math.Sin(section.Start.Inclination!.Value)),
+                System.Math.Abs(System.Math.Sin(section.End.Inclination!.Value)));
+            double peak = System.Math.Sqrt(build * build + maximumSine * maximumSine * turn * turn);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(section.BuildAndTurn.Length, Is.EqualTo(845.293).Within(0.01));
+                Assert.That(peak, Is.LessThanOrEqualTo(maximumCurvature + 1e-12));
+                Assert.That(section.End.X, Is.EqualTo(6534960.156788087).Within(1e-5));
+                Assert.That(section.End.Y, Is.EqualTo(328704.32592859754).Within(1e-5));
+                Assert.That(section.End.Z, Is.EqualTo(1703.6123210251205).Within(1e-5));
+            });
+        }
     }
 }

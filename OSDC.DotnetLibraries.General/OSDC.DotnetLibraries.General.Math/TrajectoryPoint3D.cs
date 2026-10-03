@@ -4,6 +4,28 @@ using OSDC.DotnetLibraries.General.Common;
 namespace OSDC.DotnetLibraries.General.Math
 {
     /// <summary>
+    /// One distinct constant-build-and-turn solution from a survey station to a Cartesian target.
+    /// Rates and curvature are in radians per metre, swept angles are in radians, and length is in metres.
+    /// </summary>
+    public sealed class BuildAndTurnTargetSolution
+    {
+        public double SweptInclination { get; }
+        public double SweptAzimuth { get; }
+        public double Length { get; }
+        public double BuildRate => Length == 0.0 ? 0.0 : SweptInclination / Length;
+        public double TurnRate => Length == 0.0 ? 0.0 : SweptAzimuth / Length;
+        public double PeakCurvature { get; }
+
+        internal BuildAndTurnTargetSolution(double sweptInclination, double sweptAzimuth, double length, double peakCurvature)
+        {
+            SweptInclination = sweptInclination;
+            SweptAzimuth = sweptAzimuth;
+            Length = length;
+            PeakCurvature = peakCurvature;
+        }
+    }
+
+    /// <summary>
     /// A curvilinear point that also carries the parameters of the curve arriving at it, together with
     /// the geometry of the three curve models used to build a well path: the circular arc, the constant
     /// build and turn curve, and the constant curvature and toolface curve.
@@ -875,6 +897,169 @@ namespace OSDC.DotnetLibraries.General.Math
             curveLength = chord / unitRange;
             return Numeric.IsDefined(curveLength) && Numeric.GT(curveLength, 0.0);
         }
+
+        /// <summary>
+        /// Returns the distinct exact constant-build-and-turn curves found by the standard target solver,
+        /// ordered by increasing forward length. A Cartesian target can have several physically different
+        /// answers; callers imposing a curvature limit must inspect all returned roots rather than reject
+        /// the target merely because the shortest root exceeds that limit.
+        /// </summary>
+        public IReadOnlyList<BuildAndTurnTargetSolution> SolveBTTargetSolutions(double targetX, double targetY, double targetZ)
+        {
+            List<BuildAndTurnTargetSolution> solutions = new List<BuildAndTurnTargetSolution>();
+            if (!Numeric.IsDefined(X) || !Numeric.IsDefined(Y) || !Numeric.IsDefined(Z) ||
+                !Numeric.IsDefined(Inclination) || !Numeric.IsDefined(Azimuth) || !Numeric.IsDefined(Abscissa) ||
+                !Numeric.IsDefined(targetX) || !Numeric.IsDefined(targetY) || !Numeric.IsDefined(targetZ))
+            {
+                return solutions;
+            }
+
+            double dNorth = targetX - X.Value;
+            double dEast = targetY - Y.Value;
+            double dVertical = targetZ - Z.Value;
+            double chord = System.Math.Sqrt(dNorth * dNorth + dEast * dEast + dVertical * dVertical);
+            if (!Numeric.GT(chord, 0.0))
+            {
+                solutions.Add(new BuildAndTurnTargetSolution(0.0, 0.0, 0.0, 0.0));
+                return solutions;
+            }
+
+            double inclinationStart = Inclination.Value;
+            double azimuthStart = Azimuth.Value;
+            double targetVerticalAngle = System.Math.Atan2(System.Math.Sqrt(dNorth * dNorth + dEast * dEast), dVertical);
+            double targetBearing = WrapToPi(System.Math.Atan2(dEast, dNorth) - azimuthStart);
+            double seedInclination = 2.0 * (targetVerticalAngle - inclinationStart);
+            double seedAzimuth = 2.0 * targetBearing;
+
+            void Consider(double seedSweptInclination, double seedSweptAzimuth)
+            {
+                if (!TrySolveBTTargetFromSeed(inclinationStart, azimuthStart, chord, targetVerticalAngle, targetBearing,
+                        seedSweptInclination, seedSweptAzimuth,
+                        out double trialInclination, out double trialAzimuth, out double trialLength, out _))
+                {
+                    return;
+                }
+                double scale = System.Math.Max(1.0, trialLength);
+                if (solutions.Any(solution =>
+                        System.Math.Abs(solution.SweptInclination - trialInclination) <= 1.0e-7 &&
+                        System.Math.Abs(solution.SweptAzimuth - trialAzimuth) <= 1.0e-7 &&
+                        System.Math.Abs(solution.Length - trialLength) <= 1.0e-7 * scale))
+                {
+                    return;
+                }
+                solutions.Add(new BuildAndTurnTargetSolution(trialInclination, trialAzimuth, trialLength,
+                    BTPeakCurvature(inclinationStart, trialInclination, trialAzimuth, trialLength)));
+            }
+
+            foreach (int wholeTurns in BTTargetSeedTurns)
+            {
+                if (wholeTurns == 0) Consider(seedInclination, seedAzimuth);
+                foreach (double gridInclination in BTTargetSeedInclinations)
+                {
+                    Consider(gridInclination, 2.0 * targetBearing + 2.0 * Numeric.PI * wholeTurns);
+                    Consider(gridInclination, targetBearing + 2.0 * Numeric.PI * wholeTurns);
+                }
+            }
+            return solutions.OrderBy(solution => solution.Length).ToList();
+        }
+
+        private static double BTPeakCurvature(double inclinationStart, double sweptInclination, double sweptAzimuth, double length)
+        {
+            if (!Numeric.GT(length, 0.0)) return 0.0;
+            double inclinationEnd = inclinationStart + sweptInclination;
+            double maximumSine = System.Math.Max(System.Math.Abs(System.Math.Sin(inclinationStart)),
+                                                 System.Math.Abs(System.Math.Sin(inclinationEnd)));
+            double lower = System.Math.Min(inclinationStart, inclinationEnd);
+            double upper = System.Math.Max(inclinationStart, inclinationEnd);
+            double firstSineExtremum = System.Math.Ceiling((lower - 0.5 * Numeric.PI) / Numeric.PI);
+            double lastSineExtremum = System.Math.Floor((upper - 0.5 * Numeric.PI) / Numeric.PI);
+            if (firstSineExtremum <= lastSineExtremum) maximumSine = 1.0;
+            double build = sweptInclination / length;
+            double turn = sweptAzimuth / length;
+            return System.Math.Sqrt(build * build + maximumSine * maximumSine * turn * turn);
+        }
+
+        /// <summary>
+        /// Completes a Cartesian constant-build-and-turn target with the shortest exact root whose peak
+        /// curvature does not exceed <paramref name="maximumCurvature"/>.
+        /// </summary>
+        public bool CompleteBTXYZ(TrajectoryPoint3D next, double maximumCurvature)
+        {
+            if (next == null || !Numeric.IsDefined(next.X) || !Numeric.IsDefined(next.Y) || !Numeric.IsDefined(next.Z) ||
+                !Numeric.IsDefined(maximumCurvature) || maximumCurvature < 0.0)
+            {
+                return false;
+            }
+            double targetX = next.X.Value;
+            double targetY = next.Y.Value;
+            double targetZ = next.Z.Value;
+
+            // Almost every target is accepted by the conventional shortest root. Keep that common path
+            // cheap and only run the multi-start search when the shortest root violates the constraint.
+            TrajectoryPoint3D shortest = new TrajectoryPoint3D { X = targetX, Y = targetY, Z = targetZ };
+            if (CompleteBTXYZ((CurvilinearPoint3D)shortest) &&
+                Numeric.IsDefined(shortest.Abscissa) && Numeric.IsDefined(shortest.Inclination) &&
+                Numeric.IsDefined(shortest.Azimuth))
+            {
+                double length = shortest.Abscissa.Value - Abscissa.Value;
+                double sweptInclination = shortest.Inclination.Value - Inclination.Value;
+                double sweptAzimuth = shortest.Azimuth.Value - Azimuth.Value;
+                if (BTPeakCurvature(Inclination.Value, sweptInclination, sweptAzimuth, length) <=
+                    maximumCurvature + 1.0e-12)
+                {
+                    next.Set(shortest);
+                    next.SetCurveParameters(shortest);
+                    return true;
+                }
+            }
+
+            BuildAndTurnTargetSolution? solution = SolveBTTargetSolutions(targetX, targetY, targetZ)
+                .FirstOrDefault(candidate => candidate.PeakCurvature <= maximumCurvature + 1.0e-12);
+            if (solution == null) return false;
+            if (solution.Length == 0.0)
+            {
+                next.Abscissa = Abscissa;
+                next.Inclination = Inclination;
+                next.Azimuth = Azimuth;
+                next.BUR = 0.0;
+                next.TUR = 0.0;
+                next.Curvature = 0.0;
+                next.Toolface = null;
+                return true;
+            }
+
+            TrajectoryPoint3D solved = new TrajectoryPoint3D
+            {
+                Abscissa = Abscissa.Value + solution.Length,
+                Inclination = Inclination.Value + solution.SweptInclination,
+                Azimuth = Azimuth.Value + solution.SweptAzimuth
+            };
+            TrajectoryPoint3D origin = new TrajectoryPoint3D(this) { Abscissa = Abscissa };
+            origin.X = X;
+            origin.Y = Y;
+            origin.Z = Z;
+            double chord = System.Math.Sqrt((targetX - X.Value) * (targetX - X.Value) +
+                                            (targetY - Y.Value) * (targetY - Y.Value) +
+                                            (targetZ - Z.Value) * (targetZ - Z.Value));
+            if (!origin.CompleteBTSIA(solved, 0, false) ||
+                !Numeric.IsDefined(solved.X) || !Numeric.IsDefined(solved.Y) || !Numeric.IsDefined(solved.Z) ||
+                System.Math.Abs(solved.X.Value - targetX) > 1.0e-7 * System.Math.Max(1.0, chord) ||
+                System.Math.Abs(solved.Y.Value - targetY) > 1.0e-7 * System.Math.Max(1.0, chord) ||
+                System.Math.Abs(solved.Z.Value - targetZ) > 1.0e-7 * System.Math.Max(1.0, chord))
+            {
+                return false;
+            }
+            next.Abscissa = solved.Abscissa;
+            next.Inclination = solved.Inclination;
+            next.Azimuth = solved.Azimuth;
+            next.Curvature = solved.Curvature;
+            next.Toolface = solved.Toolface;
+            next.BUR = solved.BUR;
+            next.TUR = solved.TUR;
+            next.VerticalSection = solved.VerticalSection;
+            return true;
+        }
+
         public bool CompleteBTXYZ(CurvilinearPoint3D next)
         {
             if (next == null ||
