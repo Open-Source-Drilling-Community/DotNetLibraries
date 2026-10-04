@@ -51,4 +51,61 @@ public sealed class BuildAndTurnTargetSolutionTests
             Assert.That(target.Z, Is.EqualTo(1703.6123210251205).Within(1e-5));
         });
     }
+
+    [Test]
+    public void Tolerance_aware_completion_matches_the_shortest_compliant_enumerated_root()
+    {
+        const double maximumCurvature = 0.004654211338651545;
+        const double positionTolerance = 0.25;
+        TrajectoryPoint3D start = Start();
+        IReadOnlyList<BuildAndTurnTargetSolution> solutions = start.SolveBTTargetSolutions(
+            6534960.156788087, 328704.32592859754, 1703.6123210251205, positionTolerance);
+        BuildAndTurnTargetSolution expected = solutions.First(solution =>
+            solution.PeakCurvature <= maximumCurvature + 1e-12);
+        TrajectoryPoint3D target = new()
+        {
+            X = 6534960.156788087,
+            Y = 328704.32592859754,
+            Z = 1703.6123210251205
+        };
+
+        BuildAndTurnTargetCompletionStatus status = start.CompleteBTXYZ(
+            target, maximumCurvature, positionTolerance);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(status, Is.EqualTo(BuildAndTurnTargetCompletionStatus.Completed));
+            Assert.That(target.Abscissa - start.Abscissa, Is.EqualTo(expected.Length).Within(1e-8));
+            Assert.That(target.Curvature, Is.LessThanOrEqualTo(maximumCurvature + 1e-12));
+            Assert.That(target.X, Is.EqualTo(6534960.156788087).Within(positionTolerance));
+            Assert.That(target.Y, Is.EqualTo(328704.32592859754).Within(positionTolerance));
+            Assert.That(target.Z, Is.EqualTo(1703.6123210251205).Within(positionTolerance));
+        });
+    }
+
+    [Test]
+    public void Curvature_rejection_retains_a_geometric_root_for_classification()
+    {
+        const double positionTolerance = 0.25;
+        TrajectoryPoint3D start = Start();
+        TrajectoryPoint3D target = new()
+        {
+            X = 6534960.156788087,
+            Y = 328704.32592859754,
+            Z = 1703.6123210251205
+        };
+
+        BuildAndTurnTargetCompletionStatus status = start.CompleteBTXYZ(
+            target, 1e-8, positionTolerance);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(status, Is.EqualTo(BuildAndTurnTargetCompletionStatus.ExceedsMaximumCurvature));
+            Assert.That(target.Abscissa, Is.GreaterThan(start.Abscissa));
+            Assert.That(target.Curvature, Is.GreaterThan(1e-8));
+            Assert.That(target.X, Is.EqualTo(6534960.156788087).Within(positionTolerance));
+            Assert.That(target.Y, Is.EqualTo(328704.32592859754).Within(positionTolerance));
+            Assert.That(target.Z, Is.EqualTo(1703.6123210251205).Within(positionTolerance));
+        });
+    }
 }

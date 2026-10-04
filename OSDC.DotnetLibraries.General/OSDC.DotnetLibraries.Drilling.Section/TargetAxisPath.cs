@@ -65,6 +65,8 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         /// </summary>
         public TargetAxisFailureReason FailureReason { get; private set; } = TargetAxisFailureReason.None;
 
+        private TargetAxisFailureReason appendFailureReason_ = TargetAxisFailureReason.CurveDeclined;
+
         /// <summary>
         /// Which curve the leg that failed was being drawn with, when it had got as far as choosing one.
         /// </summary>
@@ -104,6 +106,9 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                         return "no " + Describe(FailedCurveType) + " reaches target " + FailedTargetIndex
                              + (TargetImposesAnAxis(FailedTargetIndex) ? " with the direction it asks for" : "")
                              + " from the station before it";
+                    case TargetAxisFailureReason.MaximumCurvatureExceeded:
+                        return "constant build and turn curves reach target " + FailedTargetIndex
+                             + ", but all exceed the requested maximum curvature";
                     case TargetAxisFailureReason.TargetNotReached:
                         return "the " + Describe(FailedCurveType) + " worked out for target " + FailedTargetIndex
                              + " does not arrive at it";
@@ -220,6 +225,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             FailedCurveType = null;
             FailedFrom = null;
             FailureReason = TargetAxisFailureReason.None;
+            appendFailureReason_ = TargetAxisFailureReason.CurveDeclined;
 
             if (Start == null ||
                 !Numeric.IsDefined(Start.X) || !Numeric.IsDefined(Start.Y) || !Numeric.IsDefined(Start.Z))
@@ -255,6 +261,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
 
                 TrajectoryPoint3D leavingFrom = new TrajectoryPoint3D();
                 leavingFrom.Set(current);
+                appendFailureReason_ = TargetAxisFailureReason.CurveDeclined;
 
                 TrajectoryPoint3D reached = target.HasAxis
                     ? AppendThroughAxis(current, destination, type)
@@ -265,7 +272,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                     // The construction found nothing at all: the targets ask for a curve of this kind
                     // which does not exist. Moving the target, or drawing this leg with another kind of
                     // curve, is what answers it.
-                    return Fail(TargetAxisFailureReason.CurveDeclined, i, type, leavingFrom);
+                    return Fail(appendFailureReason_, i, type, leavingFrom);
                 }
                 if (!Arrived(reached, target))
                 {
@@ -340,9 +347,22 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                 case SectionCurveType.ConstantBuildAndTurn:
                     {
                         BuildAndTurnArcSection section = new BuildAndTurnArcSection(from, to);
-                        if (!(MaximumCurvature.HasValue
-                            ? section.CalculateXYZ(MaximumCurvature.Value)
-                            : section.CalculateXYZ()))
+                        if (MaximumCurvature.HasValue)
+                        {
+                            BuildAndTurnTargetCompletionStatus status = section.CalculateXYZ(
+                                MaximumCurvature.Value, PositionAccuracy);
+                            if (status == BuildAndTurnTargetCompletionStatus.ExceedsMaximumCurvature)
+                            {
+                                Sections.Add(section);
+                                appendFailureReason_ = TargetAxisFailureReason.MaximumCurvatureExceeded;
+                                return null;
+                            }
+                            if (status != BuildAndTurnTargetCompletionStatus.Completed)
+                            {
+                                return null;
+                            }
+                        }
+                        else if (!section.CalculateXYZ())
                         {
                             return null;
                         }

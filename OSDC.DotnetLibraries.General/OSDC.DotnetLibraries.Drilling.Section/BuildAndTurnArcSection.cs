@@ -816,6 +816,30 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             return false;
         }
 
+        /// <summary>
+        /// Calculates a curvature-constrained Cartesian target within an absolute position tolerance and
+        /// distinguishes targets with no geometric root from targets rejected only by curvature. In the
+        /// latter case the section retains the shortest geometric root so callers can classify it without
+        /// solving the same target a second time.
+        /// </summary>
+        public BuildAndTurnTargetCompletionStatus CalculateXYZ(double maximumCurvature,
+            double positionTolerance)
+        {
+            if (!Numeric.IsDefined(End.X) || !Numeric.IsDefined(End.Y) || !Numeric.IsDefined(End.Z))
+            {
+                return BuildAndTurnTargetCompletionStatus.NoGeometricSolution;
+            }
+            BuildAndTurnTargetCompletionStatus status = Start.CompleteBTXYZ(
+                End, maximumCurvature, positionTolerance);
+            if (status != BuildAndTurnTargetCompletionStatus.NoGeometricSolution)
+            {
+                BuildAndTurn.BUR = End.BUR;
+                BuildAndTurn.TR = End.TUR;
+                BuildAndTurn.Length = End.Abscissa - Start.Abscissa;
+            }
+            return status;
+        }
+
         public bool CalculateID()
         {
             End.X = Start.X;

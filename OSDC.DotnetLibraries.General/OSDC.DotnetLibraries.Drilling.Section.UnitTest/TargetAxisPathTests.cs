@@ -546,5 +546,43 @@ namespace OSDC.DotnetLibraries.Drilling.Section.UnitTest
                 Assert.That(section.End.Z, Is.EqualTo(1703.6123210251205).Within(1e-5));
             });
         }
+
+        [Test]
+        public void BuildAndTurnPathRetainsRejectedRootAndReportsCurvatureLimit()
+        {
+            TrajectoryPoint3D start = new TrajectoryPoint3D
+            {
+                X = 6534963.594500519,
+                Y = 328719.4050929201,
+                Z = 974.7544888700581,
+                Abscissa = 1026.78,
+                Inclination = 0.46355365128420706,
+                Azimuth = 2.8525680288655395
+            };
+            TargetAxisPath path = new TargetAxisPath
+            {
+                Start = start,
+                CurveType = SectionCurveType.ConstantBuildAndTurn,
+                MaximumCurvature = 1e-8,
+                PositionAccuracy = 0.25
+            };
+            path.AddTarget(6534960.156788087, 328704.32592859754, 1703.6123210251205);
+
+            Assert.That(path.Calculate(), Is.False);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(path.FailureReason,
+                    Is.EqualTo(TargetAxisFailureReason.MaximumCurvatureExceeded));
+                Assert.That(path.Sections, Has.Count.EqualTo(1));
+                Assert.That(path.Sections[0], Is.TypeOf<BuildAndTurnArcSection>());
+                Assert.That(path.Sections[0].End.X,
+                    Is.EqualTo(6534960.156788087).Within(path.PositionAccuracy));
+                Assert.That(path.Sections[0].End.Y,
+                    Is.EqualTo(328704.32592859754).Within(path.PositionAccuracy));
+                Assert.That(path.Sections[0].End.Z,
+                    Is.EqualTo(1703.6123210251205).Within(path.PositionAccuracy));
+            });
+        }
     }
 }

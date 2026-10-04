@@ -26,6 +26,16 @@ namespace OSDC.DotnetLibraries.General.Math
     }
 
     /// <summary>
+    /// Outcome of a curvature-constrained constant-build-and-turn Cartesian target calculation.
+    /// </summary>
+    public enum BuildAndTurnTargetCompletionStatus
+    {
+        NoGeometricSolution,
+        ExceedsMaximumCurvature,
+        Completed
+    }
+
+    /// <summary>
     /// A curvilinear point that also carries the parameters of the curve arriving at it, together with
     /// the geometry of the three curve models used to build a well path: the circular arc, the constant
     /// build and turn curve, and the constant curvature and toolface curve.
@@ -702,7 +712,9 @@ namespace OSDC.DotnetLibraries.General.Math
         /// The swept azimuth is a free unknown here rather than a station azimuth folded into a single
         /// revolution, so turns beyond half a turn are reachable.
         /// </summary>
-        private bool TrySolveBTTargetDirect(double inclinationStart, double azimuthStart, double dNorth, double dEast, double dVertical, double chord, out double dInclination, out double dAzimuth, out double curveLength)
+        private bool TrySolveBTTargetDirect(double inclinationStart, double azimuthStart, double dNorth,
+            double dEast, double dVertical, double chord, double residualTolerance,
+            out double dInclination, out double dAzimuth, out double curveLength)
         {
             dInclination = 0.0;
             dAzimuth = 0.0;
@@ -737,7 +749,7 @@ namespace OSDC.DotnetLibraries.General.Math
             void Consider(double seedSweptInclination, double seedSweptAzimuth)
             {
                 if (TrySolveBTTargetFromSeed(inclinationStart, azimuthStart, chord, targetVerticalAngle, targetBearing,
-                        seedSweptInclination, seedSweptAzimuth,
+                        seedSweptInclination, seedSweptAzimuth, residualTolerance,
                         out double trialInclination, out double trialAzimuth, out double trialLength, out _) &&
                     trialLength < bestLength)
                 {
@@ -780,7 +792,10 @@ namespace OSDC.DotnetLibraries.General.Math
             curveLength = bestLength;
             return true;
         }
-        private bool TrySolveBTTargetFromSeed(double inclinationStart, double azimuthStart, double chord, double targetVerticalAngle, double targetBearing, double seedInclination, double seedAzimuth, out double dInclination, out double dAzimuth, out double curveLength, out double achievedResidual)
+        private bool TrySolveBTTargetFromSeed(double inclinationStart, double azimuthStart, double chord,
+            double targetVerticalAngle, double targetBearing, double seedInclination, double seedAzimuth,
+            double residualTolerance, out double dInclination, out double dAzimuth,
+            out double curveLength, out double achievedResidual)
         {
             const double InclinationMargin = 1.0e-9;
             const int MaxIterations = 60;
@@ -811,7 +826,7 @@ namespace OSDC.DotnetLibraries.General.Math
             }
             double norm = Hypot(g0, g1);
 
-            for (int iteration = 0; iteration < MaxIterations && norm > 1.0e-14; iteration++)
+            for (int iteration = 0; iteration < MaxIterations && norm > residualTolerance; iteration++)
             {
                 double hInclination = 1.0e-7 * System.Math.Max(1.0, System.Math.Abs(dInclination));
                 double hAzimuth = 1.0e-7 * System.Math.Max(1.0, System.Math.Abs(dAzimuth));
@@ -880,7 +895,7 @@ namespace OSDC.DotnetLibraries.General.Math
             }
 
             achievedResidual = norm;
-            if (!(norm <= 1.0e-9))
+            if (!(norm <= residualTolerance))
             {
                 return false;
             }
@@ -904,9 +919,35 @@ namespace OSDC.DotnetLibraries.General.Math
         /// answers; callers imposing a curvature limit must inspect all returned roots rather than reject
         /// the target merely because the shortest root exceeds that limit.
         /// </summary>
-        public IReadOnlyList<BuildAndTurnTargetSolution> SolveBTTargetSolutions(double targetX, double targetY, double targetZ)
+        public IReadOnlyList<BuildAndTurnTargetSolution> SolveBTTargetSolutions(
+            double targetX, double targetY, double targetZ) =>
+            SolveBTTargetSolutionsCore(targetX, targetY, targetZ, 1.0e-9);
+
+        /// <summary>
+        /// Returns the distinct constant-build-and-turn roots needed for a Cartesian target calculation
+        /// whose final position may differ by at most <paramref name="positionTolerance"/> metres.
+        /// </summary>
+        public IReadOnlyList<BuildAndTurnTargetSolution> SolveBTTargetSolutions(
+            double targetX, double targetY, double targetZ, double positionTolerance)
+        {
+            double chord = TargetChord(targetX, targetY, targetZ);
+            if (!Numeric.IsDefined(positionTolerance) || positionTolerance <= 0.0 || !Numeric.IsDefined(chord))
+            {
+                return Array.Empty<BuildAndTurnTargetSolution>();
+            }
+            return SolveBTTargetSolutionsCore(targetX, targetY, targetZ,
+                BTTargetResidualTolerance(chord, positionTolerance));
+        }
+
+        private IReadOnlyList<BuildAndTurnTargetSolution> SolveBTTargetSolutionsCore(
+            double targetX, double targetY, double targetZ, double residualTolerance,
+            BuildAndTurnTargetSolution? initialSolution = null)
         {
             List<BuildAndTurnTargetSolution> solutions = new List<BuildAndTurnTargetSolution>();
+            if (initialSolution != null)
+            {
+                solutions.Add(initialSolution);
+            }
             if (!Numeric.IsDefined(X) || !Numeric.IsDefined(Y) || !Numeric.IsDefined(Z) ||
                 !Numeric.IsDefined(Inclination) || !Numeric.IsDefined(Azimuth) || !Numeric.IsDefined(Abscissa) ||
                 !Numeric.IsDefined(targetX) || !Numeric.IsDefined(targetY) || !Numeric.IsDefined(targetZ))
@@ -934,7 +975,7 @@ namespace OSDC.DotnetLibraries.General.Math
             void Consider(double seedSweptInclination, double seedSweptAzimuth)
             {
                 if (!TrySolveBTTargetFromSeed(inclinationStart, azimuthStart, chord, targetVerticalAngle, targetBearing,
-                        seedSweptInclination, seedSweptAzimuth,
+                        seedSweptInclination, seedSweptAzimuth, residualTolerance,
                         out double trialInclination, out double trialAzimuth, out double trialLength, out _))
                 {
                     return;
@@ -953,7 +994,7 @@ namespace OSDC.DotnetLibraries.General.Math
 
             foreach (int wholeTurns in BTTargetSeedTurns)
             {
-                if (wholeTurns == 0) Consider(seedInclination, seedAzimuth);
+                if (wholeTurns == 0 && initialSolution == null) Consider(seedInclination, seedAzimuth);
                 foreach (double gridInclination in BTTargetSeedInclinations)
                 {
                     Consider(gridInclination, 2.0 * targetBearing + 2.0 * Numeric.PI * wholeTurns);
@@ -979,16 +1020,65 @@ namespace OSDC.DotnetLibraries.General.Math
             return System.Math.Sqrt(build * build + maximumSine * maximumSine * turn * turn);
         }
 
+        private double TargetChord(double targetX, double targetY, double targetZ)
+        {
+            if (!Numeric.IsDefined(X) || !Numeric.IsDefined(Y) || !Numeric.IsDefined(Z) ||
+                !Numeric.IsDefined(targetX) || !Numeric.IsDefined(targetY) || !Numeric.IsDefined(targetZ))
+            {
+                return double.NaN;
+            }
+            double dX = targetX - X.Value;
+            double dY = targetY - Y.Value;
+            double dZ = targetZ - Z.Value;
+            return System.Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
+        }
+
+        private static double BTTargetResidualTolerance(double chord, double positionTolerance)
+        {
+            // The solved residual is angular. Reserve a factor of four for the subsequent conversion
+            // from direction to length and verify the final Cartesian position independently.
+            double scaled = 0.25 * positionTolerance / System.Math.Max(chord, 1.0e-12);
+            return System.Math.Max(1.0e-12, System.Math.Min(1.0e-3, scaled));
+        }
+
         /// <summary>
         /// Completes a Cartesian constant-build-and-turn target with the shortest exact root whose peak
         /// curvature does not exceed <paramref name="maximumCurvature"/>.
         /// </summary>
         public bool CompleteBTXYZ(TrajectoryPoint3D next, double maximumCurvature)
         {
+            double chord = next == null ? double.NaN : TargetChord(next.X ?? double.NaN,
+                next.Y ?? double.NaN, next.Z ?? double.NaN);
+            double positionTolerance = 1.0e-7 * System.Math.Max(1.0, chord);
+            return CompleteBTXYZConstrainedCore(next, maximumCurvature, positionTolerance, 1.0e-9) ==
+                BuildAndTurnTargetCompletionStatus.Completed;
+        }
+
+        /// <summary>
+        /// Completes a curvature-constrained Cartesian target using the requested absolute position
+        /// tolerance, and distinguishes an absent geometric root from roots rejected by curvature.
+        /// When curvature is exceeded, <paramref name="next"/> contains the shortest geometric root.
+        /// </summary>
+        public BuildAndTurnTargetCompletionStatus CompleteBTXYZ(TrajectoryPoint3D next,
+            double maximumCurvature, double positionTolerance)
+        {
+            double chord = next == null ? double.NaN : TargetChord(next.X ?? double.NaN,
+                next.Y ?? double.NaN, next.Z ?? double.NaN);
+            if (!Numeric.IsDefined(chord) || !Numeric.IsDefined(positionTolerance) || positionTolerance <= 0.0)
+            {
+                return BuildAndTurnTargetCompletionStatus.NoGeometricSolution;
+            }
+            return CompleteBTXYZConstrainedCore(next, maximumCurvature, positionTolerance,
+                BTTargetResidualTolerance(chord, positionTolerance));
+        }
+
+        private BuildAndTurnTargetCompletionStatus CompleteBTXYZConstrainedCore(TrajectoryPoint3D next,
+            double maximumCurvature, double positionTolerance, double residualTolerance)
+        {
             if (next == null || !Numeric.IsDefined(next.X) || !Numeric.IsDefined(next.Y) || !Numeric.IsDefined(next.Z) ||
                 !Numeric.IsDefined(maximumCurvature) || maximumCurvature < 0.0)
             {
-                return false;
+                return BuildAndTurnTargetCompletionStatus.NoGeometricSolution;
             }
             double targetX = next.X.Value;
             double targetY = next.Y.Value;
@@ -997,37 +1087,73 @@ namespace OSDC.DotnetLibraries.General.Math
             // Almost every target is accepted by the conventional shortest root. Keep that common path
             // cheap and only run the multi-start search when the shortest root violates the constraint.
             TrajectoryPoint3D shortest = new TrajectoryPoint3D { X = targetX, Y = targetY, Z = targetZ };
-            if (CompleteBTXYZ((CurvilinearPoint3D)shortest) &&
+            BuildAndTurnTargetSolution? shortestSolution = null;
+            if (CompleteBTXYZCore(shortest, residualTolerance, positionTolerance) &&
                 Numeric.IsDefined(shortest.Abscissa) && Numeric.IsDefined(shortest.Inclination) &&
                 Numeric.IsDefined(shortest.Azimuth))
             {
                 double length = shortest.Abscissa.Value - Abscissa.Value;
                 double sweptInclination = shortest.Inclination.Value - Inclination.Value;
                 double sweptAzimuth = shortest.Azimuth.Value - Azimuth.Value;
-                if (BTPeakCurvature(Inclination.Value, sweptInclination, sweptAzimuth, length) <=
-                    maximumCurvature + 1.0e-12)
+                shortestSolution = new BuildAndTurnTargetSolution(sweptInclination, sweptAzimuth, length,
+                    BTPeakCurvature(Inclination.Value, sweptInclination, sweptAzimuth, length));
+                if (shortestSolution.PeakCurvature <= maximumCurvature + 1.0e-12)
                 {
                     next.Set(shortest);
                     next.SetCurveParameters(shortest);
-                    return true;
+                    return BuildAndTurnTargetCompletionStatus.Completed;
                 }
             }
 
-            BuildAndTurnTargetSolution? solution = SolveBTTargetSolutions(targetX, targetY, targetZ)
-                .FirstOrDefault(candidate => candidate.PeakCurvature <= maximumCurvature + 1.0e-12);
-            if (solution == null) return false;
-            if (solution.Length == 0.0)
+            IReadOnlyList<BuildAndTurnTargetSolution> solutions = SolveBTTargetSolutionsCore(
+                targetX, targetY, targetZ, residualTolerance, shortestSolution);
+            bool hadCompliantCandidate = false;
+            foreach (BuildAndTurnTargetSolution solution in solutions.Where(candidate =>
+                candidate.PeakCurvature <= maximumCurvature + 1.0e-12))
             {
-                next.Abscissa = Abscissa;
-                next.Inclination = Inclination;
-                next.Azimuth = Azimuth;
-                next.BUR = 0.0;
-                next.TUR = 0.0;
-                next.Curvature = 0.0;
-                next.Toolface = null;
-                return true;
+                hadCompliantCandidate = true;
+                if (solution.Length == 0.0)
+                {
+                    next.Abscissa = Abscissa;
+                    next.Inclination = Inclination;
+                    next.Azimuth = Azimuth;
+                    next.BUR = 0.0;
+                    next.TUR = 0.0;
+                    next.Curvature = 0.0;
+                    next.Toolface = null;
+                    return BuildAndTurnTargetCompletionStatus.Completed;
+                }
+                if (ApplyBTTargetSolution(next, targetX, targetY, targetZ, solution, positionTolerance))
+                {
+                    return BuildAndTurnTargetCompletionStatus.Completed;
+                }
+            }
+            if (hadCompliantCandidate)
+            {
+                return BuildAndTurnTargetCompletionStatus.NoGeometricSolution;
             }
 
+            BuildAndTurnTargetSolution? geometricSolution = shortestSolution ?? solutions.FirstOrDefault();
+            if (geometricSolution == null)
+            {
+                return BuildAndTurnTargetCompletionStatus.NoGeometricSolution;
+            }
+            if (shortestSolution != null)
+            {
+                next.Set(shortest);
+                next.SetCurveParameters(shortest);
+            }
+            else if (!ApplyBTTargetSolution(next, targetX, targetY, targetZ,
+                geometricSolution, positionTolerance))
+            {
+                return BuildAndTurnTargetCompletionStatus.NoGeometricSolution;
+            }
+            return BuildAndTurnTargetCompletionStatus.ExceedsMaximumCurvature;
+        }
+
+        private bool ApplyBTTargetSolution(TrajectoryPoint3D next, double targetX, double targetY,
+            double targetZ, BuildAndTurnTargetSolution solution, double positionTolerance)
+        {
             TrajectoryPoint3D solved = new TrajectoryPoint3D
             {
                 Abscissa = Abscissa.Value + solution.Length,
@@ -1038,14 +1164,11 @@ namespace OSDC.DotnetLibraries.General.Math
             origin.X = X;
             origin.Y = Y;
             origin.Z = Z;
-            double chord = System.Math.Sqrt((targetX - X.Value) * (targetX - X.Value) +
-                                            (targetY - Y.Value) * (targetY - Y.Value) +
-                                            (targetZ - Z.Value) * (targetZ - Z.Value));
             if (!origin.CompleteBTSIA(solved, 0, false) ||
                 !Numeric.IsDefined(solved.X) || !Numeric.IsDefined(solved.Y) || !Numeric.IsDefined(solved.Z) ||
-                System.Math.Abs(solved.X.Value - targetX) > 1.0e-7 * System.Math.Max(1.0, chord) ||
-                System.Math.Abs(solved.Y.Value - targetY) > 1.0e-7 * System.Math.Max(1.0, chord) ||
-                System.Math.Abs(solved.Z.Value - targetZ) > 1.0e-7 * System.Math.Max(1.0, chord))
+                System.Math.Abs(solved.X.Value - targetX) > positionTolerance ||
+                System.Math.Abs(solved.Y.Value - targetY) > positionTolerance ||
+                System.Math.Abs(solved.Z.Value - targetZ) > positionTolerance)
             {
                 return false;
             }
@@ -1061,6 +1184,29 @@ namespace OSDC.DotnetLibraries.General.Math
         }
 
         public bool CompleteBTXYZ(CurvilinearPoint3D next)
+        {
+            double chord = next == null ? double.NaN : TargetChord(next.X ?? double.NaN,
+                next.Y ?? double.NaN, next.Z ?? double.NaN);
+            return CompleteBTXYZCore(next, 1.0e-9, 1.0e-7 * System.Math.Max(1.0, chord));
+        }
+
+        /// <summary>
+        /// Completes the shortest constant-build-and-turn Cartesian root within an absolute position
+        /// tolerance in metres.
+        /// </summary>
+        public bool CompleteBTXYZ(CurvilinearPoint3D next, double positionTolerance)
+        {
+            double chord = next == null ? double.NaN : TargetChord(next.X ?? double.NaN,
+                next.Y ?? double.NaN, next.Z ?? double.NaN);
+            if (!Numeric.IsDefined(chord) || !Numeric.IsDefined(positionTolerance) || positionTolerance <= 0.0)
+            {
+                return false;
+            }
+            return CompleteBTXYZCore(next, BTTargetResidualTolerance(chord, positionTolerance), positionTolerance);
+        }
+
+        private bool CompleteBTXYZCore(CurvilinearPoint3D next, double residualTolerance,
+            double positionTolerance)
         {
             if (next == null ||
                 X == null ||
@@ -1112,7 +1258,7 @@ namespace OSDC.DotnetLibraries.General.Math
             // follows from one division. The swept azimuth is a free unknown rather than a station
             // azimuth folded into a single revolution, so a target whose curve turns by more than half a
             // turn is reachable.
-            if (TrySolveBTTargetDirect(i1, a1, targetX - x1, targetY - y1, targetZ - z1, chord,
+            if (TrySolveBTTargetDirect(i1, a1, targetX - x1, targetY - y1, targetZ - z1, chord, residualTolerance,
                     out double directInclination, out double directAzimuth, out double directLength))
             {
                 TrajectoryPoint3D direct = new TrajectoryPoint3D()
@@ -1129,9 +1275,9 @@ namespace OSDC.DotnetLibraries.General.Math
                 // parameters exactly while doing so.
                 if (origin.CompleteBTSIA(direct, 0, false) &&
                     direct.X != null && direct.Y != null && direct.Z != null &&
-                    System.Math.Abs(direct.X.Value - targetX) <= 1e-7 * System.Math.Max(1.0, chord) &&
-                    System.Math.Abs(direct.Y.Value - targetY) <= 1e-7 * System.Math.Max(1.0, chord) &&
-                    System.Math.Abs(direct.Z.Value - targetZ) <= 1e-7 * System.Math.Max(1.0, chord))
+                    System.Math.Abs(direct.X.Value - targetX) <= positionTolerance &&
+                    System.Math.Abs(direct.Y.Value - targetY) <= positionTolerance &&
+                    System.Math.Abs(direct.Z.Value - targetZ) <= positionTolerance)
                 {
                     next.Abscissa = direct.Abscissa;
                     next.Inclination = direct.Inclination;

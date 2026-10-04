@@ -44,6 +44,13 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         CurveDeclined,
 
         /// <summary>
+        /// At least one constant-build-and-turn curve reaches the target, but every root exceeds the
+        /// requested peak-curvature limit. The rejected shortest geometric section is retained so a
+        /// caller can inspect and classify it without repeating the inverse calculation.
+        /// </summary>
+        MaximumCurvatureExceeded,
+
+        /// <summary>
         /// A curve was worked out but does not arrive at the target closely enough.
         ///
         /// At the accuracy the path asks for by default this should not happen, and it is checked for so
