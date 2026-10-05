@@ -39,9 +39,10 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         public SectionCurveType CurveType { get; set; } = SectionCurveType.CircularArc;
 
         /// <summary>
-        /// Optional peak-curvature limit, in radians per metre, for constant-build-and-turn sections to
-        /// position-only targets. When set, alternative exact roots are considered if the shortest root
-        /// exceeds the limit.
+        /// Optional peak-curvature limit, in radians per metre, for constant-build-and-turn sections.
+        /// For position-only targets, alternative exact roots are considered if the shortest root
+        /// exceeds the limit. For attitude-constrained targets, the shortest double-curve root is kept
+        /// for classification when it exceeds the limit.
         /// </summary>
         public double? MaximumCurvature { get; set; }
 
@@ -437,6 +438,12 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                                   () => Half(from, pair.Intermediate, curve.UpstreamBUR, curve.UpstreamTR, curve.UpstreamLength),
                                   () => Half(pair.Intermediate, pair.End, curve.DownstreamBUR, curve.DownstreamTR, curve.DownstreamLength),
                                   () => Half(from, pair.End, curve.UpstreamBUR, curve.UpstreamTR, curve.UpstreamLength));
+                        if (MaximumCurvature.HasValue &&
+                            PeakBuildAndTurnCurvature(pair) > MaximumCurvature.Value)
+                        {
+                            appendFailureReason_ = TargetAxisFailureReason.MaximumCurvatureExceeded;
+                            return null;
+                        }
                         return pair.End;
                     }
                 case SectionCurveType.ConstantCurvatureAndToolface:
@@ -496,6 +503,32 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             }
             Sections.Add(upstream());
             Sections.Add(downstream());
+        }
+
+        /// <summary>
+        /// Largest curvature reached by either half of a double build-and-turn section.
+        /// </summary>
+        private static double PeakBuildAndTurnCurvature(DoubleBuildAndTurnArcs pair)
+        {
+            NonLocalizedDoubleBuildAndTurnCurve curve = pair.DoubleBuildAndTurnCurve;
+            return System.Math.Max(
+                PeakBuildAndTurnCurvature((double)curve.UpstreamBUR, (double)curve.UpstreamTR,
+                                          (double)pair.Start.Inclination,
+                                          (double)pair.Intermediate.Inclination),
+                PeakBuildAndTurnCurvature((double)curve.DownstreamBUR, (double)curve.DownstreamTR,
+                                          (double)pair.Intermediate.Inclination,
+                                          (double)pair.End.Inclination));
+        }
+
+        private static double PeakBuildAndTurnCurvature(double build, double turn, double from, double to)
+        {
+            double low = System.Math.Min(from, to);
+            double high = System.Math.Max(from, to);
+            double sine = low <= 0.5 * Numeric.PI && high >= 0.5 * Numeric.PI
+                ? 1.0
+                : System.Math.Max(System.Math.Abs(System.Math.Sin(low)),
+                                  System.Math.Abs(System.Math.Sin(high)));
+            return System.Math.Sqrt(build * build + turn * turn * sine * sine);
         }
 
         /// <summary>

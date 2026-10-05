@@ -17,6 +17,43 @@ namespace OSDC.DotnetLibraries.Drilling.Section.UnitTest
     {
         private const int Cases = 1500;
 
+        [Test]
+        public void ProductionLandingGeometryChoosesTheShortestExactRoot()
+        {
+            TrajectoryPoint3D start = new TrajectoryPoint3D
+            {
+                X = 6534963.594500519,
+                Y = 328719.4050929201,
+                Z = 974.7544888700581,
+                Abscissa = 1026.78,
+                Inclination = 0.46355365128420706,
+                Azimuth = 2.8525680288655395
+            };
+            TrajectoryPoint3D end = new TrajectoryPoint3D
+            {
+                X = 6534897.01897866,
+                Y = 328712.98670815467,
+                Z = 1691.2395502311726,
+                Inclination = 0.19198621771937624,
+                Azimuth = 3.0543261909900767
+            };
+            DoubleBuildAndTurnArcs section = Solver(start, end);
+
+            Assert.That(section.CalculateXYZ(), Is.True);
+
+            double length = section.DoubleBuildAndTurnCurve.UpstreamLength!.Value +
+                            section.DoubleBuildAndTurnCurve.DownstreamLength!.Value;
+            TrajectoryPoint3D reached = Rebuild(section, start, out _);
+            Assert.Multiple(() =>
+            {
+                Assert.That(length, Is.EqualTo(879.0535775618).Within(1e-3));
+                Assert.That(length, Is.LessThan(1000.0),
+                    "the 31 km cancelling root must not displace the drilling-scale root");
+                Assert.That(Distance(reached, end), Is.LessThanOrEqualTo(1e-6));
+                Assert.That(AttitudeMiss(reached, end), Is.LessThanOrEqualTo(1e-7));
+            });
+        }
+
         private static void Tangent(TrajectoryPoint3D point, out double x, out double y, out double z)
         {
             double sine = System.Math.Sin((double)point.Inclination);

@@ -584,5 +584,40 @@ namespace OSDC.DotnetLibraries.Drilling.Section.UnitTest
                     Is.EqualTo(1703.6123210251205).Within(path.PositionAccuracy));
             });
         }
+
+        [Test]
+        public void AttitudeConstrainedBuildAndTurnPathRejectsTheShortestRootByCurvature()
+        {
+            TrajectoryPoint3D start = new TrajectoryPoint3D
+            {
+                X = 6534963.594500519,
+                Y = 328719.4050929201,
+                Z = 974.7544888700581,
+                Abscissa = 1026.78,
+                Inclination = 0.46355365128420706,
+                Azimuth = 2.8525680288655395
+            };
+            TargetAxisPath path = new TargetAxisPath
+            {
+                Start = start,
+                CurveType = SectionCurveType.ConstantBuildAndTurn,
+                MaximumCurvature = 0.008144869842640205,
+                PositionAccuracy = 0.25
+            };
+            path.AddTarget(6534897.01897866, 328712.98670815467, 1691.2395502311726,
+                           0.19198621771937624, 3.0543261909900767);
+
+            Assert.That(path.Calculate(), Is.False);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(path.FailureReason,
+                    Is.EqualTo(TargetAxisFailureReason.MaximumCurvatureExceeded));
+                Assert.That(path.Sections, Has.Count.EqualTo(2));
+                Assert.That(path.Sections.Sum(section => section.End.Abscissa!.Value -
+                                                         section.Start.Abscissa!.Value),
+                    Is.EqualTo(879.0535775618).Within(1e-3));
+            });
+        }
     }
 }

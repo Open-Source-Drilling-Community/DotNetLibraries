@@ -174,7 +174,7 @@ namespace OSDC.DotnetLibraries.Drilling.Section
             double turnCentre = 0.5 * turn;
 
             bool found = false;
-            double bestSeverity = double.PositiveInfinity;
+            double bestLength = double.PositiveInfinity;
             double bestJunctionInclination = 0.0;
             double bestFirstTurn = 0.0;
 
@@ -259,20 +259,17 @@ namespace OSDC.DotnetLibraries.Drilling.Section
                         {
                             continue;
                         }
-                        // The gentlest pair is the one whose worst dogleg severity anywhere is least.
-                        // For a pair sharing one curvature that is the curvature itself, so this is the
-                        // same choice the other two sections make, written for a curvature that moves.
-                        double severity = System.Math.Max(
-                            PeakCurvature(buildFirst / lengthFirst, turnFirst / lengthFirst,
-                                          inclinationStart, junctionInclination),
-                            PeakCurvature(buildSecond / lengthSecond, turnSecond / lengthSecond,
-                                          junctionInclination, inclinationEnd));
-                        if (!(severity < bestSeverity))
+                        // Several exact pairs may reach the same station and attitude. Minimise drilled
+                        // length, as the single build-and-turn inverse does. Minimising curvature here is
+                        // ill posed: increasingly long, cancelling, multi-loop pairs have ever smaller
+                        // rates and can otherwise displace the drilling-scale root.
+                        double length = lengthFirst + lengthSecond;
+                        if (!(length < bestLength))
                         {
                             continue;
                         }
                         found = true;
-                        bestSeverity = severity;
+                        bestLength = length;
                         bestJunctionInclination = junctionInclination;
                         bestFirstTurn = firstTurn;
                     }
@@ -400,28 +397,6 @@ namespace OSDC.DotnetLibraries.Drilling.Section
         private static double CurvatureAt(double bur, double tur, double inclination)
         {
             double sine = System.Math.Sin(inclination);
-            return System.Math.Sqrt(bur * bur + tur * tur * sine * sine);
-        }
-
-        /// <summary>
-        /// The largest curvature a build and turn curve reaches between two inclinations. The inclination
-        /// runs monotonically from one to the other, so the sine is largest at the horizontal when the
-        /// curve passes through it and at one of the two ends otherwise.
-        /// </summary>
-        private static double PeakCurvature(double bur, double tur, double from, double to)
-        {
-            double low = System.Math.Min(from, to);
-            double high = System.Math.Max(from, to);
-            double sine;
-            if (low <= 0.5 * Numeric.PI && high >= 0.5 * Numeric.PI)
-            {
-                sine = 1.0;
-            }
-            else
-            {
-                sine = System.Math.Max(System.Math.Abs(System.Math.Sin(low)),
-                                       System.Math.Abs(System.Math.Sin(high)));
-            }
             return System.Math.Sqrt(bur * bur + tur * tur * sine * sine);
         }
 
