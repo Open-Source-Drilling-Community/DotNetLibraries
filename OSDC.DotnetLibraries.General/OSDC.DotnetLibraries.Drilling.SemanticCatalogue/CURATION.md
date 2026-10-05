@@ -77,3 +77,15 @@ Approver: Eric Cayeux. Evidence: “The proposed semantic catalogue can now refe
 ProjectionScaleFactor binds to the published UnitConversion 3.4.5 quantity, with SI 1 and meaningful display precision 1e-9. Conversion.DrillingEngineering 3.4.5 supplies general Conversion transitively. The full projection factor remains distinct from HelmertScaleDifference. Two-dimensional positions, CRS/conversion/method distinctions, origin roles, reference conventions and generic parameter exceptions are accepted. UnitConversion owns display precision; it does not imply scientific accuracy or stored-value rounding.
 
 This increment prepares source and the NuGet package without publishing it. Provider/importer corrections and REST/MCP integration remain separate work; vocabulary approval does not certify current provider behavior. Future concepts still require curation.
+
+## 2026-10-05 — Trajectory REST/MCP vocabulary (0.13.0)
+
+The [Trajectory review](CURATION-TRAJECTORY-2026-10-05.md) adds 96 Reviewed definitions to the unchanged 421-entry 0.12.0 baseline. The review treats REST and MCP as two publications of the same domain meanings and covers the full Trajectory controller/model surface without turning transport mechanics into vocabulary.
+
+The physical-quantity audit found that all unit-bearing fields resolve through existing UnitConversion quantities. No new physical quantity or package dependency is introduced. Provider annotations and publication remain separate operations.
+
+## 2026-10-05 — Unit Conversion REST/MCP vocabulary (0.14.0)
+
+The [Unit Conversion review](CURATION-UNITCONVERSION-2026-10-05.md) adds 60 Reviewed definitions to the unchanged 517-entry 0.13.0 baseline. It models the authoritative metrology domain—physical quantities, dimensions, units, affine definitions, hierarchy, unit systems and conversion results—without turning REST or MCP transport mechanics into vocabulary.
+
+No new physical quantity is required. Generic converted values inherit the caller-selected quantity dynamically, and conversion coefficients and precision metadata intentionally have no fixed `quantityName`. Provider annotations and publication remain separate operations.

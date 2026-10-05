@@ -1,8 +1,8 @@
 # OSDC Drilling Semantic Catalogue
 
-Source **0.12.0** adds the curated SurveyInstrument vocabulary. It contains **421 concepts: 418 Reviewed and three Deprecated legacy names**. All 370 definitions from 0.11.0 remain unchanged. See [the approved review](CURATION-SURVEYINSTRUMENT-2026-09-30.md).
+Source **0.14.0** adds the curated Unit Conversion REST/MCP vocabulary. It contains **577 concepts: 574 Reviewed and three Deprecated legacy names**. All 517 definitions from 0.13.0 remain unchanged. See [the Unit Conversion review and binding map](CURATION-UNITCONVERSION-2026-10-05.md).
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.12.0 is prepared for packaging; publication and provider adoption are separate operations.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.14.0 is prepared for packaging; publication and provider adoption are separate operations.
 
 ## Canonical drilling references
 
@@ -148,3 +148,17 @@ The catalogue preserves the current provider's exact ISCWSA flags and finite `Er
 Pressure ratings specialize AbsolutePressure and inherit the canonical vacuum reference. Equipment Weight fields are curated as mass, heave-compensator capacity as force, controller gains as dimensionless and rotational speeds as angular velocity in rad/s. Depth capacities are extents and deliberately have no datum binding. Measurement range and absolute accuracy retain a dynamic physical quantity declared by their sibling PhysicalQuantity field.
 
 The increment uses existing UnitConversion 3.4.5 quantities and leaves canonical drilling reference profile 1.1.0 unchanged. NuGet publication and Rig provider integration follow separately; no Rig payload, persistence or runtime behavior changes in this vocabulary release.
+
+## Trajectory REST/MCP vocabulary
+
+The [Trajectory review and binding map](CURATION-TRAJECTORY-2026-10-05.md) adds 96 Reviewed concepts for survey runs and measurements, trajectories, interpolation, uncertainty ellipses, aggregation, realizations, extrapolation, target landing, directional-control evaluation, minimum distance, octree discovery, anti-collision policy/calculation, imports, external-reference audits and dependency-closed backup/restore.
+
+REST and MCP are treated as two transports for the same domain contract. Transport operations, route names, chunk indices and pagination controls are not duplicated as drilling-domain concepts. Existing identity, feature, metadata, validity and concurrency meanings are reused.
+
+The physical-quantity audit found no gap. `DepthDrilling`, `PositionDrilling`, `LengthStandard`, `PlaneAngleDrilling`, `CurvatureDrilling`, `ProportionStandard` and the already curated borehole-diameter quantity cover every unit-bearing Trajectory field. Generic residual distributions deliberately inherit their selected component quantity rather than asserting one universal dimension. Version 0.13.0 does not change UnitConversion or the canonical drilling reference profile.
+
+## Unit Conversion REST/MCP vocabulary
+
+The [Unit Conversion review](CURATION-UNITCONVERSION-2026-10-05.md) adds 60 Reviewed concepts for the metrology model exposed through REST and MCP: physical quantities and dimensional exponents, unit choices and affine definitions, unit systems and validated assignments, direct and persisted conversions, precision-aware formatting, hierarchy inheritance and semantic discovery.
+
+No new engineering physical quantity is introduced. Generic conversion values inherit the selected quantity dynamically, while dimensional exponents, conversion coefficients and precision settings are metadata rather than measurements with one fixed quantity. Catalogue 0.14.0 therefore leaves the UnitConversion dependency and canonical drilling reference profile unchanged.

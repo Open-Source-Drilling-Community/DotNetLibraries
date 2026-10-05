@@ -9,13 +9,13 @@ public class SurveyInstrumentVocabularyTests
     public void SurveyInstrumentIncrementIsReviewedAndPreservesThePreviousBaseline()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.12.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(421));
+        Assert.That(c.Document.Version, Is.EqualTo("0.14.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(577));
         Assert.That(c.Document.Concepts.Take(370), Has.Count.EqualTo(370));
-        Assert.That(c.Document.Concepts.Skip(370), Has.Count.EqualTo(51));
-        Assert.That(c.Document.Concepts.Skip(370).Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(50));
-        Assert.That(c.Document.Concepts.Skip(370).Count(x => x.Status == CurationStatus.Deprecated), Is.EqualTo(1));
-        Assert.That(c.Document.Concepts.Skip(370).All(x => x.Evidence.Count > 0), Is.True);
+        Assert.That(c.Document.Concepts.Skip(370).Take(51), Has.Count.EqualTo(51));
+        Assert.That(c.Document.Concepts.Skip(370).Take(51).Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(50));
+        Assert.That(c.Document.Concepts.Skip(370).Take(51).Count(x => x.Status == CurationStatus.Deprecated), Is.EqualTo(1));
+        Assert.That(c.Document.Concepts.Skip(370).Take(51).All(x => x.Evidence.Count > 0), Is.True);
     }
 
     [Test]

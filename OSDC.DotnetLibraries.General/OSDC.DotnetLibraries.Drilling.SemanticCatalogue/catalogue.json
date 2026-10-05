@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.12.0",
+  "version": "0.14.0",
   "schemaVersion": 2,
   "concepts": [
     {
@@ -7886,6 +7886,474 @@
     },
     {
       "id": "urn:osdc:semantic:error-source-ordering-index", "label": "Error-source ordering index", "definition": "Provider-owned implementation ordering value for a survey error source; it is not an ISCWSA semantic identity.", "kind": "Noun", "status": "Reviewed", "constraints": ["Do not use this index as the error-source identity."], "evidence": ["ErrorSource.Index; Eric Cayeux approval, 2026-09-30"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-run", "label": "Survey run", "definition": "Managed acquisition or planning run containing ordered directional survey measurements and the survey stations calculated from them for one wellbore.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "requiredContext": ["wellbore", "survey instrument", "calculation method", "inclination reference", "azimuth reference"], "evidence": ["Trajectory Model/SurveyRun.cs and SurveyRunController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:survey-measurement"},{"kind":"HasPart","target":"urn:osdc:semantic:survey-station"}]
+    },
+    {
+      "id": "urn:osdc:semantic:actual-survey-run", "label": "Actual survey run", "definition": "Survey run representing observations or imported observations of a drilled wellbore.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-run"], "evidence": ["Trajectory SurveyRunType.Actual REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:planned-survey-run", "label": "Planned survey run", "definition": "Survey run representing directional stations intended for a planned wellbore path.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-run"], "evidence": ["Trajectory SurveyRunType.Planned REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-measurement", "label": "Survey measurement", "definition": "Directional observation at an along-hole depth, carrying inclination and azimuth together with acquisition, reference and correction provenance.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["along-hole depth origin", "inclination reference", "azimuth reference"], "evidence": ["Trajectory Model/SurveyMeasurement.cs REST/MCP schema; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:along-hole-depth"},{"kind":"HasPart","target":"urn:osdc:semantic:wellbore-inclination"},{"kind":"HasPart","target":"urn:osdc:semantic:wellbore-azimuth"}]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-station", "label": "Survey station", "definition": "Calculated directional and Cartesian state of a wellbore path at a specified along-hole depth.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["trajectory calculation method", "coordinate and depth references"], "evidence": ["OSDC Drilling Surveying SurveyStation and Trajectory REST/MCP schemas; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:survey-station-position"},{"kind":"HasPart","target":"urn:osdc:semantic:wellbore-inclination"},{"kind":"HasPart","target":"urn:osdc:semantic:wellbore-azimuth"}]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-measurement-origin", "label": "Survey measurement origin", "definition": "Provenance classification stating whether a directional row is an instrument measurement or an already supplied terminal extrapolation.", "kind": "Noun", "status": "Reviewed", "constraints": ["Only the final row of a survey run may be extrapolated."], "evidence": ["Trajectory SurveyMeasurementOrigin REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:measured-survey-measurement", "label": "Measured survey measurement", "definition": "Survey measurement acquired as a physical directional observation.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-measurement-origin"], "evidence": ["Trajectory SurveyMeasurementOrigin.Measured; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:extrapolated-survey-measurement", "label": "Extrapolated survey measurement", "definition": "Already supplied terminal survey row representing an extrapolation beyond the last instrument measurement.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-measurement-origin"], "constraints": ["This origin may occur only on the final row of a survey run."], "evidence": ["Trajectory SurveyMeasurementOrigin.Extrapolated; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-inclination-reference", "label": "Survey inclination reference", "definition": "Reference direction from which wellbore inclination is measured.", "kind": "Reference", "status": "Reviewed", "evidence": ["Trajectory SurveyInclinationReference REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:geodetic-vertical", "label": "Geodetic vertical", "definition": "Inclination reference defined by the normal to the applicable geodetic reference ellipsoid.", "kind": "Reference", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-inclination-reference"], "requiredContext": ["geodetic reference frame"], "evidence": ["Trajectory SurveyInclinationReference.GeodeticVertical; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:gravity-vertical", "label": "Gravity vertical", "definition": "Inclination reference defined by the local gravity direction.", "kind": "Reference", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-inclination-reference"], "requiredContext": ["gravity model and evaluation point"], "evidence": ["Trajectory SurveyInclinationReference.GravityVertical; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-azimuth-reference", "label": "Survey azimuth reference", "definition": "North reference from which wellbore azimuth is measured clockwise.", "kind": "Reference", "status": "Reviewed", "evidence": ["Trajectory SurveyAzimuthReference REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:true-north", "label": "True north", "definition": "Azimuth reference directed toward geodetic north at the evaluation position.", "kind": "Reference", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-azimuth-reference"], "evidence": ["Trajectory SurveyAzimuthReference.TrueNorth; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:magnetic-north", "label": "Magnetic north", "definition": "Azimuth reference directed along the horizontal component of the local geomagnetic field.", "kind": "Reference", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-azimuth-reference"], "requiredContext": ["geomagnetic model and evaluation instant"], "evidence": ["Trajectory SurveyAzimuthReference.MagneticNorth; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-measurement-correction", "label": "Survey measurement correction", "definition": "Provenance record for inclination and azimuth corrections applied to an observed survey measurement, including model inputs and evaluation instant.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["correction source", "correction time method"], "evidence": ["Trajectory SurveyMeasurementCorrection REST/MCP schema; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"EvaluatedUsing","target":"urn:osdc:semantic:scientific-model-provenance"}]
+    },
+    {
+      "id": "urn:osdc:semantic:applied-inclination-correction", "label": "Applied inclination correction", "definition": "Signed angular correction added to observed inclination to obtain the corrected inclination.", "kind": "Noun", "status": "Reviewed", "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "requiredContext": ["survey inclination reference"], "evidence": ["SurveyMeasurementCorrection.AppliedInclinationCorrection; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:applied-azimuth-correction", "label": "Applied azimuth correction", "definition": "Signed angular correction added to observed azimuth to obtain the corrected azimuth.", "kind": "Noun", "status": "Reviewed", "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "requiredContext": ["survey azimuth reference", "angle wrapping convention"], "evidence": ["SurveyMeasurementCorrection.AppliedAzimuthCorrection; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:wellbore-trajectory", "label": "Wellbore trajectory", "definition": "Managed ordered representation of a wellbore path assembled from one or more survey-run sections and calculated survey stations.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "requiredContext": ["wellbore", "trajectory type", "calculation method"], "evidence": ["Trajectory Model/Trajectory.cs and TrajectoryController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:trajectory-survey-run-section"},{"kind":"HasPart","target":"urn:osdc:semantic:survey-station"}]
+    },
+    {
+      "id": "urn:osdc:semantic:actual-wellbore-trajectory", "label": "Actual wellbore trajectory", "definition": "Wellbore trajectory representing a drilled path.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:wellbore-trajectory"], "evidence": ["Trajectory TrajectoryType.Actual REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:planned-wellbore-trajectory", "label": "Planned wellbore trajectory", "definition": "Wellbore trajectory representing an intended path.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:wellbore-trajectory"], "evidence": ["Trajectory TrajectoryType.Planned REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:definitive-wellbore-trajectory", "label": "Definitive wellbore trajectory", "definition": "Trajectory designated as the authoritative current representation among trajectories of its applicable scope.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:wellbore-trajectory"], "requiredContext": ["wellbore and trajectory type"], "evidence": ["Trajectory.TrajectoryLight.IsDefinitive and search contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-survey-run-section", "label": "Trajectory survey-run section", "definition": "Ordered contribution of a survey run to a trajectory beginning at an explicit along-hole abscissa.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["survey run identifier", "start along-hole depth"], "evidence": ["TrajectorySurveyRunSection REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-calculation-method", "label": "Trajectory calculation method", "definition": "Algorithm used to calculate continuous path geometry and derived survey stations from directional observations or section controls.", "kind": "Noun", "status": "Reviewed", "evidence": ["OSDC Surveying TrajectoryCalculationType REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:minimum-curvature-method", "label": "Minimum-curvature trajectory method", "definition": "Survey calculation method joining consecutive directional observations by the conventional minimum-curvature circular arc.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:trajectory-calculation-method"], "evidence": ["TrajectoryCalculationType.MinimumCurvatureMethod; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:true-vertical-depth", "label": "True vertical depth", "definition": "Downward depth coordinate of a survey station along the selected vertical reference direction.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:depth-coordinate"], "quantityName": "DepthDrilling", "siUnit": "m", "requiredContext": ["vertical reference", "depth origin"], "evidence": ["SurveyStation.TVD in Trajectory REST/MCP schemas; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-station-position", "label": "Survey station position", "definition": "Position of a survey station represented by local north, east and true-vertical-depth coordinates with explicit references.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["position reference", "vertical reference"], "evidence": ["SurveyStation position fields in Trajectory REST/MCP schemas; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:riemannian-north"},{"kind":"HasPart","target":"urn:osdc:semantic:riemannian-east"},{"kind":"HasPart","target":"urn:osdc:semantic:true-vertical-depth"}]
+    },
+    {
+      "id": "urn:osdc:semantic:wellbore-curvature", "label": "Wellbore curvature", "definition": "Magnitude of change of the wellbore tangent direction per unit along-hole length.", "kind": "Noun", "status": "Reviewed", "quantityName": "CurvatureDrilling", "siUnit": "rad/m", "constraints": ["Curvature is nonnegative; signed directional components are build rate and turn rate."], "evidence": ["SurveyStation.Curvature and Trajectory calculation REST/MCP schemas; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:build-rate", "label": "Build rate", "definition": "Signed rate of change of wellbore inclination per unit along-hole length.", "kind": "Noun", "status": "Reviewed", "quantityName": "CurvatureDrilling", "siUnit": "rad/m", "requiredContext": ["inclination sign convention"], "evidence": ["SurveyStation.BUR and build-turn REST/MCP fields; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:turn-rate", "label": "Turn rate", "definition": "Signed rate of change of wellbore azimuth per unit along-hole length in the constant-build-and-turn representation.", "kind": "Noun", "status": "Reviewed", "quantityName": "CurvatureDrilling", "siUnit": "rad/m", "requiredContext": ["azimuth convention", "inclination"], "constraints": ["Turn rate is not the same as the azimuthal component of spatial curvature near vertical inclination."], "evidence": ["SurveyStation.TUR and build-turn REST/MCP fields; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:toolface", "label": "Toolface angle", "definition": "Rotation angle about the local wellbore tangent that orients the curvature direction in the normal plane.", "kind": "Noun", "status": "Reviewed", "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "requiredContext": ["toolface zero direction", "positive rotation convention"], "constraints": ["Toolface is undefined for a zero-curvature direction and requires special treatment near vertical where the reference normal is singular."], "evidence": ["SurveyStation.Toolface and curve-control REST/MCP fields; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:vertical-section-distance", "label": "Vertical-section distance", "definition": "Signed horizontal projection of a survey-station displacement onto a specified vertical-section azimuth.", "kind": "Noun", "status": "Reviewed", "quantityName": "LengthStandard", "siUnit": "m", "requiredContext": ["vertical-section origin", "vertical-section azimuth"], "evidence": ["SurveyStation.VerticalSection in Trajectory REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:interpolated-trajectory", "label": "Interpolated trajectory", "definition": "Derived trajectory sampled from a source trajectory at requested depth intervals and additional engineering abscissae.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["InterpolatedTrajectoryController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:survey-station"}]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-interpolation-interval", "label": "Trajectory interpolation interval", "definition": "Requested along-hole spacing between interpolated trajectory samples.", "kind": "Noun", "status": "Reviewed", "quantityName": "DepthDrilling", "siUnit": "m", "constraints": ["This is an interval extent, not a depth coordinate."], "evidence": ["InterpolatedTrajectory.InterpolationStep and trajectory Web UI; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-chord-arc-distance", "label": "Maximum chord-arc distance", "definition": "Maximum permitted geometric deviation between a curved path segment and its chord during discretization or refinement.", "kind": "Noun", "status": "Reviewed", "quantityName": "LengthStandard", "siUnit": "m", "constraints": ["This is a nonnegative approximation tolerance."], "evidence": ["Trajectory interpolation and minimum-distance REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-station-uncertainty-ellipse", "label": "Survey-station uncertainty ellipse", "definition": "Confidence-scaled positional uncertainty ellipse at a survey station, defined by semi-major axis, semi-minor axis and orientation in an explicitly stated plane.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["ellipse plane", "confidence factor", "orientation convention"], "evidence": ["SurveyStationEllipseCalculation REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:horizontal-survey-uncertainty-ellipse", "label": "Horizontal survey uncertainty ellipse", "definition": "Survey-station uncertainty ellipse projected in the local horizontal north-east plane.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-station-uncertainty-ellipse"], "evidence": ["SurveyStationEllipseResult.HorizontalEllipse; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:vertical-survey-uncertainty-ellipse", "label": "Vertical survey uncertainty ellipse", "definition": "Survey-station uncertainty ellipse represented in the applicable vertical section plane.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-station-uncertainty-ellipse"], "requiredContext": ["vertical section plane"], "evidence": ["SurveyStationEllipseResult.VerticalEllipse; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:perpendicular-survey-uncertainty-ellipse", "label": "Perpendicular survey uncertainty ellipse", "definition": "Survey-station uncertainty ellipse in the plane perpendicular to the local wellbore tangent.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:survey-station-uncertainty-ellipse"], "evidence": ["SurveyStationEllipseResult.PerpendicularEllipse; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:confidence-factor", "label": "Confidence factor", "definition": "Dimensionless probability or coverage factor selected for an uncertainty-dependent calculation.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "constraints": ["The admissible interval and statistical interpretation are defined by the consuming calculation."], "evidence": ["Trajectory uncertainty, landing, octree and anti-collision REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-case", "label": "Calculation case", "definition": "Persisted calculation definition with inputs, lifecycle state, progress and server-derived results.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "evidence": ["Trajectory calculation-case REST/MCP resources; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-state", "label": "Calculation state", "definition": "Finite lifecycle state of an asynchronous or persisted calculation, such as queued, running, completed or failed.", "kind": "Noun", "status": "Reviewed", "evidence": ["Trajectory CalculationState REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-progress", "label": "Calculation progress", "definition": "Server-reported completed fraction of a calculation.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "constraints": ["Values range from zero to one and are informational rather than an optimistic-concurrency token."], "evidence": ["Trajectory calculation light REST/MCP objects; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-aggregation-case", "label": "Trajectory aggregation case", "definition": "Calculation that approximates one or more detailed trajectories with a compact ordered set of drilling-curve sections within stated geometric tolerances.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["TrajectoryAggregationCaseController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:aggregated-trajectory-section"}]
+    },
+    {
+      "id": "urn:osdc:semantic:aggregated-trajectory-section", "label": "Aggregated trajectory section", "definition": "One ordered drilling-curve section in a compact trajectory approximation, with explicit start state and curve-specific controls.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["section order", "curve type"], "evidence": ["TrajectoryAggregationSection REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:circular-arc-section", "label": "Circular-arc trajectory section", "definition": "Trajectory section whose Cartesian path is a circular arc defined by constant curvature magnitude and an initial toolface whose local value evolves along the arc.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:aggregated-trajectory-section"], "requiredContext": ["curvature", "start toolface"], "evidence": ["TrajectoryAggregationSectionType.CircularArc and Section library; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:constant-curvature-toolface-section", "label": "Constant-curvature-and-toolface section", "definition": "Trajectory section controlled by constant curvature magnitude and constant local toolface.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:aggregated-trajectory-section"], "requiredContext": ["curvature", "toolface"], "evidence": ["TrajectoryAggregationSectionType.ConstantCurvatureAndToolface and Section library; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:constant-build-turn-section", "label": "Constant-build-and-turn section", "definition": "Trajectory section controlled by constant signed build rate and constant signed turn rate.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:aggregated-trajectory-section"], "requiredContext": ["build rate", "turn rate"], "evidence": ["TrajectoryAggregationSectionType.ConstantBuildAndTurn and Section library; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-realization-case", "label": "Trajectory realization case", "definition": "Calculation that samples multiple stochastic wellbore trajectories from a reference trajectory and its position-uncertainty model.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["TrajectoryRealizationCaseController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:trajectory-realization"}]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-realization", "label": "Trajectory realization", "definition": "One sampled wellbore path from a trajectory realization calculation.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["reference trajectory", "random realization case"], "evidence": ["TrajectoryRealizationCase.RealizationList and chunk REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:survey-station-position"}]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-extrapolation-case", "label": "Trajectory extrapolation case", "definition": "Calculation extending a source trajectory according to one enforced extrapolation specification variant.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "constraints": ["Exactly one mode-specific specification is selected."], "evidence": ["TrajectoryExtrapolationCaseController REST/MCP discriminated contract; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:solved-trajectory-section"}]
+    },
+    {
+      "id": "urn:osdc:semantic:fixed-length-trajectory-extrapolation", "label": "Fixed-length trajectory extrapolation", "definition": "Extrapolation continuing the terminal source geometry for a specified along-hole length using the selected continuation rule.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:trajectory-extrapolation-case"], "evidence": ["FixedLengthExtrapolationSpecification REST/MCP variant; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:reconnect-trajectory-extrapolation", "label": "Reconnect-to-trajectory extrapolation", "definition": "Extrapolation solving a steering path from the source trajectory to a point advanced from the closest point on a reference trajectory.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:trajectory-extrapolation-case"], "requiredContext": ["reference trajectory", "reference advance", "curve type"], "evidence": ["ReconnectTrajectoryExtrapolationSpecification REST/MCP variant; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:geosteering-trajectory-extrapolation", "label": "Geosteering trajectory extrapolation", "definition": "Extrapolation solving a steering path to a target attitude and vertical depth under a departure-distance or drilled-length extent constraint.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:trajectory-extrapolation-case"], "evidence": ["GeosteeringTrajectoryExtrapolationSpecification REST/MCP variant; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:well-path-trajectory-extrapolation", "label": "Section-defined well-path extrapolation", "definition": "Extrapolation constructed from an ordered list of explicitly constrained drilling-curve sections.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:trajectory-extrapolation-case"], "evidence": ["WellPathExtrapolationSpecification REST/MCP variant; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:aggregated-trajectory-section"}]
+    },
+    {
+      "id": "urn:osdc:semantic:lead-in-length", "label": "Lead-in length", "definition": "Straight or source-geometry continuation length before active steering begins.", "kind": "Noun", "status": "Reviewed", "quantityName": "DepthDrilling", "siUnit": "m", "constraints": ["This is an along-hole extent, not a depth coordinate."], "evidence": ["Trajectory extrapolation and target-landing LeadInLength/LeadLength fields; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:reference-trajectory-advance", "label": "Reference-trajectory advance", "definition": "Along-hole distance advanced on the reference trajectory from its closest point to define the reconnect target.", "kind": "Noun", "status": "Reviewed", "quantityName": "DepthDrilling", "siUnit": "m", "constraints": ["This is a signed or nonnegative interval according to the consuming operation, not an absolute depth coordinate."], "evidence": ["Reconnect ReferenceMDAdvance and directional-control correction length; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:departure-distance", "label": "Departure distance", "definition": "Horizontal displacement magnitude from an explicitly stated origin used as a geosteering extent constraint.", "kind": "Noun", "status": "Reviewed", "quantityName": "LengthStandard", "siUnit": "m", "requiredContext": ["departure origin"], "evidence": ["DepartureGeosteeringExtentConstraint REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:departure-bearing", "label": "Departure bearing", "definition": "Clockwise azimuth of horizontal departure relative to its declared north reference.", "kind": "Noun", "status": "Reviewed", "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "requiredContext": ["azimuth reference"], "evidence": ["DepartureGeosteeringExtentConstraint.DepartureBearing; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:solved-trajectory-section", "label": "Solved trajectory section", "definition": "Server-derived section geometry and controls satisfying an extrapolation or landing constraint.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["section role", "curve type", "ordered section index"], "evidence": ["TrajectoryExtrapolationSolvedSection REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:target-landing-case", "label": "Target landing case", "definition": "Calculation of the subset of a planar target polygon reachable from a source trajectory under selected curve, attitude, uncertainty and maximum-curvature constraints.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["TargetLandingCaseController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:target-plane"},{"kind":"HasPart","target":"urn:osdc:semantic:reachable-target-boundary"}]
+    },
+    {
+      "id": "urn:osdc:semantic:target-plane", "label": "Target plane", "definition": "Oriented plane in local drilling space defined by an origin and forward normal, within which target polygons are expressed.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["position and depth references", "normal inclination and azimuth"], "evidence": ["TargetPlaneDefinition and CurvilinearPoint3D REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:target-boundary", "label": "Target boundary", "definition": "Ordered closed delineation in target-plane coordinates.", "kind": "Noun", "status": "Reviewed", "quantityName": "LengthStandard", "siUnit": "m", "requiredContext": ["target-plane origin and axes"], "constraints": ["The quantity applies to each planar coordinate; the boundary itself is not a scalar length."], "evidence": ["TargetPlanePoint polygon and target-landing REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:geological-target-boundary", "label": "Geological target boundary", "definition": "Target-plane boundary supplied as the geological region of interest before drilling-operational inset or reachability constraints.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:target-boundary"], "evidence": ["TargetLandingCase.GeologicalTargetBoundary; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:driller-target-boundary", "label": "Driller target boundary", "definition": "Operational target-plane boundary after applying the selected target type and uncertainty treatment.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:target-boundary"], "evidence": ["TargetLandingCase.DrillerTargetBoundary; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:reachable-target-boundary", "label": "Reachable target boundary", "definition": "Boundary of target-plane positions for which at least one valid landing solution satisfies the selected geometric, attitude, curvature and uncertainty constraints.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:target-boundary"], "constraints": ["Multiple disjoint contours and interior holes are permitted when produced by the solution topology."], "evidence": ["TargetLandingCase reachable contours REST/MCP schema and calculator; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:landing-attitude-mode", "label": "Landing attitude mode", "definition": "Constraint selecting whether final landing attitude is free or perpendicular to the target plane.", "kind": "Noun", "status": "Reviewed", "evidence": ["TargetLandingAttitudeMode REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:free-landing-attitude", "label": "Free landing attitude", "definition": "Landing-attitude mode that does not constrain the final tangent to the target-plane normal.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:landing-attitude-mode"], "evidence": ["TargetLandingAttitudeMode.FreeLandingAttitude; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:perpendicular-landing-attitude", "label": "Perpendicular-to-plane landing attitude", "definition": "Landing-attitude mode requiring the final wellbore tangent to align with the oriented target-plane normal.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:landing-attitude-mode"], "evidence": ["TargetLandingAttitudeMode.LandPerpendicularToTargetPlane; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:maximum-landing-curvature", "label": "Maximum landing curvature", "definition": "Maximum permitted peak wellbore curvature anywhere along a candidate landing path.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:wellbore-curvature"], "constraints": ["A candidate is feasible only when its curve-specific peak curvature does not exceed this limit."], "evidence": ["TargetLandingCase.MaximumLandingCurvature; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:landing-control-point", "label": "Landing control point", "definition": "Sample of exact curve-specific steering controls along normalized length of a solved target-landing path.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["curve type", "normalized length"], "evidence": ["TargetLandingControlPoint REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:directional-control-evaluation-case", "label": "Directional control evaluation case", "definition": "Calculation comparing controls expected from repeated reconnect-to-reference solutions with controls fitted over corresponding intervals of an actual trajectory.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "constraints": ["Reference and actual trajectories belong to the same wellbore."], "evidence": ["DirectionalControlEvaluationCaseController REST/MCP contracts; Eric Cayeux requirements, 2026-10-03 to 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:directional-control-evaluation-sample"},{"kind":"HasPart","target":"urn:osdc:semantic:directional-control-bundle"}]
+    },
+    {
+      "id": "urn:osdc:semantic:directional-control-evaluation-sample", "label": "Directional control evaluation sample", "definition": "Evaluation interval containing expected, actual and residual first-section steering controls at an actual-trajectory depth range.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["curve type", "actual depth interval", "reference reconnect solution"], "evidence": ["DirectionalControlEvaluationSample REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:directional-control-residual", "label": "Directional control residual", "definition": "Signed actual-minus-expected steering-control value over one directional-control evaluation interval.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["steering-control component", "curve type"], "evidence": ["DirectionalControlEvaluationSample residual fields; Eric Cayeux terminology, 2026-10-03"]
+    },
+    {
+      "id": "urn:osdc:semantic:curvature-residual", "label": "Curvature residual", "definition": "Actual-minus-expected curvature residual for a circular-arc or constant-curvature-and-toolface correction.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:directional-control-residual"], "quantityName": "CurvatureDrilling", "siUnit": "rad/m", "evidence": ["DirectionalControlEvaluationSample.CurvatureResidual; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:toolface-residual", "label": "Toolface residual", "definition": "Circular actual-minus-expected toolface residual for a circular-arc or constant-curvature-and-toolface correction.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:directional-control-residual"], "quantityName": "PlaneAngleDrilling", "siUnit": "rad", "constraints": ["Statistics use circular angle handling rather than ordinary linear subtraction across the wrap boundary."], "evidence": ["DirectionalControlEvaluationSample.ToolfaceResidual; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:build-rate-residual", "label": "Build-rate residual", "definition": "Actual-minus-expected build-rate residual for a constant-build-and-turn correction.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:directional-control-residual"], "quantityName": "CurvatureDrilling", "siUnit": "rad/m", "evidence": ["DirectionalControlEvaluationSample.BuildRateResidual; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:turn-rate-residual", "label": "Turn-rate residual", "definition": "Actual-minus-expected turn-rate residual for a constant-build-and-turn correction.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:directional-control-residual"], "quantityName": "CurvatureDrilling", "siUnit": "rad/m", "evidence": ["DirectionalControlEvaluationSample.TurnRateResidual; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:directional-control-bundle", "label": "Directional control bundle", "definition": "Contiguous actual-depth range whose linked pair of steering-control residuals is represented by one statistically coherent response-bias family.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["curve type", "depth range", "minimum sample count", "hard invalid-gap limit"], "constraints": ["Individual failed evaluations do not break a bundle unless the hard invalid-gap limit is exceeded."], "evidence": ["DirectionalControlBundling and DirectionalControlEvaluationBundle REST/MCP schema; Eric Cayeux requirements, 2026-10-03"]
+    },
+    {
+      "id": "urn:osdc:semantic:residual-distribution-summary", "label": "Residual distribution summary", "definition": "Empirical distribution summary for one residual component, including P10, P50, P90, mean, standard deviation, median absolute deviation and histogram bins.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["residual component physical quantity", "bundle depth range"], "evidence": ["DirectionalControlDistributionSummary REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:minimum-distance-calculation", "label": "Well-path minimum-distance calculation", "definition": "Calculation of closest approaches between a reference survey run or trajectory and selected comparison paths, optionally accounting for borehole radii and adaptive refinement.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["SurveyRun and Trajectory MinimumDistanceCalculation REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:center-to-center-distance", "label": "Center-to-center well-path distance", "definition": "Euclidean distance between the centerlines of two well paths at a closest-approach pair.", "kind": "Noun", "status": "Reviewed", "quantityName": "PositionDrilling", "siUnit": "m", "constraints": ["This is a nonnegative separation extent, not a position coordinate."], "evidence": ["MinimumDistanceResult.CenterToCenterDistance REST/MCP fields; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:clearance-distance", "label": "Borehole clearance distance", "definition": "Wall-to-wall separation equal to centerline distance minus the applicable borehole radii.", "kind": "Noun", "status": "Reviewed", "quantityName": "LengthStandard", "siUnit": "m", "constraints": ["A negative value denotes geometric overlap of the modeled borehole envelopes."], "evidence": ["MinimumDistanceResult.ClearanceDistance REST/MCP fields; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:closest-approach-toolface", "label": "Closest-approach toolface", "definition": "Toolface direction from the reference path toward the comparison path at a closest-approach point.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:toolface"], "requiredContext": ["reference trajectory tangent"], "evidence": ["MinimumDistanceResult.Toolface REST/MCP fields; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:octree-trajectory-index", "label": "Octree trajectory index", "definition": "Derived spatial index of trajectory segments used for bounded candidate discovery and closest-approach acceleration.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["source trajectory revision", "index schema version", "calculation parameters"], "evidence": ["OctreesController and OctreeIndexStatus REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:octree-candidate-search", "label": "Octree candidate-trajectory search", "definition": "Asynchronous query using a reference trajectory octree to discover spatially relevant planned or actual comparison trajectories.", "kind": "Noun", "status": "Reviewed", "evidence": ["Octree search-job REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"EvaluatedUsing","target":"urn:osdc:semantic:octree-trajectory-index"}]
+    },
+    {
+      "id": "urn:osdc:semantic:global-anti-collision-calculation", "label": "Global anti-collision calculation", "definition": "Asynchronous separation-factor evaluation between one reference path and selected comparison trajectories under the effective anti-collision policy.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["GlobalAntiCollisionsController REST/MCP contract; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"EvaluatedUsing","target":"urn:osdc:semantic:anti-collision-policy-revision"}]
+    },
+    {
+      "id": "urn:osdc:semantic:separation-factor", "label": "Well-path separation factor", "definition": "Dimensionless ratio comparing well-path separation with the combined positional uncertainty and policy-defined safety envelope.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "requiredContext": ["confidence factor", "anti-collision policy", "reference direction"], "evidence": ["GlobalAntiCollision SeparationFactorPoint REST/MCP schema; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:anti-collision-policy-revision", "label": "Anti-collision policy revision", "definition": "Immutable versioned anti-collision policy definition used to evaluate trajectory separation and preserve calculation auditability.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "constraints": ["Published revisions are immutable and calculations retain a frozen policy snapshot."], "evidence": ["AntiCollisionPolicyRevisionController REST/MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:field-anti-collision-policy-assignment", "label": "Field anti-collision policy assignment", "definition": "Validity-dated assignment selecting the effective anti-collision policy revision for a drilling field.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:classification-assignment"], "requiredContext": ["field", "policy revision", "validity period"], "evidence": ["FieldAntiCollisionPolicyAssignmentController REST/MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-run-batch-import", "label": "Survey-run batch import", "definition": "Atomic import definition that maps tabular directional survey rows and units into one or more survey runs.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "requiredContext": ["column mapping", "source units", "target wellbore and survey instrument"], "evidence": ["SurveyRunBatchImportController REST/MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:external-reference-validation", "label": "Trajectory external-reference validation", "definition": "Bounded validation or audit result distinguishing valid, invalid and dependency-unavailable references owned by other drilling microservices.", "kind": "Noun", "status": "Reviewed", "constraints": ["Dependency unavailability is not evidence that a reference is invalid."], "evidence": ["Trajectory and SurveyRun external-reference REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:dependency-closed-trajectory-backup", "label": "Dependency-closed trajectory backup", "definition": "Schema-versioned export and atomic restore document containing selected trajectory resources together with every owned dependency required to restore them.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["export scope", "catalog handling policy", "resource conflict policy"], "constraints": ["Restore validates the complete document before committing any change."], "evidence": ["Trajectory batch export/restore REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-run-bit-extrapolation", "label": "Survey-run bit extrapolation", "definition": "Server-derived extension from the last valid survey measurement to an estimated bit position using a selected terminal continuation mode.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["survey run", "terminal continuation mode", "bit along-hole depth"], "evidence": ["SurveyRun.BitExtrapolation REST/MCP schema and SurveyRunBitExtrapolationCalculator; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:distance-to-bit"}]
+    },
+    {
+      "id": "urn:osdc:semantic:survey-station-ellipse-calculation", "label": "Survey-station ellipse calculation", "definition": "Calculation propagating a survey-instrument uncertainty model along supplied stations to horizontal, vertical and perpendicular position-uncertainty ellipses.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["SurveyStationEllipseCalculationController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:survey-station-uncertainty-ellipse"},{"kind":"EvaluatedUsing","target":"urn:osdc:semantic:survey-instrument"}]
+    },
+    {
+      "id": "urn:osdc:semantic:trajectory-aggregation", "label": "Trajectory aggregation result", "definition": "Compact approximation result for one source trajectory within a trajectory aggregation case.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["source trajectory", "aggregation tolerances"], "evidence": ["TrajectoryAggregation REST/MCP schema; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:aggregated-trajectory-section"}]
+    },
+    {
+      "id": "urn:osdc:semantic:target-landing-sample", "label": "Target landing sample", "definition": "Evaluated target-plane position with feasibility state, landing geometry, uncertainty result and curve-specific solved path.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["target plane", "curve type", "landing attitude mode"], "evidence": ["TargetLandingSample REST/MCP schema; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:landing-control-point"},{"kind":"HasPart","target":"urn:osdc:semantic:solved-trajectory-section"}]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity", "label": "Physical quantity", "definition": "Metrological kind of quantity that determines dimensional meaning, SI representation, precision metadata and compatible unit choices.", "kind": "Noun", "status": "Reviewed", "constraints": ["A physical quantity is not a measured value and must not be inferred solely from a property name."], "evidence": ["UnitConversion BasePhysicalQuantity and PhysicalQuantity REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity-identifier", "label": "Physical-quantity identifier", "definition": "Stable UUID identifying one physical quantity in the UnitConversion catalogue.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:resource-identifier"], "evidence": ["BasePhysicalQuantity.ID and UnitConversion MCP schemas; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity-canonical-name", "label": "Physical-quantity canonical name", "definition": "Authoritative name used to identify and discover a physical quantity.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.Name and search_physical_quantities MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity-description", "label": "Physical-quantity description", "definition": "Markdown description of the physical meaning and intended use of a quantity.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.DescriptionMD and get_physical_quantity MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity-synonym", "label": "Physical-quantity synonym", "definition": "Alternative usual name used to discover a physical quantity without replacing its canonical name.", "kind": "Noun", "status": "Reviewed", "constraints": ["A synonym may be ambiguous and does not change the quantity identifier."], "evidence": ["BasePhysicalQuantity.UsualNames and search_physical_quantities MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity-typical-symbol", "label": "Physical-quantity typical symbol", "definition": "Conventional mathematical symbol commonly used for a physical quantity.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.TypicalSymbol and get_physical_quantity MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-dimension-vector", "label": "Physical-dimension vector", "definition": "Ordered exponents describing a physical quantity in the supported base and angular dimensions.", "kind": "Noun", "status": "Reviewed", "constraints": ["Exponent order and dimension names are part of the contract."], "evidence": ["get_physical_quantity MCP output schema and BasePhysicalQuantity dimensions; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:length-dimension-exponent", "label": "Length-dimension exponent", "definition": "Exponent of the length dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.LengthDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:mass-dimension-exponent", "label": "Mass-dimension exponent", "definition": "Exponent of the mass dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.MassDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:time-dimension-exponent", "label": "Time-dimension exponent", "definition": "Exponent of the time dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.TimeDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:temperature-dimension-exponent", "label": "Thermodynamic-temperature-dimension exponent", "definition": "Exponent of the thermodynamic-temperature dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.TemperatureDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:amount-of-substance-dimension-exponent", "label": "Amount-of-substance-dimension exponent", "definition": "Exponent of the amount-of-substance dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.AmountOfSubstanceDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:electric-current-dimension-exponent", "label": "Electric-current-dimension exponent", "definition": "Exponent of the electric-current dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.ElectricCurrentDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:luminous-intensity-dimension-exponent", "label": "Luminous-intensity-dimension exponent", "definition": "Exponent of the luminous-intensity dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.LuminousIntensityDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:plane-angle-dimension-exponent", "label": "Plane-angle-dimension exponent", "definition": "Exponent of the plane-angle dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.PlaneAngleDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:solid-angle-dimension-exponent", "label": "Solid-angle-dimension exponent", "definition": "Exponent of the solid-angle dimension in a physical-dimension vector.", "kind": "Noun", "status": "Reviewed", "evidence": ["BasePhysicalQuantity.SolidAngleDimension; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:si-unit", "label": "SI unit", "definition": "Canonical coherent unit used for storage and conversion of a selected physical quantity.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["physical quantity"], "constraints": ["The unit's dimension is determined by its physical quantity."], "evidence": ["BasePhysicalQuantity SI unit metadata and UnitConversion MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-choice", "label": "Unit choice", "definition": "Named representation of a physical quantity with identity, labels, synonyms and conversion to and from its SI unit.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["physical quantity"], "evidence": ["UnitChoice model and get_physical_quantity MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-choice-identifier", "label": "Unit-choice identifier", "definition": "Stable UUID identifying one unit choice for a physical quantity.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:resource-identifier"], "evidence": ["UnitChoice.ID and UnitConversion MCP schemas; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-name", "label": "Unit name", "definition": "Canonical human-readable name of a unit choice.", "kind": "Noun", "status": "Reviewed", "evidence": ["UnitChoice.UnitName; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-label", "label": "Unit label", "definition": "Compact display label or symbol of a unit choice.", "kind": "Noun", "status": "Reviewed", "evidence": ["UnitChoice.UnitLabel; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-latex-label", "label": "Unit LaTeX label", "definition": "LaTeX representation of a unit label for mathematical rendering.", "kind": "Noun", "status": "Reviewed", "evidence": ["get_physical_quantity SIUnitLabelLatex MCP output; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-synonym", "label": "Unit synonym", "definition": "Alternative name, label or symbol accepted when resolving a unit choice.", "kind": "Noun", "status": "Reviewed", "constraints": ["Resolution remains scoped to the selected physical quantity."], "evidence": ["UnitChoice.Synonyms and convert_values MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:default-unit-choice", "label": "Default unit choice", "definition": "Unit choice designated as the default presentation for its physical quantity.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-choice"], "evidence": ["UnitChoice.IsDefault; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:si-unit-choice", "label": "SI unit choice", "definition": "Unit choice designated as the SI representation of its physical quantity.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-choice"], "evidence": ["UnitChoice.IsSI; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:affine-unit-conversion", "label": "Affine unit conversion", "definition": "Conversion between an SI numeric representation and a unit choice using a scale factor and additive bias.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["physical quantity", "source unit", "target unit"], "constraints": ["The symbolic definition and numeric coefficients describe value representation, not a new physical quantity."], "evidence": ["UnitChoice conversion implementation and UnitConversion MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-scale-factor", "label": "Conversion scale factor", "definition": "Multiplicative coefficient in an affine unit conversion.", "kind": "Noun", "status": "Reviewed", "constraints": ["It is conversion metadata and has no fixed engineering physical-quantity binding."], "evidence": ["UnitChoice.ConversionFactorFromSI; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-bias", "label": "Conversion bias", "definition": "Additive coefficient in an affine unit conversion.", "kind": "Noun", "status": "Reviewed", "constraints": ["Its dimensional interpretation depends on the selected quantity and unit representation."], "evidence": ["UnitChoice.ConversionBiasFromSI; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-factor-formula", "label": "Conversion-factor formula", "definition": "Symbolic formula defining the multiplicative coefficient from the SI representation.", "kind": "Noun", "status": "Reviewed", "evidence": ["UnitChoice.ConversionFactorFromSIFormula; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-bias-formula", "label": "Conversion-bias formula", "definition": "Symbolic formula defining the additive bias from the SI representation.", "kind": "Noun", "status": "Reviewed", "evidence": ["UnitChoice.ConversionBiasFromSIFormula; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-description", "label": "Conversion description", "definition": "Human-readable explanation of a unit conversion definition.", "kind": "Noun", "status": "Reviewed", "evidence": ["UnitChoice.ConversionDescription and convert_values output; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:meaningful-precision-in-si", "label": "Meaningful precision in SI", "definition": "SI-domain increment used to select meaningful display precision for values of a physical quantity.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["physical quantity"], "constraints": ["It controls formatting and does not round or reduce the stored numeric result."], "evidence": ["BasePhysicalQuantity.MeaningfulPrecisionInSI and ValueConversion.Calculate; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity-specialization", "label": "Physical-quantity specialization", "definition": "Directed relationship from a specialized physical quantity to a compatible ancestor quantity.", "kind": "Noun", "status": "Reviewed", "constraints": ["Specialization does not replace the requested quantity's identity."], "evidence": ["PhysicalQuantityHierarchy; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:inherited-unit-choice-compatibility", "label": "Inherited unit-choice compatibility", "definition": "Compatibility rule allowing a specialized physical quantity to use unit choices defined by an ancestor quantity.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["requested quantity", "ancestor quantity", "unit choice"], "evidence": ["PhysicalQuantityHierarchy and UnitConversion MCP resolution; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-system", "label": "Unit system", "definition": "Named managed mapping from physical-quantity identifiers to chosen unit-choice identifiers.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "constraints": ["Every mapping must reference a known compatible physical quantity and unit choice."], "evidence": ["BaseUnitSystem and UnitSystem REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-system-choice-assignment", "label": "Unit-system choice assignment", "definition": "Assignment of one compatible unit choice to one physical quantity within a unit system.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["unit system", "physical quantity", "unit choice"], "evidence": ["BaseUnitSystem.Choices and UnitSystem mutation validation; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:default-unit-system", "label": "Default unit system", "definition": "Unit system designated as a default selectable system.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-system"], "evidence": ["BaseUnitSystem.IsDefault; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:si-unit-system", "label": "SI unit system", "definition": "Unit system whose validated choices are all the SI choices of their physical quantities.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-system"], "constraints": ["SI status is derived by the service from the submitted mappings."], "evidence": ["BaseUnitSystem.IsSI and UnitSystem REST/MCP mutation behavior; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:metric-unit-system", "label": "Metric unit system", "definition": "Built-in metric presentation unit system.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-system"], "evidence": ["UnitSystemName.Metric and list_unit_systems MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:imperial-unit-system", "label": "Imperial unit system", "definition": "Built-in imperial presentation unit system.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-system"], "evidence": ["UnitSystemName.Imperial and list_unit_systems MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:united-states-customary-unit-system", "label": "United States customary unit system", "definition": "Built-in United States customary presentation unit system.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-system"], "evidence": ["UnitSystemName.US and list_unit_systems MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-conversion", "label": "Unit conversion", "definition": "Transformation of numeric representations of the same physical quantity between compatible units or unit systems.", "kind": "Noun", "status": "Reviewed", "constraints": ["Conversion changes representation, not the underlying physical quantity."], "evidence": ["UnitConversion REST models and MCP conversion tools; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-conversion-input-value", "label": "Unit-conversion input value", "definition": "Finite numeric value submitted for unit conversion.", "kind": "Role", "status": "Reviewed", "requiredContext": ["physical quantity", "source unit"], "constraints": ["Its physical quantity is selected dynamically and is not universally fixed."], "evidence": ["ValueConversion.DataIn and convert_values MCP input; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-conversion-numeric-result", "label": "Unit-conversion numeric result", "definition": "Unrounded numeric result of a unit conversion.", "kind": "Role", "status": "Reviewed", "requiredContext": ["physical quantity", "target unit"], "constraints": ["Formatting precision must not alter this value."], "evidence": ["ValueConversion.DataOut and conversion MCP outputs; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-conversion-formatted-result", "label": "Unit-conversion formatted result", "definition": "Text rendering of a conversion result using the physical quantity's meaningful SI precision and target unit.", "kind": "Role", "status": "Reviewed", "requiredContext": ["physical quantity", "target unit", "meaningful precision in SI"], "evidence": ["ValueConversion.DataOutString and conversion MCP outputs; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:direct-unit-conversion", "label": "Direct unit conversion", "definition": "Non-persisting conversion of one or more values between explicitly selected compatible unit choices.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-conversion"], "constraints": ["Input batches contain from one through one thousand finite values in the MCP contract."], "evidence": ["convert_values MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-system-conversion", "label": "Unit-system conversion", "definition": "Conversion of values using source and target unit choices resolved from two unit systems for a selected physical quantity.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:unit-conversion"], "evidence": ["convert_between_unit_systems MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-conversion-set", "label": "Unit conversion set", "definition": "Managed, persisted set of quantity-specific source-unit to target-unit conversions and calculated values.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "constraints": ["Calculated outputs are derived by the service before persistence."], "evidence": ["UnitConversionSet model and REST controller; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:unit-system-conversion-set", "label": "Unit-system conversion set", "definition": "Managed, persisted set of quantity conversions evaluated between one source and one target unit system.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "constraints": ["Calculated outputs are derived by the service before persistence."], "evidence": ["UnitSystemConversionSet model and REST controller; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:quantity-conversion-batch", "label": "Quantity conversion batch", "definition": "Collection of conversion values sharing one physical quantity and either explicit units or enclosing unit systems.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["physical quantity"], "evidence": ["QuantityConversion and QuantityUnitConversion models; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:physical-quantity-search", "label": "Physical-quantity search", "definition": "Ranked discovery of physical quantities by canonical name and synonyms.", "kind": "Noun", "status": "Reviewed", "constraints": ["Search results preserve the canonical quantity UUID and hierarchy."], "evidence": ["search_physical_quantities MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:documentation-semantic-search", "label": "Documentation semantic search", "definition": "Ranked semantic discovery of UnitConversion documentation resources relevant to a natural-language query.", "kind": "Noun", "status": "Reviewed", "constraints": ["A search result is discovery metadata, not a physical-quantity definition or conversion result."], "evidence": ["search_documentation MCP contract; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:semantic-fact", "label": "Semantic fact", "definition": "Subject-predicate-object example illustrating the intended meaning of a physical quantity.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["physical quantity"], "evidence": ["SemanticFact and BasePhysicalQuantity.SemanticExample; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:semantic-subject", "label": "Semantic subject", "definition": "Subject term in a semantic fact example.", "kind": "Role", "status": "Reviewed", "evidence": ["SemanticFact.Subject; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:semantic-predicate", "label": "Semantic predicate", "definition": "Predicate or verb term in a semantic fact example.", "kind": "Role", "status": "Reviewed", "aliases": ["semantic verb"], "evidence": ["SemanticFact.Verb; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:semantic-object", "label": "Semantic object", "definition": "Object term in a semantic fact example.", "kind": "Role", "status": "Reviewed", "evidence": ["SemanticFact.Object; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-source-unit", "label": "Conversion source unit", "definition": "Unit choice in which a conversion input value is expressed.", "kind": "Role", "status": "Reviewed", "requiredContext": ["physical quantity"], "evidence": ["QuantityUnitConversion.UnitChoiceIDIn and convert_values input; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-target-unit", "label": "Conversion target unit", "definition": "Unit choice in which a conversion result is expressed.", "kind": "Role", "status": "Reviewed", "requiredContext": ["physical quantity"], "evidence": ["QuantityUnitConversion.UnitChoiceIDOut and convert_values input; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-source-unit-system", "label": "Conversion source unit system", "definition": "Unit system supplying source unit choices for a unit-system conversion.", "kind": "Role", "status": "Reviewed", "evidence": ["UnitSystemConversionSet.UnitSystemIDIn and convert_between_unit_systems input; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:conversion-target-unit-system", "label": "Conversion target unit system", "definition": "Unit system supplying target unit choices for a unit-system conversion.", "kind": "Role", "status": "Reviewed", "evidence": ["UnitSystemConversionSet.UnitSystemIDOut and convert_between_unit_systems input; Eric Cayeux request, 2026-10-05"]
     }
   ],
   "referenceProfiles": [
