@@ -48,7 +48,7 @@ Approval is limited to this vocabulary increment. Future discoveries still requi
 
 Approver: Eric Cayeux. Evidence: “Otherwise I accept your proposed additions. Consider the new vocabulary as curated,” with the explicit correction to use LengthStandard for Geoid undulation. All 14 entries in CURATION-EARTHVERTICALDATUM-2026-09-27.md change from Proposed to Reviewed in unpublished 0.4.0. The 58 published 0.3.0 entries remain unchanged.
 
-Geoid undulation resolves to UnitConversion LengthStandard with SI metres and meaningful display precision 0.001 m (1 mm). This precision is owned by UnitConversion, not duplicated as model accuracy or a wire-rounding rule. Geoid representation error retains Length. The approved direction replaces provider GridResolutionMinutes with AngularGridSpacing in radians when integrating the provider. No provider code, NuGet publication or deployment is performed by this approval step.
+Geoid undulation resolves to UnitConversion LengthStandard with SI metres and meaningful display precision 0.001 m (1 mm). This precision is owned by UnitConversion, not duplicated as model accuracy or a wire-rounding rule. Geoid representation error retains Length. The approved direction replaces provider GridResolutionMinutes with AngularGridSpacing in radians. The provider and its generated downstream contracts implemented that replacement on 2026-10-05; deployment remains a separate operation.
 
 The catalogue now contains 72 Reviewed entries. New vocabulary discovered later still starts as Proposed.
 
@@ -67,3 +67,11 @@ Approver: Eric Cayeux. Evidence: “The proposed semantic catalogue can now refe
 ProjectionScaleFactor binds to the published UnitConversion 3.4.5 quantity, with SI 1 and meaningful display precision 1e-9. Conversion.DrillingEngineering 3.4.5 supplies general Conversion transitively. The full projection factor remains distinct from HelmertScaleDifference. Two-dimensional positions, CRS/conversion/method distinctions, origin roles, reference conventions and generic parameter exceptions are accepted. UnitConversion owns display precision; it does not imply scientific accuracy or stored-value rounding.
 
 This increment prepares source and the NuGet package without publishing it. Provider/importer corrections and REST/MCP integration remain separate work; vocabulary approval does not certify current provider behavior. Future concepts still require curation.
+
+## 2026-10-06 — Persisted calculation-case lifecycle vocabulary
+
+Approver: Eric Cayeux. Evidence: “Go ahead and extend the vocabulary first. Then we will update the description of each microservice according the new vocabulary.” Target catalogue/package: **0.15.0**, unpublished.
+
+Added 19 Reviewed definitions covering calculation specifications and results, lightweight status projections, diagnostics, result manifests/chunks, immediate and queued submission/replacement, and focused retrieval roles. Added `HasInput`, `Produces` and `ProjectionOf` relations. Compatibly clarified `CalculationCase`, `CalculationState` and `CalculationProgress`; no identifier was replaced or deprecated.
+
+No new physical quantity is introduced. Calculation progress remains a dimensionless proportion. REST/OpenAPI and MCP provider bindings are explicitly subsequent work.

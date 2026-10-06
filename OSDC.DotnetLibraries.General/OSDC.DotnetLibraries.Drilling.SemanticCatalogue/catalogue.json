@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "schemaVersion": 2,
   "concepts": [
     {
@@ -8005,13 +8005,13 @@
       "id": "urn:osdc:semantic:confidence-factor", "label": "Confidence factor", "definition": "Dimensionless probability or coverage factor selected for an uncertainty-dependent calculation.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "constraints": ["The admissible interval and statistical interpretation are defined by the consuming calculation."], "evidence": ["Trajectory uncertainty, landing, octree and anti-collision REST/MCP contracts; Eric Cayeux request, 2026-10-05"]
     },
     {
-      "id": "urn:osdc:semantic:calculation-case", "label": "Calculation case", "definition": "Persisted calculation definition with inputs, lifecycle state, progress and server-derived results.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "evidence": ["Trajectory calculation-case REST/MCP resources; Eric Cayeux request, 2026-10-05"]
+      "id": "urn:osdc:semantic:calculation-case", "label": "Calculation case", "definition": "Persisted managed resource that records a calculation specification and may expose lifecycle state, progress, diagnostics and server-derived results.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:managed-resource"], "constraints": ["Callers supply the calculation specification; lifecycle facts and results are derived by the service unless a narrower contract explicitly states otherwise.", "An immediate calculation need not expose polling or progress when it completes in the submission or replacement response.", "A queued calculation should expose a lightweight status projection until it reaches a terminal state."], "evidence": ["Trajectory calculation-case REST/MCP resources; Eric Cayeux request, 2026-10-05", "OSDC calculation-case REST/MCP patterns; Eric Cayeux request, 2026-10-06"], "relations": [{"kind":"HasInput","target":"urn:osdc:semantic:calculation-specification"},{"kind":"Produces","target":"urn:osdc:semantic:calculation-result"},{"kind":"HasPart","target":"urn:osdc:semantic:calculation-state"},{"kind":"HasPart","target":"urn:osdc:semantic:calculation-progress"},{"kind":"HasPart","target":"urn:osdc:semantic:calculation-diagnostic-message"}]
     },
     {
-      "id": "urn:osdc:semantic:calculation-state", "label": "Calculation state", "definition": "Finite lifecycle state of an asynchronous or persisted calculation, such as queued, running, completed or failed.", "kind": "Noun", "status": "Reviewed", "evidence": ["Trajectory CalculationState REST/MCP enum; Eric Cayeux request, 2026-10-05"]
+      "id": "urn:osdc:semantic:calculation-state", "label": "Calculation state", "definition": "Finite lifecycle state of a persisted calculation when its execution is tracked, such as queued, running, completed or failed.", "kind": "Noun", "status": "Reviewed", "constraints": ["An immediate calculation may enter a terminal state during submission without exposing intermediate states."], "evidence": ["Trajectory CalculationState REST/MCP enum; Eric Cayeux request, 2026-10-05", "OSDC calculation-case REST/MCP patterns; Eric Cayeux request, 2026-10-06"]
     },
     {
-      "id": "urn:osdc:semantic:calculation-progress", "label": "Calculation progress", "definition": "Server-reported completed fraction of a calculation.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "constraints": ["Values range from zero to one and are informational rather than an optimistic-concurrency token."], "evidence": ["Trajectory calculation light REST/MCP objects; Eric Cayeux request, 2026-10-05"]
+      "id": "urn:osdc:semantic:calculation-progress", "label": "Calculation progress", "definition": "Optional server-reported completed fraction of a calculation whose execution is tracked.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "constraints": ["Values range from zero to one and are informational rather than an optimistic-concurrency token.", "A service need not expose progress for a calculation that completes in the submission or replacement response."], "evidence": ["Trajectory calculation light REST/MCP objects; Eric Cayeux request, 2026-10-05", "OSDC calculation-case REST/MCP patterns; Eric Cayeux request, 2026-10-06"]
     },
     {
       "id": "urn:osdc:semantic:trajectory-aggregation-case", "label": "Trajectory aggregation case", "definition": "Calculation that approximates one or more detailed trajectories with a compact ordered set of drilling-curve sections within stated geometric tolerances.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["TrajectoryAggregationCaseController REST/MCP contracts; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:aggregated-trajectory-section"}]
@@ -8354,6 +8354,63 @@
     },
     {
       "id": "urn:osdc:semantic:conversion-target-unit-system", "label": "Conversion target unit system", "definition": "Unit system supplying target unit choices for a unit-system conversion.", "kind": "Role", "status": "Reviewed", "evidence": ["UnitSystemConversionSet.UnitSystemIDOut and convert_between_unit_systems input; Eric Cayeux request, 2026-10-05"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-specification", "label": "Calculation specification", "definition": "Caller-supplied configuration and input references that state what a calculation case is to calculate.", "kind": "Noun", "status": "Reviewed", "constraints": ["It excludes lifecycle facts and server-derived results unless a narrower calculation contract explicitly makes them caller-controlled."], "evidence": ["OSDC calculation-case REST/MCP patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-result", "label": "Calculation result", "definition": "Server-derived output produced by evaluating a calculation specification.", "kind": "Noun", "status": "Reviewed", "constraints": ["A result may be embedded in its calculation case or exposed through focused result retrieval operations."], "evidence": ["OSDC calculation-case REST/MCP patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-status-snapshot", "label": "Calculation status snapshot", "definition": "Lightweight projection of a calculation case containing enough identity and lifecycle information to monitor execution without loading its full specification or results.", "kind": "Noun", "status": "Reviewed", "constraints": ["It preserves the identity of the calculation case that it projects.", "It must not be described as a separate calculation case merely because it uses a light representation."], "evidence": ["OSDC calculation light REST/MCP records; Eric Cayeux request, 2026-10-06"], "relations": [{"kind":"ProjectionOf","target":"urn:osdc:semantic:calculation-case"},{"kind":"HasPart","target":"urn:osdc:semantic:calculation-state"},{"kind":"HasPart","target":"urn:osdc:semantic:calculation-progress"},{"kind":"HasPart","target":"urn:osdc:semantic:calculation-diagnostic-message"}]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-diagnostic-message", "label": "Calculation diagnostic message", "definition": "Server-reported human-readable execution status, warning or failure information associated with a calculation case.", "kind": "Noun", "status": "Reviewed", "constraints": ["It is diagnostic information and not the stable machine-readable calculation state."], "evidence": ["OSDC calculation status and progress REST/MCP records; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-result-manifest", "label": "Calculation result manifest", "definition": "Lightweight description of an available calculation result and the chunks or pages through which it can be retrieved.", "kind": "Noun", "status": "Reviewed", "constraints": ["It describes result availability and partitioning without requiring transfer of the complete result."], "evidence": ["OSDC large calculation-result REST/MCP patterns; Eric Cayeux request, 2026-10-06"], "relations": [{"kind":"ProjectionOf","target":"urn:osdc:semantic:calculation-result"},{"kind":"HasPart","target":"urn:osdc:semantic:calculation-result-chunk"}]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-result-chunk", "label": "Calculation result chunk", "definition": "Stable bounded partition of a calculation result returned independently to limit payload size.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["parent calculation result", "chunk identity or range"], "constraints": ["Chunks collectively preserve the meaning and documented ordering of the complete result."], "evidence": ["OSDC large calculation-result REST/MCP patterns; Eric Cayeux request, 2026-10-06"], "relations": [{"kind":"ProjectionOf","target":"urn:osdc:semantic:calculation-result"}]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-input", "label": "Calculation input", "definition": "Role played by caller-controlled data or a referenced resource within a calculation specification.", "kind": "Role", "status": "Reviewed", "evidence": ["OSDC calculation-case REST/MCP patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:server-derived-calculation-result", "label": "Server-derived calculation result", "definition": "Role played by data computed by the service from a calculation specification rather than accepted as authoritative caller input.", "kind": "Role", "status": "Reviewed", "evidence": ["OSDC calculation-case REST/MCP patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-status-projection", "label": "Calculation status projection", "definition": "Role played by a light representation that projects the identity and execution status of a calculation case while omitting heavyweight inputs or results.", "kind": "Role", "status": "Reviewed", "constraints": ["Use this role with the concrete calculation-case concept when a light DTO retains that case's domain identity."], "evidence": ["OSDC calculation light REST/MCP records; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-submission", "label": "Calculation submission", "definition": "Operation role that creates a persisted calculation case from a caller-supplied specification and initiates its evaluation.", "kind": "Role", "status": "Reviewed", "constraints": ["Server-derived lifecycle facts and results are not authoritative caller inputs."], "evidence": ["OSDC calculation-case POST REST/MCP operations; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:immediate-calculation-submission", "label": "Immediate calculation submission", "definition": "Calculation submission whose evaluation completes as part of the submission response and does not require status polling.", "kind": "Role", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-submission"], "evidence": ["OSDC synchronous calculation-case POST patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:queued-calculation-submission", "label": "Queued calculation submission", "definition": "Calculation submission that schedules server-side execution and returns before a terminal result is available.", "kind": "Role", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-submission"], "constraints": ["A lightweight status retrieval operation should be available for monitoring."], "evidence": ["OSDC asynchronous calculation-case POST patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-replacement", "label": "Calculation replacement", "definition": "Operation role that replaces the caller-controlled specification of an existing calculation case and initiates reevaluation.", "kind": "Role", "status": "Reviewed", "constraints": ["Optimistic-concurrency protection remains part of the provider contract when the resource supports it."], "evidence": ["OSDC calculation-case PUT REST/MCP operations; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:immediate-calculation-replacement", "label": "Immediate calculation replacement", "definition": "Calculation replacement whose reevaluation completes as part of the replacement response.", "kind": "Role", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-replacement"], "evidence": ["OSDC synchronous calculation-case PUT patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:queued-calculation-replacement", "label": "Queued calculation replacement", "definition": "Calculation replacement that schedules server-side reevaluation and returns before a terminal result is available.", "kind": "Role", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-replacement"], "constraints": ["A lightweight status retrieval operation should be available for monitoring."], "evidence": ["OSDC asynchronous calculation-case PUT patterns; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-case-retrieval", "label": "Calculation case retrieval", "definition": "Operation role that retrieves a persisted calculation case, including the contractually available specification, lifecycle facts and results.", "kind": "Role", "status": "Reviewed", "evidence": ["OSDC calculation-case GET REST/MCP operations; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-status-retrieval", "label": "Calculation status retrieval", "definition": "Operation role that retrieves a lightweight calculation status projection without loading heavyweight specification or result payloads.", "kind": "Role", "status": "Reviewed", "evidence": ["OSDC calculation light/status REST/MCP operations; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-result-retrieval", "label": "Calculation result retrieval", "definition": "Operation role that retrieves the complete available result of a calculation case independently of its caller-controlled specification.", "kind": "Role", "status": "Reviewed", "evidence": ["OSDC calculation result REST/MCP operations; Eric Cayeux request, 2026-10-06"]
+    },
+    {
+      "id": "urn:osdc:semantic:calculation-result-chunk-retrieval", "label": "Calculation result chunk retrieval", "definition": "Operation role that retrieves one stable bounded chunk or page of a calculation result.", "kind": "Role", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-result-retrieval"], "requiredContext": ["chunk identity or range"], "evidence": ["OSDC chunked calculation result REST/MCP operations; Eric Cayeux request, 2026-10-06"]
     }
   ],
   "referenceProfiles": [

@@ -12,7 +12,7 @@ Inspected EarthVerticalDatum's README, all engineering DTOs, evaluator and MCP t
 
 1. **Geoid-referenced depth**, specializing Depth coordinate, is the shared noun. The provider's `MeanSeaLevelDepth` binds to it with the EGM84 model geoid reference. Retain the property initially, but explicitly describe it as EGM84 geoid-referenced depth; do not treat all meanings of MSL as equivalent. Wgs84EllipsoidalDepth reuses Ellipsoidal depth and WGS84.
 2. **Geoid undulation** is signed surface separation, positive upward; use the existing LengthStandard quantity, with meaningful display precision 0.001 m (1 mm), not DepthDrilling. The forward rule is D_ellipsoid = D_geoid - N; the inverse is D_geoid = D_ellipsoid + N. These transformations need references and sign conventions, not merely matching metre units.
-3. **Angular grid spacing** has canonical SI radians, but current `GridResolutionMinutes` uses arcminutes. Thirty arcminutes equals pi/360 radians. Recommendation for the provider upgrade: replace the misleadingly unit-bearing field with `AngularGridSpacing` in radians, and display arcminutes through UnitConversion. This contract change is approved but not performed here. If retaining the old field, explicitly declare its wire unit and conversion: the current SemanticAttribute API only publishes the concept's SI unit and cannot alone correctly label a non-SI wire value. Do not annotate a raw value of 30 as radians.
+3. **Angular grid spacing** has canonical SI radians. The former `GridResolutionMinutes` value used arcminutes; thirty arcminutes equals pi/360 radians. The provider upgrade replaces that misleadingly unit-bearing field with `AngularGridSpacing` in radians and delegates display units to UnitConversion. The provider and its generated downstream contracts implemented this approved change on 2026-10-05.
 4. **Geoid representation error + statistic roles** covers the maximum and RMS fields using Length/metres. It is not coordinate depth, a generic confidence interval, or model accuracy. DatasetTimestamp is a role on Instant with UTC, distinct from ReleaseDate; the header timestamp's event meaning should be documented without guessing it.
 
 ## Curated vocabulary
@@ -65,7 +65,7 @@ For surface separation, one Reference attribute cannot express two independent r
 
 ## Contract and UI follow-up after curation
 
-- Add model attributes and export matching REST/MCP annotations only after resolving the arcminute wire representation. Preserve the approved 0.3.0 concepts without changing their definitions.
+- Model attributes and matching REST/MCP annotations now bind `AngularGridSpacing` after the provider changed its wire value to SI radians. Preserve the approved concepts without changing their definitions.
 - Document geoid/reference distinctions, both conversion equations and error-estimate scope in DTO XML, MCP schemas and README/Home pages.
 - Replace raw model-page error values with Length-aware unit controls. Grid spacing must use angular units, never time minutes. The calculation page currently uses DepthDrilling for actual depths, which is appropriate; geoid undulation is a signed separation and should use LengthStandard when displayed.
 - Share model-info definitions across tools, regenerate clients and schemas, and test both conversion directions, reference/sign consistency, unit metadata and REST/MCP parity.

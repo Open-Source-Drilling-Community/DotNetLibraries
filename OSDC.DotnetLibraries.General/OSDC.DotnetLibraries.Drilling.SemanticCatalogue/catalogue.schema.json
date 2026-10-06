@@ -130,7 +130,10 @@
                   "enum": [
                     "HasPart",
                     "LocatedAt",
-                    "EvaluatedUsing"
+                    "EvaluatedUsing",
+                    "HasInput",
+                    "Produces",
+                    "ProjectionOf"
                   ]
                 },
                 "target": {

@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 namespace OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 
 /// <summary>Provider-owned binding to a shared concept. It does not change payload serialization.</summary>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, Inherited = true)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Method, Inherited = true)]
 public sealed class SemanticAttribute(string concept) : Attribute
 {
     public string Concept { get; } = concept;

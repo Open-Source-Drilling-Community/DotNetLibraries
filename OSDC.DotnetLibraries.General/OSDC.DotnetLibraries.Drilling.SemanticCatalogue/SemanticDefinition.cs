@@ -9,7 +9,15 @@ public enum SemanticKind { Noun, Role, Reference }
 public enum CurationStatus { Proposed, Reviewed, Deprecated }
 
 [JsonConverter(typeof(JsonStringEnumConverter<SemanticRelationKind>))]
-public enum SemanticRelationKind { HasPart, LocatedAt, EvaluatedUsing }
+public enum SemanticRelationKind
+{
+    HasPart,
+    LocatedAt,
+    EvaluatedUsing,
+    HasInput,
+    Produces,
+    ProjectionOf
+}
 
 public sealed record SemanticRelation(SemanticRelationKind Kind, string Target);
 

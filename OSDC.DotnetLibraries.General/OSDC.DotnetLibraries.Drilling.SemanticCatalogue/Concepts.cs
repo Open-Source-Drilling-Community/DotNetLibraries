@@ -592,4 +592,24 @@ public static class Concepts
     public const string ConversionTargetUnit = "urn:osdc:semantic:conversion-target-unit";
     public const string ConversionSourceUnitSystem = "urn:osdc:semantic:conversion-source-unit-system";
     public const string ConversionTargetUnitSystem = "urn:osdc:semantic:conversion-target-unit-system";
+    // Persisted calculation-case lifecycle vocabulary curated on 2026-10-06.
+    public const string CalculationSpecification = "urn:osdc:semantic:calculation-specification";
+    public const string CalculationResult = "urn:osdc:semantic:calculation-result";
+    public const string CalculationStatusSnapshot = "urn:osdc:semantic:calculation-status-snapshot";
+    public const string CalculationDiagnosticMessage = "urn:osdc:semantic:calculation-diagnostic-message";
+    public const string CalculationResultManifest = "urn:osdc:semantic:calculation-result-manifest";
+    public const string CalculationResultChunk = "urn:osdc:semantic:calculation-result-chunk";
+    public const string CalculationInput = "urn:osdc:semantic:calculation-input";
+    public const string ServerDerivedCalculationResult = "urn:osdc:semantic:server-derived-calculation-result";
+    public const string CalculationStatusProjection = "urn:osdc:semantic:calculation-status-projection";
+    public const string CalculationSubmission = "urn:osdc:semantic:calculation-submission";
+    public const string ImmediateCalculationSubmission = "urn:osdc:semantic:immediate-calculation-submission";
+    public const string QueuedCalculationSubmission = "urn:osdc:semantic:queued-calculation-submission";
+    public const string CalculationReplacement = "urn:osdc:semantic:calculation-replacement";
+    public const string ImmediateCalculationReplacement = "urn:osdc:semantic:immediate-calculation-replacement";
+    public const string QueuedCalculationReplacement = "urn:osdc:semantic:queued-calculation-replacement";
+    public const string CalculationCaseRetrieval = "urn:osdc:semantic:calculation-case-retrieval";
+    public const string CalculationStatusRetrieval = "urn:osdc:semantic:calculation-status-retrieval";
+    public const string CalculationResultRetrieval = "urn:osdc:semantic:calculation-result-retrieval";
+    public const string CalculationResultChunkRetrieval = "urn:osdc:semantic:calculation-result-chunk-retrieval";
 }

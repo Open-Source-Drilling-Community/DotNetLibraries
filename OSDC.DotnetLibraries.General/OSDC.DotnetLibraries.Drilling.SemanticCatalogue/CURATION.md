@@ -89,3 +89,9 @@ The physical-quantity audit found that all unit-bearing fields resolve through e
 The [Unit Conversion review](CURATION-UNITCONVERSION-2026-10-05.md) adds 60 Reviewed definitions to the unchanged 517-entry 0.13.0 baseline. It models the authoritative metrology domain—physical quantities, dimensions, units, affine definitions, hierarchy, unit systems and conversion results—without turning REST or MCP transport mechanics into vocabulary.
 
 No new physical quantity is required. Generic converted values inherit the caller-selected quantity dynamically, and conversion coefficients and precision metadata intentionally have no fixed `quantityName`. Provider annotations and publication remain separate operations.
+
+## 2026-10-06 — Persisted calculation-case lifecycle vocabulary (0.15.0)
+
+The [calculation lifecycle review](CURATION-CALCULATION-LIFECYCLE-2026-10-06.md) adds 19 Reviewed definitions to the 577-entry 0.14.0 baseline and compatibly clarifies `CalculationCase`, `CalculationState` and `CalculationProgress`. It distinguishes caller-controlled specifications from server-derived results; immediate execution from queued execution; full case retrieval from lightweight status retrieval; and complete results from manifests and stable chunks.
+
+No new physical quantity is required. `CalculationProgress` remains `ProportionStandard` in SI unit `1`. Provider operation annotations and microservice REST/OpenAPI/MCP description updates are deliberately deferred to the next phase.

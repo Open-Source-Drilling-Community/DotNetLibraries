@@ -1,8 +1,10 @@
 # OSDC Drilling Semantic Catalogue
 
-Source **0.14.0** adds the curated Unit Conversion REST/MCP vocabulary. It contains **577 concepts: 574 Reviewed and three Deprecated legacy names**. All 517 definitions from 0.13.0 remain unchanged. See [the Unit Conversion review and binding map](CURATION-UNITCONVERSION-2026-10-05.md).
+Source **0.15.0** adds the curated persisted calculation-case lifecycle vocabulary. It contains **596 concepts: 593 Reviewed and three Deprecated legacy names**. The 577-entry 0.14.0 baseline is retained; `CalculationCase`, `CalculationState` and `CalculationProgress` receive compatible clarifications and 19 definitions are added. See [the calculation lifecycle review and binding guidance](CURATION-CALCULATION-LIFECYCLE-2026-10-06.md).
 
-A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.14.0 is prepared for packaging; publication and provider adoption are separate operations.
+A shared, locally available semantic vocabulary for OSDC providers and consumers. NuGet identity: `OSDC.DotnetLibraries.Drilling.SemanticCatalogue`, targeting .NET 8. Version 0.14.0 is published on NuGet.org; source 0.15.0 has not been published. Its provider bindings are adopted by the reviewed OSDC services; each service remains responsible for binding its concrete fields and operations and publishing those bindings consistently through REST/OpenAPI and MCP.
+
+Current direct provider integrations include Cluster, Well, WellBore, WellBore Architecture, Rig, Earth Gravity, Earth Magnetic Field, Earth Vertical Datum, Earth Geodesy, Earth Cartographic Projection, Field, Survey Instrument, and Trajectory. Unit Conversion is the deliberate exception: this catalogue depends on Unit Conversion physical-quantity packages and the service cannot take a reverse dependency without forming a package cycle. Its 0.14.0 vocabulary is therefore an external binding map rather than an in-process package reference.
 
 ## Canonical drilling references
 
@@ -20,7 +22,7 @@ This resolves the WGS84 path-intersection along-hole reference automatically. Al
 
 `catalogue.json` is the authoritative language-neutral vocabulary, embedded in the assembly and packed alongside `catalogue.schema.json`. `Concepts.cs` exposes stable URN constants; tests ensure these refer to actual entries. The 36 EarthGravity definitions have **Reviewed** status following Eric Cayeuxâ€™s approval on 2026-09-26. Provider annotations remain assertions about their own fields; future concepts start as Proposed.
 
-Each definition has an immutable semantic ID, label, definition, kind, curation status, aliases, parents, quantity name, SI representation, required context, constraints, source evidence, typed HasPart/LocatedAt/EvaluatedUsing relationships and optional supersession. Nouns, roles and reference conventions are distinct kinds. Only `parents` expresses specialization. Physical quantity and field role are not parent relationships. Aliases are discovery hints and can return multiple concepts.
+Each definition has an immutable semantic ID, label, definition, kind, curation status, aliases, parents, quantity name, SI representation, required context, constraints, source evidence, typed HasPart/LocatedAt/EvaluatedUsing/HasInput/Produces/ProjectionOf relationships and optional supersession. Nouns, roles and reference conventions are distinct kinds. Only `parents` expresses specialization. Physical quantity and field role are not parent relationships. Aliases are discovery hints and can return multiple concepts.
 
 Earth Gravity supplies the first examples: geographic coordinates specialize Coordinate; latitude/longitude specialize Geodetic angular coordinate; ellipsoidal depth specializes Depth coordinate. Total gravity is distinct from its component/magnitude roles. WGS84 and local NED are explicit reference conventions. Constraints and context requirements accumulate through inheritance; cycles, missing parents, incompatible kinds and conflicting inherited quantities/units are rejected. A child cannot weaken a parent by removing inherited requirements. This library does not evaluate natural-language constraints or authorize arithmetic.
 
@@ -39,7 +41,7 @@ Total gravitational plus centrifugal potential binds to `EarthGravityPotential`,
 public double Depth { get; set; }
 ```
 
-`SemanticMetadata.For(member)` returns a JSON object for the `x-osdc-semantic` extension. It includes catalogue identity/version, concept, curation status, optional role/reference, required context, SI representation and the resolved physical-quantity identity. Invalid concept/role/reference IDs fail explicitly. `AnnotateObject` applies attributes to an existing JSON schema object and its direct properties; it does not infer paths, recurse through `$ref`, change validation keywords or alter data serialization. Providers apply it to each named/inline model schema. Earth Gravity demonstrates equivalent MCP and OpenAPI publication from the same attributes.
+`SemanticMetadata.For(member)` returns a JSON object for the `x-osdc-semantic` extension. It accepts attributed types, properties and methods, and includes catalogue identity/version, concept, curation status, optional role/reference, required context, SI representation and the resolved physical-quantity identity. Invalid concept/role/reference IDs fail explicitly. `AnnotateObject` applies attributes to an existing JSON schema object and its direct properties; it does not infer paths, recurse through `$ref`, change validation keywords or alter data serialization. Providers apply it to each named/inline model schema and may use method metadata for REST/MCP operations. Earth Gravity demonstrates equivalent MCP and OpenAPI publication from the same attributes.
 
 Consumers can use `SemanticCatalogue.Default`, `Get`, `Find`, `IsA`, `Ancestors`, `Quantity`, `RequiredContext` and `Constraints`. No live catalogue server is required. `ToJson()` exposes the versioned language-neutral catalogue. URNs are stable identities, not assumed HTTP endpoints.
 
@@ -162,3 +164,9 @@ The physical-quantity audit found no gap. `DepthDrilling`, `PositionDrilling`, `
 The [Unit Conversion review](CURATION-UNITCONVERSION-2026-10-05.md) adds 60 Reviewed concepts for the metrology model exposed through REST and MCP: physical quantities and dimensional exponents, unit choices and affine definitions, unit systems and validated assignments, direct and persisted conversions, precision-aware formatting, hierarchy inheritance and semantic discovery.
 
 No new engineering physical quantity is introduced. Generic conversion values inherit the selected quantity dynamically, while dimensional exponents, conversion coefficients and precision settings are metadata rather than measurements with one fixed quantity. Catalogue 0.14.0 therefore leaves the UnitConversion dependency and canonical drilling reference profile unchanged.
+
+## Persisted calculation-case lifecycle vocabulary
+
+The [calculation lifecycle review and provider guidance](CURATION-CALCULATION-LIFECYCLE-2026-10-06.md) adds 19 Reviewed definitions for caller-controlled specifications, server-derived results, lightweight status projections, diagnostics, result manifests/chunks and operation roles. Immediate and queued execution specialize the same submission and replacement roles; they do not create competing calculation-case resource types.
+
+`CalculationCase`, `CalculationState` and `CalculationProgress` are compatibly clarified. Progress remains an optional `ProportionStandard` value in SI unit `1`; no new physical quantity or canonical reference is introduced. Source 0.15.0 also permits semantic attributes on methods so a provider can publish operation bindings consistently through REST/OpenAPI and MCP. Provider annotations and contract-description updates remain the next, separate phase.
