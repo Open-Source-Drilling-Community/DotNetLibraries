@@ -95,3 +95,9 @@ No new physical quantity is required. Generic converted values inherit the calle
 The [calculation lifecycle review](CURATION-CALCULATION-LIFECYCLE-2026-10-06.md) adds 19 Reviewed definitions to the 577-entry 0.14.0 baseline and compatibly clarifies `CalculationCase`, `CalculationState` and `CalculationProgress`. It distinguishes caller-controlled specifications from server-derived results; immediate execution from queued execution; full case retrieval from lightweight status retrieval; and complete results from manifests and stable chunks.
 
 No new physical quantity is required. `CalculationProgress` remains `ProportionStandard` in SI unit `1`. Provider operation annotations and microservice REST/OpenAPI/MCP description updates are deliberately deferred to the next phase.
+
+## 2026-10-06 — Calculation-case deletion vocabulary (0.16.0)
+
+The [calculation-case deletion review](CURATION-CALCULATION-CASE-DELETION-2026-10-06.md) adds one Reviewed operation role to the unchanged 596-entry 0.15.0 baseline. `CalculationCaseDeletion` describes permanent removal of a persisted case and its service-owned lifecycle information and results.
+
+Deletion is explicitly distinct from replacement and from cancellation of queued or running work. The provider contract remains responsible for destructive-write safety annotations, authorization, optimistic concurrency, errors and any explicit cancellation guarantee. No new physical quantity or canonical reference is required.

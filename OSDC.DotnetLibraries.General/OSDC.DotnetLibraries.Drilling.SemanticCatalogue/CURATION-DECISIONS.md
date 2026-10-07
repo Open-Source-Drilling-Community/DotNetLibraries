@@ -75,3 +75,9 @@ Approver: Eric Cayeux. Evidence: “Go ahead and extend the vocabulary first. Th
 Added 19 Reviewed definitions covering calculation specifications and results, lightweight status projections, diagnostics, result manifests/chunks, immediate and queued submission/replacement, and focused retrieval roles. Added `HasInput`, `Produces` and `ProjectionOf` relations. Compatibly clarified `CalculationCase`, `CalculationState` and `CalculationProgress`; no identifier was replaced or deprecated.
 
 No new physical quantity is introduced. Calculation progress remains a dimensionless proportion. REST/OpenAPI and MCP provider bindings are explicitly subsequent work.
+
+## 2026-10-06 — Calculation-case deletion vocabulary
+
+Approver: Eric Cayeux. Evidence: “Can you revise the vocabulary to enable the description of case deletion?” Target catalogue/package: **0.16.0**, unpublished.
+
+Added the Reviewed `CalculationCaseDeletion` operation role. It permanently removes a persisted calculation case and its service-owned stored lifecycle information and results. It does not imply cancellation of already-running execution, and it is not a specialization of replacement or retrieval. Provider contracts retain responsibility for destructive-write annotations, authorization, optimistic concurrency and stable error behavior. No physical quantity or canonical reference is added.

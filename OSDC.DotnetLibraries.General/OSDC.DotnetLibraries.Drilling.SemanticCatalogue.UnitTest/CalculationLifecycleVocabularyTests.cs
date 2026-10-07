@@ -10,6 +10,9 @@ public class CalculationLifecycleVocabularyTests
     {
         [Semantic(Concepts.CalculationCase, Role = Concepts.QueuedCalculationSubmission)]
         public void Submit() { }
+
+        [Semantic(Concepts.CalculationCase, Role = Concepts.CalculationCaseDeletion)]
+        public void Delete() { }
     }
 
     [Test]
@@ -19,12 +22,12 @@ public class CalculationLifecycleVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(catalogue.Document.Version, Is.EqualTo("0.15.0"));
-            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(596));
-            Assert.That(catalogue.Document.Concepts.Skip(577), Has.Count.EqualTo(19));
+            Assert.That(catalogue.Document.Version, Is.EqualTo("0.16.0"));
+            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(597));
+            Assert.That(catalogue.Document.Concepts.Skip(577), Has.Count.EqualTo(20));
             Assert.That(catalogue.Document.Concepts.Skip(577).All(x => x.Status == CurationStatus.Reviewed), Is.True);
             Assert.That(catalogue.Document.Concepts.Skip(577).All(x => x.Evidence.Count > 0), Is.True);
-            Assert.That(catalogue.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(593));
+            Assert.That(catalogue.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(594));
         });
     }
 
@@ -84,6 +87,28 @@ public class CalculationLifecycleVocabularyTests
             Assert.That(catalogue.IsA(Concepts.CalculationResultChunkRetrieval, Concepts.CalculationResultRetrieval), Is.True);
             Assert.That(catalogue.Get(Concepts.CalculationSubmission).Kind, Is.EqualTo(SemanticKind.Role));
             Assert.That(catalogue.Get(Concepts.CalculationStatusRetrieval).Kind, Is.EqualTo(SemanticKind.Role));
+            Assert.That(catalogue.Get(Concepts.CalculationCaseDeletion).Kind, Is.EqualTo(SemanticKind.Role));
+        });
+    }
+
+    [Test]
+    public void CalculationCaseDeletionIsDistinctFromReplacementAndCancellation()
+    {
+        var catalogue = Catalogue.Default;
+        SemanticDefinition deletion = catalogue.Get(Concepts.CalculationCaseDeletion);
+        var method = typeof(OperationBindings).GetMethod(nameof(OperationBindings.Delete))!;
+        var metadata = SemanticMetadata.For(method)!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(deletion.Label, Is.EqualTo("Calculation case deletion"));
+            Assert.That(deletion.Parents, Is.Empty);
+            Assert.That(deletion.Constraints, Has.Some.Contains("destructive operation"));
+            Assert.That(deletion.Constraints, Has.Some.Contains("does not mean cancelling"));
+            Assert.That(deletion.Constraints, Has.Some.Contains("exact case created"));
+            Assert.That(deletion.Evidence, Is.Not.Empty);
+            Assert.That(metadata["concept"]!.GetValue<string>(), Is.EqualTo(Concepts.CalculationCase));
+            Assert.That(metadata["role"]!.GetValue<string>(), Is.EqualTo(Concepts.CalculationCaseDeletion));
         });
     }
 
@@ -95,7 +120,7 @@ public class CalculationLifecycleVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(metadata["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.15.0"));
+            Assert.That(metadata["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.16.0"));
             Assert.That(metadata["concept"]!.GetValue<string>(), Is.EqualTo(Concepts.CalculationCase));
             Assert.That(metadata["role"]!.GetValue<string>(), Is.EqualTo(Concepts.QueuedCalculationSubmission));
         });

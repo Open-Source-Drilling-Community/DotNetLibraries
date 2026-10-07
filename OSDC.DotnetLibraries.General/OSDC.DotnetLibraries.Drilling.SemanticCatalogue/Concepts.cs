@@ -612,4 +612,5 @@ public static class Concepts
     public const string CalculationStatusRetrieval = "urn:osdc:semantic:calculation-status-retrieval";
     public const string CalculationResultRetrieval = "urn:osdc:semantic:calculation-result-retrieval";
     public const string CalculationResultChunkRetrieval = "urn:osdc:semantic:calculation-result-chunk-retrieval";
+    public const string CalculationCaseDeletion = "urn:osdc:semantic:calculation-case-deletion";
 }

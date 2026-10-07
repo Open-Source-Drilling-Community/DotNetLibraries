@@ -9,8 +9,8 @@ public class SurveyInstrumentVocabularyTests
     public void SurveyInstrumentIncrementIsReviewedAndPreservesThePreviousBaseline()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.15.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(596));
+        Assert.That(c.Document.Version, Is.EqualTo("0.16.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(597));
         Assert.That(c.Document.Concepts.Take(370), Has.Count.EqualTo(370));
         Assert.That(c.Document.Concepts.Skip(370).Take(51), Has.Count.EqualTo(51));
         Assert.That(c.Document.Concepts.Skip(370).Take(51).Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(50));

@@ -27,7 +27,7 @@ Most of these libraries have been packaged as .NET NuGets and published to [nuge
 
 ## Shared semantic catalogue
 
-[Drilling.SemanticCatalogue](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/README.md) 0.15.0 contains 596 concepts (593 Reviewed and three Deprecated legacy names), including the persisted calculation-case lifecycle, Unit Conversion and Trajectory REST/MCP vocabularies, and the ISCWSA Revision 5-aligned SurveyInstrument increment. It uses UnitConversion 3.4.5 and canonical drilling reference profile 1.1.0, preserving earlier definitions and presentation-reference support.
+[Drilling.SemanticCatalogue](OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/README.md) version 0.16.0 contains 597 concepts (594 Reviewed and three Deprecated legacy names). It adds the calculation-case deletion operation role to the persisted calculation-case lifecycle and retains the Unit Conversion and Trajectory REST/MCP vocabularies and the ISCWSA Revision 5-aligned SurveyInstrument increment. It uses UnitConversion 3.4.5 and canonical drilling reference profile 1.1.0, preserving earlier definitions and presentation-reference support. Version 0.16.0 is published on NuGet.org.
 
 ## Shared resource classification
 

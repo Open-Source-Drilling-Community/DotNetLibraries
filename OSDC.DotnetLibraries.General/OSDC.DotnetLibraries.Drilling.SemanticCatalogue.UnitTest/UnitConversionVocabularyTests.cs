@@ -10,8 +10,8 @@ public class UnitConversionVocabularyTests
     public void UnitConversionIncrementIsReviewedAndPreservesThePreviousBaseline()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.15.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(596));
+        Assert.That(c.Document.Version, Is.EqualTo("0.16.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(597));
         Assert.That(c.Document.Concepts.Take(517), Has.Count.EqualTo(517));
         Assert.That(c.Document.Concepts.Skip(517).Take(60), Has.Count.EqualTo(60));
         Assert.That(c.Document.Concepts.Skip(517).Take(60).All(x => x.Status == CurationStatus.Reviewed), Is.True);
