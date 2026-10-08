@@ -13,8 +13,8 @@ public class WellWellBoreVocabularyTests
     public void ReviewedIncrementPreservesPublishedDefinitions()
     {
         var current = Catalogue.Default;
-        Assert.That(current.Document.Version, Is.EqualTo("0.16.0"));
-        Assert.That(current.Document.Concepts.Count, Is.EqualTo(597));
+        Assert.That(current.Document.Version, Is.EqualTo("0.17.0"));
+        Assert.That(current.Document.Concepts.Count, Is.EqualTo(606));
         Assert.That(current.Document.Concepts.All(c => c.Status is CurationStatus.Reviewed or CurationStatus.Deprecated), Is.True);
         var assembly = typeof(Catalogue).Assembly;
         using var stream = assembly.GetManifestResourceStream(

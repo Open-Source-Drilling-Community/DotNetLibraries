@@ -613,4 +613,13 @@ public static class Concepts
     public const string CalculationResultRetrieval = "urn:osdc:semantic:calculation-result-retrieval";
     public const string CalculationResultChunkRetrieval = "urn:osdc:semantic:calculation-result-chunk-retrieval";
     public const string CalculationCaseDeletion = "urn:osdc:semantic:calculation-case-deletion";
+    public const string UncertaintyEllipseOrientation = "urn:osdc:semantic:uncertainty-ellipse-orientation";
+    public const string VerticalSectionAzimuth = "urn:osdc:semantic:vertical-section-azimuth";
+    public const string MajorAxis = "urn:osdc:semantic:major-axis";
+    public const string MinorAxis = "urn:osdc:semantic:minor-axis";
+    public const string VerticalEllipseAxisConvention = "urn:osdc:semantic:vertical-ellipse-axis-convention";
+    public const string GroundAlongHoleOrigin = "urn:osdc:semantic:ground-along-hole-origin";
+    public const string DrillFloorAlongHoleOrigin = "urn:osdc:semantic:drill-floor-along-hole-origin";
+    public const string WellheadAlongHoleOrigin = "urn:osdc:semantic:wellhead-along-hole-origin";
+    public const string MslAlongHoleOrigin = "urn:osdc:semantic:msl-along-hole-origin";
 }
