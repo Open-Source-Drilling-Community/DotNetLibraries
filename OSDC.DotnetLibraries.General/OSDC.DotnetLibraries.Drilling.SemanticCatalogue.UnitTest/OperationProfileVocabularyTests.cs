@@ -26,8 +26,8 @@ public class OperationProfileVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(catalogue.Document.Version, Is.EqualTo("0.19.0"));
-            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(650));
+            Assert.That(catalogue.Document.Version, Is.EqualTo("0.20.0"));
+            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(675));
             Assert.That(increment, Has.Length.EqualTo(35));
             Assert.That(increment.All(x => x.Status == CurationStatus.Reviewed), Is.True);
             Assert.That(increment.All(x => x.Evidence.Count > 0), Is.True);
@@ -119,7 +119,7 @@ public class OperationProfileVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(list["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.19.0"));
+            Assert.That(list["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.20.0"));
             Assert.That(list["role"]!.GetValue<string>(), Is.EqualTo(Concepts.ResourceCollectionRetrieval));
             Assert.That(evaluate["role"]!.GetValue<string>(), Is.EqualTo(Concepts.StatelessEvaluation));
             Assert.That(cancel["role"]!.GetValue<string>(), Is.EqualTo(Concepts.CalculationCancellation));

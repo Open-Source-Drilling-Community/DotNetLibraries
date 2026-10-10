@@ -668,4 +668,30 @@ public static class Concepts
     public const string MinimumDeterminantEllipsoidalOuterBoundConvention = "urn:osdc:semantic:minimum-determinant-ellipsoidal-outer-bound-convention";
     public const string CircularUncertaintyEnvelopeDilation = "urn:osdc:semantic:circular-uncertainty-envelope-dilation";
     public const string CircularlyDilatedUncertaintyEnvelope = "urn:osdc:semantic:circularly-dilated-uncertainty-envelope";
+    // Ordered radial construction profile approved on 2026-10-10.
+    public const string RadialProfileAtAbscissaEvaluation = "urn:osdc:semantic:radial-profile-at-abscissa-evaluation";
+    public const string WellboreRadialProfile = "urn:osdc:semantic:wellbore-radial-profile";
+    public const string RadialBoundary = "urn:osdc:semantic:radial-boundary";
+    public const string RadialBoundaryDiameter = "urn:osdc:semantic:radial-boundary-diameter";
+    public const string OutermostKnownPhysicalEnvelopeDiameter = "urn:osdc:semantic:outermost-known-physical-envelope-diameter";
+    public const string InnermostKnownPhysicalEnvelopeDiameter = "urn:osdc:semantic:innermost-known-physical-envelope-diameter";
+    public const string DeepestCasingShoeEvaluation = "urn:osdc:semantic:deepest-casing-shoe-evaluation";
+    public const string DeepestCasingShoeResult = "urn:osdc:semantic:deepest-casing-shoe-result";
+    public const string CasingShoeAlongHoleDepth = "urn:osdc:semantic:casing-shoe-along-hole-depth";
+    public const string RadialBoundaryKind = "urn:osdc:semantic:radial-boundary-kind";
+    public const string BoreholeWallBoundary = "urn:osdc:semantic:borehole-wall-boundary";
+    public const string CementOuterBoundary = "urn:osdc:semantic:cement-outer-boundary";
+    public const string CementInnerBoundary = "urn:osdc:semantic:cement-inner-boundary";
+    public const string CasingOuterBoundary = "urn:osdc:semantic:casing-outer-boundary";
+    public const string CasingInnerBoundary = "urn:osdc:semantic:casing-inner-boundary";
+    public const string RadialMaterialKind = "urn:osdc:semantic:radial-material-kind";
+    public const string FormationMaterial = "urn:osdc:semantic:formation-material";
+    public const string CementMaterial = "urn:osdc:semantic:cement-material";
+    public const string CasingMaterial = "urn:osdc:semantic:casing-material";
+    public const string InternalFluidOrVoidMaterial = "urn:osdc:semantic:internal-fluid-or-void-material";
+    public const string UnknownRadialMaterial = "urn:osdc:semantic:unknown-radial-material";
+    public const string OutermostKnownBoundary = "urn:osdc:semantic:outermost-known-boundary";
+    public const string InnermostKnownBoundary = "urn:osdc:semantic:innermost-known-boundary";
+    public const string MaterialOutsideBoundary = "urn:osdc:semantic:material-outside-boundary";
+    public const string MaterialInsideBoundary = "urn:osdc:semantic:material-inside-boundary";
 }

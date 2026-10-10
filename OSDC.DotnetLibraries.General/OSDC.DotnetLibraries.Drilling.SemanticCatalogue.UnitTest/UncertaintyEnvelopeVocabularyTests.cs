@@ -13,8 +13,8 @@ public sealed class UncertaintyEnvelopeVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(catalogue.Document.Version, Is.EqualTo("0.19.0"));
-            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(650));
+            Assert.That(catalogue.Document.Version, Is.EqualTo("0.20.0"));
+            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(675));
             Assert.That(catalogue.IsA(Concepts.BoreholeDiameterAtAbscissaEvaluation, Concepts.StatelessEvaluation), Is.True);
             Assert.That(catalogue.Get(Concepts.BoreholeDiameterAtAbscissaResult).Relations.Select(r => r.Target),
                 Does.Contain(Concepts.BoreholeDiameter));

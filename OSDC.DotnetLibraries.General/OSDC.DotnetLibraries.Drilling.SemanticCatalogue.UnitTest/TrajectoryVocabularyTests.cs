@@ -10,8 +10,8 @@ public class TrajectoryVocabularyTests
     public void TrajectoryIncrementIsReviewedAndPreservesThePreviousBaseline()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.19.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(650));
+        Assert.That(c.Document.Version, Is.EqualTo("0.20.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(675));
         Assert.That(c.Document.Concepts.Take(421), Has.Count.EqualTo(421));
         Assert.That(c.Document.Concepts.Skip(421).Take(96), Has.Count.EqualTo(96));
         Assert.That(c.Document.Concepts.Skip(421).Take(96).All(x => x.Status == CurationStatus.Reviewed), Is.True);
