@@ -12,8 +12,8 @@ public class EarthCartographicProjectionVocabularyTests
     public void CuratedProjectionVocabularyPreservesRepresentationAndOperationBoundaries()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.17.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(606));
+        Assert.That(c.Document.Version, Is.EqualTo("0.19.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(650));
         Assert.That(c.Document.Concepts.Take(156).All(x => x.Status == CurationStatus.Reviewed), Is.True);
         Assert.That(c.IsA(Concepts.GeographicPosition2D, Concepts.GenericGeodeticPosition), Is.False);
         Assert.That(c.IsA(Concepts.GeographicPosition2D, Concepts.Position), Is.False);
@@ -66,7 +66,7 @@ public class EarthCartographicProjectionVocabularyTests
     public void ProviderMetadataPublishesReviewedQuantityRolesAndConventions()
     {
         var scale = SemanticMetadata.For(typeof(ProjectionBindings).GetProperty("Scale")!)!;
-        Assert.That(scale["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.17.0"));
+        Assert.That(scale["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.19.0"));
         Assert.That(scale["curationStatus"]!.GetValue<string>(), Is.EqualTo("Reviewed"));
         Assert.That(scale["physicalQuantity"]!["name"]!.GetValue<string>(), Is.EqualTo("ProjectionScaleFactor"));
         Assert.That(scale["role"]!.GetValue<string>(), Is.EqualTo(Concepts.NaturalOrigin));

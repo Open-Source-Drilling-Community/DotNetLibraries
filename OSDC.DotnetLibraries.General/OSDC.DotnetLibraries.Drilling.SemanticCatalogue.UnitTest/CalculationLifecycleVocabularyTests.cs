@@ -22,12 +22,12 @@ public class CalculationLifecycleVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(catalogue.Document.Version, Is.EqualTo("0.17.0"));
-            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(606));
+            Assert.That(catalogue.Document.Version, Is.EqualTo("0.19.0"));
+            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(650));
             Assert.That(catalogue.Document.Concepts.Skip(577).Take(20), Has.Count.EqualTo(20));
             Assert.That(catalogue.Document.Concepts.Skip(577).Take(20).All(x => x.Status == CurationStatus.Reviewed), Is.True);
             Assert.That(catalogue.Document.Concepts.Skip(577).Take(20).All(x => x.Evidence.Count > 0), Is.True);
-            Assert.That(catalogue.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(603));
+            Assert.That(catalogue.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(647));
         });
     }
 
@@ -102,7 +102,13 @@ public class CalculationLifecycleVocabularyTests
         Assert.Multiple(() =>
         {
             Assert.That(deletion.Label, Is.EqualTo("Calculation case deletion"));
-            Assert.That(deletion.Parents, Is.Empty);
+            Assert.That(deletion.Parents, Is.EquivalentTo(new[]
+            {
+                Concepts.CalculationCaseOperation,
+                Concepts.ResourceDeletion
+            }));
+            Assert.That(catalogue.IsA(Concepts.CalculationCaseDeletion, Concepts.CalculationCancellation), Is.False);
+            Assert.That(catalogue.IsA(Concepts.CalculationCaseDeletion, Concepts.CalculationReplacement), Is.False);
             Assert.That(deletion.Constraints, Has.Some.Contains("destructive operation"));
             Assert.That(deletion.Constraints, Has.Some.Contains("does not mean cancelling"));
             Assert.That(deletion.Constraints, Has.Some.Contains("exact case created"));
@@ -120,7 +126,7 @@ public class CalculationLifecycleVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(metadata["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.17.0"));
+            Assert.That(metadata["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.19.0"));
             Assert.That(metadata["concept"]!.GetValue<string>(), Is.EqualTo(Concepts.CalculationCase));
             Assert.That(metadata["role"]!.GetValue<string>(), Is.EqualTo(Concepts.QueuedCalculationSubmission));
         });
