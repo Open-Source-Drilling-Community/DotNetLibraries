@@ -1,6 +1,6 @@
 {
   "id": "urn:osdc:semantic-catalogue",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "schemaVersion": 2,
   "concepts": [
     {
@@ -8144,6 +8144,37 @@
     },
     {
       "id": "urn:osdc:semantic:global-anti-collision-calculation", "label": "Global anti-collision calculation", "definition": "Asynchronous separation-factor evaluation between one reference path and selected comparison trajectories under the effective anti-collision policy.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:calculation-case"], "evidence": ["GlobalAntiCollisionsController REST/MCP contract; Eric Cayeux request, 2026-10-05"], "relations": [{"kind":"EvaluatedUsing","target":"urn:osdc:semantic:anti-collision-policy-revision"}]
+    },
+    {
+      "id": "urn:osdc:semantic:reference-resource", "label": "Reference resource", "definition": "Role played by the resource against which other resources are compared or evaluated in a calculation.", "kind": "Role", "status": "Reviewed", "constraints": ["The resource concept and identifier remain declared separately; this role does not imply a particular resource type."], "evidence": ["Cross-calculation reference/comparison value-flow requirement; Eric Cayeux approval, 2026-10-18"]
+    },
+    {
+      "id": "urn:osdc:semantic:comparison-resource", "label": "Comparison resource", "definition": "Role played by each resource compared with a calculation's declared reference resource.", "kind": "Role", "status": "Reviewed", "constraints": ["The resource concept and identifier remain declared separately; cardinality is supplied by the containing contract."], "evidence": ["Cross-calculation reference/comparison value-flow requirement; Eric Cayeux approval, 2026-10-18"]
+    },
+    {
+      "id": "urn:osdc:semantic:anti-collision-comparison-result", "label": "Anti-collision comparison result", "definition": "Result for one comparison trajectory in a global anti-collision calculation, including its separation-factor profile and any policy evaluation.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["reference trajectory", "comparison trajectory", "confidence factor"], "evidence": ["GlobalAntiCollision SeparationFactorResult REST/MCP contract; Eric Cayeux approval, 2026-10-18"], "relations": [{"kind":"HasPart","target":"urn:osdc:semantic:separation-factor"},{"kind":"HasPart","target":"urn:osdc:semantic:anti-collision-policy-evaluation"}]
+    },
+    {
+      "id": "urn:osdc:semantic:anti-collision-policy-evaluation", "label": "Anti-collision policy evaluation", "definition": "Frozen policy decision for one reference/comparison trajectory pair, including evaluation state, matched thresholds, evidence interval and worst safety classification.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["anti-collision policy revision", "evaluation instant"], "evidence": ["AntiCollisionPolicyEvaluation REST/MCP contract; Eric Cayeux approval, 2026-10-18"]
+    },
+    {
+      "id": "urn:osdc:semantic:anti-collision-policy-evaluation-state", "label": "Anti-collision policy evaluation state", "definition": "Finite outcome stating whether an anti-collision policy rule matched or whether the evaluation was indeterminate.", "kind": "Noun", "status": "Reviewed", "evidence": ["AntiCollisionPolicyEvaluationState REST/MCP enum; Eric Cayeux approval, 2026-10-18"]
+    },
+    {"id":"urn:osdc:semantic:anti-collision-policy-matched-state","label":"Anti-collision policy matched state","definition":"Policy evaluation state in which one applicable anti-collision rule matched.","kind":"Noun","status":"Reviewed","parents":["urn:osdc:semantic:anti-collision-policy-evaluation-state"],"evidence":["AntiCollisionPolicyEvaluationState.Matched; Eric Cayeux approval, 2026-10-18"]},
+    {"id":"urn:osdc:semantic:anti-collision-policy-no-match-state","label":"Anti-collision policy no-match state","definition":"Policy evaluation state in which no anti-collision rule matched the available evidence.","kind":"Noun","status":"Reviewed","parents":["urn:osdc:semantic:anti-collision-policy-evaluation-state"],"evidence":["AntiCollisionPolicyEvaluationState.NoMatch; Eric Cayeux approval, 2026-10-18"]},
+    {"id":"urn:osdc:semantic:anti-collision-policy-indeterminate-state","label":"Anti-collision policy indeterminate state","definition":"Policy evaluation state in which missing or unavailable evidence prevents a deterministic rule decision.","kind":"Noun","status":"Reviewed","parents":["urn:osdc:semantic:anti-collision-policy-evaluation-state"],"evidence":["AntiCollisionPolicyEvaluationState.Indeterminate; Eric Cayeux approval, 2026-10-18"]},
+    {
+      "id": "urn:osdc:semantic:anti-collision-safety-classification", "label": "Anti-collision safety classification", "definition": "Ordered safety category assigned by an anti-collision policy from the calculated separation factor and the matched rule thresholds.", "kind": "Noun", "status": "Reviewed", "requiredContext": ["anti-collision policy evaluation"], "evidence": ["AntiCollisionClassification REST/MCP enum; Eric Cayeux approval, 2026-10-18"]
+    },
+    {"id":"urn:osdc:semantic:anti-collision-normal-classification","label":"Normal anti-collision classification","definition":"Safety classification indicating that the evaluated separation factor does not cross the policy alert threshold.","kind":"Noun","status":"Reviewed","parents":["urn:osdc:semantic:anti-collision-safety-classification"],"evidence":["AntiCollisionClassification.Normal; Eric Cayeux approval, 2026-10-18"]},
+    {"id":"urn:osdc:semantic:anti-collision-alert-classification","label":"Alert anti-collision classification","definition":"Safety classification indicating that the evaluated separation factor crosses the policy alert threshold without crossing the alarm threshold.","kind":"Noun","status":"Reviewed","parents":["urn:osdc:semantic:anti-collision-safety-classification"],"evidence":["AntiCollisionClassification.Alert; Eric Cayeux approval, 2026-10-18"]},
+    {"id":"urn:osdc:semantic:anti-collision-alarm-classification","label":"Alarm anti-collision classification","definition":"Safety classification indicating that the evaluated separation factor crosses the policy alarm threshold.","kind":"Noun","status":"Reviewed","parents":["urn:osdc:semantic:anti-collision-safety-classification"],"evidence":["AntiCollisionClassification.Alarm; Eric Cayeux approval, 2026-10-18"]},
+    {"id":"urn:osdc:semantic:anti-collision-indeterminate-classification","label":"Indeterminate anti-collision classification","definition":"Safety classification used when available evidence is insufficient to determine a normal, alert or alarm outcome.","kind":"Noun","status":"Reviewed","parents":["urn:osdc:semantic:anti-collision-safety-classification"],"evidence":["AntiCollisionClassification.Indeterminate; Eric Cayeux approval, 2026-10-18"]},
+    {
+      "id": "urn:osdc:semantic:anti-collision-alert-threshold", "label": "Anti-collision alert threshold", "definition": "Separation-factor threshold at which the matched anti-collision policy rule enters its alert classification.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:separation-factor"], "evidence": ["AntiCollisionPolicyEvaluation.AlertThreshold; Eric Cayeux approval, 2026-10-18"]
+    },
+    {
+      "id": "urn:osdc:semantic:anti-collision-alarm-threshold", "label": "Anti-collision alarm threshold", "definition": "Separation-factor threshold at which the matched anti-collision policy rule enters its alarm classification.", "kind": "Noun", "status": "Reviewed", "parents": ["urn:osdc:semantic:separation-factor"], "evidence": ["AntiCollisionPolicyEvaluation.AlarmThreshold; Eric Cayeux approval, 2026-10-18"]
     },
     {
       "id": "urn:osdc:semantic:separation-factor", "label": "Well-path separation factor", "definition": "Dimensionless ratio comparing well-path separation with the combined positional uncertainty and policy-defined safety envelope.", "kind": "Noun", "status": "Reviewed", "quantityName": "ProportionStandard", "siUnit": "1", "requiredContext": ["confidence factor", "anti-collision policy", "reference direction"], "evidence": ["GlobalAntiCollision SeparationFactorPoint REST/MCP schema; Eric Cayeux request, 2026-10-05"]
