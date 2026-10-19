@@ -1839,3 +1839,8 @@ Run the regression suite using the explicit project path:
 ```powershell
 dotnet test ..\OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest\OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest.csproj
 ```
+
+
+## Release 10.2.10
+
+Updates the DWIS semantic dependency DWIS.API.DTO to 2.2.33. Releases are tested and published by GitHub Actions using NuGet.org trusted publishing; see the repository README for setup and release steps.

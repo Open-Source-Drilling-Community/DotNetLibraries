@@ -36,3 +36,11 @@ provides common identity, feature and membership models and pure validation
 helpers. Version 0.1.0 targets .NET 8 and references DataManagement 2.2.0.
 Field and Cluster are the initial consumer migrations. The package README
 documents ownership, contract preservation, validation policies and publication order.
+
+## DrillingProperties publishing
+
+DrillingProperties 10.2.10 references DWIS.API.DTO 2.2.33 in both the standard and debug projects. The RDF project references DWIS.Client.ReferenceImplementation 2.2.51.
+
+The `generate-pack-push-drilling-properties.yml` workflow restores, builds, tests, packs and uploads the package artifact before publishing through `NuGet/login@v1` with GitHub OIDC. It requires `id-token: write` and a repository variable or secret named `NUGET_USER` containing the NuGet account username. No long-lived NuGet API key is used.
+
+Configure a NuGet.org trusted publishing policy for owner `Open-Source-Drilling-Community`, repository `DotNetLibraries`, and workflow `generate-pack-push-drilling-properties.yml` (no environment). Run the workflow manually with the project version, or push a matching `drillingproperties-v<version>` tag. The requested version must match the project version. Verify the successful publishing run and NuGet.org indexing before consuming a release.
