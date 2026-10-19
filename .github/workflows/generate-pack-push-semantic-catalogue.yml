@@ -14,8 +14,20 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
+      id-token: write
+
+    concurrency:
+      group: publish-semantic-catalogue-${{ github.ref }}
+      cancel-in-progress: false
+
+    env:
+      PROJECT: OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.csproj
+      TEST_PROJECT: OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest.csproj
+      ARTIFACTS: ${{ github.workspace }}/artifacts
+      REQUESTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
 
     steps:
       - name: Check out code
@@ -30,30 +42,59 @@ jobs:
         id: version
         shell: bash
         run: |
+          set -euo pipefail
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
+            VERSION="$REQUESTED_VERSION"
           else
-            VERSION="${GITHUB_REF_NAME#semantic-catalogue-v}"
+            VERSION="${REQUESTED_VERSION#semantic-catalogue-v}"
           fi
 
-          if [ -z "$VERSION" ]; then
-            echo "Package version is empty."
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid package version: '$VERSION'."
+            exit 1
+          fi
+
+          PROJECT_VERSION="$(dotnet msbuild "$PROJECT" -nologo -getProperty:Version | tr -d '\r' | tail -n 1)"
+          if [ "$VERSION" != "$PROJECT_VERSION" ]; then
+            echo "Requested version '$VERSION' does not match the project version '$PROJECT_VERSION'."
             exit 1
           fi
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Restore
-        run: dotnet restore OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.csproj
+        run: dotnet restore "$TEST_PROJECT"
 
       - name: Build
-        run: dotnet build OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.csproj --configuration Release --no-restore
+        run: dotnet build "$TEST_PROJECT" --configuration Release --no-restore -p:PackageVersion=${{ steps.version.outputs.version }}
 
       - name: Verify semantic catalogue
-        run: dotnet test OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.UnitTest.csproj --configuration Release
+        run: dotnet test "$TEST_PROJECT" --configuration Release --no-build --no-restore
 
       - name: Pack
-        run: dotnet pack OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.SemanticCatalogue/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.version }} --output ${{ github.workspace }}/artifacts
+        run: dotnet pack "$PROJECT" --configuration Release --no-build --no-restore -p:PackageVersion=${{ steps.version.outputs.version }} --output "$ARTIFACTS"
+
+      - name: Verify package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACKAGE="$ARTIFACTS/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.${{ steps.version.outputs.version }}.nupkg"
+          test -f "$PACKAGE"
+          unzip -t "$PACKAGE"
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-catalogue-${{ steps.version.outputs.version }}
+          path: ${{ env.ARTIFACTS }}/*.nupkg
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: NuGet login with trusted publishing
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
 
       - name: Push to NuGet.org
-        run: dotnet nuget push "${{ github.workspace }}/artifacts/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "$ARTIFACTS/OSDC.DotnetLibraries.Drilling.SemanticCatalogue.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

@@ -10,8 +10,8 @@ public class TrajectoryVocabularyTests
     public void TrajectoryIncrementIsReviewedAndPreservesThePreviousBaseline()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.17.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(606));
+        Assert.That(c.Document.Version, Is.EqualTo("0.22.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(694));
         Assert.That(c.Document.Concepts.Take(421), Has.Count.EqualTo(421));
         Assert.That(c.Document.Concepts.Skip(421).Take(96), Has.Count.EqualTo(96));
         Assert.That(c.Document.Concepts.Skip(421).Take(96).All(x => x.Status == CurationStatus.Reviewed), Is.True);
@@ -35,6 +35,43 @@ public class TrajectoryVocabularyTests
             Assert.That(c.IsA(Concepts.DirectionalControlEvaluationCase, Concepts.CalculationCase), Is.True);
             Assert.That(c.IsA(Concepts.MinimumDistanceCalculation, Concepts.CalculationCase), Is.True);
             Assert.That(c.IsA(Concepts.GlobalAntiCollisionCalculation, Concepts.CalculationCase), Is.True);
+        });
+    }
+
+    [Test]
+    public void AggregationInputsAndOrderedCollectionRolesAreExplicit()
+    {
+        var c = Catalogue.Default;
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.Quantity(Concepts.TrajectoryAggregationCentreCoordinateConstancyTolerance)!.Name,
+                Is.EqualTo("LengthStandard"));
+            Assert.That(c.SiUnit(Concepts.TrajectoryAggregationCentreCoordinateConstancyTolerance), Is.EqualTo("m"));
+            Assert.That(c.Quantity(Concepts.TrajectoryAggregationCurvatureConstancyTolerance)!.Name,
+                Is.EqualTo("CurvatureDrilling"));
+            Assert.That(c.SiUnit(Concepts.TrajectoryAggregationCurvatureConstancyTolerance), Is.EqualTo("rad/m"));
+            Assert.That(c.Get(Concepts.SequencePosition).Kind, Is.EqualTo(SemanticKind.Role));
+            Assert.That(c.Get(Concepts.ExactCollectionCardinality).Kind, Is.EqualTo(SemanticKind.Role));
+        });
+    }
+
+    [Test]
+    public void AntiCollisionPlanningSemanticsAreExplicitAndProviderNeutral()
+    {
+        var c = Catalogue.Default;
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.Get(Concepts.ReferenceResource).Kind, Is.EqualTo(SemanticKind.Role));
+            Assert.That(c.Get(Concepts.ComparisonResource).Kind, Is.EqualTo(SemanticKind.Role));
+            Assert.That(c.IsA(Concepts.AntiCollisionPolicyMatchedState, Concepts.AntiCollisionPolicyEvaluationState), Is.True);
+            Assert.That(c.IsA(Concepts.AntiCollisionPolicyNoMatchState, Concepts.AntiCollisionPolicyEvaluationState), Is.True);
+            Assert.That(c.IsA(Concepts.AntiCollisionPolicyIndeterminateState, Concepts.AntiCollisionPolicyEvaluationState), Is.True);
+            Assert.That(c.IsA(Concepts.AntiCollisionNormalClassification, Concepts.AntiCollisionSafetyClassification), Is.True);
+            Assert.That(c.IsA(Concepts.AntiCollisionAlertClassification, Concepts.AntiCollisionSafetyClassification), Is.True);
+            Assert.That(c.IsA(Concepts.AntiCollisionAlarmClassification, Concepts.AntiCollisionSafetyClassification), Is.True);
+            Assert.That(c.IsA(Concepts.AntiCollisionIndeterminateClassification, Concepts.AntiCollisionSafetyClassification), Is.True);
+            Assert.That(c.Quantity(Concepts.AntiCollisionAlertThreshold)!.Name, Is.EqualTo("ProportionStandard"));
+            Assert.That(c.Quantity(Concepts.AntiCollisionAlarmThreshold)!.Name, Is.EqualTo("ProportionStandard"));
         });
     }
 
