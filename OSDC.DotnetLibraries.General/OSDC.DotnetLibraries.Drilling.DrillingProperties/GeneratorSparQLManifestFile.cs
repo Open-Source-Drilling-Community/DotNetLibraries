@@ -27,7 +27,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         List<SemanticFactAttribute> semanticFactAttributes = [];
                         foreach (var attr in workingSemanticFactAttributes)
                         {
-                            if (!(attr is ExcludeFactAttribute))
+                            if (!(attr is ExcludeFactAttribute) && !(attr is OptionalExcludeFactAttribute))
                             {
                                 if (!(attr is OptionalFactAttribute) ||
                                     (options == null && !(attr is OptionalFactAttribute) && !optionalFactAttributes.Contains(attr)) ||
@@ -50,7 +50,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         List<SemanticFactAttribute> toBeRemoved = [];
                         foreach (var attr in decls)
                         {
-                            bool isUtilized = false;
+                            bool isUtilized = attr.ObjectAttributes?.Length > 0;
                             foreach (var attr2 in semanticFactAttributes)
                             {
                                 if (attr2.Verb != Verbs.Enum.BelongsToClass &&
@@ -177,7 +177,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                             BrowseName = ProcessManifestVariable(kpv.Key),
                                             DisplayName = ProcessManifestVariable(kpv.Key),
                                             UniqueName = ProcessManifestVariable(kpv.Key),
-                                            TypeDictionaryURI = kpv.Value[0].ToString()
+                                            TypeDictionaryURI = kpv.Value[0].ToString(),
+                                            Fields = SemanticAttributeValues.Fields(kpv.Key, facts)
                                         };
                                         manifestFile.InjectedNodes.Add(injectedNode);
                                     }
@@ -285,7 +286,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 List<SemanticFactAttribute> semanticFactAttributes = [];
                                 foreach (var attr in workingSemanticFactAttributes)
                                 {
-                                    if (!(attr is ExcludeFactAttribute))
+                                    if (!(attr is ExcludeFactAttribute) && !(attr is OptionalExcludeFactAttribute))
                                     {
                                         if (!(attr is OptionalFactAttribute) ||
                                             (options == null && !(attr is OptionalFactAttribute) && !optionalFactAttributes.Contains(attr)) ||
@@ -308,7 +309,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 List<SemanticFactAttribute> toBeRemoved = [];
                                 foreach (var attr in decls)
                                 {
-                                    bool isUtilized = false;
+                                    bool isUtilized = attr.ObjectAttributes?.Length > 0;
                                     foreach (var attr2 in semanticFactAttributes)
                                     {
                                         if (attr2.Verb != Verbs.Enum.BelongsToClass &&
@@ -593,7 +594,8 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     BrowseName = ProcessManifestVariable(kpv.Key),
                                                     DisplayName = ProcessManifestVariable(kpv.Key),
                                                     UniqueName = ProcessManifestVariable(kpv.Key),
-                                                    TypeDictionaryURI = kpv.Value[0].ToString()
+                                                    TypeDictionaryURI = kpv.Value[0].ToString(),
+                                                    Fields = SemanticAttributeValues.Fields(kpv.Key, facts)
                                                 };
                                                 manifestFile.InjectedNodes.Add(injectedNode);
                                             }
@@ -892,7 +894,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                         List<SemanticFactAttribute> semanticFactAttributes = new List<SemanticFactAttribute>();
                         foreach (var attr in workingSemanticFactAttributes)
                         {
-                            if (!optionalFactAttributes.Contains(attr))
+                            if (!optionalFactAttributes.Contains(attr) && attr is not ExcludeFactAttribute)
                             {
                                 semanticFactAttributes.Add(attr);
                             }
@@ -943,6 +945,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 excludeFact.ObjectName = excludedFactAttribute.ObjectName;
                                                 excludeFact.ObjectPhysicalQuantity = excludedFactAttribute.ObjectPhysicalQuantity;
                                                 excludeFact.ObjectDrillingQuantity = excludedFactAttribute.ObjectDrillingQuantity;
+                                                excludeFact.ObjectAttributes = excludedFactAttribute.ObjectAttributes;
                                                 excludeFacts.Add(excludeFact);
                                             }
                                         }
@@ -982,6 +985,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 sparql += "\n";
                                             }
                                             sparql += "WHERE {\n";
+                                            SemanticAttributeValues.Validate(combination.Where(f => f is not ExcludeFact));
                                             List<string> alreadyTyped = new List<string>();
                                             foreach (var fact in combination)
                                             {
@@ -993,12 +997,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 {
                                                     fact.ObjectName = ProcessQueryVariable(fact.ObjectName);
                                                 }
-                                                sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
+                                                if (fact is not ExcludeFact) sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
                                             }
-                                            if (excludeFactAttributes != null && excludeFactAttributes.Any())
+                                            if (excludeFacts.Any() || combination.OfType<ExcludeFact>().Any())
                                             {
                                                 sparql += "  FILTER NOT EXISTS {\n";
-                                                foreach (var excluded in excludeFacts)
+                                                foreach (var excluded in excludeFacts.Concat(combination.OfType<ExcludeFact>()))
                                                 {
                                                     if (!string.IsNullOrEmpty(excluded.SubjectName))
                                                     {
@@ -1075,7 +1079,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                 List<SemanticFactAttribute> semanticFactAttributes = new List<SemanticFactAttribute>();
                                 foreach (var attr in workingSemanticFactAttributes)
                                 {
-                                    if (!optionalFactAttributes.Contains(attr))
+                                    if (!optionalFactAttributes.Contains(attr) && attr is not ExcludeFactAttribute)
                                     {
                                         semanticFactAttributes.Add(attr);
                                     }
@@ -1153,6 +1157,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                         excludeFact.ObjectName = excludedFactAttribute.ObjectName;
                                                         excludeFact.ObjectPhysicalQuantity = excludedFactAttribute.ObjectPhysicalQuantity;
                                                         excludeFact.ObjectDrillingQuantity = excludedFactAttribute.ObjectDrillingQuantity;
+                                                        excludeFact.ObjectAttributes = excludedFactAttribute.ObjectAttributes;
                                                         excludeFacts.Add(excludeFact);
                                                     }
                                                 }
@@ -1390,6 +1395,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                 }
                                                 sparql += "\n";
                                                 sparql += "WHERE {\n";
+                                                SemanticAttributeValues.Validate(combination.Where(f => f is not ExcludeFact));
                                                 List<string> alreadyTyped = new List<string>();
                                                 foreach (var fact in combination)
                                                 {
@@ -1401,7 +1407,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                     {
                                                         fact.ObjectName = ProcessQueryVariable(fact.ObjectName);
                                                     }
-                                                    sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
+                                                    if (fact is not ExcludeFact) sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
                                                 }
                                                 if (additionalQueryTypeVariables != null)
                                                 {
@@ -1411,13 +1417,13 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                                                         fact.SubjectName = ProcessQueryVariable(var);
                                                         fact.Verb = Verbs.Enum.BelongsToClass;
                                                         fact.ObjectName = ProcessQueryVariable(var) + "Type";
-                                                        sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
+                                                        if (fact is not ExcludeFact) sparql += GenerateWhereStatement(fact, alreadyTyped, excludeFacts);
                                                     }
                                                 }
-                                                if (excludeFactAttributes != null && excludeFactAttributes.Any())
+                                                if (excludeFacts.Any() || combination.OfType<ExcludeFact>().Any())
                                                 {
                                                     sparql += "  FILTER NOT EXISTS {\n";
-                                                    foreach (var excluded in excludeFacts)
+                                                    foreach (var excluded in excludeFacts.Concat(combination.OfType<ExcludeFact>()))
                                                     {
                                                         if (!string.IsNullOrEmpty(excluded.SubjectName))
                                                         {
@@ -1600,6 +1606,12 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                     }
                 }
             }
+            foreach (var fact in facts)
+            {
+                if (fact.ObjectAttributes?.Length > 0 &&
+                    (SemanticAttributeValues.Target(fact) is not string target || !results.ContainsKey(target)))
+                    throw new ArgumentException("Manifest semantic attributes require a declared injected node; provided variables and vocabulary nodes cannot carry fields.");
+            }
             return results;
         }
         private static string ProcessQueryVariable(string variable)
@@ -1659,7 +1671,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                     if (fact.Object == Nouns.Enum.DynamicDrillingSignal || 
                         fact.Object == Nouns.Enum.DrillingSignal)
                     {
-                        return string.Empty;
+                        return SemanticAttributeValues.Query(fact);
                     }
                 }
                 string verb = string.Empty;
@@ -1681,6 +1693,7 @@ namespace OSDC.DotnetLibraries.Drilling.DrillingProperties
                 }
 
                 result += "\t" + subject + " " + verb + " " + obj + " .\n";
+                result += SemanticAttributeValues.Query(fact);
             }
             return result;
         }

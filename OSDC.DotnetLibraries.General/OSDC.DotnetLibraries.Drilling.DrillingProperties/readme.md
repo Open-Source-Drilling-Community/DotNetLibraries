@@ -1,4 +1,4 @@
-# Background
+﻿# Background
 This package is developed as part of the Society of Petroleum (SPE) Open Source Drilling Community, a sub-committee of the Drilling System Automation Technical Section.
 
 # Purpose
@@ -1776,3 +1776,66 @@ This library depends on the following nugets:
 
 
 
+
+
+## Semantic node attributes in manifests and discovery queries
+
+`SemanticFact`, `OptionalFact`, `ExcludeFact`, and `OptionalExcludeFact` accept
+alternating attribute-name/value strings after their normal arguments:
+
+```csharp
+[SemanticFact("telemetry", Nouns.Enum.WiredPipeTelemetry,
+    "NumberOfRepeaters", "3")]
+[SemanticFact("measurement", Verbs.Enum.IsTransmittedBy, "telemetry",
+    "AverageDelayByRepeater", "0.25")]
+```
+
+On a `BelongsToClass` declaration, pairs describe the declared subject node. On a
+relationship, they describe its named object node. They never describe the edge.
+The manifest generator merges pairs into that injected node's `Fields`; repeated
+equivalent values are deduplicated, while conflicting values throw. A field target
+must be a declared injected node: the current manifest contract cannot carry these
+fields on provided variables, quantity definitions or vocabulary class nodes.
+Attribute-bearing standalone declarations are retained.
+
+Types come from the generated `DWIS.Vocabulary.Schemas.Attributes` name/type
+constants, not value heuristics. Use the unqualified attribute name (or the value
+of a generated attribute-name constant). The attribute must also be defined on the
+node's vocabulary class or an ancestor for the Blackboard to accept it; generation
+resolves scalar types by attribute name, but does not validate class membership.
+A new vocabulary attribute requires refreshed schema metadata before use here.
+
+Manifest field values are raw strings, normalized for numeric/boolean/date types;
+JSON serialization handles JSON escaping. SPARQL emits an attribute predicate in
+the `http://ddhub.no/` namespace and an explicitly typed XML Schema literal, e.g.:
+
+```sparql
+?telemetry ddhub:NumberOfRepeaters "3"^^<http://www.w3.org/2001/XMLSchema#int> .
+?telemetry ddhub:AverageDelayByRepeater "0.25"^^<http://www.w3.org/2001/XMLSchema#double> .
+```
+
+Supported scalar metadata types are string, bool/boolean, int, long, short, byte
+(XML Schema signed byte), uint, ulong, float, double, decimal and DateTime.
+Numbers use invariant XML lexical syntax (decimal point, optional exponent where
+applicable). Floating-point values must be finite. Quotes, backslashes, line breaks,
+tabs and control characters in string literals are escaped for SPARQL; strings
+that look numeric remain strings. Unknown/ambiguous names, invalid/overflowed values,
+and unsupported structured types such as arrays or object fail explicitly.
+
+Mandatory pairs constrain every query. Optional pairs follow the existing fact
+combination/group selection and are injected only when their group is selected.
+Excluded pairs appear only inside `FILTER NOT EXISTS`, together with their owning
+fact; they are never injected or emitted as positive constraints. Optional exclusions
+apply only to selected combinations. These rules apply to type-level and property-level
+generation. Existing annotations without attribute pairs retain their output, except
+that excluded facts are now correctly omitted from positive query patterns.
+
+This support generates contracts; it does not alter Blackboard literal conversion.
+A consuming Blackboard must support the corresponding scalar type and preserve its
+lexical value (notably DateTime and strings containing punctuation).
+
+Run the regression suite using the explicit project path:
+
+```powershell
+dotnet test ..\OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest\OSDC.DotnetLibraries.Drilling.DrillingProperties.UnitTest.csproj
+```
