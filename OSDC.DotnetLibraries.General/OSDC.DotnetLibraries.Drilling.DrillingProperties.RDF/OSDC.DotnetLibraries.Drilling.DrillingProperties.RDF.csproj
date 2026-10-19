@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.2.51" />
+    <PackageReference Include="DWIS.Client.ReferenceImplementation" Version="2.2.52" />
     <PackageReference Include="OSDC.DotnetLibraries.Drilling.DrillingProperties" Version="4.0.1" />
   </ItemGroup>
 

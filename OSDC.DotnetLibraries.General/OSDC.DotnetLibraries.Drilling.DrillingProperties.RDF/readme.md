@@ -10,7 +10,7 @@ associated with.
 # Dependence
 This library depends on the following nugets:
 
-- `DWIS.Client.ReferenceImplementation`
+- `DWIS.Client.ReferenceImplementation` 2.2.52 (DWIS semantic dependencies 2.2.33)
 - `OSDC.DotnetLibraries.Drilling.DrillingProperties`
 
 
