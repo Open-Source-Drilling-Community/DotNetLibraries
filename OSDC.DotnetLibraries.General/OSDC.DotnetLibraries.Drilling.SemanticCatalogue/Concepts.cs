@@ -709,4 +709,9 @@ public static class Concepts
     public const string InnermostKnownBoundary = "urn:osdc:semantic:innermost-known-boundary";
     public const string MaterialOutsideBoundary = "urn:osdc:semantic:material-outside-boundary";
     public const string MaterialInsideBoundary = "urn:osdc:semantic:material-inside-boundary";
+    // Generic aggregation and ordered-collection query bindings approved on 2026-10-18.
+    public const string TrajectoryAggregationCentreCoordinateConstancyTolerance = "urn:osdc:semantic:trajectory-aggregation-centre-coordinate-constancy-tolerance";
+    public const string TrajectoryAggregationCurvatureConstancyTolerance = "urn:osdc:semantic:trajectory-aggregation-curvature-constancy-tolerance";
+    public const string SequencePosition = "urn:osdc:semantic:sequence-position";
+    public const string ExactCollectionCardinality = "urn:osdc:semantic:exact-collection-cardinality";
 }
