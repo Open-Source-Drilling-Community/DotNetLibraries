@@ -10,12 +10,30 @@ public class TrajectoryVocabularyTests
     public void TrajectoryIncrementIsReviewedAndPreservesThePreviousBaseline()
     {
         var c = Catalogue.Default;
-        Assert.That(c.Document.Version, Is.EqualTo("0.22.0"));
-        Assert.That(c.Document.Concepts, Has.Count.EqualTo(694));
+        Assert.That(c.Document.Version, Is.EqualTo("0.23.0"));
+        Assert.That(c.Document.Concepts, Has.Count.EqualTo(703));
         Assert.That(c.Document.Concepts.Take(421), Has.Count.EqualTo(421));
         Assert.That(c.Document.Concepts.Skip(421).Take(96), Has.Count.EqualTo(96));
         Assert.That(c.Document.Concepts.Skip(421).Take(96).All(x => x.Status == CurationStatus.Reviewed), Is.True);
         Assert.That(c.Document.Concepts.Skip(421).Take(96).All(x => x.Evidence.Count > 0), Is.True);
+    }
+
+    [Test]
+    public void CurveCurvatureCharacteristicsAreReusableAcrossCalculationContexts()
+    {
+        var c = Catalogue.Default;
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.Get(Concepts.CurveCurvatureCharacteristics).Kind, Is.EqualTo(SemanticKind.Noun));
+            Assert.That(c.Get(Concepts.MinimumValue).Kind, Is.EqualTo(SemanticKind.Role));
+            Assert.That(c.Get(Concepts.JunctionValue).Kind, Is.EqualTo(SemanticKind.Role));
+            Assert.That(c.Get(Concepts.MaximumValue).Kind, Is.EqualTo(SemanticKind.Role));
+            Assert.That(c.Get(Concepts.CurveCurvatureCharacteristics).Relations.Any(relation =>
+                relation.Kind == SemanticRelationKind.HasPart && relation.Target == Concepts.WellboreCurvature), Is.True);
+            Assert.That(c.IsA(Concepts.LeadInContinuationSection, Concepts.SolvedTrajectorySection), Is.True);
+            Assert.That(c.IsA(Concepts.UpstreamSteeringSection, Concepts.SolvedTrajectorySection), Is.True);
+            Assert.That(c.IsA(Concepts.DownstreamSteeringSection, Concepts.SolvedTrajectorySection), Is.True);
+        });
     }
 
     [Test]

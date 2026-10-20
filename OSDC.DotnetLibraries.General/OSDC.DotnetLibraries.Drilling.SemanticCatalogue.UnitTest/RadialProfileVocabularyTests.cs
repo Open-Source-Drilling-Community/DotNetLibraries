@@ -36,7 +36,7 @@ public sealed class RadialProfileVocabularyTests
     public void VersionIs0200AndEveryPublicConstantResolves() =>
         Assert.Multiple(() =>
         {
-            Assert.That(Catalogue.Default.Document.Version, Is.EqualTo("0.22.0"));
+            Assert.That(Catalogue.Default.Document.Version, Is.EqualTo("0.23.0"));
             foreach (var field in typeof(Concepts).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
                 if (field.IsLiteral && field.FieldType == typeof(string) && field.GetRawConstantValue() is string id)
                     Assert.That(() => Catalogue.Default.Get(id), Throws.Nothing, field.Name);

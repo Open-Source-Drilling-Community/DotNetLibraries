@@ -22,12 +22,12 @@ public class CalculationLifecycleVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(catalogue.Document.Version, Is.EqualTo("0.22.0"));
-            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(694));
+            Assert.That(catalogue.Document.Version, Is.EqualTo("0.23.0"));
+            Assert.That(catalogue.Document.Concepts, Has.Count.EqualTo(703));
             Assert.That(catalogue.Document.Concepts.Skip(577).Take(20), Has.Count.EqualTo(20));
             Assert.That(catalogue.Document.Concepts.Skip(577).Take(20).All(x => x.Status == CurationStatus.Reviewed), Is.True);
             Assert.That(catalogue.Document.Concepts.Skip(577).Take(20).All(x => x.Evidence.Count > 0), Is.True);
-            Assert.That(catalogue.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(689));
+            Assert.That(catalogue.Document.Concepts.Count(x => x.Status == CurationStatus.Reviewed), Is.EqualTo(698));
         });
     }
 
@@ -126,7 +126,7 @@ public class CalculationLifecycleVocabularyTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(metadata["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.22.0"));
+            Assert.That(metadata["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.23.0"));
             Assert.That(metadata["concept"]!.GetValue<string>(), Is.EqualTo(Concepts.CalculationCase));
             Assert.That(metadata["role"]!.GetValue<string>(), Is.EqualTo(Concepts.QueuedCalculationSubmission));
         });

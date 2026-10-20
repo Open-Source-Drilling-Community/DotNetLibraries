@@ -714,4 +714,14 @@ public static class Concepts
     public const string TrajectoryAggregationCurvatureConstancyTolerance = "urn:osdc:semantic:trajectory-aggregation-curvature-constancy-tolerance";
     public const string SequencePosition = "urn:osdc:semantic:sequence-position";
     public const string ExactCollectionCardinality = "urn:osdc:semantic:exact-collection-cardinality";
+    // Generic curve-curvature characteristics approved on 2026-10-20.
+    public const string CurveCurvatureCharacteristics = "urn:osdc:semantic:curve-curvature-characteristics";
+    public const string MinimumValue = "urn:osdc:semantic:minimum-value";
+    public const string JunctionValue = "urn:osdc:semantic:junction-value";
+    public const string MaximumValue = "urn:osdc:semantic:maximum-value";
+    public const string FixedLengthExtensionSection = "urn:osdc:semantic:fixed-length-extension-section";
+    public const string LeadInContinuationSection = "urn:osdc:semantic:lead-in-continuation-section";
+    public const string UpstreamSteeringSection = "urn:osdc:semantic:upstream-steering-section";
+    public const string DownstreamSteeringSection = "urn:osdc:semantic:downstream-steering-section";
+    public const string WellPathSection = "urn:osdc:semantic:well-path-section";
 }
