@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Check out code
@@ -52,5 +53,11 @@ jobs:
       - name: Pack
         run: dotnet pack OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.General.Statistics/OSDC.DotnetLibraries.General.Statistics.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.version }} --output ${{ github.workspace }}/artifacts
 
+      - name: NuGet login with trusted publishing
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER || secrets.NUGET_USER }}
+
       - name: Push to NuGet.org
-        run: dotnet nuget push "${{ github.workspace }}/artifacts/OSDC.DotnetLibraries.General.Statistics.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "${{ github.workspace }}/artifacts/OSDC.DotnetLibraries.General.Statistics.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
