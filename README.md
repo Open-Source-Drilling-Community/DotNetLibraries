@@ -44,3 +44,6 @@ DrillingProperties 10.2.11 references DWIS.API.DTO 2.2.34 in both the standard a
 The `generate-pack-push-drilling-properties.yml` workflow restores, builds, tests, packs and uploads the package artifact before publishing through `NuGet/login@v1` with GitHub OIDC. It requires `id-token: write` and a repository variable or secret named `NUGET_USER` containing the NuGet account username. No long-lived NuGet API key is used.
 
 Configure a NuGet.org trusted publishing policy for owner `Open-Source-Drilling-Community`, repository `DotNetLibraries`, and workflow `generate-pack-push-drilling-properties.yml` (no environment). Run the workflow manually with the project version, or push a matching `drillingproperties-v<version>` tag. The requested version must match the project version. Verify the successful publishing run and NuGet.org indexing before consuming a release.
+## Statistics dependency update
+General.Statistics 3.3.6 depends on General.Math 1.4.2. Run the Statistics.UnitTest project
+and dispatch generate-pack-push-statistics.yml with version 3.3.6 to publish.
