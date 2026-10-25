@@ -47,3 +47,7 @@ Configure a NuGet.org trusted publishing policy for owner `Open-Source-Drilling-
 ## Statistics dependency update
 General.Statistics 3.3.6 depends on General.Math 1.4.2. Run the Statistics.UnitTest project
 and dispatch generate-pack-push-statistics.yml with version 3.3.6 to publish.
+
+## RigJobDescription dependency release
+
+DrillingProperties 10.2.12 rebuilds against DWIS.API.DTO 2.2.35 (vocabulary 1.0.177), including the debug DTO reference. The RDF client reference is aligned to 2.2.56. Intended release consumers are Common.Model and the rig bridge; the inventory of other OSDC consumers was reviewed without an unrelated service-wide upgrade.
