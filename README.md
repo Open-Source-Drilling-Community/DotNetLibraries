@@ -39,7 +39,7 @@ documents ownership, contract preservation, validation policies and publication 
 
 ## DrillingProperties publishing
 
-DrillingProperties 10.2.11 references DWIS.API.DTO 2.2.34 in both the standard and debug projects. The RDF project references DWIS.Client.ReferenceImplementation 2.2.53.
+DrillingProperties 10.2.12 references DWIS.API.DTO 2.2.35 in both the standard and debug projects. The RDF project references DWIS.Client.ReferenceImplementation 2.2.56.
 
 The `generate-pack-push-drilling-properties.yml` workflow restores, builds, tests, packs and uploads the package artifact before publishing through `NuGet/login@v1` with GitHub OIDC. It requires `id-token: write` and a repository variable or secret named `NUGET_USER` containing the NuGet account username. No long-lived NuGet API key is used.
 
