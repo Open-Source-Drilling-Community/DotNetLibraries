@@ -737,3 +737,9 @@ the `Covariance` matrices.
 
 
 
+# Borehole radius default
+
+Since 1.3.7, a new `SurveyStation` has a null `BoreholeRadius` when no radius is
+specified. Explicit values, including zero in legacy data, are preserved. Consumers
+that treat legacy zero as unknown should continue to handle it explicitly.
+

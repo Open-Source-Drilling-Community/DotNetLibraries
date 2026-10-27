@@ -27,9 +27,9 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public SurveyInstrument? SurveyTool { get; set; }
         /// <summary>
-        /// The borehole radius at the survey station
+        /// The borehole radius at the survey station, or null when unknown.
         /// </summary>
-        public double? BoreholeRadius { get; set; } = 0.0;
+        public double? BoreholeRadius { get; set; }
 
         /// <summary>
         /// default constructor
