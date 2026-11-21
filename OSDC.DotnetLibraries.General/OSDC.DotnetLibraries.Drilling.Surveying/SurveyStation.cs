@@ -757,8 +757,19 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             h = c * p;
                             r = Pythag(p, e[i]);
                             e[i + 1] = s * r;
-                            s = e[i] / r;
-                            c = p / r;
+                            if (Numeric.EQ(r, 0.0))
+                            {
+                                // A positive-semidefinite rank-deficient covariance can produce a
+                                // zero QL rotation. Preserve the identity rotation instead of 0/0,
+                                // which would contaminate the sentinel subdiagonal with NaN.
+                                s = 0.0;
+                                c = 1.0;
+                            }
+                            else
+                            {
+                                s = e[i] / r;
+                                c = p / r;
+                            }
                             p = c * d[i] - s * g;
                             d[i + 1] = h + s * (c * g + s * d[i]);
 

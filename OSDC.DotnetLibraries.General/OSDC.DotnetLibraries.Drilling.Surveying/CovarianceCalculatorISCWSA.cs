@@ -21,7 +21,17 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         {
             bool ok;
             if (surveyStationList is { } && surveyStationList.Count > 0)
-            { 
+            {
+                foreach (ErrorSource source in surveyStationList
+                             .SelectMany(station => station.SurveyTool?.ErrorSourceList ?? [])
+                             .Distinct())
+                {
+                    if (!ErrorSourceRuntime.TryHydrate(source, out string? hydrationError))
+                    {
+                        System.Console.WriteLine(hydrationError);
+                        return false;
+                    }
+                }
                 ok = SurveyStation.CompleteSurvey(surveyStationList); // make sure that all survey stations member variables are complete
                 if (ok) 
                 {

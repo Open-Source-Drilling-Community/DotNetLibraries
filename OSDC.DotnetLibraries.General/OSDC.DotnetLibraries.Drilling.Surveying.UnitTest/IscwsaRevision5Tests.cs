@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using static OSDC.DotnetLibraries.Drilling.Surveying.ErrorSource;
 
 namespace OSDC.DotnetLibraries.Drilling.Surveying.UnitTest;
@@ -217,6 +219,35 @@ public class IscwsaRevision5Tests
         });
     }
 
+    [TestCase(0)]
+    [TestCase(1)]
+    public void JsonRoundTrippedRevision5ToolCalculatesU7(int stationsToSkip)
+    {
+        JsonSerializerOptions options = new();
+        options.Converters.Add(new JsonStringEnumConverter());
+        SurveyInstrument original = CreateOfficialMwdRev5Tool();
+        SurveyInstrument roundTripped = JsonSerializer.Deserialize<SurveyInstrument>(
+            JsonSerializer.Serialize(original, options), options)!;
+
+        Assert.That(roundTripped.ErrorSourceList, Is.All.Matches<ErrorSource>(source =>
+            source.WeightingFunctionMD == null && source.WeightingFunctionIncl == null &&
+            source.WeightingFunctionAzim == null));
+
+        List<SurveyStation> stations = CreateU7Stations(roundTripped).Skip(stationsToSkip).ToList();
+        Assert.That(CovarianceCalculatorISCWSA.Calculate(stations), Is.True);
+        Assert.That(stations, Is.All.Matches<SurveyStation>(station => station.Covariance != null));
+    }
+
+    [Test]
+    public void InitialInclinedStationSupportsRankOneDepthReferenceCovariance()
+    {
+        SurveyInstrument tool = CreateOfficialMwdRev5Tool();
+        List<SurveyStation> stations = CreateU7Stations(tool).Skip(2).ToList();
+
+        Assert.That(CovarianceCalculatorISCWSA.Calculate(stations), Is.True);
+        Assert.That(stations[0].EigenValues, Is.Not.Null);
+    }
+
     private static void AssertIscwsaDiagnosticValue(double? actual, double expected, string component)
     {
         // The diagnostic file reports four decimals and OSDC uses its established minimum-curvature
@@ -272,6 +303,40 @@ public class IscwsaRevision5Tests
             ErrorSourceFactory.Create_DBH_OI(magnitude: 356e-9 * DegreesToRadians)
         ]
     };
+
+    private static List<SurveyStation> CreateU7Stations(SurveyInstrument tool) =>
+    [
+        new SurveyStation
+        {
+            MD = -90.72, Abscissa = -90.72, Inclination = 0, Azimuth = 0,
+            X = 6535270.882093326, Y = 328667.90173262125, Z = -90.72,
+            RiemannianNorth = 6535270.882093326, RiemannianEast = 328667.90173262125,
+            Latitude = 1.0285851086006512, Longitude = 0.09961349831157526,
+            TVD = -90.72, VerticalSection = 0, SurveyTool = tool
+        },
+        new SurveyStation
+        {
+            MD = -49.22, Abscissa = -49.22, Inclination = 0.029845130209103034, Azimuth = 2.966187063764363,
+            X = 6535270.272354566, Y = 328668.0097947415, Z = -49.22616062055119,
+            RiemannianNorth = 6535270.272354566, RiemannianEast = 328668.0097947415,
+            TVD = -49.22616062055119, VerticalSection = 0.6192404848274852, SurveyTool = tool
+        },
+        new SurveyStation
+        {
+            MD = 0.7800000000000011, Abscissa = 0.7800000000000011,
+            Inclination = 0.07696902001294993, Azimuth = 2.9571113516539924,
+            X = 6535267.647591092, Y = 328668.49269486626, Z = 0.6979295697585925,
+            RiemannianNorth = 6535267.647591092, RiemannianEast = 328668.49269486626,
+            TVD = 0.6979295697585925, VerticalSection = 3.288055919478057, SurveyTool = tool
+        },
+        new SurveyStation
+        {
+            MD = 50.78, Abscissa = 50.78, Inclination = 0.12479104151759457, Azimuth = 2.8963738936845895,
+            X = 6535262.738337163, Y = 328669.6009536944, Z = 50.43913203361417,
+            RiemannianNorth = 6535262.738337163, RiemannianEast = 328669.6009536944,
+            TVD = 50.43913203361417, VerticalSection = 8.32084955399468, SurveyTool = tool
+        }
+    ];
 
     private static List<SurveyStation> CreateIscwsaWellOne(SurveyInstrument tool)
     {

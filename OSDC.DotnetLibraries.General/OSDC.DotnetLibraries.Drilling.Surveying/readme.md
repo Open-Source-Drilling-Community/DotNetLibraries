@@ -4,6 +4,8 @@ This package contains classes to perform survey calculations.
 
 ISCWSA Revision 5 covariance calculations are regression-tested against the official Rev5.1 ISCWSA#1 diagnostic well. The calculator publishes the accumulated covariance on every station, includes depth-reference uncertainty at the first station, uses SI magnitudes, and treats `*-U` sources as Well-by-Well. The Revision 5 vocabulary includes the exact axial-correction sensor names and the `MFIR`, `MFI-U/OS/OH/OI`, `MDIR`, and `MDI-U/OS/OH/OI` splits; earlier simplified OSDC codes remain deserializable but are rejected for new Revision 5 models. The complete-matrix test retains a one-percent comparison envelope because OSDC uses its established minimum-curvature geometry while the diagnostic data uses the ISCWSA reference interpolation; individual unit and weighting-function checks remain exact.
 
+Error-source weighting functions are executable runtime delegates and are intentionally omitted from JSON and OpenAPI contracts. Before an ISCWSA calculation, the calculator restores those delegates from the serialized error-source code while preserving the transmitted magnitude, propagation mode, quantity, and other declarative values. This allows generated DTOs and JSON-round-tripped Survey Instruments to calculate correctly without embedding implementation details in their schemas. Rank-deficient positive-semidefinite covariance matrices at an inclined first station are also supported.
+
 # Survey
 A `Survey` is a subclass of `CurvilinearPoint3D`. For that reason, it is a `Point3D` with `X`, `Y` and `Z` components, but it is also defined
 on a curve and has therefore a curvilinear `Abscissa` (denoted here as $s$) and a tangent defined by an `Inclination` (denoted here $\theta$) 
