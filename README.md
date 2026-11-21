@@ -22,6 +22,8 @@ It contains the following standard libraries implemented in .NET, relevant for t
 - [Surveying (unit tests)](https://github.com/Open-Source-Drilling-Community/DotNetLibraries/tree/main/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.Surveying.UnitTest): unit tests associated with the Surveying library
 - [Surveying](https://github.com/Open-Source-Drilling-Community/DotNetLibraries/tree/main/OSDC.DotnetLibraries.General/OSDC.DotnetLibraries.Drilling.Surveying): utility classes and functions used in wellbore surveying
 
+`UncertaintyEnvelope` normally calculates covariance from the supplied survey history. Callers that have already reconstructed complete multi-leg covariance can set `SurveyStationsPrepared`; the envelope then validates and consumes those matrices without rerunning a flattened instrument model.
+
 ## Deployment
 Most of these libraries have been packaged as .NET NuGets and published to [nuget.org](https://www.nuget.org/packages?q=OSDC.Dotnetlibraries).
 

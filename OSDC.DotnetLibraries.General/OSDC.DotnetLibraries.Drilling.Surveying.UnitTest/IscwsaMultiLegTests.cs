@@ -33,6 +33,45 @@ public sealed class IscwsaMultiLegTests
     }
 
     [Test]
+    public void Prepared_envelope_preserves_covariance_without_requiring_survey_tools()
+    {
+        SurveyInstrument tool = MwdTool();
+        List<SurveyStation> stations = Stations(tool, tool);
+        Assert.That(CovarianceCalculatorISCWSA.Calculate(stations), Is.True);
+        SymmetricMatrix3x3[] covariance = stations.Select(station => Clone(station.Covariance!)).ToArray();
+        foreach (SurveyStation station in stations)
+        {
+            station.SurveyTool = null;
+        }
+
+        UncertaintyEnvelope envelope = new()
+        {
+            ErrorModel = UncertaintyEnvelope.ErrorModelType.ISCWSA,
+            SurveyStationList = stations,
+            SurveyStationsPrepared = true,
+            ConfidenceFactor = 0.95,
+            ScalingFactor = 1.0,
+            CalculateHorizontalEllipse = false,
+            CalculateVerticalEllipse = false,
+            CalculatePerpendicularEllipse = true
+        };
+
+        Assert.That(envelope.Calculate(), Is.True);
+        Assert.That(envelope.MeshedEllipseList, Is.Not.Empty);
+        for (int station = 0; station < stations.Count; station++)
+        {
+            for (int row = 0; row < 3; row++)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    Assert.That(stations[station].Covariance![row, column],
+                        Is.EqualTo(covariance[station][row, column]).Within(1e-12));
+                }
+            }
+        }
+    }
+
+    [Test]
     public void Gyro_to_mwd_tie_on_supports_different_error_source_sets()
     {
         SurveyInstrument gyro = GyroTool();
@@ -183,4 +222,17 @@ public sealed class IscwsaMultiLegTests
 
     private static double Trace(SymmetricMatrix3x3 covariance) =>
         covariance[0, 0]!.Value + covariance[1, 1]!.Value + covariance[2, 2]!.Value;
+
+    private static SymmetricMatrix3x3 Clone(SymmetricMatrix3x3 source)
+    {
+        SymmetricMatrix3x3 clone = new();
+        for (int row = 0; row < 3; row++)
+        {
+            for (int column = 0; column < 3; column++)
+            {
+                clone[row, column] = source[row, column];
+            }
+        }
+        return clone;
+    }
 }

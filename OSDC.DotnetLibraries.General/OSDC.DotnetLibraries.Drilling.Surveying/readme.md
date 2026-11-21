@@ -6,6 +6,8 @@ ISCWSA Revision 5 covariance calculations are regression-tested against the offi
 
 `CovarianceCalculatorISCWSA.CalculateMultiLeg` propagates a contiguous well assembled from survey legs that use different ISCWSA gyro or MWD tools. Error sources are joined by their stable ISCWSA error code rather than list position. Random and systematic contributions remain independent between legs, while Well-by-Well and Global contributions with the same code remain correlated across legs as required by Revision 5. Conflicting propagation modes or quantities for the same code fail closed.
 
+`UncertaintyEnvelope` calculates covariance itself by default. Set `SurveyStationsPrepared` only when every supplied station already carries authoritative covariance reconstructed from its complete multi-leg lineage. The envelope validates those matrices and projects them without rerunning a single flattened instrument model.
+
 Error-source weighting functions are executable runtime delegates and are intentionally omitted from JSON and OpenAPI contracts. Before an ISCWSA calculation, the calculator restores those delegates from the serialized error-source code while preserving the transmitted magnitude, propagation mode, quantity, and other declarative values. This allows generated DTOs and JSON-round-tripped Survey Instruments to calculate correctly without embedding implementation details in their schemas. Rank-deficient positive-semidefinite covariance matrices at an inclined first station are also supported.
 
 # Survey

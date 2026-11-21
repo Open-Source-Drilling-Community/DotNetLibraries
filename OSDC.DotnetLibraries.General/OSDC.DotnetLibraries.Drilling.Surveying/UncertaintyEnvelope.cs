@@ -15,6 +15,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// </summary>
         public List<SurveyStation>? SurveyStationList { get; set; }
         /// <summary>
+        /// Indicates that every survey station already carries authoritative covariance calculated
+        /// from its complete survey-leg lineage. When true, envelope projection must not recalculate
+        /// covariance from the flattened station list.
+        /// </summary>
+        public bool SurveyStationsPrepared { get; set; }
+        /// <summary>
         /// The confidence factor used to compute the ellipsoid of uncertainty
         /// </summary>
         public double? ConfidenceFactor { get; set; } = 0.95;
@@ -86,7 +92,11 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 /////////////////////////////////////////////////////////////////////////////////////////////
                 if (surveyStationsIndices != null && surveyStationsIndices.Count >= 3) // 3 survey stations needed for an envelope
                 {
-                    if (errorModel is ErrorModelType.WolffAndDeWardt)
+                    if (SurveyStationsPrepared)
+                    {
+                        ok = surveyStationsIndices.All(index => HasUsableCovariance(SurveyStationList[index]));
+                    }
+                    else if (errorModel is ErrorModelType.WolffAndDeWardt)
                     {
                         ok = CovarianceCalculatorWolffDeWardt.Calculate(SurveyStationList, surveyStationsIndices);
                     }
@@ -197,6 +207,26 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                 }
             }
             return ok;
+        }
+
+        private static bool HasUsableCovariance(SurveyStation station)
+        {
+            if (station.Covariance is not { } covariance)
+            {
+                return false;
+            }
+
+            for (int row = 0; row < 3; row++)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    if (covariance[row, column] is not double value || !double.IsFinite(value))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         /// <summary>
