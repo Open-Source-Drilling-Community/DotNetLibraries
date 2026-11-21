@@ -6,6 +6,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
 {
     public static class CovarianceCalculatorISCWSA
     {
+        /// <summary>
+        /// One contiguous survey leg and the position-uncertainty model used for that leg.
+        /// Indices are inclusive and refer to the flattened wellbore station list.
+        /// </summary>
+        public sealed record SurveyLeg(int StartIndex, int EndIndex, SurveyInstrument SurveyTool);
+
         // Default tortuosity for long course length terms (XCL terms in ISCWSA notations)
         public static readonly double DEFAULT_TORTUOSITY = 0.000572615; //[rad/m]
 
@@ -18,6 +24,12 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public static bool Calculate(List<SurveyStation> surveyStationList, List<int>? surveyStationsIndices = null)
+            => CalculateCore(surveyStationList, surveyStationsIndices, null);
+
+        private static bool CalculateCore(
+            List<SurveyStation> surveyStationList,
+            List<int>? surveyStationsIndices,
+            Action<int, IReadOnlyList<ISCWSAErrorAccumulator>>? accumulatorObserver)
         {
             bool ok;
             if (surveyStationList is { } && surveyStationList.Count > 0)
@@ -62,6 +74,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                     // The ISCWSA error accumulator is initialized
                     foreach (var errorSource in surveyStationList[startIdx]!.SurveyTool!.ErrorSourceList!)
                         errorSourcesAccumulator.Add(new());
+                    accumulatorObserver?.Invoke(startIdx, errorSourcesAccumulator);
 
                     // Since startIdx 0 is handled above, and since we send the previous station to the CalculateCovariance method, we need to start at index 1 here.
                     // However, if startIdx is greater than 1, we need to start at startIdx to make sure we calculate the covariance for all stations in the list up to endIdx.
@@ -89,6 +102,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                             }
                             if (!ok)
                                 throw new Exception($"Calling CalculateCovariance() failed at iteration {i}");
+                            accumulatorObserver?.Invoke(i, errorSourcesAccumulator);
                         }
 
                         // TODO: implement the code below?
@@ -107,6 +121,265 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             }
             return ok;
         }
+
+        /// <summary>
+        /// Calculates one ISCWSA wellbore assembled from consecutive survey legs that may use
+        /// different gyro or MWD position-uncertainty models. Random and systematic sources are
+        /// independent between legs; well-by-well and global sources with the same error code are
+        /// correlated across legs, as defined by ISCWSA Revision 5 section 4.7.
+        /// </summary>
+        public static bool CalculateMultiLeg(List<SurveyStation> surveyStationList, IReadOnlyList<SurveyLeg> surveyLegs)
+        {
+            if (!ValidateSurveyLegs(surveyStationList, surveyLegs) || !SurveyStation.CompleteSurvey(surveyStationList))
+            {
+                return false;
+            }
+
+            SymmetricMatrix3x3[] totalCovariance = Enumerable.Range(0, surveyStationList.Count)
+                .Select(_ => ZeroCovariance())
+                .ToArray();
+
+            List<SourceOccurrence> occurrences = [];
+            foreach (SurveyLeg leg in surveyLegs)
+            {
+                foreach (ErrorSource source in leg.SurveyTool.ErrorSourceList!)
+                {
+                    occurrences.Add(new SourceOccurrence(leg, source));
+                }
+            }
+
+            foreach (IGrouping<ErrorCode, SourceOccurrence> sourceGroup in occurrences.GroupBy(item => item.Source.ErrorCode))
+            {
+                SourceOccurrence[] sourceOccurrences = sourceGroup.ToArray();
+                ErrorPropagationMode mode = sourceOccurrences[0].Source.EffectivePropagationMode;
+                if (sourceOccurrences.Any(item =>
+                        item.Source.EffectivePropagationMode != mode ||
+                        item.Source.MagnitudeQuantity != sourceOccurrences[0].Source.MagnitudeQuantity))
+                {
+                    return false;
+                }
+
+                List<ScenarioResult> scenarios = [];
+                foreach (SourceOccurrence occurrence in sourceOccurrences)
+                {
+                    if (!TryCalculateLegSourceScenario(surveyStationList, occurrence, out ScenarioResult? scenario) || scenario == null)
+                    {
+                        return false;
+                    }
+                    scenarios.Add(scenario);
+                }
+
+                if (mode is ErrorPropagationMode.Random or ErrorPropagationMode.Systematic)
+                {
+                    foreach (ScenarioResult scenario in scenarios)
+                    {
+                        for (int stationIndex = 0; stationIndex < surveyStationList.Count; stationIndex++)
+                        {
+                            AddCovariance(totalCovariance[stationIndex], scenario.Covariances[stationIndex]);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int stationIndex = 0; stationIndex < surveyStationList.Count; stationIndex++)
+                    {
+                        double[] combined = new double[3];
+                        foreach (ScenarioResult scenario in scenarios)
+                        {
+                            for (int axis = 0; axis < 3; axis++)
+                            {
+                                combined[axis] += scenario.EffectiveErrors[stationIndex][axis];
+                            }
+                        }
+                        AddOuterProduct(totalCovariance[stationIndex], combined);
+                    }
+                }
+            }
+
+            for (int stationIndex = 0; stationIndex < surveyStationList.Count; stationIndex++)
+            {
+                surveyStationList[stationIndex].Covariance = totalCovariance[stationIndex];
+                surveyStationList[stationIndex].CalculateEigenProperties();
+            }
+            return true;
+        }
+
+        private static bool ValidateSurveyLegs(List<SurveyStation>? stations, IReadOnlyList<SurveyLeg>? legs)
+        {
+            if (stations is not { Count: > 0 } || legs is not { Count: > 0 } ||
+                legs[0].StartIndex != 0 || legs[^1].EndIndex != stations.Count - 1)
+            {
+                return false;
+            }
+
+            int expectedStart = 0;
+            foreach (SurveyLeg leg in legs)
+            {
+                if (leg.StartIndex != expectedStart || leg.EndIndex < leg.StartIndex || leg.EndIndex >= stations.Count ||
+                    leg.SurveyTool?.ErrorSourceList is not { Count: > 0 } sources ||
+                    sources.GroupBy(source => source.ErrorCode).Any(group => group.Count() != 1))
+                {
+                    return false;
+                }
+                expectedStart = leg.EndIndex + 1;
+            }
+            return true;
+        }
+
+        private static bool TryCalculateLegSourceScenario(
+            List<SurveyStation> sourceStations,
+            SourceOccurrence occurrence,
+            out ScenarioResult? result)
+        {
+            result = null;
+            int contextStart = occurrence.Leg.StartIndex == 0 ? 0 : occurrence.Leg.StartIndex - 1;
+            List<SurveyStation> scenarioStations = [];
+            for (int globalIndex = contextStart; globalIndex < sourceStations.Count; globalIndex++)
+            {
+                bool active = globalIndex >= occurrence.Leg.StartIndex && globalIndex <= occurrence.Leg.EndIndex;
+                ErrorSource scenarioSource = CloneErrorSource(occurrence.Source, active ? occurrence.Source.Magnitude : 0.0);
+                SurveyStation station = new(sourceStations[globalIndex])
+                {
+                    SurveyTool = CloneSurveyTool(occurrence.Leg.SurveyTool, scenarioSource),
+                    Covariance = null,
+                    Bias = null,
+                    EigenValues = null,
+                    EigenVectors = null
+                };
+                scenarioStations.Add(station);
+            }
+
+            double[][] effectiveErrors = Enumerable.Range(0, sourceStations.Count)
+                .Select(_ => new double[3])
+                .ToArray();
+            bool calculated = CalculateCore(scenarioStations, null, (localIndex, accumulators) =>
+            {
+                if (accumulators.Count == 1 && accumulators[0].CurrentError is { Length: 3 } current)
+                {
+                    effectiveErrors[contextStart + localIndex] = (double[])current.Clone();
+                }
+            });
+            if (!calculated)
+            {
+                return false;
+            }
+
+            SymmetricMatrix3x3[] covariances = Enumerable.Range(0, sourceStations.Count)
+                .Select(_ => ZeroCovariance())
+                .ToArray();
+            for (int localIndex = 0; localIndex < scenarioStations.Count; localIndex++)
+            {
+                if (scenarioStations[localIndex].Covariance is not { } covariance)
+                {
+                    return false;
+                }
+                covariances[contextStart + localIndex] = CloneCovariance(covariance);
+            }
+            result = new ScenarioResult(covariances, effectiveErrors);
+            return true;
+        }
+
+        private static SurveyInstrument CloneSurveyTool(SurveyInstrument source, ErrorSource errorSource) => new()
+        {
+            MetaInfo = source.MetaInfo,
+            Name = source.Name,
+            Description = source.Description,
+            ModelType = source.ModelType,
+            ErrorSourceList = [errorSource],
+            Dip = source.Dip,
+            Declination = source.Declination,
+            Gravity = source.Gravity,
+            BField = source.BField,
+            Convergence = source.Convergence,
+            Latitude = source.Latitude,
+            EarthRotRate = source.EarthRotRate,
+            CantAngle = source.CantAngle,
+            GyroRunningSpeed = source.GyroRunningSpeed,
+            ExtRefInitInc = source.ExtRefInitInc,
+            GyroSwitching = source.GyroSwitching,
+            GyroMinDist = source.GyroMinDist,
+            GyroNoiseRed = source.GyroNoiseRed
+        };
+
+        private static ErrorSource CloneErrorSource(ErrorSource source, double? magnitude) => new()
+        {
+            MetaInfo = source.MetaInfo,
+            ErrorCode = source.ErrorCode,
+            Description = source.Description,
+            Index = source.Index,
+            PropagationMode = source.PropagationMode,
+            IsSystematic = source.IsSystematic,
+            IsRandom = source.IsRandom,
+            IsGlobal = source.IsGlobal,
+            SingularIssues = source.SingularIssues,
+            IsContinuous = source.IsContinuous,
+            IsStationary = source.IsStationary,
+            KOperatorImposed = source.KOperatorImposed,
+            Magnitude = magnitude,
+            MagnitudeQuantity = source.MagnitudeQuantity,
+            UseInclinationInterval = source.UseInclinationInterval,
+            StartInclination = source.StartInclination,
+            EndInclination = source.EndInclination,
+            InitInclination = source.InitInclination,
+            WeightingFunctionMD = source.WeightingFunctionMD,
+            WeightingFunctionIncl = source.WeightingFunctionIncl,
+            WeightingFunctionAzim = source.WeightingFunctionAzim,
+            VerticalHoleWeightingFunctionNorth = source.VerticalHoleWeightingFunctionNorth,
+            VerticalHoleWeightingFunctionEast = source.VerticalHoleWeightingFunctionEast,
+            VerticalHoleWeightingFunctionVertical = source.VerticalHoleWeightingFunctionVertical,
+            WeightingFunctionDepthGyro = source.WeightingFunctionDepthGyro
+        };
+
+        private static SymmetricMatrix3x3 ZeroCovariance()
+        {
+            SymmetricMatrix3x3 covariance = new();
+            for (int row = 0; row < 3; row++)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    covariance[row, column] = 0.0;
+                }
+            }
+            return covariance;
+        }
+
+        private static SymmetricMatrix3x3 CloneCovariance(SymmetricMatrix3x3 source)
+        {
+            SymmetricMatrix3x3 clone = ZeroCovariance();
+            for (int row = 0; row < 3; row++)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    clone[row, column] = source[row, column];
+                }
+            }
+            return clone;
+        }
+
+        private static void AddCovariance(SymmetricMatrix3x3 target, SymmetricMatrix3x3 source)
+        {
+            for (int row = 0; row < 3; row++)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    target[row, column] += source[row, column];
+                }
+            }
+        }
+
+        private static void AddOuterProduct(SymmetricMatrix3x3 target, double[] vector)
+        {
+            for (int row = 0; row < 3; row++)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    target[row, column] += vector[row] * vector[column];
+                }
+            }
+        }
+
+        private sealed record SourceOccurrence(SurveyLeg Leg, ErrorSource Source);
+        private sealed record ScenarioResult(SymmetricMatrix3x3[] Covariances, double[][] EffectiveErrors);
 
         private static void AddInitialDepthReferenceCovariance(SurveyStation station)
         {
@@ -855,6 +1128,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                         double[,] CovarianceI = new double[3, 3];
                         if (eSource.EffectivePropagationMode == ErrorPropagationMode.Random && !allSystematic)
                         {
+                            errorSourcesAccumulator[i].CurrentError = null;
                             if (c == 0)
                             {
                                 CovarianceI[0, 0] = eStar[0] * eStar[0];
@@ -905,6 +1179,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
                                 sigmaesystematic[0] = es0 + eStar[0];
                                 sigmaesystematic[1] = es1 + eStar[1];
                                 sigmaesystematic[2] = es2 + eStar[2];
+                                errorSourcesAccumulator[i].CurrentError = (double[])sigmaesystematic.Clone();
                                 if (c == 0)
                                 {
                                     CovarianceI[0, 0] = eStar[0] * eStar[0];
@@ -1041,6 +1316,7 @@ namespace OSDC.DotnetLibraries.Drilling.Surveying
             public double[,]? Covariance { get; set; }
             public double[]? ErrorSum { get; set; }
             public double[,]? SigmaErrorRandom { get; set; }
+            public double[]? CurrentError { get; set; }
             public double GyroH { get; set; }
             public bool IsInitialized = false;
             public double InitializationMD = 0.0;

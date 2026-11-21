@@ -219,6 +219,29 @@ public class IscwsaRevision5Tests
         });
     }
 
+    [Test]
+    public void MwdRev5SingleLegCalculationMatchesExistingCalculator()
+    {
+        SurveyInstrument tool = CreateOfficialMwdRev5Tool();
+        List<SurveyStation> existing = CreateIscwsaWellOne(tool);
+        List<SurveyStation> multiLeg = CreateIscwsaWellOne(tool);
+
+        Assert.That(CovarianceCalculatorISCWSA.Calculate(existing), Is.True);
+        Assert.That(CovarianceCalculatorISCWSA.CalculateMultiLeg(multiLeg,
+        [
+            new(0, multiLeg.Count - 1, tool)
+        ]), Is.True);
+
+        for (int row = 0; row < 3; row++)
+        {
+            for (int column = 0; column < 3; column++)
+            {
+                Assert.That(multiLeg[^1].Covariance![row, column],
+                    Is.EqualTo(existing[^1].Covariance![row, column]).Within(1e-9));
+            }
+        }
+    }
+
     [TestCase(0)]
     [TestCase(1)]
     public void JsonRoundTrippedRevision5ToolCalculatesU7(int stationsToSkip)
